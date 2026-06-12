@@ -26,15 +26,10 @@
   margin-bottom: var(--space-8);
 }
 
-.logoMark {
-  font-family: var(--font-headline);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-  text-shadow: var(--gold-text-glow);
-  margin-bottom: var(--space-1);
+.logoImg {
+  height: 72px;
+  width: auto;
+  display: inline-block;
 }
 
 .logoSub {

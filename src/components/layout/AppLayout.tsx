@@ -32,7 +32,7 @@ export default function AppLayout() {
     <div className={styles.shell}>
       <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarLogo}>
-          <div className={styles.logoMark}>Hunter's Holistic</div>
+          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.sidebarLogoImg} />
           <div className={styles.logoSub}>Functional Medicine Education</div>
         </div>
 

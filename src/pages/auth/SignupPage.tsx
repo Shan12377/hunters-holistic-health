@@ -67,7 +67,7 @@ export default function SignupPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.logo}>
-          <div className={styles.logoMark}>Hunter's Holistic Health</div>
+          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
         </div>
         <h1 className={styles.title}>Create Your Account</h1>
         <p className={styles.subtitle}>Join your wellness education journey</p>

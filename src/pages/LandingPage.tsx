@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Heart, Shield, Award, Users, BookOpen, Pill, Activity, ChevronRight, ExternalLink } from 'lucide-react'
+import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink } from 'lucide-react'
 import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
 
@@ -32,10 +32,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <Link to="/" className={styles.navBrand}>
-          <span className={styles.navLogoIcon}>
-            <Heart size={16} color="#c8a74b" fill="#c8a74b" />
-          </span>
-          <span className={styles.navLogo}>Hunter's Holistic Health</span>
+          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.navLogoImg} />
         </Link>
         <div className={styles.navLinks}>
           <Link to="/login" className={styles.navLink}>Sign In</Link>
