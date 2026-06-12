@@ -683,6 +683,169 @@
   padding-top: var(--space-2);
 }
 
+/* --- Cohort management section --- */
+.cohortsSection {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.cohortsSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.cohortsSectionTitle {
+  font-family: var(--font-headline);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cohortsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.cohortsListRow {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cohortsListName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cohortsListMeta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.cohortsListCount {
+  font-size: 12px;
+  color: var(--teal);
+  font-weight: 600;
+  background: rgba(11, 158, 142, 0.08);
+  border: 1px solid rgba(11, 158, 142, 0.2);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  flex-shrink: 0;
+}
+
+.cohortsEmpty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: var(--space-3) 0;
+}
+
+.cohortsFormCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-top: var(--space-3);
+}
+
+.cohortsFormTitle {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+.cohortsFormFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.cohortsFormLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+  display: block;
+}
+
+.cohortsInput {
+  width: 100%;
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  transition: border-color var(--transition-fast);
+}
+
+.cohortsInput:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.cohortsCheckboxLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+.cohortsCheckboxList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 220px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.cohortsCheckboxItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.cohortsCheckboxItem:hover {
+  background: var(--bg-hover);
+}
+
+.cohortsCheckboxItem input[type="checkbox"] {
+  accent-color: var(--gold);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.cohortsCheckboxItemLabel {
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.cohortsFormActions {
+  display: flex;
+  gap: var(--space-3);
+}
+
 @media (max-width: 900px) {
   .rosterRow { grid-template-columns: 2fr 1fr 1fr auto; }
   .rosterHeadRow { grid-template-columns: 2fr 1fr 1fr auto; }

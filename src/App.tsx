@@ -15,6 +15,7 @@ import ProtocolPage from '@/pages/client/ProtocolPage'
 import SupplementLogPage from '@/pages/client/SupplementLogPage'
 import WeeklyGradePage from '@/pages/client/WeeklyGradePage'
 import FeedPage from '@/pages/client/FeedPage'
+import CohortPage from '@/pages/client/CohortPage'
 import SettingsPage from '@/pages/client/SettingsPage'
 import CoachDashboard from '@/pages/coach/CoachDashboard'
 import ClientDetailPage from '@/pages/coach/ClientDetailPage'
@@ -93,6 +94,7 @@ export default function App() {
           <Route path="supplements" element={<SupplementLogPage />} />
           <Route path="weekly-grade" element={<WeeklyGradePage />} />
           <Route path="feed" element={<FeedPage />} />
+          <Route path="cohort" element={<CohortPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

@@ -42,13 +42,26 @@ interface CohortStats {
   avgEnergy: number
 }
 
+interface ProgramCohort {
+  id: string
+  name: string
+  starts_on: string
+  ends_on: string
+  cohort_members: { user_id: string }[]
+}
+
 export default function CoachDashboard() {
   const [clients, setClients] = useState<ClientSummary[]>([])
   const [cohortStats, setCohortStats] = useState<CohortStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [programCohorts, setProgramCohorts] = useState<ProgramCohort[]>([])
+  const [showCohortForm, setShowCohortForm] = useState(false)
+  const [cohortForm, setCohortForm] = useState({ name: '', starts_on: '', ends_on: '' })
+  const [cohortMemberIds, setCohortMemberIds] = useState<string[]>([])
+  const [savingCohort, setSavingCohort] = useState(false)
 
-  useEffect(() => { fetchClients() }, [])
+  useEffect(() => { fetchClients(); fetchCohorts() }, [])
 
   const fetchClients = async () => {
     const { data: profiles } = await supabase
@@ -157,6 +170,48 @@ export default function CoachDashboard() {
     setClients(summaries)
     setCohortStats(cs)
     setLoading(false)
+  }
+
+  const fetchCohorts = async () => {
+    const { data } = await supabase
+      .from('cohorts')
+      .select('id, name, starts_on, ends_on, cohort_members(user_id)')
+      .order('starts_on', { ascending: false })
+    setProgramCohorts((data ?? []) as unknown as ProgramCohort[])
+  }
+
+  const createCohort = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!cohortForm.name.trim() || !cohortForm.starts_on || !cohortForm.ends_on) return
+    setSavingCohort(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: newCohort, error } = await supabase
+      .from('cohorts')
+      .insert({
+        name: cohortForm.name.trim(),
+        starts_on: cohortForm.starts_on,
+        ends_on: cohortForm.ends_on,
+        created_by: user?.id ?? null,
+      })
+      .select()
+      .single()
+    if (error || !newCohort) {
+      toast.error('Failed to create cohort.')
+      setSavingCohort(false)
+      return
+    }
+    if (cohortMemberIds.length > 0) {
+      const { error: membersError } = await supabase.from('cohort_members').insert(
+        cohortMemberIds.map(uid => ({ cohort_id: newCohort.id, user_id: uid }))
+      )
+      if (membersError) toast.error('Cohort created, but member assignment failed. Try editing from the database.')
+    }
+    toast.success('Cohort created!')
+    setCohortForm({ name: '', starts_on: '', ends_on: '' })
+    setCohortMemberIds([])
+    setShowCohortForm(false)
+    setSavingCohort(false)
+    fetchCohorts()
   }
 
   const filtered = clients
@@ -399,6 +454,127 @@ export default function CoachDashboard() {
           })}
         </div>
       )}
+
+      {/* Cohort Management */}
+      <div className={styles.cohortsSection}>
+        <div className={styles.cohortsSectionHeader}>
+          <h3 className={styles.cohortsSectionTitle}>Cohorts</h3>
+          {!showCohortForm && (
+            <button className={shared.btnSecondary} onClick={() => setShowCohortForm(true)}>
+              + New Cohort
+            </button>
+          )}
+        </div>
+
+        {programCohorts.length === 0 && !showCohortForm && (
+          <p className={styles.cohortsEmpty}>No cohorts created yet.</p>
+        )}
+
+        {programCohorts.length > 0 && (
+          <div className={styles.cohortsList}>
+            {programCohorts.map(c => (
+              <div key={c.id} className={styles.cohortsListRow}>
+                <div>
+                  <div className={styles.cohortsListName}>{c.name}</div>
+                  <div className={styles.cohortsListMeta}>
+                    {format(new Date(c.starts_on + 'T12:00:00'), 'MMM d')} to {format(new Date(c.ends_on + 'T12:00:00'), 'MMM d, yyyy')}
+                  </div>
+                </div>
+                <div className={styles.cohortsListCount}>
+                  {c.cohort_members.length} member{c.cohort_members.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {showCohortForm && (
+          <div className={styles.cohortsFormCard}>
+            <h4 className={styles.cohortsFormTitle}>Create New Cohort</h4>
+            <form onSubmit={createCohort}>
+              <div className={styles.cohortsFormFields}>
+                <div>
+                  <label className={styles.cohortsFormLabel}>Cohort Name</label>
+                  <input
+                    className={styles.cohortsInput}
+                    type="text"
+                    required
+                    maxLength={100}
+                    placeholder="Week 1 Group"
+                    value={cohortForm.name}
+                    onChange={e => setCohortForm(f => ({ ...f, name: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className={styles.cohortsFormLabel}>Start Date</label>
+                  <input
+                    className={styles.cohortsInput}
+                    type="date"
+                    required
+                    value={cohortForm.starts_on}
+                    onChange={e => setCohortForm(f => ({ ...f, starts_on: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className={styles.cohortsFormLabel}>End Date</label>
+                  <input
+                    className={styles.cohortsInput}
+                    type="date"
+                    required
+                    value={cohortForm.ends_on}
+                    onChange={e => setCohortForm(f => ({ ...f, ends_on: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              {clients.length > 0 && (
+                <>
+                  <label className={styles.cohortsCheckboxLabel}>
+                    Assign Participants ({cohortMemberIds.length} selected)
+                  </label>
+                  <div className={styles.cohortsCheckboxList}>
+                    {clients.map(c => (
+                      <label key={c.id} className={styles.cohortsCheckboxItem}>
+                        <input
+                          type="checkbox"
+                          checked={cohortMemberIds.includes(c.id)}
+                          onChange={() => {
+                            setCohortMemberIds(ids =>
+                              ids.includes(c.id)
+                                ? ids.filter(id => id !== c.id)
+                                : [...ids, c.id]
+                            )
+                          }}
+                        />
+                        <span className={styles.cohortsCheckboxItemLabel}>
+                          {c.first_name} {c.last_name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <div className={styles.cohortsFormActions}>
+                <button type="submit" className={shared.btnPrimary} disabled={savingCohort}>
+                  {savingCohort ? 'Creating...' : 'Create Cohort'}
+                </button>
+                <button
+                  type="button"
+                  className={shared.btnSecondary}
+                  onClick={() => {
+                    setShowCohortForm(false)
+                    setCohortForm({ name: '', starts_on: '', ends_on: '' })
+                    setCohortMemberIds([])
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
 
       {/* Cohort Outcomes Card */}
       {!loading && cohortStats && clients.length > 0 && (

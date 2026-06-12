@@ -12,6 +12,7 @@ const clientNav = [
   { to: '/app/protocol', icon: '◈', label: 'My Protocol' },
   { to: '/app/supplements', icon: '⬡', label: 'Supplements' },
   { to: '/app/weekly-grade', icon: '★', label: 'Weekly Grade' },
+  { to: '/app/cohort', icon: '◑', label: 'My Cohort' },
   { to: '/app/feed', icon: '◎', label: 'Community Feed' },
 ]
 
