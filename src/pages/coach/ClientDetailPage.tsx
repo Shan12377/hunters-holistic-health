@@ -256,6 +256,67 @@ new Chart(document.getElementById('stepsChart'), {
           </div>
         )}
       </div>
+
+      {/* Reflection Patterns (Educational) */}
+      {(() => {
+        const lateSlips = dailyLogs.filter(l => l.late_slip_reason !== null)
+        if (lateSlips.length === 0) return null
+
+        const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        const dowCounts = DOW_LABELS.map((_, i) =>
+          lateSlips.filter(l => new Date(l.log_date + 'T12:00:00').getDay() === i).length
+        )
+
+        const dowChartData = {
+          labels: DOW_LABELS,
+          datasets: [{
+            label: 'Reflections',
+            data: dowCounts,
+            backgroundColor: 'rgba(200,167,75,0.45)',
+            borderColor: '#c8a74b',
+            borderWidth: 1,
+          }],
+        }
+
+        const dowChartOpts = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#91a0ac', font: { size: 10 } }, grid: { color: '#1f3331' } },
+            y: { ticks: { color: '#91a0ac', font: { size: 10 }, stepSize: 1 }, grid: { color: '#1f3331' }, min: 0 },
+          },
+        }
+
+        return (
+          <div className={styles.card}>
+            <h3 className={styles.cardSubTitle}>Reflection Patterns (Educational)</h3>
+            <p className={styles.slipPatternDesc}>
+              Late slip entries from the most recent 30 logs. For educational program awareness only.
+            </p>
+            <div className={styles.slipPatternMeta}>
+              <span className={styles.slipCount}>{lateSlips.length}</span>
+              <span className={styles.slipCountLabel}>
+                {lateSlips.length === 1 ? 'reflection entry' : 'reflection entries'} in last 30 logs
+              </span>
+            </div>
+            <div className={styles.chartWrapSm} style={{ marginBottom: 'var(--space-5)' }}>
+              <Bar data={dowChartData} options={dowChartOpts as never} />
+            </div>
+            <div className={styles.slipList}>
+              {lateSlips.slice(0, 10).map(l => (
+                <div key={l.id} className={styles.slipItem}>
+                  <span className={styles.slipDate}>{l.log_date}</span>
+                  <span className={styles.slipReason}>{l.late_slip_reason}</span>
+                </div>
+              ))}
+              {lateSlips.length > 10 && (
+                <div className={styles.slipMore}>+{lateSlips.length - 10} more entries</div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

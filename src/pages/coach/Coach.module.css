@@ -524,6 +524,149 @@
   flex-wrap: wrap;
 }
 
+/* --- At-risk tag --- */
+.atRiskTag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: rgba(224, 92, 92, 0.12);
+  color: #e05c5c;
+  border: 1px solid rgba(224, 92, 92, 0.3);
+  vertical-align: middle;
+}
+
+/* --- Cohort outcomes card --- */
+.cohortCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.cohortCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.cohortCardKicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: var(--space-1);
+}
+
+.cohortCardTitle {
+  font-family: var(--font-headline);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cohortGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.cohortStat {
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.cohortStatValue {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: var(--gold-text-glow);
+  line-height: 1.1;
+  margin-bottom: var(--space-1);
+}
+
+.cohortStatLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* --- Late slip / reflection patterns --- */
+.slipPatternDesc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.slipPatternMeta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.slipCount {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.slipCountLabel {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.slipList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.slipItem {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.slipItem:last-child {
+  border-bottom: none;
+}
+
+.slipDate {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 86px;
+}
+
+.slipReason {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.slipMore {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-top: var(--space-2);
+}
+
 @media (max-width: 900px) {
   .rosterRow { grid-template-columns: 2fr 1fr 1fr auto; }
   .rosterHeadRow { grid-template-columns: 2fr 1fr 1fr auto; }
@@ -534,4 +677,5 @@
   .detailGrid { grid-template-columns: 1fr; }
   .rosterRow { grid-template-columns: 1fr auto; }
   .rosterHeadRow { display: none; }
+  .cohortGrid { grid-template-columns: 1fr 1fr; }
 }
