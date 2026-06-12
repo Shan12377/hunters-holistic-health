@@ -1,0 +1,206 @@
+{
+  "name": "HHH Workflow 10: Appointment Follow-Up Automation",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "nodes": [
+    {
+      "id": "a1f10001-0000-4000-8000-000000000001",
+      "name": "Daily 4pm Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a1f10001-0000-4000-8000-000000000002",
+      "name": "Read Session Follow-Ups",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Follow-Ups",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "a1f10001-0000-4000-8000-000000000003",
+      "name": "Filter Unsent Follow-Ups",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [440, 0],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "typeValidation": "loose",
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f1",
+              "leftValue": "={{ $json['Follow-Up Sent'] }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "f2",
+              "leftValue": "={{ $json['Client Email'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f3",
+              "leftValue": "={{ $json['Follow-Up Instructions'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1f10001-0000-4000-8000-000000000004",
+      "name": "Send Follow-Up Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [660, 0],
+      "parameters": {
+        "sendTo": "={{ $json['Client Email'] }}",
+        "subject": "Thank you for your session with Hunter's Holistic Health",
+        "emailType": "text",
+        "message": "=Hi {{ $json['Client First Name'] }},\n\nThank you for your {{ $json['Session Type'] }} session on {{ $json['Session Date'] }}. It was great to connect with you.\n\nHere are your next steps from the session:\n\n{{ $json['Follow-Up Instructions'] }}\n\nTake these one day at a time. Small, consistent steps are what move the needle.\n\nIf you have any questions, reply to this email or call us at [REPLACE_WITH_PRACTICE_PHONE].\n\nWarmly,\nHunter's Holistic Health\nFunctional Medicine Education\n\nThis message is educational and is not medical advice. If you have a medical emergency, call 911.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "a1f10001-0000-4000-8000-000000000005",
+      "name": "Mark Follow-Up Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [880, 0],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Follow-Ups",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Client Code": "={{ $('Filter Unsent Follow-Ups').item.json['Client Code'] }}",
+            "Follow-Up Sent": "YES",
+            "Sent Date": "={{ $now.toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": ["Client Code"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 4pm Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Session Follow-Ups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Session Follow-Ups": {
+      "main": [
+        [
+          {
+            "node": "Filter Unsent Follow-Ups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Unsent Follow-Ups": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-Up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-Up Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Follow-Up Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

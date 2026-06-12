@@ -1,0 +1,457 @@
+{
+  "name": "HHH Workflow 8: Virtual Telehealth Intake and Pre-Session Brief",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "nodes": [
+    {
+      "id": "d1f08001-0000-4000-8000-000000000001",
+      "name": "Hourly Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000002",
+      "name": "Read Session Intakes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 0],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Intakes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000003",
+      "name": "Compute Session Actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0],
+      "parameters": {
+        "jsCode": "const out = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  if (!j['Session ID'] || !j['Session Date']) continue;\n  const time = j['Session Time'] || '09:00';\n  const sessionAt = new Date(`${j['Session Date']}T${time}:00`);\n  if (isNaN(sessionAt.getTime())) continue;\n  const hoursUntil = (sessionAt.getTime() - Date.now()) / 3600000;\n  let action = 'none';\n  if (hoursUntil > 23 && hoursUntil <= 25 && j['Reminder Sent'] !== 'YES') {\n    action = 'send_reminder';\n  } else if (hoursUntil > 0 && hoursUntil <= 2.5 && j['Intake Submitted'] === 'YES' && j['Brief Sent'] !== 'YES') {\n    action = 'generate_brief';\n  }\n  if (action !== 'none') {\n    out.push({ json: { ...j, action, hoursUntil: Math.round(hoursUntil * 10) / 10 } });\n  }\n}\nreturn out;"
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000004",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [660, 0],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "w1",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "send_reminder",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "send_reminder"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "w2",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "generate_brief",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "generate_brief"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000005",
+      "name": "Send Intake Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [880, -150],
+      "parameters": {
+        "sendTo": "={{ $json['Client Email'] }}",
+        "subject": "Your session tomorrow, please take 5 minutes",
+        "emailType": "text",
+        "message": "=Hi,\n\nYour session with Hunter's Holistic Health is scheduled for {{ $json['Session Date'] }} at {{ $json['Session Time'] }}.\n\nPlease take 5 minutes to complete this short pre-session form so we can make the most of your time:\n\n[REPLACE_WITH_INTAKE_FORM_URL]\n\nYour Session ID is {{ $json['Session ID'] }}. You will need it on the form.\n\nPrivacy notice: please do not include lab results, diagnoses, or medication details in this form. Those belong in your secure clinical channel. This form covers your current concerns and the questions you want answered.\n\nSee you soon,\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000006",
+      "name": "Mark Reminder Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1100, -150],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Intakes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session ID": "={{ $('Route Action').item.json['Session ID'] }}",
+            "Reminder Sent": "YES"
+          },
+          "matchingColumns": ["Session ID"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000007",
+      "name": "Generate Pre-Session Brief",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [880, 150],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You generate a structured pre-session brief for a functional medicine educator. Input is a client's short pre-session intake. Output sections, in order: 1) Chief Concern (one or two sentences). 2) Reported Changes Since Last Session. 3) Client Questions To Address (as stated, lightly cleaned up). 4) Suggested Session Priorities (3 bullets max, educational framing only).\n\nRules: refer to the session by Session ID and client code only. Never invent a client name. Do not diagnose, do not suggest medication changes, do not interpret labs. Keep it under 250 words. Do not use the em dash character anywhere in your output."
+            },
+            {
+              "role": "user",
+              "content": "=Session ID: {{ $json['Session ID'] }}\nClient Code: {{ $json['Client Code'] }}\nSession Type: {{ $json['Session Type'] }}\nVisit Reason: {{ $json['Visit Reason'] }}\nCurrent Concerns: {{ $json['Current Concerns'] }}\nQuestions for Today: {{ $json['Questions for Today'] }}\nChanges Since Last Session: {{ $json['Changes Since Last Session'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "OpenAI [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000008",
+      "name": "Email Brief To Dr Hunter",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1100, 150],
+      "parameters": {
+        "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
+        "subject": "=Pre-Session Brief - {{ $('Route Action').item.json['Session ID'] }} - {{ $('Route Action').item.json['Session Date'] }} {{ $('Route Action').item.json['Session Time'] }}",
+        "emailType": "text",
+        "message": "=Pre-session brief for {{ $('Route Action').item.json['Session ID'] }} (client code {{ $('Route Action').item.json['Client Code'] }}).\n\n{{ $json.message.content }}\n\nPer the email rules, no client name appears in this message.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000009",
+      "name": "Mark Brief Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1320, 150],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Intakes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session ID": "={{ $('Route Action').item.json['Session ID'] }}",
+            "Brief Generated": "YES",
+            "Brief Sent": "YES"
+          },
+          "matchingColumns": ["Session ID"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000010",
+      "name": "Pre-Session Intake Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [0, 400],
+      "webhookId": "d1f08001-aaaa-4000-8000-000000000010",
+      "parameters": {
+        "formTitle": "Pre-Session Check-In",
+        "formDescription": "This takes about 5 minutes. Privacy notice: please do not include lab results, diagnoses, or medication details here. This form covers your current concerns and the questions you want answered in your session.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Session ID",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Client Code",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Visit Reason",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Current Concerns",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Questions for Today",
+              "fieldType": "textarea",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Changes Since Last Session",
+              "fieldType": "textarea",
+              "requiredField": false
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d1f08001-0000-4000-8000-000000000011",
+      "name": "Record Intake Submission",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 400],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Session Intakes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session ID": "={{ $json['Session ID'] }}",
+            "Visit Reason": "={{ $json['Visit Reason'] }}",
+            "Current Concerns": "={{ $json['Current Concerns'] }}",
+            "Questions for Today": "={{ $json['Questions for Today'] }}",
+            "Changes Since Last Session": "={{ $json['Changes Since Last Session'] }}",
+            "Intake Submitted": "YES"
+          },
+          "matchingColumns": ["Session ID"],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Hourly Check": {
+      "main": [
+        [
+          {
+            "node": "Read Session Intakes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Session Intakes": {
+      "main": [
+        [
+          {
+            "node": "Compute Session Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Session Actions": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "Send Intake Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Pre-Session Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Intake Reminder": {
+      "main": [
+        [
+          {
+            "node": "Mark Reminder Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Pre-Session Brief": {
+      "main": [
+        [
+          {
+            "node": "Email Brief To Dr Hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Brief To Dr Hunter": {
+      "main": [
+        [
+          {
+            "node": "Mark Brief Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pre-Session Intake Form": {
+      "main": [
+        [
+          {
+            "node": "Record Intake Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

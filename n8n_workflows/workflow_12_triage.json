@@ -1,0 +1,565 @@
+{
+  "name": "HHH Workflow 12: Urgent Triage and Escalation",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "nodes": [
+    {
+      "id": "b1f12001-0000-4000-8000-000000000001",
+      "name": "Intake Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "b1f12001-aaaa-4000-8000-000000000001",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hhh-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "notes": "Full URL: {N8N_WEBHOOK_BASE_URL}/webhook/hhh-intake. Set this as VITE_N8N_WEBHOOK_URL in the app."
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000002",
+      "name": "Check Shared Secret",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [220, 0],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "s1",
+              "leftValue": "={{ $json.headers['x-hhh-secret'] }}",
+              "rightValue": "[REPLACE_WITH_YOUR_SHARED_SECRET]",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000003",
+      "name": "Respond Unauthorized",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [440, 200],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Unauthorized",
+        "options": {
+          "responseCode": 401
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000004",
+      "name": "Is Support Submission",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, -100],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "t1",
+              "leftValue": "={{ $json.body.submissionType }}",
+              "rightValue": "support",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000005",
+      "name": "Respond OK (Other Types)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 100],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "notes": "Non-support submission types pass through here. Route them to your existing intake logging workflow or extend this workflow with a Switch on submissionType."
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000006",
+      "name": "Classify Urgency",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [660, -150],
+      "parameters": {
+        "resource": "text",
+        "operation": "message",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a triage classifier for a wellness education platform. Read the support message and classify its urgency. Respond with valid JSON only, in this exact shape: {\"level\": \"EMERGENCY or URGENT or ROUTINE\", \"reason\": \"one short sentence\"}. Rules: EMERGENCY means a possible life-threatening situation such as chest pain, trouble breathing, stroke signs, or statements about self-harm. URGENT means any health concern that needs human review soon, including any mention of symptoms, medications, or supplement reactions. ROUTINE means account, technical, billing, or general questions with no health content. If the message contains any health details at all, classify it as URGENT at minimum. The reason field must describe the urgency category only. Do not repeat, quote, or summarize any health details in the reason field."
+            },
+            {
+              "role": "user",
+              "content": "=Category: {{ $json.body.category }}\nMessage: {{ $json.body.description }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "OpenAI [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000007",
+      "name": "Parse Triage Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -150],
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.message?.content ?? $input.first().json.text ?? '';\nlet level = 'URGENT';\nlet reason = 'Classifier output could not be parsed. Defaulting to human review.';\ntry {\n  const match = String(raw).match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    const parsed = JSON.parse(match[0]);\n    const allowed = ['EMERGENCY', 'URGENT', 'ROUTINE'];\n    if (allowed.includes(parsed.level)) {\n      level = parsed.level;\n      reason = String(parsed.reason || 'No reason given.').slice(0, 200);\n    }\n  }\n} catch (e) {\n  // Keep the URGENT default so a human always reviews unparseable cases.\n}\nconst body = $('Intake Webhook').first().json.body;\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    submissionType: 'support',\n    name: `${body.firstName} ${body.lastName}`,\n    email: body.email,\n    category: body.category,\n    description: body.description,\n    preferredContact: body.preferredContact,\n    consent: body.consent ? 'YES' : 'NO',\n    triageLevel: level,\n    triageReason: reason\n  }\n}];"
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000008",
+      "name": "Log To Support Requests",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1100, -150],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Support Requests",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Submission Type": "={{ $json.submissionType }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Category": "={{ $json.category }}",
+            "Short Description": "={{ $json.description }}",
+            "Preferred Contact Method": "={{ $json.preferredContact }}",
+            "Consent": "={{ $json.consent }}",
+            "Triage Level": "={{ $json.triageLevel }}",
+            "Resolved": "NO"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000009",
+      "name": "Respond Received",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1320, 50],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000010",
+      "name": "Route By Triage Level",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1320, -250],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r1",
+                    "leftValue": "={{ $json.triageLevel }}",
+                    "rightValue": "EMERGENCY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "EMERGENCY"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r2",
+                    "leftValue": "={{ $json.triageLevel }}",
+                    "rightValue": "URGENT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "URGENT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "r3",
+                    "leftValue": "={{ $json.triageLevel }}",
+                    "rightValue": "ROUTINE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "ROUTINE"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000011",
+      "name": "Emergency Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1540, -400],
+      "parameters": {
+        "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
+        "subject": "=EMERGENCY ALERT - Support Request {{ $json.timestamp }}",
+        "emailType": "text",
+        "message": "=An incoming support request was triaged as EMERGENCY.\n\nName: {{ $json.name }}\nEmail: {{ $json.email }}\nTriage reason: {{ $json.triageReason }}\nTimestamp: {{ $json.timestamp }}\n\nReview the Support Requests sheet and contact this person immediately. Per the alert rules, this email contains no message content or health details.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000012",
+      "name": "Emergency SMS Gateway Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1760, -400],
+      "parameters": {
+        "sendTo": "[REPLACE_WITH_SMS_GATEWAY_ADDRESS]",
+        "subject": "=EMERGENCY ALERT - Support Request {{ $json.timestamp }}",
+        "emailType": "text",
+        "message": "=EMERGENCY support request from {{ $json.name }} ({{ $json.email }}). Check email and the Support Requests sheet now.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      },
+      "notes": "Most US carriers expose an email-to-SMS gateway, for example number@vtext.com for Verizon. Replace with a Twilio node later if preferred."
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000013",
+      "name": "Emergency User Notice",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1980, -400],
+      "parameters": {
+        "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
+        "subject": "We received your message",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nWe received your message and will respond shortly.\n\nIf this is a medical emergency, call 911 immediately. Do not wait for our reply.\n\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000014",
+      "name": "Urgent Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1540, -250],
+      "parameters": {
+        "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
+        "subject": "Urgent Support Request - Review Within 1 Hour",
+        "emailType": "text",
+        "message": "=An incoming support request was triaged as URGENT.\n\nName: {{ $json.name }}\nEmail: {{ $json.email }}\nTriage reason: {{ $json.triageReason }}\nTimestamp: {{ $json.timestamp }}\n\nReview the Support Requests sheet within 1 hour. Per the alert rules, this email contains no message content or health details.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000015",
+      "name": "Urgent User Notice",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1760, -250],
+      "parameters": {
+        "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
+        "subject": "We received your message",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nWe received your message and will respond shortly.\n\nIf this is a medical emergency, call 911 immediately.\n\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000016",
+      "name": "Routine Acknowledgment",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1540, -100],
+      "parameters": {
+        "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
+        "subject": "We received your support request",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nThanks for reaching out. Your request has been received and is in our queue. You will hear back by the next business day via your preferred contact method.\n\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Intake Webhook": {
+      "main": [
+        [
+          {
+            "node": "Check Shared Secret",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Shared Secret": {
+      "main": [
+        [
+          {
+            "node": "Is Support Submission",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Support Submission": {
+      "main": [
+        [
+          {
+            "node": "Classify Urgency",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond OK (Other Types)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Urgency": {
+      "main": [
+        [
+          {
+            "node": "Parse Triage Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Triage Result": {
+      "main": [
+        [
+          {
+            "node": "Log To Support Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log To Support Requests": {
+      "main": [
+        [
+          {
+            "node": "Respond Received",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route By Triage Level",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Triage Level": {
+      "main": [
+        [
+          {
+            "node": "Emergency Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Urgent Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Routine Acknowledgment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Emergency Email Alert": {
+      "main": [
+        [
+          {
+            "node": "Emergency SMS Gateway Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Emergency SMS Gateway Alert": {
+      "main": [
+        [
+          {
+            "node": "Emergency User Notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgent Email Alert": {
+      "main": [
+        [
+          {
+            "node": "Urgent User Notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

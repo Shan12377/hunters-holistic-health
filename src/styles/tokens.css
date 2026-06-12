@@ -1,0 +1,65 @@
+/* ============================================================
+   HUNTER'S HOLISTIC HEALTH: DESIGN TOKENS
+   Exact match to drshallandahunter.com brand system
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@600&display=swap');
+
+:root {
+  /* --- Colors --- */
+  --gold:            #c8a74b;
+  --gold-rgb:        200, 167, 75;
+  --teal:            #0B9E8E;
+  --teal-dark:       #144445;
+  --bg-page:         hsl(205, 32%, 7%);
+  --bg-card:         hsl(205, 26%, 11%);
+  --bg-hover:        hsl(205, 20%, 15%);
+  --text-primary:    hsl(0, 0%, 97%);
+  --text-secondary:  hsl(205, 14%, 62%);
+  --text-muted:      hsl(205, 12%, 42%);
+  --border:          hsl(205, 20%, 18%);
+  --border-subtle:   hsl(205, 20%, 14%);
+  --error:           #e05c5c;
+  --success:         #4caf7d;
+
+  /* --- Glow effects --- */
+  --gold-glow:        0 0 12px rgba(200, 167, 75, 0.35);
+  --gold-glow-strong: 0 0 24px rgba(200, 167, 75, 0.55);
+  --gold-text-glow:   0 0 8px rgba(200, 167, 75, 0.5);
+  --teal-glow:        0 0 12px rgba(11, 158, 142, 0.3);
+
+  /* --- Typography --- */
+  --font-headline: 'Outfit', sans-serif;
+  --font-body:     'Inter', sans-serif;
+  --font-serif:    'Cormorant Garamond', serif;
+
+  /* --- Easing --- */
+  --ease-primary: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Spacing scale --- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* --- Radii --- */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-full: 9999px;
+
+  /* --- Transitions --- */
+  --transition-fast:   150ms var(--ease-primary);
+  --transition-base:   250ms var(--ease-primary);
+  --transition-slow:   400ms var(--ease-primary);
+  --transition-spring: 350ms var(--ease-spring);
+}

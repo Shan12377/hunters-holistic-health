@@ -1,0 +1,537 @@
+/* ============================================================
+   COACH / EDUCATOR PAGES
+   ============================================================ */
+
+.pageTopTitle {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.pageTopDate {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* --- Stat icon cards --- */
+.statIconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.statIconCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.statIconCard svg {
+  margin: 0 auto var(--space-2);
+}
+
+.statIconValue {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.statIconLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* --- Search --- */
+.searchWrap {
+  margin-bottom: var(--space-4);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-body);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.searchInput::placeholder { color: var(--text-muted); }
+
+.searchInput:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.12);
+}
+
+/* --- Client list cards --- */
+.clientList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.clientCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: border-color var(--transition-base), transform var(--transition-spring);
+}
+
+.clientCard:hover {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.clientCardInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.clientAvatarLg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(var(--gold-rgb), 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.clientInfo {
+  flex: 1;
+}
+
+.clientFullName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.clientAgeInline {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: var(--space-2);
+  font-weight: 400;
+}
+
+.clientHandle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.metricCol {
+  text-align: center;
+  min-width: 60px;
+}
+
+.metricValue {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.metricValueGold {
+  composes: metricValue;
+  color: var(--gold);
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.metricEmpty {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.loadingText {
+  text-align: center;
+  padding: var(--space-10) 0;
+  color: var(--text-secondary);
+}
+
+/* --- Educator disclaimer --- */
+.disclaimerBox {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(var(--gold-rgb), 0.04);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(var(--gold-rgb), 0.1);
+}
+
+.disclaimerText {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.disclaimerText strong {
+  color: var(--gold);
+}
+
+.pageHeader {
+  margin-bottom: var(--space-8);
+}
+
+.pageKicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: var(--space-2);
+}
+
+.pageTitle {
+  font-family: var(--font-headline);
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 900;
+  margin-bottom: var(--space-2);
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* --- Stats row --- */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.statCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.statLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.statValue {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: var(--gold-text-glow);
+  line-height: 1;
+}
+
+/* --- Client roster table --- */
+.rosterCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.rosterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rosterTitle {
+  font-family: var(--font-headline);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rosterRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+
+.rosterRow:last-child {
+  border-bottom: none;
+}
+
+.rosterRow:hover {
+  background: var(--bg-hover);
+}
+
+.rosterHeadRow {
+  composes: rosterRow;
+  background: var(--bg-page);
+}
+
+.rosterHeadRow:hover {
+  background: var(--bg-page);
+}
+
+.rosterHeadCell {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.clientName {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.clientAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(var(--gold-rgb), 0.12);
+  border: 1px solid rgba(var(--gold-rgb), 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.clientNameText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.clientAge {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cellText {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* --- Client detail --- */
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.detailHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.detailName {
+  font-family: var(--font-headline);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.detailMeta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.cardSubTitle {
+  font-family: var(--font-headline);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chartWrapSm {
+  position: relative;
+  height: 180px;
+}
+
+.emptyText {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* --- Daily log table --- */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.logTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.logTable th {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.logTable td {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.cellPrimary {
+  color: var(--text-primary);
+}
+
+.cellMet {
+  color: var(--success);
+}
+
+.cellGold {
+  color: var(--gold);
+}
+
+.cellTruncate {
+  font-size: 12px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pageHeader2 {
+  margin-bottom: var(--space-6);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  margin-bottom: var(--space-6);
+  transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.backBtn:hover {
+  color: var(--text-primary);
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+.detailCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.detailCardTitle {
+  font-family: var(--font-headline);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: var(--space-5);
+}
+
+.chartWrap {
+  position: relative;
+  height: 220px;
+}
+
+/* --- Report share --- */
+.shareCard {
+  background: rgba(var(--gold-rgb), 0.04);
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.shareTitle {
+  font-family: var(--font-headline);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.shareDesc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.shareActions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .rosterRow { grid-template-columns: 2fr 1fr 1fr auto; }
+  .rosterHeadRow { grid-template-columns: 2fr 1fr 1fr auto; }
+}
+
+@media (max-width: 640px) {
+  .statsRow { grid-template-columns: 1fr 1fr; }
+  .detailGrid { grid-template-columns: 1fr; }
+  .rosterRow { grid-template-columns: 1fr auto; }
+  .rosterHeadRow { display: none; }
+}
