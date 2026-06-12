@@ -70,3 +70,44 @@ export const BP_ZONE_COLORS: Record<BPZone, string> = {
   high2: '#e05c5c',
   crisis: '#c0392b',
 }
+
+export interface BSReading {
+  id: string
+  user_id: string
+  glucose_mg_dl: number
+  reading_context: 'fasting' | 'before_meal' | 'post_meal_2hr' | 'bedtime'
+  notes: string | null
+  logged_at: string
+}
+
+export type BSZone = 'low' | 'normal' | 'above_typical' | 'elevated'
+
+export function getBSZone(
+  glucose: number,
+  context: 'fasting' | 'before_meal' | 'post_meal_2hr' | 'bedtime'
+): BSZone {
+  if (context === 'post_meal_2hr') {
+    if (glucose >= 200) return 'elevated'
+    if (glucose >= 140) return 'above_typical'
+    return 'normal'
+  }
+  // fasting, before_meal, bedtime
+  if (glucose < 70) return 'low'
+  if (glucose <= 99) return 'normal'
+  if (glucose <= 125) return 'above_typical'
+  return 'elevated'
+}
+
+export const BS_ZONE_LABELS: Record<BSZone, string> = {
+  low: 'Low (Below Typical Range)',
+  normal: 'In Typical Range',
+  above_typical: 'Above Typical Range',
+  elevated: 'Elevated: Discuss With Provider',
+}
+
+export const BS_ZONE_COLORS: Record<BSZone, string> = {
+  low: '#e08a4b',
+  normal: '#4be08a',
+  above_typical: '#e0b84b',
+  elevated: '#e05c5c',
+}

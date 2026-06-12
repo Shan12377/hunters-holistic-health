@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Activity, Shield, ClipboardList, BookOpen, Droplets, Zap } from 'lucide-react'
+import { Heart, Activity, Shield, ClipboardList, BookOpen, Droplets, Droplet, Zap } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
-import type { DailyLog, BPReading } from '@/types'
-import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS } from '@/types'
+import type { DailyLog, BPReading, BSReading } from '@/types'
+import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import LateSlipModal from '@/components/ui/LateSlipModal'
 import styles from './Client.module.css'
 
@@ -13,6 +13,7 @@ export default function ClientDashboard() {
   const { profile } = useAuthStore()
   const [todayLog, setTodayLog] = useState<DailyLog | null>(null)
   const [latestBP, setLatestBP] = useState<BPReading | null>(null)
+  const [latestBS, setLatestBS] = useState<BSReading | null>(null)
   const [showLateSlip, setShowLateSlip] = useState(false)
   const today = format(new Date(), 'yyyy-MM-dd')
   const hour = new Date().getHours()
@@ -33,13 +34,15 @@ export default function ClientDashboard() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const [logRes, bpRes] = await Promise.all([
+    const [logRes, bpRes, bsRes] = await Promise.all([
       supabase.from('daily_logs').select('*').eq('user_id', user.id).eq('log_date', today).single(),
       supabase.from('blood_pressure_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
+      supabase.from('blood_sugar_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
     ])
 
     if (logRes.data) setTodayLog(logRes.data as DailyLog)
     if (bpRes.data) setLatestBP(bpRes.data as BPReading)
+    if (bsRes.data) setLatestBS(bsRes.data as BSReading)
   }
 
   const completionItems = todayLog ? [
@@ -54,6 +57,7 @@ export default function ClientDashboard() {
   const completionPct = completionItems.length > 0 ? Math.round((completionItems.filter(Boolean).length / completionItems.length) * 100) : 0
 
   const bpZone = latestBP ? getBPZone(latestBP.systolic, latestBP.diastolic) : null
+  const bsZone = latestBS ? getBSZone(latestBS.glucose_mg_dl, latestBS.reading_context) : null
 
   return (
     <div className="animate-fade-in">
@@ -157,6 +161,27 @@ export default function ClientDashboard() {
               {todayLog?.energy_level ?? '-'}{todayLog?.energy_level ? '/10' : ''}
             </div>
             <div className={styles.miniSub}>Self-reported</div>
+          </div>
+        </Link>
+
+        {/* Blood Sugar */}
+        <Link to="/app/blood-sugar" className={styles.miniLink}>
+          {/* Border and value color come from the live BS zone, so they stay inline */}
+          <div className={styles.miniCard} style={bsZone ? { borderColor: BS_ZONE_COLORS[bsZone] + '40' } : undefined}>
+            <div className={styles.miniHeader}>
+              <Droplet size={16} color={bsZone ? BS_ZONE_COLORS[bsZone] : 'var(--text-secondary)'} />
+              <span className={styles.miniLabel}>Blood Sugar</span>
+            </div>
+            {latestBS ? (
+              <>
+                <div className={styles.miniValue} style={{ color: BS_ZONE_COLORS[bsZone!] }}>
+                  {latestBS.glucose_mg_dl}
+                </div>
+                <div className={styles.miniSub}>{BS_ZONE_LABELS[bsZone!]}</div>
+              </>
+            ) : (
+              <div className={styles.miniEmpty}>No readings yet</div>
+            )}
           </div>
         </Link>
       </div>

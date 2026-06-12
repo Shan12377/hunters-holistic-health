@@ -6,7 +6,8 @@ import styles from './AppLayout.module.css'
 const clientNav = [
   { to: '/app/dashboard', icon: '⬡', label: 'Dashboard' },
   { to: '/app/daily-log', icon: '✓', label: 'Daily Log' },
-  { to: '/app/bp-tracker', icon: '♥', label: 'BP Tracker' },
+  { to: '/app/blood-pressure', icon: '♥', label: 'BP Tracker' },
+  { to: '/app/blood-sugar', icon: '◉', label: 'Blood Sugar' },
   { to: '/app/meal-guard', icon: '⚡', label: 'Meal Guard' },
   { to: '/app/protocol', icon: '◈', label: 'My Protocol' },
   { to: '/app/supplements', icon: '⬡', label: 'Supplements' },

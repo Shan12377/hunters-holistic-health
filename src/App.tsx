@@ -8,6 +8,7 @@ import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import ClientDashboard from '@/pages/client/ClientDashboard'
 import BPTrackerPage from '@/pages/client/BPTrackerPage'
+import BloodSugarPage from '@/pages/client/BloodSugarPage'
 import MealGuardPage from '@/pages/client/MealGuardPage'
 import DailyLogPage from '@/pages/client/DailyLogPage'
 import ProtocolPage from '@/pages/client/ProtocolPage'
@@ -85,6 +86,7 @@ export default function App() {
           <Route index element={<Navigate to="/app/dashboard" replace />} />
           <Route path="dashboard" element={<ClientDashboard />} />
           <Route path="blood-pressure" element={<BPTrackerPage />} />
+          <Route path="blood-sugar" element={<BloodSugarPage />} />
           <Route path="meal-guard" element={<MealGuardPage />} />
           <Route path="daily-log" element={<DailyLogPage />} />
           <Route path="protocol" element={<ProtocolPage />} />
