@@ -66,7 +66,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Toaster position="top-right" toastOptions={{ style: { background:'#1f282e', color:'#f7f7f7', border:'1px solid #272f35' }, success: { iconTheme: { primary:'#c8a74b', secondary:'#0c1318' } }, error: { iconTheme: { primary:'#e05c5c', secondary:'#0c1318' } } }} />
+      <Toaster position="top-right" toastOptions={{ style: { background:'#182a28', color:'#f7f7f7', border:'1px solid #1f3331' }, success: { iconTheme: { primary:'#c8a74b', secondary:'#0e1c1b' } }, error: { iconTheme: { primary:'#e05c5c', secondary:'#0e1c1b' } } }} />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />

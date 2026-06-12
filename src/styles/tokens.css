@@ -11,14 +11,14 @@
   --gold-rgb:        200, 167, 75;
   --teal:            #0B9E8E;
   --teal-dark:       #144445;
-  --bg-page:         hsl(174, 38%, 8%);
-  --bg-card:         hsl(174, 30%, 12%);
-  --bg-hover:        hsl(174, 24%, 16%);
+  --bg-page:         hsl(176, 32%, 8%);
+  --bg-card:         hsl(176, 26%, 12%);
+  --bg-hover:        hsl(176, 22%, 16%);
   --text-primary:    hsl(0, 0%, 97%);
-  --text-secondary:  hsl(174, 14%, 62%);
-  --text-muted:      hsl(174, 12%, 42%);
-  --border:          hsl(174, 20%, 18%);
-  --border-subtle:   hsl(174, 20%, 14%);
+  --text-secondary:  hsl(174, 14%, 64%);
+  --text-muted:      hsl(174, 12%, 44%);
+  --border:          hsl(176, 22%, 20%);
+  --border-subtle:   hsl(176, 22%, 15%);
   --error:           #e05c5c;
   --success:         #4caf7d;
 
@@ -27,6 +27,7 @@
   --gold-glow-strong: 0 0 24px rgba(200, 167, 75, 0.55);
   --gold-text-glow:   0 0 8px rgba(200, 167, 75, 0.5);
   --teal-glow:        0 0 12px rgba(11, 158, 142, 0.3);
+  --teal-glow-strong: 0 0 24px rgba(11, 158, 142, 0.5);
 
   /* --- Typography --- */
   --font-headline: 'Outfit', sans-serif;

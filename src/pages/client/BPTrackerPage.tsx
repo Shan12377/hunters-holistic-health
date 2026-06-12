@@ -124,8 +124,8 @@ export default function BPTrackerPage() {
     plugins: {
       legend: { labels: { color: '#91a0ac', font: { size: 12 } } },
       tooltip: {
-        backgroundColor: '#1f282e',
-        borderColor: '#272f35',
+        backgroundColor: '#182a28',
+        borderColor: '#1f3331',
         borderWidth: 1,
         titleColor: '#f7f7f7',
         bodyColor: '#91a0ac',
@@ -140,10 +140,10 @@ export default function BPTrackerPage() {
       },
     },
     scales: {
-      x: { ticks: { color: '#91a0ac', font: { size: 11 } }, grid: { color: '#272f35' } },
+      x: { ticks: { color: '#91a0ac', font: { size: 11 } }, grid: { color: '#1f3331' } },
       y: {
         ticks: { color: '#91a0ac', font: { size: 11 } },
-        grid: { color: '#272f35' },
+        grid: { color: '#1f3331' },
         min: 50, max: 180,
       },
     },

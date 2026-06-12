@@ -185,7 +185,7 @@ export default function SupplementLogPage() {
                   return (
                     <div key={supp.id} className={taken ? styles.suppRowTaken : styles.suppRow}>
                       <button onClick={() => toggleTaken(supp)} className={taken ? styles.suppCheckTaken : styles.suppCheck}>
-                        {taken && <Check size={16} color="#0c1318" strokeWidth={3} />}
+                        {taken && <Check size={16} color="#0e1c1b" strokeWidth={3} />}
                       </button>
                       <div className={styles.suppRowBody}>
                         <div className={taken ? styles.suppRowNameTaken : styles.suppRowName}>{supp.name}</div>

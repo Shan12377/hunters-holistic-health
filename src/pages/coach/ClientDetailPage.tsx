@@ -65,13 +65,13 @@ export default function ClientDetailPage() {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; background: #0c1318; color: #f7f7f7; padding: 24px; max-width: 900px; margin: 0 auto; }
+  body { font-family: system-ui, sans-serif; background: #0e1c1b; color: #f7f7f7; padding: 24px; max-width: 900px; margin: 0 auto; }
   h1 { font-size: 24px; font-weight: 700; color: #c8a74b; margin-bottom: 4px; }
   h2 { font-size: 16px; font-weight: 600; color: #91a0ac; margin-bottom: 16px; }
   h3 { font-size: 14px; font-weight: 600; color: #91a0ac; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-  .card { background: #151d23; border: 1px solid #272f35; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card { background: #13211f; border: 1px solid #1f3331; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .stat { background: #1f282e; border: 1px solid #272f35; border-radius: 10px; padding: 16px; text-align: center; }
+  .stat { background: #182a28; border: 1px solid #1f3331; border-radius: 10px; padding: 16px; text-align: center; }
   .stat-val { font-size: 28px; font-weight: 700; color: #c8a74b; }
   .stat-label { font-size: 12px; color: #91a0ac; margin-top: 4px; }
   .disclaimer { font-size: 11px; color: #91a0ac; line-height: 1.6; padding: 12px 16px; background: rgba(200,167,75,0.04); border: 1px solid rgba(200,167,75,0.15); border-radius: 8px; margin-top: 20px; }
@@ -115,8 +115,8 @@ const chartDefaults = {
   responsive: true,
   plugins: { legend: { labels: { color: '#91a0ac' } } },
   scales: {
-    x: { ticks: { color: '#91a0ac' }, grid: { color: '#272f35' } },
-    y: { ticks: { color: '#91a0ac' }, grid: { color: '#272f35' } }
+    x: { ticks: { color: '#91a0ac' }, grid: { color: '#1f3331' } },
+    y: { ticks: { color: '#91a0ac' }, grid: { color: '#1f3331' } }
   }
 };
 
@@ -176,7 +176,7 @@ new Chart(document.getElementById('stepsChart'), {
     datasets: [{ label: 'Steps', data: [...dailyLogs].reverse().slice(-14).map(l => l.steps ?? 0), backgroundColor: 'rgba(11,158,142,0.5)', borderColor: '#0b9e8e', borderWidth: 1 }],
   }
 
-  const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#91a0ac', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#91a0ac', font: { size: 10 } }, grid: { color: '#272f35' } }, y: { ticks: { color: '#91a0ac', font: { size: 10 } }, grid: { color: '#272f35' } } } }
+  const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#91a0ac', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#91a0ac', font: { size: 10 } }, grid: { color: '#1f3331' } }, y: { ticks: { color: '#91a0ac', font: { size: 10 } }, grid: { color: '#1f3331' } } } }
 
   return (
     <div className="animate-fade-in">
