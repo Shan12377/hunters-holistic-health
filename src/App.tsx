@@ -26,6 +26,7 @@ import JoinPage from '@/pages/intake/JoinPage'
 import SupportPage from '@/pages/intake/SupportPage'
 import FeatureRequestPage from '@/pages/intake/FeatureRequestPage'
 import ClinicalInquiryPage from '@/pages/intake/ClinicalInquiryPage'
+import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -81,6 +82,7 @@ export default function App() {
         <Route path="/support" element={<SupportPage />} />
         <Route path="/feature-request" element={<FeatureRequestPage />} />
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
+        <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

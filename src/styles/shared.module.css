@@ -545,3 +545,16 @@
 .emptyState p {
   font-size: 14px;
 }
+
+/* --- Inline text link --- */
+.textLink {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.textLink:hover {
+  color: var(--gold);
+}
+

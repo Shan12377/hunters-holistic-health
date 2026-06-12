@@ -74,7 +74,8 @@ export default function SignupPage() {
 
         {/* Privacy notice */}
         <div className={shared.alertInfo}>
-          🔒 <strong>Privacy-first design:</strong> We collect only your first name, last name, and age; never your date of birth, address, or insurance information.
+          🔒 <strong>Privacy-first design:</strong> We collect only your first name, last name, and age; never your date of birth, address, or insurance information.{' '}
+          <Link to="/privacy-scorecard" className={shared.textLink}>See our Privacy Scorecard.</Link>
         </div>
 
         <form onSubmit={handleSignup} className={styles.form}>

@@ -292,8 +292,95 @@
   color: var(--text-muted);
 }
 
+/* --- Privacy Scorecard --- */
+.scorecardWrap {
+  overflow-x: auto;
+  margin-top: var(--space-4);
+}
+
+.tdCheck {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: #4be08a;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.tdCross {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: #e05c5c;
+  line-height: 1.5;
+}
+
+.tdCheck svg,
+.tdCross svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.collectGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.collectItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid rgba(200, 167, 75, 0.4);
+  border-radius: var(--radius-md);
+}
+
+.collectItemName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.collectItemWhy {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.rightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.rightCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--teal);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.rightCardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: var(--space-2);
+}
+
+.rightCardText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
 @media (max-width: 640px) {
   .wrap { padding: var(--space-8) var(--space-4); }
   .topbar { padding: var(--space-4); }
   .table { font-size: 13px; }
+  .rightsGrid { grid-template-columns: 1fr 1fr; }
 }
