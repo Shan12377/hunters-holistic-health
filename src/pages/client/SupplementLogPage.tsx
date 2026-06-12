@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Pill, Plus, Check, ExternalLink, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
+import { calcSupplementAdherence } from '@/lib/adherence'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
@@ -18,6 +19,7 @@ interface Supplement {
 
 interface SupplementLog {
   id: string
+  user_id: string
   supplement_id: string
   taken_at: string
   log_date: string
@@ -33,6 +35,8 @@ export default function SupplementLogPage() {
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', dose: '', timing: 'am' as Supplement['timing'], notes: '' })
   const today = format(new Date(), 'yyyy-MM-dd')
+  // Fetch 14 days so adherence can be computed without an extra query.
+  const windowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
 
   useEffect(() => { fetchData() }, [])
 
@@ -41,7 +45,7 @@ export default function SupplementLogPage() {
     if (!user) return
     const [suppRes, logRes] = await Promise.all([
       supabase.from('supplements').select('*').eq('user_id', user.id).eq('active', true).order('timing').order('name'),
-      supabase.from('supplement_logs').select('*').eq('user_id', user.id).eq('log_date', today),
+      supabase.from('supplement_logs').select('*').eq('user_id', user.id).gte('log_date', windowStart),
     ])
     setSupplements((suppRes.data as Supplement[]) ?? [])
     setLogs((logRes.data as SupplementLog[]) ?? [])
@@ -51,13 +55,16 @@ export default function SupplementLogPage() {
   const toggleTaken = async (supp: Supplement) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-    const existing = logs.find(l => l.supplement_id === supp.id)
+    // Look for today's log only, not a historical one.
+    const existing = logs.find(l => l.supplement_id === supp.id && l.log_date === today)
     if (existing) {
       await supabase.from('supplement_logs').delete().eq('id', existing.id)
       setLogs(l => l.filter(x => x.id !== existing.id))
       toast('Marked as not taken', { icon: '↩️' })
     } else {
-      const { data } = await supabase.from('supplement_logs').insert({ user_id: user.id, supplement_id: supp.id, log_date: today, taken_at: new Date().toISOString() }).select().single()
+      const { data } = await supabase.from('supplement_logs').insert({
+        user_id: user.id, supplement_id: supp.id, log_date: today, taken_at: new Date().toISOString(),
+      }).select().single()
       if (data) setLogs(l => [...l, data as SupplementLog])
       toast.success(`${supp.name} marked as taken!`)
     }
@@ -67,7 +74,10 @@ export default function SupplementLogPage() {
     e.preventDefault()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-    const { data, error } = await supabase.from('supplements').insert({ user_id: user.id, name: form.name.trim(), dose: form.dose.trim(), timing: form.timing, notes: form.notes || null, active: true }).select().single()
+    const { data, error } = await supabase.from('supplements').insert({
+      user_id: user.id, name: form.name.trim(), dose: form.dose.trim(),
+      timing: form.timing, notes: form.notes || null, active: true,
+    }).select().single()
     if (error) { toast.error('Failed to add supplement'); return }
     setSupplements(s => [...s, data as Supplement])
     setForm({ name: '', dose: '', timing: 'am', notes: '' })
@@ -81,12 +91,21 @@ export default function SupplementLogPage() {
     toast('Supplement removed', { icon: '🗑️' })
   }
 
-  const takenIds = new Set(logs.map(l => l.supplement_id))
+  // Today-only slice for the daily tracker.
+  const todayLogs = logs.filter(l => l.log_date === today)
+  const takenIds = new Set(todayLogs.map(l => l.supplement_id))
   const amSupps = supplements.filter(s => s.timing === 'am')
   const pmSupps = supplements.filter(s => s.timing === 'pm')
   const otherSupps = supplements.filter(s => s.timing !== 'am' && s.timing !== 'pm')
   const totalTaken = supplements.filter(s => takenIds.has(s.id)).length
   const pct = supplements.length ? Math.round((totalTaken / supplements.length) * 100) : 0
+
+  // 14-day adherence (pure computation, no extra fetch).
+  const adherence = supplements.length > 0
+    ? calcSupplementAdherence(supplements, logs)
+    : null
+
+  const adhrColor = (n: number) => n >= 70 ? '#4be08a' : n >= 50 ? '#e0b84b' : '#e05c5c'
 
   return (
     <div className="animate-fade-in">
@@ -102,7 +121,7 @@ export default function SupplementLogPage() {
         </button>
       </div>
 
-      {/* Progress */}
+      {/* Today's progress */}
       {supplements.length > 0 && (
         <div className={styles.suppProgressCard}>
           <div className={styles.suppProgressBody}>
@@ -111,11 +130,59 @@ export default function SupplementLogPage() {
               <span className={styles.suppProgressCount}>{totalTaken}/{supplements.length} taken</span>
             </div>
             <div className={styles.suppProgressTrack}>
-              {/* Width and color are computed from live progress, so they stay inline */}
+              {/* Width and fill color are computed from live progress, so they stay inline */}
               <div className={styles.suppProgressFill} style={{ width: `${pct}%`, background: pct === 100 ? '#4be08a' : 'var(--gold)' }} />
             </div>
           </div>
           <div className={styles.suppProgressPct} style={{ color: pct === 100 ? '#4be08a' : 'var(--gold)' }}>{pct}%</div>
+        </div>
+      )}
+
+      {/* 14-Day Adherence */}
+      {!loading && adherence && (
+        <div className={styles.card}>
+          <div className={styles.adhrHeader}>
+            <h3 className={styles.adhrTitle}>14-Day Adherence</h3>
+            <div className={styles.adhrStreakPill}>
+              🔥 {adherence.streak} day{adherence.streak !== 1 ? 's' : ''} streak
+            </div>
+          </div>
+
+          <div className={styles.adhrPctRow}>
+            {/* Color is computed from live adherence score, so it stays inline */}
+            <div className={styles.adhrPctNum} style={{ color: adhrColor(adherence.overall) }}>
+              {adherence.overall}%
+            </div>
+            <div className={styles.adhrBarWrap}>
+              <div className={styles.adhrBarTrack}>
+                <div className={styles.adhrBarFill} style={{ width: `${adherence.overall}%`, background: adhrColor(adherence.overall) }} />
+              </div>
+              <div className={styles.adhrBarLabel}>Overall (last 14 days)</div>
+            </div>
+          </div>
+
+          {adherence.breakdown.length > 0 && (
+            <div className={styles.adhrBreakdown}>
+              {adherence.breakdown.map(s => (
+                <div key={s.id} className={styles.adhrBreakdownItem}>
+                  <div className={styles.adhrBreakdownName}>{s.name}</div>
+                  <div className={styles.adhrMiniTrack}>
+                    {/* Bar width and color are computed from live adherence, so they stay inline */}
+                    <div className={styles.adhrMiniFill} style={{ width: `${s.pct}%`, background: adhrColor(s.pct) }} />
+                  </div>
+                  <span className={styles.adhrBreakdownPct} style={{ color: adhrColor(s.pct) }}>
+                    {s.pct}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {adherence.overall < 60 && (
+            <p className={styles.adhrNote}>
+              Consistency matters more than perfection. Pick your easiest supplement and anchor it to an existing habit.
+            </p>
+          )}
         </div>
       )}
 
@@ -176,7 +243,11 @@ export default function SupplementLogPage() {
         </div>
       ) : (
         <>
-          {[{ label: 'Morning Supplements', supps: amSupps, color: '#c8a74b' }, { label: 'Evening Supplements', supps: pmSupps, color: '#9b59b6' }, { label: 'Other', supps: otherSupps, color: '#91a0ac' }].filter(g => g.supps.length > 0).map(({ label, supps, color }) => (
+          {[
+            { label: 'Morning Supplements', supps: amSupps, color: '#c8a74b' },
+            { label: 'Evening Supplements', supps: pmSupps, color: '#9b59b6' },
+            { label: 'Other', supps: otherSupps, color: '#91a0ac' },
+          ].filter(g => g.supps.length > 0).map(({ label, supps, color }) => (
             <div key={label} className={styles.card}>
               <h3 className={styles.cardLabel} style={{ color }}>{label}</h3>
               <div className={styles.checklist}>
@@ -213,6 +284,9 @@ export default function SupplementLogPage() {
           <ExternalLink size={14} /> Shop Now
         </a>
       </div>
+      <p className={styles.reorderNote}>
+        Running low? Reorder through the dispensary so your protocol stays unbroken.
+      </p>
 
       <p className={styles.footerNote}>
         Supplement recommendations are for educational purposes only. Always consult your healthcare provider before starting any new supplement regimen.

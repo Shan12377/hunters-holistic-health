@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Download, Heart, Activity } from 'lucide-react'
+import { ArrowLeft, Download, Heart, Activity, Pill } from 'lucide-react'
 import { Line, Bar } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js'
 import { supabase } from '@/lib/supabase'
 import { format, parseISO, subDays } from 'date-fns'
 import type { BPReading, DailyLog, Profile } from '@/types'
 import { getBPZone, BP_ZONE_COLORS } from '@/types'
+import { calcSupplementAdherence } from '@/lib/adherence'
+import type { SupplementAdherenceResult } from '@/lib/adherence'
 import toast from 'react-hot-toast'
 import styles from './Coach.module.css'
+import clientStyles from '../client/Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend)
@@ -18,20 +21,27 @@ export default function ClientDetailPage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [bpReadings, setBpReadings] = useState<BPReading[]>([])
   const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([])
+  const [adherence, setAdherence] = useState<SupplementAdherenceResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [generatingReport, setGeneratingReport] = useState(false)
 
   useEffect(() => { if (clientId) fetchClientData(clientId) }, [clientId])
 
   const fetchClientData = async (id: string) => {
-    const [profileRes, bpRes, logsRes] = await Promise.all([
+    const suppWindowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
+    const [profileRes, bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('blood_pressure_logs').select('*').eq('user_id', id).order('logged_at', { ascending: true }).limit(30),
       supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
+      supabase.from('supplements').select('id,name,timing').eq('user_id', id).eq('active', true),
+      supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
     ])
     if (profileRes.data) setProfile(profileRes.data as Profile)
     setBpReadings((bpRes.data as BPReading[]) ?? [])
     setDailyLogs((logsRes.data as DailyLog[]) ?? [])
+    const supps = (suppRes.data ?? []) as { id: string; name: string; timing: string }[]
+    const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
+    if (supps.length > 0) setAdherence(calcSupplementAdherence(supps, suppLogs))
     setLoading(false)
   }
 
@@ -220,6 +230,44 @@ new Chart(document.getElementById('stepsChart'), {
           <div className={styles.chartWrapSm}>
             <Bar data={stepsChartData} options={chartOpts as never} />
           </div>
+        </div>
+      )}
+
+      {/* Supplement Adherence (14 Days) */}
+      {adherence && (
+        <div className={styles.card}>
+          <h3 className={styles.cardSubTitle}>
+            <Pill size={16} color="#9b59b6" /> Adherence (14 Days)
+          </h3>
+          <div className={clientStyles.adhrPctRow}>
+            {/* Color is computed from live adherence score, so it stays inline */}
+            <div className={clientStyles.adhrPctNum} style={{ color: adherence.overall >= 70 ? '#4be08a' : adherence.overall >= 50 ? '#e0b84b' : '#e05c5c' }}>
+              {adherence.overall}%
+            </div>
+            <div className={clientStyles.adhrBarWrap}>
+              <div className={clientStyles.adhrBarTrack}>
+                <div className={clientStyles.adhrBarFill} style={{ width: `${adherence.overall}%`, background: adherence.overall >= 70 ? '#4be08a' : adherence.overall >= 50 ? '#e0b84b' : '#e05c5c' }} />
+              </div>
+              <div className={clientStyles.adhrBarLabel}>
+                {adherence.streak > 0 ? `🔥 ${adherence.streak} day streak` : 'Overall (last 14 days)'}
+              </div>
+            </div>
+          </div>
+          {adherence.breakdown.length > 0 && (
+            <div className={clientStyles.adhrBreakdown}>
+              {adherence.breakdown.map(s => (
+                <div key={s.id} className={clientStyles.adhrBreakdownItem}>
+                  <div className={clientStyles.adhrBreakdownName}>{s.name}</div>
+                  <div className={clientStyles.adhrMiniTrack}>
+                    <div className={clientStyles.adhrMiniFill} style={{ width: `${s.pct}%`, background: s.pct >= 70 ? '#4be08a' : s.pct >= 50 ? '#e0b84b' : '#e05c5c' }} />
+                  </div>
+                  <span className={clientStyles.adhrBreakdownPct} style={{ color: s.pct >= 70 ? '#4be08a' : s.pct >= 50 ? '#e0b84b' : '#e05c5c' }}>
+                    {s.pct}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

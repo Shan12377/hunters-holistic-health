@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { format, subDays, startOfWeek, endOfWeek } from 'date-fns'
 import type { DailyLog } from '@/types'
 import { calcGrade, scoreWeek, scoreWeekProjected } from '@/lib/grading'
+import { calcSupplementAdherence } from '@/lib/adherence'
 import toast from 'react-hot-toast'
 import styles from './Coach.module.css'
 import shared from '../../styles/shared.module.css'
@@ -29,6 +30,8 @@ interface ClientSummary {
   projected_score: number
   last_week_grade: string
   at_risk: boolean
+  supp_adherence: number    // 0–100, or -1 if no active supplements
+  low_adherence: boolean
 }
 
 interface CohortStats {
@@ -61,14 +64,17 @@ export default function CoachDashboard() {
     const lastWeekStart = format(startOfWeek(subDays(new Date(), 7), { weekStartsOn: 1 }), 'yyyy-MM-dd')
     const lastWeekEnd = format(endOfWeek(subDays(new Date(), 7), { weekStartsOn: 1 }), 'yyyy-MM-dd')
     const thirtyDaysAgo = format(subDays(new Date(), 30), 'yyyy-MM-dd')
+    const suppWindowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
     const todayDow = new Date().getDay()
     const daysElapsed = Math.max(1, todayDow === 0 ? 7 : todayDow)
 
     const rawSummaries = await Promise.all(
       profiles.map(async (p) => {
-        const [bpRes, logsRes] = await Promise.all([
+        const [bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
           supabase.from('blood_pressure_logs').select('systolic,diastolic').eq('user_id', p.id).order('logged_at', { ascending: false }).limit(1).single(),
           supabase.from('daily_logs').select('*').eq('user_id', p.id).gte('log_date', thirtyDaysAgo).order('log_date', { ascending: true }),
+          supabase.from('supplements').select('id,name,timing').eq('user_id', p.id).eq('active', true),
+          supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', p.id).gte('log_date', suppWindowStart),
         ])
 
         const allLogs = (logsRes.data as DailyLog[]) ?? []
@@ -100,6 +106,12 @@ export default function CoachDashboard() {
         const lastWeekGradeResult = calcGrade(lastWeekScore)
         const at_risk = hasLogsThisWeek && gradeToNum(projected.grade) < gradeToNum(lastWeekGradeResult.grade)
 
+        const supps = (suppRes.data ?? []) as { id: string; name: string; timing: string }[]
+        const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
+        const adhrResult = supps.length > 0 ? calcSupplementAdherence(supps, suppLogs) : null
+        const supp_adherence = adhrResult ? adhrResult.overall : -1
+        const low_adherence = supp_adherence >= 0 && supp_adherence < 60
+
         return {
           id: p.id,
           first_name: p.first_name,
@@ -115,6 +127,8 @@ export default function CoachDashboard() {
           projected_score: projectedScore,
           last_week_grade: lastWeekGradeResult.grade,
           at_risk,
+          supp_adherence,
+          low_adherence,
           thisWeekLogs,
         }
       })
@@ -162,6 +176,7 @@ export default function CoachDashboard() {
     needsAttention: clients.filter(c => c.today_completion < 40).length,
     highBP: clients.filter(c => c.latest_bp && (c.latest_bp.systolic >= 140 || c.latest_bp.diastolic >= 90)).length,
     atRisk: clients.filter(c => c.at_risk).length,
+    lowAdherence: clients.filter(c => c.low_adherence).length,
   }
 
   const downloadOutcomesReport = () => {
@@ -331,6 +346,7 @@ export default function CoachDashboard() {
                         {client.first_name} {client.last_name}
                         {client.age && <span className={styles.clientAgeInline}>Age {client.age}</span>}
                         {client.at_risk && <span className={styles.atRiskTag}>At Risk</span>}
+                        {client.low_adherence && <span className={styles.lowAdherenceBadge}>Low Adherence</span>}
                       </div>
                       {client.display_handle && (
                         <div className={styles.clientHandle}>@{client.display_handle}</div>
