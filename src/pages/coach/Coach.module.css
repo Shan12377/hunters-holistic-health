@@ -846,6 +846,93 @@
   gap: var(--space-3);
 }
 
+/* --- Upcoming sessions card --- */
+.upcomingSessionsCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.upcomingSessionsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.upcomingSessionsTitle {
+  font-family: var(--font-headline);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.upcomingSessionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.upcomingSessionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.upcomingSessionName {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 120px;
+}
+
+.upcomingSessionDateTime {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.upcomingSessionType {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.markCompleteBtn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4be08a;
+  background: rgba(75, 224, 138, 0.08);
+  border: 1px solid rgba(75, 224, 138, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.markCompleteBtn:hover {
+  background: rgba(75, 224, 138, 0.16);
+}
+
+.upcomingSessionsEmpty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: var(--space-2) 0;
+}
+
 @media (max-width: 900px) {
   .rosterRow { grid-template-columns: 2fr 1fr 1fr auto; }
   .rosterHeadRow { grid-template-columns: 2fr 1fr 1fr auto; }

@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Activity, Shield, ClipboardList, BookOpen, Droplets, Droplet, Zap } from 'lucide-react'
+import { Heart, Activity, Shield, ClipboardList, BookOpen, Droplets, Droplet, Zap, ExternalLink } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { supabase } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import type { DailyLog, BPReading, BSReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import LateSlipModal from '@/components/ui/LateSlipModal'
 import styles from './Client.module.css'
+
+const DOXY_URL = 'https://doxy.me/drshallandahunter'
+
+interface UpcomingSessionBrief {
+  id: string
+  session_date: string
+  session_time: string
+  session_type: string
+}
+
+function fmtTime(timeStr: string): string {
+  return format(new Date(`1970-01-01T${timeStr}`), 'h:mm a')
+}
+
+function fmtDate(dateStr: string): string {
+  return format(new Date(dateStr + 'T12:00:00'), 'EEEE, MMMM d')
+}
 
 export default function ClientDashboard() {
   const { profile } = useAuthStore()
   const [todayLog, setTodayLog] = useState<DailyLog | null>(null)
   const [latestBP, setLatestBP] = useState<BPReading | null>(null)
   const [latestBS, setLatestBS] = useState<BSReading | null>(null)
+  const [upcomingSession, setUpcomingSession] = useState<UpcomingSessionBrief | null>(null)
   const [showLateSlip, setShowLateSlip] = useState(false)
   const today = format(new Date(), 'yyyy-MM-dd')
   const hour = new Date().getHours()
@@ -34,15 +52,34 @@ export default function ClientDashboard() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const [logRes, bpRes, bsRes] = await Promise.all([
+    const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
+
+    const [logRes, bpRes, bsRes, sessRes] = await Promise.all([
       supabase.from('daily_logs').select('*').eq('user_id', user.id).eq('log_date', today).single(),
       supabase.from('blood_pressure_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
       supabase.from('blood_sugar_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
+      supabase.from('sessions')
+        .select('id, session_date, session_time, session_type')
+        .eq('user_id', user.id)
+        .eq('status', 'scheduled')
+        .gte('session_date', today)
+        .lte('session_date', tomorrow)
+        .order('session_date')
+        .order('session_time')
+        .limit(5),
     ])
 
     if (logRes.data) setTodayLog(logRes.data as DailyLog)
     if (bpRes.data) setLatestBP(bpRes.data as BPReading)
     if (bsRes.data) setLatestBS(bsRes.data as BSReading)
+
+    const now = new Date()
+    const within24h = ((sessRes.data ?? []) as UpcomingSessionBrief[]).find(s => {
+      const sessionDt = new Date(`${s.session_date}T${s.session_time}`)
+      const diffMs = sessionDt.getTime() - now.getTime()
+      return diffMs > 0 && diffMs <= 86400000
+    })
+    setUpcomingSession(within24h ?? null)
   }
 
   const completionItems = todayLog ? [
@@ -68,6 +105,29 @@ export default function ClientDashboard() {
         </h1>
         <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
+
+      {/* 24-hour session reminder */}
+      {upcomingSession && (
+        <div className={styles.sessionBanner}>
+          <div className={styles.sessionBannerBody}>
+            <div className={styles.sessionBannerLabel}>Session Today</div>
+            <div className={styles.sessionBannerTitle}>
+              {upcomingSession.session_type}
+            </div>
+            <div className={styles.sessionBannerMeta}>
+              {fmtDate(upcomingSession.session_date)} at {fmtTime(upcomingSession.session_time)}
+            </div>
+            <a
+              href={DOXY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.sessionBannerLink}
+            >
+              <ExternalLink size={13} /> Join Session Room
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Progress Ring + Today's Score */}
       <div className={styles.progressCard}>

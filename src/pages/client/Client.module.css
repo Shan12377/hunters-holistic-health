@@ -1899,10 +1899,198 @@
   margin-bottom: var(--space-4);
 }
 
+/* --- Session reminder banner --- */
+.sessionBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(11, 158, 142, 0.08);
+  border: 1px solid rgba(11, 158, 142, 0.25);
+  border-left: 3px solid var(--teal);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.sessionBannerBody {
+  flex: 1;
+}
+
+.sessionBannerLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: var(--space-1);
+}
+
+.sessionBannerTitle {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.sessionBannerMeta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.sessionBannerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+  margin-top: var(--space-2);
+  transition: color var(--transition-fast);
+}
+
+.sessionBannerLink:hover {
+  color: var(--gold);
+}
+
+/* --- Sessions page --- */
+.sessionsNotice {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(200, 167, 75, 0.04);
+  border: 1px solid rgba(200, 167, 75, 0.12);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.sessionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sessionCard {
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.sessionCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.sessionCardDate {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sessionCardTime {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.sessionCardType {
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sessionCardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.sessionDoxyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+  flex: 1;
+  transition: color var(--transition-fast);
+}
+
+.sessionDoxyLink:hover {
+  color: var(--gold);
+}
+
+.sessionCancelBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 12px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.sessionCancelBtn:hover {
+  color: #e05c5c;
+}
+
+.sessionStatusBadge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  text-transform: capitalize;
+}
+
+.sessionStatusScheduled {
+  color: var(--teal);
+  background: rgba(11, 158, 142, 0.1);
+  border: 1px solid rgba(11, 158, 142, 0.2);
+}
+
+.sessionStatusCompleted {
+  color: #4be08a;
+  background: rgba(75, 224, 138, 0.1);
+  border: 1px solid rgba(75, 224, 138, 0.2);
+}
+
+.sessionStatusCancelled {
+  color: var(--text-muted);
+  background: rgba(145, 160, 172, 0.08);
+  border: 1px solid rgba(145, 160, 172, 0.15);
+}
+
+.sessionsFormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .statsRow { grid-template-columns: 1fr 1fr; }
   .inputRow { grid-template-columns: 1fr; }
+  .sessionsFormGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

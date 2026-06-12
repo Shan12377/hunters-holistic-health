@@ -50,6 +50,23 @@ interface ProgramCohort {
   cohort_members: { user_id: string }[]
 }
 
+interface UpcomingSession {
+  id: string
+  user_id: string
+  session_date: string
+  session_time: string
+  session_type: string
+  profiles: { first_name: string; last_name: string }
+}
+
+function fmtSessionDate(dateStr: string): string {
+  return format(new Date(dateStr + 'T12:00:00'), 'EEE, MMM d')
+}
+
+function fmtSessionTime(timeStr: string): string {
+  return format(new Date(`1970-01-01T${timeStr}`), 'h:mm a')
+}
+
 export default function CoachDashboard() {
   const [clients, setClients] = useState<ClientSummary[]>([])
   const [cohortStats, setCohortStats] = useState<CohortStats | null>(null)
@@ -60,8 +77,9 @@ export default function CoachDashboard() {
   const [cohortForm, setCohortForm] = useState({ name: '', starts_on: '', ends_on: '' })
   const [cohortMemberIds, setCohortMemberIds] = useState<string[]>([])
   const [savingCohort, setSavingCohort] = useState(false)
+  const [upcomingSessions, setUpcomingSessions] = useState<UpcomingSession[]>([])
 
-  useEffect(() => { fetchClients(); fetchCohorts() }, [])
+  useEffect(() => { fetchClients(); fetchCohorts(); fetchUpcomingSessions() }, [])
 
   const fetchClients = async () => {
     const { data: profiles } = await supabase
@@ -212,6 +230,26 @@ export default function CoachDashboard() {
     setShowCohortForm(false)
     setSavingCohort(false)
     fetchCohorts()
+  }
+
+  const fetchUpcomingSessions = async () => {
+    const today = format(new Date(), 'yyyy-MM-dd')
+    const sevenDaysOut = format(subDays(new Date(), -7), 'yyyy-MM-dd')
+    const { data } = await supabase
+      .from('sessions')
+      .select('id, user_id, session_date, session_time, session_type, profiles(first_name, last_name)')
+      .eq('status', 'scheduled')
+      .gte('session_date', today)
+      .lte('session_date', sevenDaysOut)
+      .order('session_date')
+      .order('session_time')
+    setUpcomingSessions((data ?? []) as unknown as UpcomingSession[])
+  }
+
+  const markCompleted = async (sessionId: string) => {
+    await supabase.from('sessions').update({ status: 'completed' }).eq('id', sessionId)
+    setUpcomingSessions(s => s.filter(x => x.id !== sessionId))
+    toast.success('Add this session to the Session Follow-Ups sheet so the follow-up email goes out.')
   }
 
   const filtered = clients
@@ -572,6 +610,36 @@ export default function CoachDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+      </div>
+
+      {/* Upcoming Sessions */}
+      <div className={styles.upcomingSessionsCard}>
+        <div className={styles.upcomingSessionsHeader}>
+          <h3 className={styles.upcomingSessionsTitle}>Upcoming Sessions (Next 7 Days)</h3>
+        </div>
+        {upcomingSessions.length === 0 ? (
+          <p className={styles.upcomingSessionsEmpty}>No sessions scheduled in the next 7 days.</p>
+        ) : (
+          <div className={styles.upcomingSessionsList}>
+            {upcomingSessions.map(s => (
+              <div key={s.id} className={styles.upcomingSessionRow}>
+                <div className={styles.upcomingSessionName}>
+                  {s.profiles?.first_name ?? ''} {s.profiles?.last_name ?? ''}
+                </div>
+                <div className={styles.upcomingSessionDateTime}>
+                  {fmtSessionDate(s.session_date)} at {fmtSessionTime(s.session_time)}
+                </div>
+                <div className={styles.upcomingSessionType}>{s.session_type}</div>
+                <button
+                  className={styles.markCompleteBtn}
+                  onClick={() => markCompleted(s.id)}
+                >
+                  Mark Completed
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>

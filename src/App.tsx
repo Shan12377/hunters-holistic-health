@@ -16,6 +16,7 @@ import SupplementLogPage from '@/pages/client/SupplementLogPage'
 import WeeklyGradePage from '@/pages/client/WeeklyGradePage'
 import FeedPage from '@/pages/client/FeedPage'
 import CohortPage from '@/pages/client/CohortPage'
+import SessionsPage from '@/pages/client/SessionsPage'
 import SettingsPage from '@/pages/client/SettingsPage'
 import CoachDashboard from '@/pages/coach/CoachDashboard'
 import ClientDetailPage from '@/pages/coach/ClientDetailPage'
@@ -97,6 +98,7 @@ export default function App() {
           <Route path="weekly-grade" element={<WeeklyGradePage />} />
           <Route path="feed" element={<FeedPage />} />
           <Route path="cohort" element={<CohortPage />} />
+          <Route path="sessions" element={<SessionsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
