@@ -21,11 +21,11 @@ const TIERS = [
 ]
 
 const ROOTS_STEPS = [
-  { letter: 'R', name: 'Remove', hint: 'Clear the root causes', color: '#e05c5c' },
-  { letter: 'O', name: 'Optimize', hint: 'Nutrition, sleep, movement', color: '#c8a74b' },
-  { letter: 'O', name: 'Observe', hint: 'Your symptoms are data', color: '#0b9e8e' },
-  { letter: 'T', name: 'Transform', hint: 'Evidence-informed change', color: '#9b59b6' },
-  { letter: 'S', name: 'Sustain', hint: 'Habits that last for life', color: '#4be08a' },
+  { letter: 'R', name: 'Review', hint: 'We start with your full picture', color: '#e05c5c' },
+  { letter: 'O', name: 'Optimize Nutrition', hint: 'Food as medicine, personalized', color: '#c8a74b' },
+  { letter: 'O', name: 'Optimize Biochemistry', hint: 'Supplements and interactions reviewed', color: '#0b9e8e' },
+  { letter: 'T', name: 'Transform Lifestyle', hint: 'Evidence-informed change', color: '#9b59b6' },
+  { letter: 'S', name: 'Sustain and Adapt', hint: 'Habits that last for life', color: '#4be08a' },
 ]
 
 const CTA_CLASSES: Record<string, string> = {
