@@ -227,7 +227,7 @@ export default function SessionsPage() {
                     <div className={styles.sessionCardDate}>{formatSessionDate(s.session_date)}</div>
                     <div className={styles.sessionCardTime}>{formatSessionTime(s.session_time)}</div>
                   </div>
-                  <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
+                  <div className={styles.sessionCardBadges}>
                     <span className={styles.sessionCardType}>{s.session_type}</span>
                     <span className={`${styles.sessionStatusBadge} ${styles[STATUS_CLASS[s.status]]}`}>
                       {s.status}

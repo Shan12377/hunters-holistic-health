@@ -348,7 +348,7 @@ new Chart(document.getElementById('stepsChart'), {
                 {lateSlips.length === 1 ? 'reflection entry' : 'reflection entries'} in last 30 logs
               </span>
             </div>
-            <div className={styles.chartWrapSm} style={{ marginBottom: 'var(--space-5)' }}>
+            <div className={styles.slipChart}>
               <Bar data={dowChartData} options={dowChartOpts as never} />
             </div>
             <div className={styles.slipList}>

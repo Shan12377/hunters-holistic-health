@@ -7,6 +7,7 @@ import { format, addDays } from 'date-fns'
 import type { DailyLog, BPReading, BSReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import LateSlipModal from '@/components/ui/LateSlipModal'
+import WeeklyPulseCard from '@/components/ui/WeeklyPulseCard'
 import styles from './Client.module.css'
 
 const DOXY_URL = 'https://doxy.me/drshallandahunter'
@@ -105,6 +106,9 @@ export default function ClientDashboard() {
         </h1>
         <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
+
+      {/* Weekly AI Pulse */}
+      <WeeklyPulseCard />
 
       {/* 24-hour session reminder */}
       {upcomingSession && (

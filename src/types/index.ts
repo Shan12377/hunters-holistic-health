@@ -36,6 +36,18 @@ export interface MealLog {
   logged_at: string
 }
 
+export interface WellnessGoals {
+  primary_goal?: string
+  secondary_goal?: string
+  dietary_preference?: string
+}
+
+export interface PrivacySettings {
+  share_weight: boolean
+  share_steps: boolean
+  share_meals: boolean
+}
+
 export interface Profile {
   id: string
   first_name: string
@@ -43,6 +55,8 @@ export interface Profile {
   age: number | null
   role: 'client' | 'educator'
   display_handle: string | null
+  wellness_goals?: WellnessGoals
+  privacy_settings?: PrivacySettings
 }
 
 export type BPZone = 'normal' | 'elevated' | 'high1' | 'high2' | 'crisis'
@@ -60,7 +74,7 @@ export const BP_ZONE_LABELS: Record<BPZone, string> = {
   elevated: 'Elevated',
   high1: 'High (Stage 1)',
   high2: 'High (Stage 2)',
-  crisis: 'Hypertensive Crisis: Contact Provider',
+  crisis: 'Very High: Contact Your Provider',
 }
 
 export const BP_ZONE_COLORS: Record<BPZone, string> = {

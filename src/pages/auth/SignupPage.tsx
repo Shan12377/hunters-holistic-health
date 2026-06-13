@@ -36,6 +36,14 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
+      options: {
+        data: {
+          first_name: form.firstName,
+          last_name: form.lastName,
+          age: form.age || null,
+          display_handle: form.displayHandle || null,
+        },
+      },
     })
 
     if (error) {
@@ -45,20 +53,8 @@ export default function SignupPage() {
     }
 
     if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        first_name: form.firstName,
-        last_name: form.lastName,
-        age: form.age ? parseInt(form.age) : null,
-        display_handle: form.displayHandle || null,
-        role: 'client',
-      })
-      if (profileError) {
-        toast.error('Account created but profile setup failed. Please contact support.')
-      } else {
-        toast.success('Account created! Welcome to Hunter\'s Holistic Health.')
-        navigate('/dashboard')
-      }
+      toast.success("Account created! Welcome to Hunter's Holistic Health.")
+      navigate('/app/dashboard')
     }
     setLoading(false)
   }
@@ -67,7 +63,7 @@ export default function SignupPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.logo}>
-          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
+          <img src="/logo-mark.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
         </div>
         <h1 className={styles.title}>Create Your Account</h1>
         <p className={styles.subtitle}>Join your wellness education journey</p>

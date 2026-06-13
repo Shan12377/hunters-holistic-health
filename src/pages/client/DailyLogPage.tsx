@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { ClipboardList, Save } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/store/authStore'
+import { enqueueLog } from '@/lib/offlineQueue'
 import { format } from 'date-fns'
 import type { DailyLog } from '@/types'
 import toast from 'react-hot-toast'
@@ -10,6 +12,7 @@ import shared from '../../styles/shared.module.css'
 const ENERGY_LABELS = ['', '😴 Exhausted', '😓 Very Low', '😔 Low', '😐 Below Average', '😶 Average', '🙂 Decent', '😊 Good', '💪 Great', '🔥 Excellent', '⚡ Peak Energy']
 
 export default function DailyLogPage() {
+  const { user } = useAuthStore()
   const today = format(new Date(), 'yyyy-MM-dd')
   const [log, setLog] = useState<Partial<DailyLog>>({
     log_date: today,
@@ -27,25 +30,43 @@ export default function DailyLogPage() {
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => { fetchLog() }, [])
+  useEffect(() => {
+    if (user) fetchLog()
+  }, [user?.id])
 
   const fetchLog = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-    const { data } = await supabase
-      .from('daily_logs')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('log_date', today)
-      .single()
-    if (data) setLog(data as DailyLog)
-    setLoaded(true)
+    try {
+      const { data, error } = await supabase
+        .from('daily_logs')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('log_date', today)
+        .single()
+      if (!error && data) setLog(data as DailyLog)
+    } catch {
+      // Offline: keep default empty state
+    } finally {
+      setLoaded(true)
+    }
   }
 
   const handleSave = async () => {
+    if (!user) return
     setSaving(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setSaving(false); return }
+
+    if (!navigator.onLine) {
+      await enqueueLog({
+        user_id: user.id,
+        log_date: today,
+        payload: { ...log },
+        queued_at: Date.now(),
+      })
+      toast.success('Saved offline. Will sync when you reconnect.')
+      setSaving(false)
+      return
+    }
+
     const { error } = await supabase.from('daily_logs').upsert(
       { ...log, user_id: user.id, log_date: today },
       { onConflict: 'user_id,log_date' }

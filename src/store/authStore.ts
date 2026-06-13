@@ -2,14 +2,7 @@ import { create } from 'zustand'
 import { supabase } from '@/lib/supabase'
 import type { User, Session } from '@supabase/supabase-js'
 
-interface Profile {
-  id: string
-  first_name: string
-  last_name: string
-  age: number | null
-  role: 'client' | 'educator'
-  display_handle: string | null
-}
+import type { Profile } from '@/types'
 
 interface AuthState {
   user: User | null

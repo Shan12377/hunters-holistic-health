@@ -89,7 +89,7 @@ VITE_N8N_WEBHOOK_URL={N8N_WEBHOOK_BASE_URL}/webhook/hhh-intake
 
 **Shared secret:** Workflow 12 rejects any request without the header `x-hhh-secret` matching your secret. Generate one (`openssl rand -hex 24`), put it in the workflow's Check Shared Secret node, and update the app's intake form fetch calls to send the header. The current form code does not send this header yet; add it to the four intake pages when you wire this up, and store the value as a `VITE_` env var.
 
-**Important migration note:** Workflow 12 takes over the `hhh-intake` webhook path. Your existing intake workflow (the one logging `early_access`, `feature_request`, and `clinical_inquiry`) must either move to a different path, or be merged into Workflow 12 behind the "Is Support Submission" false branch, which currently just responds OK. Merging is the cleaner option: replace the "Respond OK (Other Types)" node with your existing Switch-on-submissionType logic. Two active workflows cannot share the same webhook path.
+**Migration note:** Workflow 12 is now the complete intake router. It handles all four submission types on the `hhh-intake` path: support requests get AI triage and escalation, `early_access` gets logged plus a welcome email, `feature_request` gets logged plus an acknowledgment (when an email was provided), and `clinical_inquiry` gets logged with Review Status NEW, an acknowledgment to the user, and a no-detail alert to Dr. Hunter. If you had an older intake workflow on this path, deactivate it; two active workflows cannot share a webhook path.
 
 ---
 
@@ -98,8 +98,8 @@ VITE_N8N_WEBHOOK_URL={N8N_WEBHOOK_BASE_URL}/webhook/hhh-intake
 ### Workflow 10: Appointment Follow-Up
 Runs daily at 4pm server time. Reads `Session Follow-Ups`, emails every row where `Follow-Up Sent` is not YES and an email plus instructions exist, then marks the row sent. Test: add the TEST-001 row from the roadmap with your own email, run the workflow manually, confirm the email contains the three action steps and no clinical language, and that the row updates.
 
-### Workflow 12: Urgent Triage
-Classifies support messages as EMERGENCY, URGENT, or ROUTINE. Any health mention is URGENT at minimum; if the AI response cannot be parsed, the workflow defaults to URGENT so a human always reviews. Alert emails contain name, email, triage reason, and timestamp only; the message body never leaves the sheet. Run the three roadmap test messages and confirm: ROUTINE gets an acknowledgment only, URGENT and EMERGENCY alert Dr. Hunter and send the user the 911 notice, EMERGENCY also fires the SMS gateway message.
+### Workflow 12: Intake Router with Urgent Triage
+Classifies support messages as EMERGENCY, URGENT, or ROUTINE. Any health mention is URGENT at minimum; if the AI response cannot be parsed, the workflow defaults to URGENT so a human always reviews. Alert emails contain name, email, triage reason, and timestamp only; the message body never leaves the sheet. Run the three roadmap test messages and confirm: ROUTINE gets an acknowledgment only, URGENT and EMERGENCY alert Dr. Hunter and send the user the 911 notice, EMERGENCY also fires the SMS gateway message. Then test the other three intake types: submit the /join, /feature-request, and /clinical-inquiry forms with test data and confirm each row lands in its tab, the welcome and acknowledgment emails arrive, and the clinical inquiry alert to Dr. Hunter contains name, email, service interest, and timestamp only.
 
 ### Workflow 5: Supplement Protocol Builder
 The form trigger creates an internal form URL. Do not link it anywhere public. Submissions get an SP-XXXXX ID, a draft protocol generated under structure/function language rules, an email to Dr. Hunter for review, and a metadata-only row in `Protocol Requests`. Test with the TEST-SP-001 data from the roadmap and check the draft uses phrases like "supports healthy iron metabolism" and includes an interaction summary.
@@ -116,4 +116,5 @@ Two halves. The hourly schedule sends the intake reminder when a session is 23 t
 - [ ] The shared secret is set in both n8n and the app, and requests without it get a 401.
 - [ ] The Workflow 5 and Workflow 8 form URLs are not linked from any public page (Workflow 5 is internal only).
 - [ ] The Google Sheet is shared with no one beyond the practice accounts.
-- [ ] The existing intake workflow was merged or moved so it does not collide with the `hhh-intake` path.
+- [ ] Any older intake workflow on the `hhh-intake` path is deactivated; Workflow 12 is the only active listener.
+- [ ] The clinical inquiry alert email was spot checked: name, email, service interest, timestamp, nothing else.

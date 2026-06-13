@@ -9,9 +9,12 @@
     "preview": "vite preview --port 4174 --host"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
     "@supabase/supabase-js": "^2.45.0",
     "chart.js": "^4.4.4",
+    "chartjs-plugin-annotation": "^3.1.0",
     "date-fns": "^4.4.0",
+    "idb": "^8.0.3",
     "lucide-react": "^1.17.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",

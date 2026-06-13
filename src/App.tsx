@@ -17,9 +17,11 @@ import WeeklyGradePage from '@/pages/client/WeeklyGradePage'
 import FeedPage from '@/pages/client/FeedPage'
 import CohortPage from '@/pages/client/CohortPage'
 import SessionsPage from '@/pages/client/SessionsPage'
+import RecipesPage from '@/pages/client/RecipesPage'
 import SettingsPage from '@/pages/client/SettingsPage'
 import CoachDashboard from '@/pages/coach/CoachDashboard'
 import ClientDetailPage from '@/pages/coach/ClientDetailPage'
+import ComplianceGuardPage from '@/pages/coach/ComplianceGuardPage'
 import AppLayout from '@/components/layout/AppLayout'
 import TermsPage from '@/pages/legal/TermsPage'
 import PrivacyPage from '@/pages/legal/PrivacyPage'
@@ -27,6 +29,17 @@ import JoinPage from '@/pages/intake/JoinPage'
 import SupportPage from '@/pages/intake/SupportPage'
 import FeatureRequestPage from '@/pages/intake/FeatureRequestPage'
 import ClinicalInquiryPage from '@/pages/intake/ClinicalInquiryPage'
+import MessagesPage from '@/pages/client/MessagesPage'
+import LeaderboardPage from '@/pages/client/LeaderboardPage'
+import EventsPage from '@/pages/client/EventsPage'
+import ManageEventsPage from '@/pages/coach/ManageEventsPage'
+import ChallengesPage from '@/pages/client/ChallengesPage'
+import ClassroomPage from '@/pages/client/ClassroomPage'
+import FeedbackPage from '@/pages/client/FeedbackPage'
+import CoursePage from '@/pages/client/CoursePage'
+import ManageChallengesPage from '@/pages/coach/ManageChallengesPage'
+import ManageClassroomPage from '@/pages/coach/ManageClassroomPage'
+import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import shared from '@/styles/shared.module.css'
 
@@ -99,6 +112,14 @@ export default function App() {
           <Route path="feed" element={<FeedPage />} />
           <Route path="cohort" element={<CohortPage />} />
           <Route path="sessions" element={<SessionsPage />} />
+          <Route path="recipes" element={<RecipesPage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
+          <Route path="events" element={<EventsPage />} />
+          <Route path="challenges" element={<ChallengesPage />} />
+          <Route path="classroom" element={<ClassroomPage />} />
+          <Route path="feedback" element={<FeedbackPage />} />
+          <Route path="classroom/:courseId" element={<CoursePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
@@ -106,6 +127,11 @@ export default function App() {
         <Route path="/coach" element={<ProtectedRoute role="educator"><AppLayout /></ProtectedRoute>}>
           <Route index element={<CoachDashboard />} />
           <Route path="client/:clientId" element={<ClientDetailPage />} />
+          <Route path="compliance-guard" element={<ComplianceGuardPage />} />
+          <Route path="messages" element={<EducatorMessagesPage />} />
+          <Route path="events" element={<ManageEventsPage />} />
+          <Route path="challenges" element={<ManageChallengesPage />} />
+          <Route path="classroom" element={<ManageClassroomPage />} />
         </Route>
 
         {/* Legacy redirects */}

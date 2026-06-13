@@ -13,13 +13,46 @@ export interface WeekBreakdown {
   pct: number
 }
 
+// Simple percentage-based grade — used on educator dashboard for at-a-glance client scoring
 export function calcGrade(score: number): GradeResult {
-  if (score >= 90) return { grade: 'A+', color: '#4be08a', message: 'Outstanding! You are crushing your wellness goals.' }
-  if (score >= 80) return { grade: 'A', color: '#4be08a', message: 'Excellent work! Consistency is your superpower.' }
-  if (score >= 70) return { grade: 'B', color: '#c8a74b', message: 'Great effort! A few more consistent days will get you to an A.' }
-  if (score >= 60) return { grade: 'C', color: '#e0b84b', message: 'Good start. Focus on one habit at a time to build momentum.' }
-  if (score >= 50) return { grade: 'D', color: '#e08a4b', message: 'Keep going. Progress is not always linear; reflect and reset.' }
-  return { grade: 'F', color: '#e05c5c', message: "This week was tough. Tomorrow is a fresh start. You've got this." }
+  if (score >= 90) return { grade: 'A+', color: '#4be08a', message: 'You are absolutely showing up. This is what consistency looks like.' }
+  if (score >= 80) return { grade: 'A', color: '#4be08a', message: 'Solid week. You kept moving and that is what matters most.' }
+  if (score >= 70) return { grade: 'B', color: '#c8a74b', message: 'Solid week. You kept moving and that is what matters most.' }
+  if (score >= 60) return { grade: 'C', color: '#e0b84b', message: 'You showed up even when it was hard. That accountability is everything.' }
+  if (score >= 40) return { grade: 'D', color: '#e08a4b', message: 'You checked in and that counts. Let us build on it this week.' }
+  return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
+}
+
+// Rubric-based grade — used on client weekly report card
+export function calcGradeFromData(logs: DailyLog[], feedPostCount: number): GradeResult {
+  const totalDays = 7
+  const loggedDays = logs.length
+  const movementMet = logs.filter(l => (l.steps ?? 0) >= 8000).length
+  const movementMissed = totalDays - movementMet
+  const mealsMissed = logs.filter(l => !l.meal1_logged).length
+  const lateSlipsSubmitted = logs.filter(l => l.late_slip_reason != null && l.late_slip_reason !== '').length
+
+  if (loggedDays === 0) {
+    return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
+  }
+
+  if (loggedDays === totalDays && feedPostCount >= 2) {
+    return { grade: 'A+', color: '#4be08a', message: 'You are absolutely showing up. This is what consistency looks like.' }
+  }
+
+  if (movementMissed === 0 && mealsMissed <= 2) {
+    return { grade: 'B', color: '#c8a74b', message: 'Solid week. You kept moving and that is what matters most.' }
+  }
+
+  if (movementMissed > 0 && lateSlipsSubmitted >= movementMissed) {
+    return { grade: 'C', color: '#e0b84b', message: 'You showed up even when it was hard. That accountability is everything.' }
+  }
+
+  if (loggedDays < 3 && lateSlipsSubmitted > 0) {
+    return { grade: 'D', color: '#e08a4b', message: 'You checked in and that counts. Let us build on it this week.' }
+  }
+
+  return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
 }
 
 export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBreakdown[] } {
@@ -48,8 +81,6 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
   return { score, breakdown }
 }
 
-// Projects the full-week score based on pace so far.
-// daysElapsed: how many days of the current week have passed (1-7).
 export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): number {
   if (logs.length === 0 || daysElapsed <= 0) return 0
   const d = daysElapsed

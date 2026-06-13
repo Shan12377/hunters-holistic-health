@@ -11,14 +11,14 @@
   --gold-rgb:        200, 167, 75;
   --teal:            #0B9E8E;
   --teal-dark:       #144445;
-  --bg-page:         hsl(176, 32%, 8%);
-  --bg-card:         hsl(176, 26%, 12%);
-  --bg-hover:        hsl(176, 22%, 16%);
-  --text-primary:    hsl(0, 0%, 97%);
-  --text-secondary:  hsl(174, 14%, 64%);
-  --text-muted:      hsl(174, 12%, 44%);
-  --border:          hsl(176, 22%, 20%);
-  --border-subtle:   hsl(176, 22%, 15%);
+  --bg-page:         #144445;
+  --bg-card:         #1c5253;
+  --bg-hover:        #225e5f;
+  --text-primary:    #ffffff;
+  --text-secondary:  hsl(181, 20%, 68%);
+  --text-muted:      hsl(181, 15%, 48%);
+  --border:          #2a6d6f;
+  --border-subtle:   #1b4e4f;
   --error:           #e05c5c;
   --success:         #4caf7d;
 
@@ -28,6 +28,18 @@
   --gold-text-glow:   0 0 8px rgba(200, 167, 75, 0.5);
   --teal-glow:        0 0 12px rgba(11, 158, 142, 0.3);
   --teal-glow-strong: 0 0 24px rgba(11, 158, 142, 0.5);
+
+  /* --- Gradients --- */
+  --gradient-gold:      linear-gradient(135deg, #dcbd6a 0%, #c8a74b 45%, #a8893a 100%);
+  --gradient-gold-text: linear-gradient(120deg, #f3e3b0 0%, #dcbd6a 35%, #c8a74b 70%, #e8d291 100%);
+  --gradient-teal:      linear-gradient(135deg, #14b8a6 0%, #0b9e8e 50%, #0a7d71 100%);
+  --gradient-card:      linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 55%);
+  --gradient-ring:      conic-gradient(from 200deg, rgba(200, 167, 75, 0.55), rgba(11, 158, 142, 0.4), rgba(200, 167, 75, 0.12), rgba(200, 167, 75, 0.55));
+
+  /* --- Elevation --- */
+  --shadow-sm: 0 1px 2px rgba(0, 20, 19, 0.3);
+  --shadow-md: 0 6px 18px rgba(0, 20, 19, 0.32);
+  --shadow-lg: 0 18px 48px rgba(0, 20, 19, 0.45);
 
   /* --- Typography --- */
   --font-headline: 'Outfit', sans-serif;

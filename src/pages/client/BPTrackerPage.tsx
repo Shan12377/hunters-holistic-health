@@ -4,6 +4,7 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, Title, Tooltip, Legend, Filler
 } from 'chart.js'
+import annotationPlugin from 'chartjs-plugin-annotation'
 import { supabase } from '@/lib/supabase'
 import { format, parseISO } from 'date-fns'
 import type { BPReading } from '@/types'
@@ -13,7 +14,7 @@ import { Heart, Plus, Info } from 'lucide-react'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, annotationPlugin)
 
 export default function BPTrackerPage() {
   const [readings, setReadings] = useState<BPReading[]>([])
@@ -138,6 +139,38 @@ export default function BPTrackerPage() {
           }
         }
       },
+      annotation: {
+        annotations: {
+          optimal: {
+            type: 'box' as const,
+            yMin: 50, yMax: 119,
+            backgroundColor: 'rgba(75, 224, 138, 0.05)',
+            borderWidth: 0,
+            label: { display: true, content: 'Optimal', color: '#4be08a', font: { size: 10 }, position: { x: 'start' as const, y: 'start' as const } },
+          },
+          elevated: {
+            type: 'box' as const,
+            yMin: 120, yMax: 129,
+            backgroundColor: 'rgba(224, 184, 75, 0.06)',
+            borderWidth: 0,
+            label: { display: true, content: 'Elevated', color: '#e0b84b', font: { size: 10 }, position: { x: 'start' as const, y: 'start' as const } },
+          },
+          high1: {
+            type: 'box' as const,
+            yMin: 130, yMax: 139,
+            backgroundColor: 'rgba(224, 138, 75, 0.06)',
+            borderWidth: 0,
+            label: { display: true, content: 'High (Stage 1)', color: '#e08a4b', font: { size: 10 }, position: { x: 'start' as const, y: 'start' as const } },
+          },
+          high2: {
+            type: 'box' as const,
+            yMin: 140, yMax: 180,
+            backgroundColor: 'rgba(224, 92, 92, 0.06)',
+            borderWidth: 0,
+            label: { display: true, content: 'High (Stage 2)', color: '#e05c5c', font: { size: 10 }, position: { x: 'start' as const, y: 'start' as const } },
+          },
+        },
+      },
     },
     scales: {
       x: { ticks: { color: '#91a0ac', font: { size: 11 } }, grid: { color: '#1f3331' } },
@@ -181,9 +214,9 @@ export default function BPTrackerPage() {
               {latest.pulse && `Pulse: ${latest.pulse} bpm · `}
               {format(parseISO(latest.logged_at), 'MMM d, h:mm a')}
             </div>
-            {latestZone === 'crisis' && (
+            {(latestZone === 'high1' || latestZone === 'high2' || latestZone === 'crisis') && (
               <div className={styles.bpCrisisAlert}>
-                ⚠️ This reading is above 180/120. Please contact your healthcare provider immediately.
+                Your recent reading is in a range that warrants attention. This is educational information only. Please contact your healthcare provider to discuss your readings.
               </div>
             )}
           </div>
@@ -251,7 +284,7 @@ export default function BPTrackerPage() {
             { zone: 'Elevated', range: '120-129 / below 80', color: '#e0b84b' },
             { zone: 'High Stage 1', range: '130-139 / 80-89', color: '#e08a4b' },
             { zone: 'High Stage 2', range: '140+ / 90+', color: '#e05c5c' },
-            { zone: 'Hypertensive Crisis', range: 'Above 180 / above 120', color: '#c0392b' },
+            { zone: 'Very High', range: 'Above 180 / above 120', color: '#c0392b' },
           ].map(({ zone, range, color }) => (
             <div key={zone} className={styles.zoneItem}>
               {/* Dot color comes from the zone data, so it stays inline */}

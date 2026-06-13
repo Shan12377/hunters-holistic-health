@@ -672,6 +672,18 @@ export default function CoachDashboard() {
         </div>
       )}
 
+      {/* Educator Tools */}
+      <div className={styles.toolsCard}>
+        <div className={styles.toolsCardTitle}>Educator Tools</div>
+        <Link to="/coach/compliance-guard" className={styles.toolLink}>
+          <div>
+            <div className={styles.toolLinkTitle}>Compliance Language Guard</div>
+            <div className={styles.toolLinkDesc}>Check your copy for FTC/FDA language concerns before publishing</div>
+          </div>
+          <span className={styles.toolLinkArrow}>→</span>
+        </Link>
+      </div>
+
       {/* Disclaimer */}
       <div className={styles.disclaimerBox}>
         <p className={styles.disclaimerText}>

@@ -28,7 +28,7 @@ export default function LoginPage() {
       <div className={styles.card}>
         {/* Header */}
         <div className={styles.logo}>
-          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
+          <img src="/logo-mark.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
         </div>
         <h1 className={styles.title}>Welcome Back</h1>
         <p className={styles.subtitle}>Sign in to your wellness education portal</p>

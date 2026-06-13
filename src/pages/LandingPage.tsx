@@ -20,6 +20,14 @@ const TIERS = [
   { name: 'VIP', price: '$39.99', period: '/mo', color: '#0b9e8e', features: ['Everything in Participant', '1-on-1 Educator Sessions', 'Custom Protocol', 'Priority Support', 'Fullscript 25% Discount'], cta: 'Apply for VIP', ctaClass: 'teal' },
 ]
 
+const ROOTS_STEPS = [
+  { letter: 'R', name: 'Remove', hint: 'Clear the root causes', color: '#e05c5c' },
+  { letter: 'O', name: 'Optimize', hint: 'Nutrition, sleep, movement', color: '#c8a74b' },
+  { letter: 'O', name: 'Observe', hint: 'Your symptoms are data', color: '#0b9e8e' },
+  { letter: 'T', name: 'Transform', hint: 'Evidence-informed change', color: '#9b59b6' },
+  { letter: 'S', name: 'Sustain', hint: 'Habits that last for life', color: '#4be08a' },
+]
+
 const CTA_CLASSES: Record<string, string> = {
   primary: shared.btnPrimary,
   secondary: shared.btnSecondary,
@@ -32,7 +40,8 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <Link to="/" className={styles.navBrand}>
-          <img src="/logo.png" alt="Hunter's Holistic Health" className={styles.navLogoImg} />
+          <img src="/logo-mark.png" alt="Hunter's Holistic Health emblem" className={styles.navLogoImg} />
+          <span className={styles.navLogo}>Hunter's Holistic Health</span>
         </Link>
         <div className={styles.navLinks}>
           <Link to="/login" className={styles.navLink}>Sign In</Link>
@@ -42,12 +51,16 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className={styles.hero}>
+        <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.heroLogo} />
         <div className={styles.heroBadge}>
           Functional Medicine Education Platform
         </div>
         <h1 className={styles.heroTitle}>
           Take Control of Your<br /><span className={styles.heroGold}>Holistic Health Journey</span>
         </h1>
+        <p className={styles.heroSerif}>
+          Rooted in science. Guided by a PharmD. Grown by you.
+        </p>
         <p className={styles.heroSubtitle}>
           Dr. Shallanda Hunter, PharmD guides you through the ROOTS Framework, a structured functional medicine education program with daily tracking, AI-powered insights, and community accountability.
         </p>
@@ -64,8 +77,36 @@ export default function LandingPage() {
         </p>
       </section>
 
+      {/* Trust strip */}
+      <section className={styles.trustStrip}>
+        <div className={styles.trustLabel}>Created and led by Dr. Shallanda Hunter</div>
+        <span className={styles.trustChip}>PharmD, Doctor of Pharmacy</span>
+        <span className={styles.trustChip}>MBA</span>
+        <span className={styles.trustChip}>CFNMP, Functional Medicine</span>
+        <span className={styles.trustChip}>Privacy-first design</span>
+        <span className={styles.trustChip}>No ads, no data sales</span>
+      </section>
+
+      {/* ROOTS Framework band */}
+      <section className={styles.section}>
+        <div className={styles.sectionKicker}>The Method</div>
+        <h2 className={styles.sectionTitle}>The ROOTS Framework™</h2>
+        <p className={styles.sectionSubtitle}>Five phases, thirty days, one structured path through functional medicine education</p>
+        <div className={styles.rootsBand}>
+          {ROOTS_STEPS.map(({ letter, name, hint, color }, i) => (
+            /* Phase color is data-driven, so the custom property stays inline */
+            <div key={name + i} className={styles.rootsTile} style={{ '--roots-color': color } as React.CSSProperties}>
+              <div className={styles.rootsLetter}>{letter}</div>
+              <div className={styles.rootsName}>{name}</div>
+              <div className={styles.rootsHint}>{hint}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Features */}
       <section className={styles.section}>
+        <div className={styles.sectionKicker}>The Toolkit</div>
         <h2 className={styles.sectionTitle}>Everything You Need to Track Your Progress</h2>
         <p className={styles.sectionSubtitle}>Built specifically for functional medicine education participants</p>
         <div className={styles.featuresGrid}>
@@ -83,7 +124,27 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
+      {/* Privacy band */}
       <section className={styles.section}>
+        <div className={styles.privacyBand}>
+          <div className={styles.privacyBandInner}>
+            <h2 className={styles.privacyTitle}>Privacy Is the Architecture, Not a Setting</h2>
+            <p className={styles.privacySerif}>Most health apps collect everything. This one was built not to.</p>
+            <ul className={styles.privacyPoints}>
+              <li>Age only, never your date of birth</li>
+              <li>No ads, no trackers, no data sales</li>
+              <li>AI never sees identified health records</li>
+              <li>One-click account deletion</li>
+            </ul>
+            <Link to="/privacy-scorecard" className={shared.btnSecondary}>
+              See the Privacy Scorecard <ChevronRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionKicker}>Membership</div>
         <h2 className={styles.sectionTitle}>Simple, Transparent Pricing</h2>
         <p className={styles.sectionSubtitle}>Cancel anytime. No hidden fees.</p>
         <div className={styles.pricingGrid}>
@@ -114,6 +175,22 @@ export default function LandingPage() {
         </p>
       </section>
 
+      {/* Final CTA */}
+      <section className={styles.ctaBand}>
+        <div className={styles.ctaBandFrame}>
+          <div className={styles.ctaBandInner}>
+            <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.ctaEmblem} />
+            <h2 className={styles.ctaTitle}>Your roots grow one day at a time</h2>
+            <p className={styles.ctaText}>
+              Join the early access list and be among the first to build your daily practice with the ROOTS Framework.
+            </p>
+            <Link to="/join" className={shared.btnPrimary}>
+              Join Early Access <ChevronRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Disclaimer */}
       <section className={styles.disclaimer}>
         <div className={styles.disclaimerInner}>
@@ -126,6 +203,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className={styles.footer}>
+        <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.footerEmblem} />
         <div className={styles.footerLinks}>
           <Link to="/join" className={styles.footerLink}>Early Access</Link>
           <Link to="/support" className={styles.footerLink}>Support</Link>

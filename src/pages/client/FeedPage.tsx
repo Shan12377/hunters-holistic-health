@@ -1,53 +1,127 @@
-import { useEffect, useState } from 'react'
-import { Users, Heart, MessageCircle, Send, Flame, Award, CheckCircle } from 'lucide-react'
+import { useEffect, useState, useMemo } from 'react'
+import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { parseISO, formatDistanceToNow } from 'date-fns'
+import { useAuthStore } from '@/store/authStore'
+import { parseISO, formatDistanceToNow, format } from 'date-fns'
 import toast from 'react-hot-toast'
+import type { PrivacySettings } from '@/types'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+
+type PostType = 'check_in' | 'late_slip' | 'milestone' | 'win' | 'general' | 'intro' | 'announcement' | 'question'
 
 interface FeedPost {
   id: string
   user_id: string
   content: string
-  post_type: 'check_in' | 'late_slip' | 'milestone' | 'win' | 'general'
+  post_type: PostType
   likes: number
+  is_pinned: boolean
   created_at: string
-  profiles: { first_name: string; last_name: string; display_handle: string | null }
+  profiles: { first_name: string; last_name: string; display_handle: string | null; privacy_settings?: PrivacySettings }
   user_liked?: boolean
 }
 
-const POST_TYPE_CONFIG = {
-  check_in: { icon: CheckCircle, color: '#4be08a', label: 'Check-in' },
-  late_slip: { icon: MessageCircle, color: '#e0b84b', label: 'Late Slip' },
-  milestone: { icon: Award, color: '#c8a74b', label: 'Milestone' },
-  win: { icon: Flame, color: '#e08a4b', label: 'Win' },
-  general: { icon: MessageCircle, color: '#91a0ac', label: '' },
+interface NextEvent {
+  id: string
+  title: string
+  start_date: string
+  start_time: string | null
+}
+
+const TYPE_CONFIG: Record<PostType, { icon: React.ElementType; color: string; label: string }> = {
+  check_in:     { icon: CheckCircle, color: '#4be08a', label: 'Check-in' },
+  late_slip:    { icon: CheckCircle, color: '#e0b84b', label: 'Late Slip' },
+  milestone:    { icon: Award,       color: '#c8a74b', label: 'Milestone' },
+  win:          { icon: Flame,       color: '#e08a4b', label: 'Win' },
+  general:      { icon: Users,       color: '#91a0ac', label: '' },
+  intro:        { icon: Users,       color: '#4b9ee0', label: 'Intro' },
+  announcement: { icon: Megaphone,   color: '#e08a4b', label: 'Announcement' },
+  question:     { icon: HelpCircle,  color: '#b44be0', label: 'Question' },
+}
+
+const COMPOSER_TYPES: { value: PostType; label: string; emoji: string }[] = [
+  { value: 'general',      label: 'General',      emoji: '💬' },
+  { value: 'win',          label: 'Win',          emoji: '🔥' },
+  { value: 'check_in',     label: 'Check-in',     emoji: '✅' },
+  { value: 'intro',        label: 'Intro',        emoji: '👋' },
+  { value: 'milestone',    label: 'Milestone',    emoji: '🏆' },
+  { value: 'question',     label: 'Question',     emoji: '❓' },
+  { value: 'announcement', label: 'Announcement', emoji: '📢' },
+]
+
+const FILTER_PILLS: { label: string; value: PostType | null; emoji: string }[] = [
+  { label: 'All',           value: null,           emoji: '' },
+  { label: 'General',       value: 'general',      emoji: '📌' },
+  { label: 'Wins',          value: 'win',          emoji: '🏆' },
+  { label: 'Intros',        value: 'intro',        emoji: '👋' },
+  { label: 'Announcements', value: 'announcement', emoji: '📢' },
+  { label: 'Questions',     value: 'question',     emoji: '❓' },
+  { label: 'Check-ins',     value: 'check_in',     emoji: '✅' },
+]
+
+function applyPrivacy(post: FeedPost): string {
+  const priv = post.profiles.privacy_settings
+  let content = post.content
+  if (priv) {
+    if (!priv.share_weight && /\d+\s*(lb|lbs|kg|pound|kilo)/i.test(content)) content = 'reached a milestone'
+    if (!priv.share_steps && /\d+\s*(step|steps)/i.test(content)) content = 'Hit a goal'
+    if (!priv.share_meals && post.post_type === 'general' && /ate|meal|food|lunch|dinner|breakfast|snack/i.test(content)) content = 'Logged a meal'
+  }
+  return content
+}
+
+function countdown(startDate: string, startTime: string | null): string | null {
+  const iso = startTime ? `${startDate}T${startTime}` : `${startDate}T09:00:00`
+  const diff = new Date(iso).getTime() - Date.now()
+  if (diff <= 0) return null
+  const h = Math.floor(diff / 3_600_000)
+  if (h < 24) return `${h} hour${h === 1 ? '' : 's'}`
+  const d = Math.floor(h / 24)
+  return `${d} day${d === 1 ? '' : 's'}`
 }
 
 export default function FeedPage() {
-  const [posts, setPosts] = useState<FeedPost[]>([])
-  const [loading, setLoading] = useState(true)
-  const [content, setContent] = useState('')
-  const [postType, setPostType] = useState<FeedPost['post_type']>('general')
-  const [posting, setPosting] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
+  const { user, profile } = useAuthStore()
+  const [posts, setPosts]             = useState<FeedPost[]>([])
+  const [loading, setLoading]         = useState(true)
+  const [content, setContent]         = useState('')
+  const [postType, setPostType]       = useState<PostType>('general')
+  const [posting, setPosting]         = useState(false)
+  const [composerOpen, setComposerOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState<PostType | null>(null)
+  const [nextEvent, setNextEvent]     = useState<NextEvent | null>(null)
+
+  const userId = user?.id ?? null
+  const initials = profile
+    ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase()
+    : '?'
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id)
-    })
     fetchPosts()
+    fetchNextEvent()
   }, [])
 
   const fetchPosts = async () => {
     const { data } = await supabase
       .from('feed_posts')
-      .select('*, profiles(first_name, last_name, display_handle)')
+      .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(60)
     setPosts((data as FeedPost[]) ?? [])
     setLoading(false)
+  }
+
+  const fetchNextEvent = async () => {
+    const today = format(new Date(), 'yyyy-MM-dd')
+    const { data } = await supabase
+      .from('events')
+      .select('id, title, start_date, start_time')
+      .gte('start_date', today)
+      .order('start_date', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+    if (data) setNextEvent(data as NextEvent)
   }
 
   const handlePost = async (e: React.FormEvent) => {
@@ -66,6 +140,7 @@ export default function FeedPage() {
       toast.success('Posted to the group!')
       setContent('')
       setPostType('general')
+      setComposerOpen(false)
       fetchPosts()
     }
     setPosting(false)
@@ -77,12 +152,79 @@ export default function FeedPage() {
     setPosts(p => p.map(x => x.id === post.id ? { ...x, likes: newLikes, user_liked: !x.user_liked } : x))
   }
 
-  const POST_TYPES: { value: FeedPost['post_type']; label: string; emoji: string }[] = [
-    { value: 'general', label: 'Share', emoji: '💬' },
-    { value: 'win', label: 'Win', emoji: '🔥' },
-    { value: 'check_in', label: 'Check-in', emoji: '✅' },
-    { value: 'milestone', label: 'Milestone', emoji: '🏆' },
-  ]
+  const handlePin = async (post: FeedPost) => {
+    const newVal = !post.is_pinned
+    await supabase.from('feed_posts').update({ is_pinned: newVal }).eq('id', post.id)
+    setPosts(p => p.map(x => x.id === post.id ? { ...x, is_pinned: newVal } : x))
+    toast.success(newVal ? 'Post pinned.' : 'Post unpinned.')
+  }
+
+  const isEducator = profile?.role === 'educator'
+
+  const pinned = useMemo(() => posts.filter(p => p.is_pinned), [posts])
+
+  const filtered = useMemo(() => {
+    const base = activeFilter ? posts.filter(p => p.post_type === activeFilter) : posts
+    return base.filter(p => !p.is_pinned)
+  }, [posts, activeFilter])
+
+  const eventCountdown = nextEvent ? countdown(nextEvent.start_date, nextEvent.start_time) : null
+
+  const renderPost = (post: FeedPost, isPinnedSection: boolean) => {
+    const typeConfig = TYPE_CONFIG[post.post_type] ?? TYPE_CONFIG.general
+    const Icon = typeConfig.icon
+    const authorName = post.profiles.display_handle
+      ? `@${post.profiles.display_handle}`
+      : `${post.profiles.first_name} ${post.profiles.last_name?.[0] ?? ''}.`
+    return (
+      <div
+        key={post.id}
+        className={isPinnedSection ? styles.feedPostPinned : styles.feedPost}
+        style={post.post_type !== 'general' ? { borderLeft: `3px solid ${typeConfig.color}` } : undefined}
+      >
+        <div className={styles.postRow}>
+          <div className={styles.feedAvatar}>
+            {post.profiles.first_name?.[0]}{post.profiles.last_name?.[0]}
+          </div>
+          <div className={styles.postBody}>
+            <div className={styles.postHeader}>
+              <span className={styles.feedName}>{authorName}</span>
+              {post.post_type !== 'general' && (
+                <span
+                  className={styles.typeBadge}
+                  style={{ background: `${typeConfig.color}15`, border: `1px solid ${typeConfig.color}30`, color: typeConfig.color }}
+                >
+                  <Icon size={10} /> {typeConfig.label}
+                </span>
+              )}
+              <span className={styles.postTime}>
+                {formatDistanceToNow(parseISO(post.created_at), { addSuffix: true })}
+              </span>
+              {isEducator && (
+                <button
+                  className={`${styles.feedPinBtn} ${post.is_pinned ? styles.feedPinBtnActive : ''}`}
+                  onClick={() => handlePin(post)}
+                  title={post.is_pinned ? 'Unpin' : 'Pin to top'}
+                >
+                  <Pin size={12} /> {post.is_pinned ? 'Unpin' : 'Pin'}
+                </button>
+              )}
+            </div>
+            <p className={styles.postContent}>{applyPrivacy(post)}</p>
+            <div>
+              <button
+                onClick={() => handleLike(post)}
+                className={post.user_liked ? styles.likeBtnLiked : styles.likeBtn}
+              >
+                <Heart size={16} fill={post.user_liked ? '#e05c5c' : 'none'} />
+                {post.likes > 0 && post.likes}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="animate-fade-in">
@@ -90,100 +232,115 @@ export default function FeedPage() {
         <h1 className={styles.pageTopTitle}>
           <Users size={22} color="var(--teal)" /> Accountability Feed
         </h1>
-        <p className={styles.pageTopDate}>
-          Share wins, check-ins, and encouragement with your group
-        </p>
       </div>
 
-      {/* Post composer */}
-      <div className={styles.card}>
-        <form onSubmit={handlePost}>
-          <textarea
-            className={styles.composerTextarea}
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            placeholder="Share a win, check-in, or encouragement with the group..."
-            rows={3}
-            maxLength={500}
-          />
-          <div className={styles.composerBar}>
-            <div className={styles.typePills}>
-              {POST_TYPES.map(({ value, label, emoji }) => (
-                <button key={value} type="button" onClick={() => setPostType(value)}
-                  className={postType === value ? styles.typePillActive : styles.typePill}>
-                  {emoji} {label}
-                </button>
-              ))}
+      {/* Composer */}
+      <div className={styles.feedComposerWrap}>
+        {!composerOpen ? (
+          <button className={styles.feedComposerPill} onClick={() => setComposerOpen(true)}>
+            <div className={styles.feedComposerAvatar}>{initials}</div>
+            <span className={styles.feedComposerPlaceholder}>Write something...</span>
+          </button>
+        ) : (
+          <div className={styles.feedComposerExpanded}>
+            <div className={styles.feedComposerTop}>
+              <div className={styles.feedComposerAvatar}>{initials}</div>
+              <textarea
+                className={styles.feedComposerTextarea}
+                value={content}
+                onChange={e => setContent(e.target.value)}
+                placeholder="Share a win, a check-in, a question, or an intro..."
+                rows={3}
+                maxLength={500}
+                autoFocus
+              />
             </div>
-            <div className={styles.composerMeta}>
-              <span className={styles.charCount}>{content.length}/500</span>
-              <button type="submit" className={`${shared.btnTeal} ${shared.btnSm}`} disabled={posting || !content.trim()}>
-                <Send size={14} /> {posting ? 'Posting...' : 'Post'}
-              </button>
+            <div className={styles.feedComposerBar}>
+              <div className={styles.feedComposerPills}>
+                {COMPOSER_TYPES.map(({ value, label, emoji }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setPostType(value)}
+                    className={postType === value ? styles.typePillActive : styles.typePill}
+                  >
+                    {emoji} {label}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.feedComposerActions}>
+                <span className={styles.charCount}>{content.length}/500</span>
+                <button type="button" className={styles.feedComposerCancel} onClick={() => { setComposerOpen(false); setContent('') }}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className={`${shared.btnTeal} ${shared.btnSm}`}
+                  onClick={handlePost}
+                  disabled={posting || !content.trim()}
+                >
+                  <Send size={14} /> {posting ? 'Posting...' : 'Post'}
+                </button>
+              </div>
             </div>
           </div>
-        </form>
+        )}
       </div>
+
+      {/* Next event countdown */}
+      {nextEvent && eventCountdown && (
+        <div className={styles.feedEventBanner}>
+          <CalendarDays size={15} />
+          <span>
+            <strong>{nextEvent.title}</strong> is happening in {eventCountdown}
+          </span>
+        </div>
+      )}
+
+      {/* Filter pills */}
+      <div className={styles.feedFilterRow}>
+        {FILTER_PILLS.map(({ label, value, emoji }) => (
+          <button
+            key={label}
+            className={activeFilter === value ? styles.feedFilterPillActive : styles.feedFilterPill}
+            onClick={() => setActiveFilter(value)}
+          >
+            {emoji && <span>{emoji}</span>} {label}
+          </button>
+        ))}
+        <button className={styles.feedFilterIcon} title="More filters">
+          <SlidersHorizontal size={16} />
+        </button>
+      </div>
+
+      {/* Pinned posts */}
+      {pinned.length > 0 && (
+        <>
+          <div className={styles.feedPinnedBanner}>
+            <Pin size={12} /> Pinned
+          </div>
+          {pinned.map(post => renderPost(post, true))}
+        </>
+      )}
 
       {/* Feed */}
       {loading ? (
         <div className={styles.loadingText}>Loading feed...</div>
-      ) : posts.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className={styles.card}>
           <div className={styles.chartEmpty}>
             <Users size={40} color="var(--border)" />
-            <p>No posts yet. Be the first to share!</p>
+            <p>{activeFilter ? 'No posts in this category yet.' : 'No posts yet. Be the first to share!'}</p>
           </div>
         </div>
       ) : (
         <div className={styles.feedList}>
-          {posts.map(post => {
-            const typeConfig = POST_TYPE_CONFIG[post.post_type]
-            const Icon = typeConfig.icon
-            return (
-              /* Post type accent color is data-driven, so it stays inline */
-              <div key={post.id} className={styles.feedPost} style={post.post_type !== 'general' ? { borderLeft: `3px solid ${typeConfig.color}` } : undefined}>
-                <div className={styles.postRow}>
-                  {/* Avatar */}
-                  <div className={styles.feedAvatar}>
-                    {post.profiles.first_name[0]}{post.profiles.last_name[0]}
-                  </div>
-                  <div className={styles.postBody}>
-                    {/* Header */}
-                    <div className={styles.postHeader}>
-                      <span className={styles.feedName}>
-                        {post.profiles.first_name} {post.profiles.last_name[0]}.
-                      </span>
-                      {post.profiles.display_handle && (
-                        <span className={styles.postHandle}>@{post.profiles.display_handle}</span>
-                      )}
-                      {post.post_type !== 'general' && (
-                        <span className={styles.typeBadge} style={{ background: `${typeConfig.color}15`, border: `1px solid ${typeConfig.color}30`, color: typeConfig.color }}>
-                          <Icon size={10} /> {typeConfig.label}
-                        </span>
-                      )}
-                      <span className={styles.postTime}>
-                        {formatDistanceToNow(parseISO(post.created_at), { addSuffix: true })}
-                      </span>
-                    </div>
-                    {/* Content */}
-                    <p className={styles.postContent}>{post.content}</p>
-                    {/* Actions */}
-                    <div>
-                      <button onClick={() => handleLike(post)} className={post.user_liked ? styles.likeBtnLiked : styles.likeBtn}>
-                        <Heart size={16} fill={post.user_liked ? '#e05c5c' : 'none'} /> {post.likes > 0 && post.likes}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {filtered.map(post => renderPost(post, false))}
         </div>
       )}
 
       <p className={styles.footerNote}>
-        This is a private group feed visible only to program participants. Be kind, be real, be supportive. 🌱
+        Private group feed visible only to program participants. Be kind, be real, be supportive.
       </p>
     </div>
   )

@@ -332,7 +332,7 @@ export default function CohortPage() {
 
         <div className={styles.feedList}>
           {posts.length === 0 ? (
-            <p className={styles.cohortEmptyMsg} style={{ padding: 'var(--space-6) 0', textAlign: 'center' }}>
+            <p className={styles.cohortEmptyCentered}>
               No posts yet. Be the first to check in!
             </p>
           ) : (

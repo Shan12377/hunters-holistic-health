@@ -19,23 +19,40 @@
   transition: all var(--transition-base);
   white-space: nowrap;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
 
 .btnPrimary {
   composes: btn;
-  background: var(--gold);
-  color: var(--bg-page);
-  box-shadow: var(--gold-glow);
+  background: var(--gradient-gold);
+  color: #102827;
+  box-shadow: var(--gold-glow), inset 0 1px 0 rgba(255, 255, 255, 0.35), var(--shadow-sm);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.btnPrimary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+  transform: translateX(-130%) skewX(-18deg);
 }
 
 .btnPrimary:hover {
-  background: #d9b85a;
-  box-shadow: var(--gold-glow-strong);
-  transform: translateY(-1px);
+  box-shadow: var(--gold-glow-strong), inset 0 1px 0 rgba(255, 255, 255, 0.35), var(--shadow-md);
+  transform: translateY(-2px) scale(1.015);
+  transition: all var(--transition-spring);
+}
+
+.btnPrimary:hover::after {
+  animation: sheen 0.85s var(--ease-primary);
 }
 
 .btnPrimary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 .btnSecondary {
@@ -161,11 +178,14 @@
 
 /* --- Cards --- */
 .card {
-  background: var(--bg-card);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.005) 55%),
+    var(--bg-card);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  transition: border-color var(--transition-base), background var(--transition-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-spring);
 }
 
 .cardHover:hover {

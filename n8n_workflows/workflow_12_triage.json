@@ -1,5 +1,5 @@
 {
-  "name": "HHH Workflow 12: Urgent Triage and Escalation",
+  "name": "HHH Workflow 12: Intake Router with Urgent Triage",
   "active": false,
   "settings": {
     "executionOrder": "v1"
@@ -11,7 +11,10 @@
       "name": "Intake Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0],
+      "position": [
+        0,
+        0
+      ],
       "webhookId": "b1f12001-aaaa-4000-8000-000000000001",
       "parameters": {
         "httpMethod": "POST",
@@ -26,7 +29,10 @@
       "name": "Check Shared Secret",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [220, 0],
+      "position": [
+        220,
+        0
+      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -55,7 +61,10 @@
       "name": "Respond Unauthorized",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [440, 200],
+      "position": [
+        440,
+        200
+      ],
       "parameters": {
         "respondWith": "text",
         "responseBody": "Unauthorized",
@@ -69,7 +78,10 @@
       "name": "Is Support Submission",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [440, -100],
+      "position": [
+        440,
+        -100
+      ],
       "parameters": {
         "conditions": {
           "options": {
@@ -98,7 +110,10 @@
       "name": "Respond OK (Other Types)",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [660, 100],
+      "position": [
+        660,
+        100
+      ],
       "parameters": {
         "respondWith": "text",
         "responseBody": "ok",
@@ -113,7 +128,10 @@
       "name": "Classify Urgency",
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
-      "position": [660, -150],
+      "position": [
+        660,
+        -150
+      ],
       "parameters": {
         "resource": "text",
         "operation": "message",
@@ -149,7 +167,10 @@
       "name": "Parse Triage Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [880, -150],
+      "position": [
+        880,
+        -150
+      ],
       "parameters": {
         "jsCode": "const raw = $input.first().json.message?.content ?? $input.first().json.text ?? '';\nlet level = 'URGENT';\nlet reason = 'Classifier output could not be parsed. Defaulting to human review.';\ntry {\n  const match = String(raw).match(/\\{[\\s\\S]*\\}/);\n  if (match) {\n    const parsed = JSON.parse(match[0]);\n    const allowed = ['EMERGENCY', 'URGENT', 'ROUTINE'];\n    if (allowed.includes(parsed.level)) {\n      level = parsed.level;\n      reason = String(parsed.reason || 'No reason given.').slice(0, 200);\n    }\n  }\n} catch (e) {\n  // Keep the URGENT default so a human always reviews unparseable cases.\n}\nconst body = $('Intake Webhook').first().json.body;\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    submissionType: 'support',\n    name: `${body.firstName} ${body.lastName}`,\n    email: body.email,\n    category: body.category,\n    description: body.description,\n    preferredContact: body.preferredContact,\n    consent: body.consent ? 'YES' : 'NO',\n    triageLevel: level,\n    triageReason: reason\n  }\n}];"
       }
@@ -159,7 +180,10 @@
       "name": "Log To Support Requests",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1100, -150],
+      "position": [
+        1100,
+        -150
+      ],
       "parameters": {
         "operation": "append",
         "documentId": {
@@ -203,7 +227,10 @@
       "name": "Respond Received",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1320, 50],
+      "position": [
+        1320,
+        50
+      ],
       "parameters": {
         "respondWith": "text",
         "responseBody": "ok",
@@ -217,7 +244,10 @@
       "name": "Route By Triage Level",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [1320, -250],
+      "position": [
+        1320,
+        -250
+      ],
       "parameters": {
         "rules": {
           "values": [
@@ -300,7 +330,10 @@
       "name": "Emergency Email Alert",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1540, -400],
+      "position": [
+        1540,
+        -400
+      ],
       "parameters": {
         "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
         "subject": "=EMERGENCY ALERT - Support Request {{ $json.timestamp }}",
@@ -320,7 +353,10 @@
       "name": "Emergency SMS Gateway Alert",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1760, -400],
+      "position": [
+        1760,
+        -400
+      ],
       "parameters": {
         "sendTo": "[REPLACE_WITH_SMS_GATEWAY_ADDRESS]",
         "subject": "=EMERGENCY ALERT - Support Request {{ $json.timestamp }}",
@@ -341,7 +377,10 @@
       "name": "Emergency User Notice",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1980, -400],
+      "position": [
+        1980,
+        -400
+      ],
       "parameters": {
         "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
         "subject": "We received your message",
@@ -361,7 +400,10 @@
       "name": "Urgent Email Alert",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1540, -250],
+      "position": [
+        1540,
+        -250
+      ],
       "parameters": {
         "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
         "subject": "Urgent Support Request - Review Within 1 Hour",
@@ -381,7 +423,10 @@
       "name": "Urgent User Notice",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1760, -250],
+      "position": [
+        1760,
+        -250
+      ],
       "parameters": {
         "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
         "subject": "We received your message",
@@ -401,12 +446,417 @@
       "name": "Routine Acknowledgment",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1540, -100],
+      "position": [
+        1540,
+        -100
+      ],
       "parameters": {
         "sendTo": "={{ $('Parse Triage Result').item.json.email }}",
         "subject": "We received your support request",
         "emailType": "text",
         "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nThanks for reaching out. Your request has been received and is in our queue. You will hear back by the next business day via your preferred contact method.\n\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000020",
+      "name": "Route Other Types",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        250
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "early_access",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "early_access"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "feature_request",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "feature_request"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "leftValue": ""
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c1",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "clinical_inquiry",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "clinical_inquiry"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000021",
+      "name": "Log Early Access",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        150
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Early Access",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Submission Type": "early_access",
+            "Name": "={{ $json.body.firstName }} {{ $json.body.lastName }}",
+            "Email": "={{ $json.body.email }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Access Type": "={{ $json.body.accessType }}",
+            "App Goal": "={{ $json.body.appGoal }}",
+            "Feature Wishlist": "={{ $json.body.featureWishlist }}",
+            "Top Feature": "={{ $json.body.topFeature }}",
+            "Consent": "={{ $json.body.consent ? 'YES' : 'NO' }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000022",
+      "name": "Respond OK (Early Access)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        150
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000023",
+      "name": "Welcome Email (Early Access)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1540,
+        150
+      ],
+      "parameters": {
+        "sendTo": "={{ $('Intake Webhook').item.json.body.email }}",
+        "subject": "You're on the list! Hunter's Holistic Health early access",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nYou're on the Hunter's Holistic Health early access list. Thank you.\n\nWhat happens next: you'll get updates as the app develops, and you'll be among the first invited when early access opens. Your feature picks help decide what gets built first, so they matter.\n\nWhile you wait, you can learn more at https://www.drshallandahunter.com.\n\nWarmly,\nHunter's Holistic Health\nFunctional Medicine Education\n\nThis platform is educational and does not provide medical advice.",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000024",
+      "name": "Log Feature Request",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Feature Requests",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Submission Type": "feature_request",
+            "Name or Anonymous": "={{ $json.body.firstName }}",
+            "Email": "={{ $json.body.email }}",
+            "Feature Description": "={{ $json.body.featureDescription }}",
+            "Category": "={{ $json.body.category }}",
+            "Importance Rating": "={{ $json.body.importance }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000025",
+      "name": "Respond OK (Feature Request)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        300
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000026",
+      "name": "Has Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e1",
+              "leftValue": "={{ $('Intake Webhook').item.json.body.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000027",
+      "name": "Ack Email (Feature Request)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        300
+      ],
+      "parameters": {
+        "sendTo": "={{ $('Intake Webhook').item.json.body.email }}",
+        "subject": "Got your feature request",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nYour feature request has been received. Every submission is read and helps shape what gets built next.\n\nThank you for helping build something better.\n\nHunter's Holistic Health",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000028",
+      "name": "Log Clinical Inquiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        450
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[REPLACE_WITH_YOUR_GOOGLE_SHEET_ID]",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clinical Interest",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Submission Type": "clinical_inquiry",
+            "Name": "={{ $json.body.firstName }} {{ $json.body.lastName }}",
+            "Email": "={{ $json.body.email }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Service Interest": "={{ $json.body.serviceInterest }}",
+            "Preferred Contact Method": "={{ $json.body.preferredContact }}",
+            "Brief Description": "={{ $json.body.briefDescription }}",
+            "Consent": "={{ $json.body.consent ? 'YES' : 'NO' }}",
+            "Review Status": "NEW"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Google Sheets [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000029",
+      "name": "Respond OK (Clinical Inquiry)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        450
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000030",
+      "name": "Ack Email (Clinical Inquiry)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1540,
+        450
+      ],
+      "parameters": {
+        "sendTo": "={{ $('Intake Webhook').item.json.body.email }}",
+        "subject": "Your inquiry was received",
+        "emailType": "text",
+        "message": "=Hi {{ $('Intake Webhook').item.json.body.firstName }},\n\nYour inquiry has been received and will be reviewed personally. If it is a good fit for advanced support, you will receive secure next steps via your preferred contact method.\n\nA note on privacy: any sensitive records or detailed health information will be handled through a separate secure process, never through email or this form.\n\nHunter's Holistic Health\nFunctional Medicine Education",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[REPLACE_WITH_YOUR_CREDENTIAL]",
+          "name": "Gmail [REPLACE_WITH_YOUR_CREDENTIAL]"
+        }
+      }
+    },
+    {
+      "id": "b1f12001-0000-4000-8000-000000000031",
+      "name": "Alert Dr Hunter (Clinical Inquiry)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1760,
+        450
+      ],
+      "parameters": {
+        "sendTo": "[REPLACE_WITH_DR_HUNTER_EMAIL]",
+        "subject": "=New Clinical Inquiry - {{ $now.toISO() }}",
+        "emailType": "text",
+        "message": "=A new clinical inquiry arrived and is marked NEW in the Clinical Interest tab.\n\nName: {{ $('Intake Webhook').item.json.body.firstName }} {{ $('Intake Webhook').item.json.body.lastName }}\nEmail: {{ $('Intake Webhook').item.json.body.email }}\nService Interest: {{ $('Intake Webhook').item.json.body.serviceInterest }}\nTimestamp: {{ $now.toISO() }}\n\nPer the alert rules, no description content is included here. Review the sheet, then start the five-step clinical handoff if it is a fit.",
         "options": {}
       },
       "credentials": {
@@ -458,7 +908,7 @@
         ],
         [
           {
-            "node": "Respond OK (Other Types)",
+            "node": "Route Other Types",
             "type": "main",
             "index": 0
           }
@@ -555,6 +1005,127 @@
         [
           {
             "node": "Urgent User Notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Other Types": {
+      "main": [
+        [
+          {
+            "node": "Log Early Access",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Feature Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Clinical Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond OK (Other Types)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Early Access": {
+      "main": [
+        [
+          {
+            "node": "Respond OK (Early Access)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond OK (Early Access)": {
+      "main": [
+        [
+          {
+            "node": "Welcome Email (Early Access)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Feature Request": {
+      "main": [
+        [
+          {
+            "node": "Respond OK (Feature Request)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond OK (Feature Request)": {
+      "main": [
+        [
+          {
+            "node": "Has Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email": {
+      "main": [
+        [
+          {
+            "node": "Ack Email (Feature Request)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Log Clinical Inquiry": {
+      "main": [
+        [
+          {
+            "node": "Respond OK (Clinical Inquiry)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond OK (Clinical Inquiry)": {
+      "main": [
+        [
+          {
+            "node": "Ack Email (Clinical Inquiry)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ack Email (Clinical Inquiry)": {
+      "main": [
+        [
+          {
+            "node": "Alert Dr Hunter (Clinical Inquiry)",
             "type": "main",
             "index": 0
           }

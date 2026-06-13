@@ -1,17 +1,54 @@
-import { useState } from 'react'
-import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+import type { WellnessGoals, PrivacySettings } from '@/types'
+
+const GOAL_OPTIONS = ['', 'Energy', 'Weight Management', 'Cardiovascular Health', 'Digestive Health', 'Stress and Sleep', 'General Wellness', 'Other']
+const DIET_OPTIONS = ['', 'No restriction', 'Plant-based', 'Gluten-free', 'Dairy-free', 'Low sodium', 'Other']
 
 export default function SettingsPage() {
-  const { profile } = useAuthStore()
+  const { profile, setProfile } = useAuthStore()
   const navigate = useNavigate()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteInput, setDeleteInput] = useState('')
+  const [goals, setGoals] = useState<WellnessGoals>(profile?.wellness_goals ?? {})
+  const [privacy, setPrivacy] = useState<PrivacySettings>(
+    profile?.privacy_settings ?? { share_weight: true, share_steps: true, share_meals: true }
+  )
+  const [savingGoals, setSavingGoals] = useState(false)
+
+  useEffect(() => {
+    if (profile?.wellness_goals) setGoals(profile.wellness_goals)
+    if (profile?.privacy_settings) setPrivacy(profile.privacy_settings)
+  }, [profile?.id])
+
+  const saveGoals = async () => {
+    if (!profile) return
+    setSavingGoals(true)
+    const { error } = await supabase.from('profiles').update({ wellness_goals: goals }).eq('id', profile.id)
+    if (error) {
+      toast.error('Failed to save goals')
+    } else {
+      setProfile({ ...profile, wellness_goals: goals })
+      toast.success('Wellness goals saved!')
+    }
+    setSavingGoals(false)
+  }
+
+  const savePrivacy = async (updated: PrivacySettings) => {
+    if (!profile) return
+    setPrivacy(updated)
+    const { error } = await supabase.from('profiles').update({ privacy_settings: updated }).eq('id', profile.id)
+    if (!error) {
+      setProfile({ ...profile, privacy_settings: updated })
+      toast.success('Privacy settings updated')
+    }
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -55,6 +92,67 @@ export default function SettingsPage() {
         <div className={styles.infoNote}>
           To update your profile information, contact your educator at <strong>hello@huntersholistichealth.com</strong>
         </div>
+      </div>
+
+      {/* Wellness Goals */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.settingsSectionTitle}>
+          <Target size={16} color="var(--gold)" /> Your Wellness Goals
+        </h3>
+        <p className={styles.settingsSectionNote}>
+          Used to personalize your AI Meal Guard experience. Not clinical data. Not shared with third parties.
+        </p>
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Primary wellness goal</label>
+          <select className={styles.settingsSelect} value={goals.primary_goal ?? ''} onChange={e => setGoals(g => ({ ...g, primary_goal: e.target.value }))}>
+            {GOAL_OPTIONS.map(o => <option key={o} value={o}>{o || 'Select a goal...'}</option>)}
+          </select>
+        </div>
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Secondary goal (optional)</label>
+          <select className={styles.settingsSelect} value={goals.secondary_goal ?? ''} onChange={e => setGoals(g => ({ ...g, secondary_goal: e.target.value }))}>
+            {GOAL_OPTIONS.map(o => <option key={o} value={o}>{o || 'None'}</option>)}
+          </select>
+        </div>
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Dietary preferences</label>
+          <select className={styles.settingsSelect} value={goals.dietary_preference ?? ''} onChange={e => setGoals(g => ({ ...g, dietary_preference: e.target.value }))}>
+            {DIET_OPTIONS.map(o => <option key={o} value={o}>{o || 'Select...'}</option>)}
+          </select>
+        </div>
+        <button className={shared.btnPrimary} onClick={saveGoals} disabled={savingGoals}>
+          {savingGoals ? 'Saving...' : 'Save Goals'}
+        </button>
+      </div>
+
+      {/* Privacy settings */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.settingsSectionTitle}>
+          <Shield size={16} color="var(--teal)" /> Feed Privacy Settings
+        </h3>
+        <p className={styles.settingsSectionNote}>
+          Control what information appears when your activity is shown in the community feed.
+        </p>
+        {[
+          { key: 'share_weight' as const, label: 'Share weight milestones', desc: 'Off: shows "reached a milestone" instead of numbers' },
+          { key: 'share_steps' as const, label: 'Share step counts', desc: 'Off: shows "Goal Met" checkmark only, not the number' },
+          { key: 'share_meals' as const, label: 'Share meal names', desc: 'Off: shows "Logged a meal" instead of food name' },
+        ].map(({ key, label, desc }) => (
+          <div key={key} className={styles.privacyToggleRow}>
+            <div>
+              <div className={styles.privacyToggleLabel}>{label}</div>
+              <div className={styles.privacyToggleDesc}>{desc}</div>
+            </div>
+            <label className={styles.toggle}>
+              <input
+                type="checkbox"
+                checked={privacy[key]}
+                onChange={e => savePrivacy({ ...privacy, [key]: e.target.checked })}
+              />
+              <span className={styles.toggleSlider} />
+            </label>
+          </div>
+        ))}
       </div>
 
       {/* Session booking */}

@@ -13,7 +13,13 @@ html {
 }
 
 body {
-  background: var(--bg-page);
+  background:
+    radial-gradient(1100px 700px at 12% -12%, rgba(20, 184, 166, 0.14), transparent 62%),
+    radial-gradient(900px 650px at 108% 8%, rgba(11, 158, 142, 0.08), transparent 58%),
+    radial-gradient(800px 560px at 92% 112%, rgba(200, 167, 75, 0.07), transparent 55%),
+    radial-gradient(640px 460px at -8% 88%, rgba(200, 167, 75, 0.04), transparent 50%),
+    var(--bg-page);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 400;
@@ -21,12 +27,26 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Fine grain texture: kills flat-color banding, adds tactile depth */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -34,6 +54,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 900;
   line-height: 1.15;
   color: var(--text-primary);
+  letter-spacing: -0.015em;
 }
 
 p {
@@ -79,5 +100,27 @@ img, svg {
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 16px rgba(11, 158, 142, 0.4)); }
+  50% { filter: drop-shadow(0 0 30px rgba(11, 158, 142, 0.65)); }
+}
+@keyframes sheen {
+  from { transform: translateX(-130%) skewX(-18deg); }
+  to { transform: translateX(230%) skewX(-18deg); }
+}
 
 .animate-fade-in { animation: fadeIn 0.4s var(--ease-primary) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
