@@ -681,3 +681,356 @@
   .heroActions { flex-direction: column; align-items: stretch; }
   .ctaBand { padding: 0 var(--space-4) var(--space-12); }
 }
+
+/* ============================================================
+   FREE EDUCATION TOOLS
+   ============================================================ */
+
+.toolTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.toolTabs::-webkit-scrollbar { display: none; }
+
+.toolTab {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.toolTab:hover { color: var(--text-primary); }
+
+.toolTabActive {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: -1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toolPanel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.toolDesc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-5);
+  line-height: 1.6;
+}
+
+.toolLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.toolInput {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: var(--font-body);
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.toolInput:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.toolInput::placeholder { color: var(--text-muted); }
+
+.toolBtn {
+  padding: 12px 24px;
+  background: var(--gold);
+  color: #0e1c1b;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  font-family: var(--font-headline);
+  letter-spacing: 0.02em;
+  align-self: flex-end;
+}
+.toolBtn:hover { opacity: 0.9; transform: translateY(-1px); }
+.toolBtn:active { transform: translateY(0); }
+
+/* --- BP tool --- */
+.bpInputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.bpField { flex: 1; min-width: 120px; }
+
+.bpSlash {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+  flex-shrink: 0;
+}
+
+/* --- Symptom tool --- */
+.symptomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.symptomCheck {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  line-height: 1.4;
+}
+.symptomCheck:hover { border-color: rgba(var(--gold-rgb), 0.4); color: var(--text-primary); }
+
+.symptomCheckActive {
+  border-color: rgba(var(--gold-rgb), 0.5);
+  background: rgba(var(--gold-rgb), 0.07);
+  color: var(--text-primary);
+}
+
+.symptomCheckInput {
+  margin-top: 2px;
+  accent-color: var(--gold);
+  flex-shrink: 0;
+}
+
+/* --- HOMA tool --- */
+.homaInputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.homaField { flex: 1; min-width: 150px; }
+
+.homaScore {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.homaScoreVal {
+  font-family: var(--font-headline);
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.homaScoreLabel {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.homaScale {
+  margin: var(--space-4) 0;
+}
+
+.homaScaleBar {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 8px;
+}
+
+.homaScaleSeg { flex: 1; }
+
+.homaScaleLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Shared result styles --- */
+.toolResult {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.toolZoneBadge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.toolResultMsg {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.toolDisclaimer {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
+}
+
+.toolCTA {
+  background: rgba(var(--gold-rgb), 0.06);
+  border: 1px solid rgba(var(--gold-rgb), 0.18);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.toolCTAText {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* --- BP factor columns --- */
+.bpFactorCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.bpFactorHeader {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+.bpFactorList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bpFactorList li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: var(--space-4);
+  position: relative;
+  line-height: 1.4;
+}
+
+.bpFactorList li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  top: 1px;
+}
+
+/* --- Symptom result --- */
+.symptomResultLabel {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.symptomPattern {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.symptomPatternDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.symptomPattern p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --- Responsive: tools --- */
+@media (max-width: 640px) {
+  .toolTabs { gap: 0; }
+  .toolTab, .toolTabActive { padding: 10px 14px; font-size: 12px; }
+  .bpInputRow { flex-direction: column; }
+  .bpSlash { display: none; }
+  .bpField { width: 100%; }
+  .symptomGrid { grid-template-columns: 1fr; }
+  .homaInputRow { flex-direction: column; }
+  .homaField { width: 100%; }
+  .bpFactorCols { grid-template-columns: 1fr; }
+  .toolCTA { flex-direction: column; align-items: flex-start; }
+  .toolPanel { padding: var(--space-4); }
+}
