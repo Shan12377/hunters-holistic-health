@@ -41,7 +41,7 @@ export default function FeatureRequestPage({ embedded = false, onSuccess }: Feat
     try {
       const res = await fetch(webhookUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': import.meta.env.VITE_N8N_WEBHOOK_SECRET || '' },
         body: JSON.stringify({
           submissionType: 'feature_request',
           firstName: form.anonymous ? 'Anonymous' : (form.firstName || 'Anonymous'),

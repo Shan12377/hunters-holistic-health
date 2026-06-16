@@ -55,7 +55,7 @@ export default function FeedbackPage() {
       try {
         await fetch(webhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': import.meta.env.VITE_N8N_WEBHOOK_SECRET || '' },
           body: JSON.stringify({
             submissionType: 'app_feedback',
             firstName,
