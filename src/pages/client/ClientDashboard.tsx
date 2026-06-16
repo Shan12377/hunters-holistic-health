@@ -8,6 +8,7 @@ import type { DailyLog, BPReading, BSReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import LateSlipModal from '@/components/ui/LateSlipModal'
 import WeeklyPulseCard from '@/components/ui/WeeklyPulseCard'
+import { getTotalPoints, getLevelInfo } from '@/lib/points'
 import styles from './Client.module.css'
 
 const DOXY_URL = 'https://doxy.me/drshallandahunter'
@@ -34,6 +35,7 @@ export default function ClientDashboard() {
   const [latestBS, setLatestBS] = useState<BSReading | null>(null)
   const [upcomingSession, setUpcomingSession] = useState<UpcomingSessionBrief | null>(null)
   const [showLateSlip, setShowLateSlip] = useState(false)
+  const [totalPoints, setTotalPoints] = useState<number | null>(null)
   const today = format(new Date(), 'yyyy-MM-dd')
   const hour = new Date().getHours()
 
@@ -73,6 +75,7 @@ export default function ClientDashboard() {
     if (logRes.data) setTodayLog(logRes.data as DailyLog)
     if (bpRes.data) setLatestBP(bpRes.data as BPReading)
     if (bsRes.data) setLatestBS(bsRes.data as BSReading)
+    getTotalPoints(user.id).then(pts => setTotalPoints(pts))
 
     const now = new Date()
     const within24h = ((sessRes.data ?? []) as UpcomingSessionBrief[]).find(s => {
@@ -106,6 +109,32 @@ export default function ClientDashboard() {
         </h1>
         <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
+
+      {/* Level badge */}
+      {totalPoints !== null && (() => {
+        const info = getLevelInfo(totalPoints)
+        return (
+          <div className={styles.levelCard}>
+            <div className={styles.levelTop}>
+              <div className={styles.levelBadge}>LVL {info.level}</div>
+              <div className={styles.levelMeta}>
+                <div className={styles.levelLabel}>{info.label}</div>
+                <div className={styles.levelPts}>{info.totalPoints.toLocaleString()} pts</div>
+              </div>
+            </div>
+            <div className={styles.levelBarRow}>
+              <div className={styles.levelBarTrack}>
+                <div className={styles.levelBarFill} style={{ width: `${info.progress}%` }} />
+              </div>
+              {info.nextMin && (
+                <div className={styles.levelBarHint}>
+                  {(info.nextMin - info.totalPoints).toLocaleString()} pts to Level {info.nextLevel}
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Weekly AI Pulse */}
       <WeeklyPulseCard />

@@ -5,16 +5,20 @@ import { useAuthStore } from '@/store/authStore'
 import { parseISO, formatDistanceToNow, format } from 'date-fns'
 import toast from 'react-hot-toast'
 import type { PrivacySettings } from '@/types'
+import { awardPoints } from '@/lib/points'
+import MemberCard from '@/components/ui/MemberCard'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 type PostType = 'check_in' | 'late_slip' | 'milestone' | 'win' | 'general' | 'intro' | 'announcement' | 'question'
+type Room = 'general' | 'wins' | 'questions' | 'challenges' | 'resources'
 
 interface FeedPost {
   id: string
   user_id: string
   content: string
   post_type: PostType
+  room: Room
   likes: number
   is_pinned: boolean
   created_at: string
@@ -60,6 +64,14 @@ const FILTER_PILLS: { label: string; value: PostType | null; emoji: string }[] =
   { label: 'Check-ins',     value: 'check_in',     emoji: '✅' },
 ]
 
+const ROOMS: { id: Room; label: string; emoji: string; defaultPostType: PostType; placeholder: string }[] = [
+  { id: 'general',    label: 'General',    emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
+  { id: 'wins',       label: 'Wins',       emoji: '🔥', defaultPostType: 'win',      placeholder: 'Share a win or milestone...' },
+  { id: 'questions',  label: 'Questions',  emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...' },
+  { id: 'challenges', label: 'Challenges', emoji: '⚡', defaultPostType: 'check_in', placeholder: 'Share your challenge progress...' },
+  { id: 'resources',  label: 'Resources',  emoji: '📚', defaultPostType: 'general',  placeholder: 'Share a tip, recipe, or tool...' },
+]
+
 function applyPrivacy(post: FeedPost): string {
   const priv = post.profiles.privacy_settings
   let content = post.content
@@ -83,14 +95,16 @@ function countdown(startDate: string, startTime: string | null): string | null {
 
 export default function FeedPage() {
   const { user, profile } = useAuthStore()
-  const [posts, setPosts]             = useState<FeedPost[]>([])
-  const [loading, setLoading]         = useState(true)
-  const [content, setContent]         = useState('')
-  const [postType, setPostType]       = useState<PostType>('general')
-  const [posting, setPosting]         = useState(false)
+  const [posts, setPosts]               = useState<FeedPost[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [content, setContent]           = useState('')
+  const [postType, setPostType]         = useState<PostType>('general')
+  const [posting, setPosting]           = useState(false)
   const [composerOpen, setComposerOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState<PostType | null>(null)
-  const [nextEvent, setNextEvent]     = useState<NextEvent | null>(null)
+  const [activeRoom, setActiveRoom]     = useState<Room>('general')
+  const [nextEvent, setNextEvent]       = useState<NextEvent | null>(null)
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
 
   const userId = user?.id ?? null
   const initials = profile
@@ -107,7 +121,7 @@ export default function FeedPage() {
       .from('feed_posts')
       .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
       .order('created_at', { ascending: false })
-      .limit(60)
+      .limit(100)
     setPosts((data as FeedPost[]) ?? [])
     setLoading(false)
   }
@@ -124,22 +138,39 @@ export default function FeedPage() {
     if (data) setNextEvent(data as NextEvent)
   }
 
+  const handleRoomChange = (room: Room) => {
+    setActiveRoom(room)
+    setActiveFilter(null)
+    const def = ROOMS.find(r => r.id === room)
+    if (def) setPostType(def.defaultPostType)
+  }
+
+  const POST_PTS: Record<PostType, number> = {
+    check_in: 5, win: 4, milestone: 4, late_slip: 3,
+    intro: 3, announcement: 3, question: 3, general: 2,
+  }
+
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!content.trim() || !userId) return
     setPosting(true)
-    const { error } = await supabase.from('feed_posts').insert({
+    const { data: newPost, error } = await supabase.from('feed_posts').insert({
       user_id: userId,
       content: content.trim(),
       post_type: postType,
+      room: activeRoom,
       likes: 0,
-    })
+    }).select('id').single()
     if (error) {
       toast.error('Failed to post')
     } else {
-      toast.success('Posted to the group!')
+      toast.success('Posted!')
+      if (newPost?.id) {
+        await awardPoints(userId, 'feed_post', POST_PTS[postType] ?? 2, newPost.id)
+      }
       setContent('')
-      setPostType('general')
+      const def = ROOMS.find(r => r.id === activeRoom)
+      setPostType(def?.defaultPostType ?? 'general')
       setComposerOpen(false)
       fetchPosts()
     }
@@ -160,13 +191,19 @@ export default function FeedPage() {
   }
 
   const isEducator = profile?.role === 'educator'
+  const activeRoomConfig = ROOMS.find(r => r.id === activeRoom)!
 
-  const pinned = useMemo(() => posts.filter(p => p.is_pinned), [posts])
+  const roomPosts = useMemo(() =>
+    posts.filter(p => (p.room ?? 'general') === activeRoom),
+    [posts, activeRoom]
+  )
+
+  const pinned = useMemo(() => roomPosts.filter(p => p.is_pinned), [roomPosts])
 
   const filtered = useMemo(() => {
-    const base = activeFilter ? posts.filter(p => p.post_type === activeFilter) : posts
+    const base = activeFilter ? roomPosts.filter(p => p.post_type === activeFilter) : roomPosts
     return base.filter(p => !p.is_pinned)
-  }, [posts, activeFilter])
+  }, [roomPosts, activeFilter])
 
   const eventCountdown = nextEvent ? countdown(nextEvent.start_date, nextEvent.start_time) : null
 
@@ -183,12 +220,14 @@ export default function FeedPage() {
         style={post.post_type !== 'general' ? { borderLeft: `3px solid ${typeConfig.color}` } : undefined}
       >
         <div className={styles.postRow}>
-          <div className={styles.feedAvatar}>
-            {post.profiles.first_name?.[0]}{post.profiles.last_name?.[0]}
-          </div>
+          <button className={styles.memberTrigger} onClick={() => setSelectedMemberId(post.user_id)}>
+            <div className={styles.feedAvatar}>
+              {post.profiles.first_name?.[0]}{post.profiles.last_name?.[0]}
+            </div>
+          </button>
           <div className={styles.postBody}>
             <div className={styles.postHeader}>
-              <span className={styles.feedName}>{authorName}</span>
+              <button className={styles.memberNameBtn} onClick={() => setSelectedMemberId(post.user_id)}>{authorName}</button>
               {post.post_type !== 'general' && (
                 <span
                   className={styles.typeBadge}
@@ -230,8 +269,21 @@ export default function FeedPage() {
     <div className="animate-fade-in">
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTopTitle}>
-          <Users size={22} color="var(--teal)" /> Accountability Feed
+          <Users size={22} color="var(--teal)" /> Community
         </h1>
+      </div>
+
+      {/* Room tabs */}
+      <div className={styles.feedRoomTabs}>
+        {ROOMS.map(room => (
+          <button
+            key={room.id}
+            className={activeRoom === room.id ? styles.feedRoomTabActive : styles.feedRoomTab}
+            onClick={() => handleRoomChange(room.id)}
+          >
+            <span>{room.emoji}</span> {room.label}
+          </button>
+        ))}
       </div>
 
       {/* Composer */}
@@ -239,7 +291,7 @@ export default function FeedPage() {
         {!composerOpen ? (
           <button className={styles.feedComposerPill} onClick={() => setComposerOpen(true)}>
             <div className={styles.feedComposerAvatar}>{initials}</div>
-            <span className={styles.feedComposerPlaceholder}>Write something...</span>
+            <span className={styles.feedComposerPlaceholder}>{activeRoomConfig.placeholder}</span>
           </button>
         ) : (
           <div className={styles.feedComposerExpanded}>
@@ -249,7 +301,7 @@ export default function FeedPage() {
                 className={styles.feedComposerTextarea}
                 value={content}
                 onChange={e => setContent(e.target.value)}
-                placeholder="Share a win, a check-in, a question, or an intro..."
+                placeholder={activeRoomConfig.placeholder}
                 rows={3}
                 maxLength={500}
                 autoFocus
@@ -297,21 +349,23 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* Filter pills */}
-      <div className={styles.feedFilterRow}>
-        {FILTER_PILLS.map(({ label, value, emoji }) => (
-          <button
-            key={label}
-            className={activeFilter === value ? styles.feedFilterPillActive : styles.feedFilterPill}
-            onClick={() => setActiveFilter(value)}
-          >
-            {emoji && <span>{emoji}</span>} {label}
+      {/* Filter pills: General room only */}
+      {activeRoom === 'general' && (
+        <div className={styles.feedFilterRow}>
+          {FILTER_PILLS.map(({ label, value, emoji }) => (
+            <button
+              key={label}
+              className={activeFilter === value ? styles.feedFilterPillActive : styles.feedFilterPill}
+              onClick={() => setActiveFilter(value)}
+            >
+              {emoji && <span>{emoji}</span>} {label}
+            </button>
+          ))}
+          <button className={styles.feedFilterIcon} title="More filters">
+            <SlidersHorizontal size={16} />
           </button>
-        ))}
-        <button className={styles.feedFilterIcon} title="More filters">
-          <SlidersHorizontal size={16} />
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Pinned posts */}
       {pinned.length > 0 && (
@@ -325,12 +379,16 @@ export default function FeedPage() {
 
       {/* Feed */}
       {loading ? (
-        <div className={styles.loadingText}>Loading feed...</div>
+        <div className={styles.loadingText}>Loading...</div>
       ) : filtered.length === 0 ? (
         <div className={styles.card}>
           <div className={styles.chartEmpty}>
             <Users size={40} color="var(--border)" />
-            <p>{activeFilter ? 'No posts in this category yet.' : 'No posts yet. Be the first to share!'}</p>
+            <p>
+              {activeRoom === 'general' && activeFilter
+                ? 'No posts in this category yet.'
+                : `No posts in ${activeRoomConfig.label} yet. Be the first!`}
+            </p>
           </div>
         </div>
       ) : (
@@ -340,8 +398,12 @@ export default function FeedPage() {
       )}
 
       <p className={styles.footerNote}>
-        Private group feed visible only to program participants. Be kind, be real, be supportive.
+        Private community visible only to program participants. Be kind, be real, be supportive.
       </p>
+
+      {selectedMemberId && (
+        <MemberCard userId={selectedMemberId} onClose={() => setSelectedMemberId(null)} />
+      )}
     </div>
   )
 }

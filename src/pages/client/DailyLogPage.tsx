@@ -3,8 +3,9 @@ import { ClipboardList, Save } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { enqueueLog } from '@/lib/offlineQueue'
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import type { DailyLog } from '@/types'
+import { awardPoints } from '@/lib/points'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
@@ -75,8 +76,24 @@ export default function DailyLogPage() {
       toast.error('Failed to save log')
     } else {
       toast.success('Daily log saved!')
+      await awardPoints(user.id, 'daily_log', 10, today)
+      await checkStreak(user.id)
     }
     setSaving(false)
+  }
+
+  const checkStreak = async (userId: string) => {
+    const sevenDaysAgo = format(subDays(new Date(), 6), 'yyyy-MM-dd')
+    const { data } = await supabase
+      .from('daily_logs')
+      .select('log_date')
+      .eq('user_id', userId)
+      .gte('log_date', sevenDaysAgo)
+      .lte('log_date', today)
+    if (data && data.length === 7) {
+      const isNew = await awardPoints(userId, 'streak_bonus', 20, `streak_${today}`)
+      if (isNew) toast.success('🔥 7-day streak! +20 bonus points!')
+    }
   }
 
   const toggle = (field: keyof DailyLog) => setLog(l => ({ ...l, [field]: !l[field as keyof typeof l] }))

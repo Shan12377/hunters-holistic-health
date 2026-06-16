@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { format, parseISO, differenceInDays, isAfter, isBefore, isToday } from 'date-fns'
 import toast from 'react-hot-toast'
+import { awardPoints } from '@/lib/points'
 import styles from './Client.module.css'
 
 interface Challenge {
@@ -100,6 +101,7 @@ export default function ChallengesPage() {
     } else {
       toast.success('Check-in logged!')
       setMyLogs(prev => [...prev, { challenge_id: challengeId, log_date: today }])
+      await awardPoints(user.id, 'challenge_checkin', 5, `${challengeId}_${today}`)
     }
     setCheckingIn(null)
   }
