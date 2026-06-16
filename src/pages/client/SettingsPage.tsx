@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target } from 'lucide-react'
+import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
@@ -187,6 +187,27 @@ export default function SettingsPage() {
         </a>
         <p className={styles.cardFootnote}>
           Affiliate disclosure: Dr. Hunter may receive compensation from Fullscript purchases. Supplement recommendations are for educational purposes only.
+        </p>
+      </div>
+
+      {/* Digital Resources */}
+      <div className={styles.card}>
+        <h3 className={styles.cardSubTitle}>
+          <Download size={16} color="var(--gold)" /> Digital Resources
+        </h3>
+        <p className={styles.cardText}>
+          The Creatine 101 Bundle includes a Quick Start Guide, 30-Day Tracker, Workout Log, Hydration Tracker, Stack Cheat Sheet, and Science Guide. Everything you need to add creatine to your protocol with confidence.
+        </p>
+        <a
+          href="https://huntersholistichealth.gumroad.com/l/creatine-bundle"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={shared.btnSecondary}
+        >
+          <ExternalLink size={16} /> Get the Creatine Bundle
+        </a>
+        <p className={styles.cardFootnote}>
+          Digital download. Available for immediate access after purchase. Content is for educational purposes only.
         </p>
       </div>
 
