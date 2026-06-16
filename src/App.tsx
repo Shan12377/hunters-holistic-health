@@ -35,6 +35,7 @@ import EventsPage from '@/pages/client/EventsPage'
 import ManageEventsPage from '@/pages/coach/ManageEventsPage'
 import ChallengesPage from '@/pages/client/ChallengesPage'
 import ClassroomPage from '@/pages/client/ClassroomPage'
+import ExercisePage from '@/pages/client/ExercisePage'
 import FeedbackPage from '@/pages/client/FeedbackPage'
 import CoursePage from '@/pages/client/CoursePage'
 import ManageChallengesPage from '@/pages/coach/ManageChallengesPage'
@@ -117,6 +118,7 @@ export default function App() {
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="challenges" element={<ChallengesPage />} />
+          <Route path="exercise" element={<ExercisePage />} />
           <Route path="classroom" element={<ClassroomPage />} />
           <Route path="feedback" element={<FeedbackPage />} />
           <Route path="classroom/:courseId" element={<CoursePage />} />

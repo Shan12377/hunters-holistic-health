@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-export type PointEvent = 'daily_log' | 'streak_bonus' | 'challenge_checkin' | 'feed_post'
+export type PointEvent = 'daily_log' | 'streak_bonus' | 'challenge_checkin' | 'feed_post' | 'exercise_log'
 
 export const LEVELS = [
   { level: 1,  min: 0,    label: 'Just Starting'   },

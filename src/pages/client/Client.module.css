@@ -5067,3 +5067,329 @@
   background: var(--border);
   flex-shrink: 0;
 }
+
+/* ============================================================
+   EXERCISE / MOVEMENT LOG PAGE
+   ============================================================ */
+
+/* Tabs */
+.exTabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-5);
+}
+
+.exTab {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.exTab:hover { color: var(--text-primary); }
+
+.exTabActive {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+/* Exercise type grid */
+.exTypeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.exTypeBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.exTypeBtn:hover {
+  border-color: rgba(var(--gold-rgb), 0.4);
+  color: var(--text-primary);
+}
+
+.exTypeBtnActive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-2);
+  background: rgba(var(--gold-rgb), 0.08);
+  border: 1.5px solid var(--gold);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--gold);
+}
+
+.exTypeLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Duration row */
+.exDurationRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.exQuickChips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.exQuickChip {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.exQuickChip:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Intensity */
+.exIntensityRow {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.exIntensityBtn {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+.exIntensityBtn:hover { border-color: rgba(var(--gold-rgb), 0.4); }
+
+.exIntensityBtnActive {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--gold);
+  border-radius: var(--radius-md);
+  background: rgba(var(--gold-rgb), 0.07);
+  cursor: pointer;
+  text-align: left;
+}
+
+.exIntensityLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.exIntensityDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* Post-save insight card */
+.exInsightCard {
+  background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.07), rgba(11, 158, 142, 0.04));
+  border: 1px solid rgba(var(--gold-rgb), 0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: fadeIn 0.3s ease;
+}
+
+.exInsightHead {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.exInsightList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.exInsightList li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: var(--space-4);
+  position: relative;
+  line-height: 1.5;
+}
+
+.exInsightList li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 20px;
+  line-height: 0.8;
+  top: 3px;
+}
+
+.exInsightSupp {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: rgba(11, 158, 142, 0.08);
+  border: 1px solid rgba(11, 158, 142, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  line-height: 1.5;
+}
+
+.exInsightStudy {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.exInsightDisclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Learn tab */
+.exLearnList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.exLearnCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.exLearnCardTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.exLearnIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.exLearnTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.exLearnIntro {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.exLearnPoints {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.exLearnPoints li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding-left: var(--space-5);
+  position: relative;
+  line-height: 1.5;
+}
+
+.exLearnPoints li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 12px;
+  top: 2px;
+  font-weight: 700;
+}
+
+.exLearnNote {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-left: 3px solid var(--gold);
+  padding-left: var(--space-3);
+  line-height: 1.4;
+}
+
+.exLearnStudy {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .exTypeGrid { grid-template-columns: repeat(3, 1fr); }
+  .exIntensityRow { flex-direction: column; }
+  .exIntensityBtn, .exIntensityBtnActive { min-width: unset; }
+}

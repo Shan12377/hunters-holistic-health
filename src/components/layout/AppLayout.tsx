@@ -23,6 +23,7 @@ const clientNav = [
   { to: '/app/feed', icon: '◎', label: 'Community Feed' },
   { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
   { to: '/app/events', icon: '◷', label: 'Events' },
+  { to: '/app/exercise', icon: '◎', label: 'Movement Log' },
   { to: '/app/challenges', icon: '⚡', label: 'Challenges' },
   { to: '/app/classroom', icon: '◈', label: 'Classroom' },
   { to: '/app/messages', icon: '✉', label: 'Messages' },
