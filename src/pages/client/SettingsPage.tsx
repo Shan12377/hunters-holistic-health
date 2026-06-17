@@ -199,12 +199,10 @@ export default function SettingsPage() {
           The Creatine 101 Bundle includes a Quick Start Guide, 30-Day Tracker, Workout Log, Hydration Tracker, Stack Cheat Sheet, and Science Guide. Everything you need to add creatine to your protocol with confidence.
         </p>
         <a
-          href="https://huntersholistichealth.gumroad.com/l/creatine-bundle"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/shop"
           className={shared.btnSecondary}
         >
-          <ExternalLink size={16} /> Get the Creatine Bundle
+          <ExternalLink size={16} /> View Creatine Bundle
         </a>
         <p className={styles.cardFootnote}>
           Digital download. Available for immediate access after purchase. Content is for educational purposes only.

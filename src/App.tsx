@@ -42,6 +42,7 @@ import ManageChallengesPage from '@/pages/coach/ManageChallengesPage'
 import ManageClassroomPage from '@/pages/coach/ManageClassroomPage'
 import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
+import ShopPage from '@/pages/ShopPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -98,6 +99,7 @@ export default function App() {
         <Route path="/feature-request" element={<FeatureRequestPage />} />
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
+        <Route path="/shop" element={<ShopPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
