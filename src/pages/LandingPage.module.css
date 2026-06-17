@@ -1034,3 +1034,186 @@
   .toolCTA { flex-direction: column; align-items: flex-start; }
   .toolPanel { padding: var(--space-4); }
 }
+
+/* ============================================================
+   NEW SECTIONS: Who This Is For, Origin, Billing Toggle,
+   Pricing additions, Quality Promise
+   ============================================================ */
+
+/* Dark alternate section */
+.sectionDark {
+  padding: var(--space-16) var(--space-8);
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Who This Is For */
+.whoGrid {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.whoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.whoCheck {
+  color: var(--teal);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* Origin Block */
+.originBlock {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.originText {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-4);
+}
+
+/* Billing Toggle */
+.billingToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  width: fit-content;
+  margin: 0 auto var(--space-8);
+}
+
+.billingBtn {
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-base), color var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.billingBtn:hover { color: var(--text-secondary); }
+
+.billingBtnActive {
+  composes: billingBtn;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.billingSavePill {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(75, 224, 138, 0.15);
+  color: #4be08a;
+  border: 1px solid rgba(75, 224, 138, 0.3);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  letter-spacing: 0.03em;
+}
+
+/* Pricing additions */
+.pricingTagline {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 var(--space-3);
+}
+
+.pricingAnnualSave {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4be08a;
+  background: rgba(75, 224, 138, 0.1);
+  border: 1px solid rgba(75, 224, 138, 0.25);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  display: inline-block;
+  margin-bottom: var(--space-3);
+}
+
+.pricingScarcity {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(11, 158, 142, 0.1);
+  border: 1px solid rgba(11, 158, 142, 0.25);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  display: inline-block;
+  margin-bottom: var(--space-3);
+}
+
+/* Quality Promise */
+.qualityBlock {
+  max-width: 680px;
+  margin: var(--space-10) auto 0;
+  padding: var(--space-6) var(--space-7);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--teal);
+}
+
+.qualityTitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: var(--space-3);
+}
+
+.qualityText {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.qualityText:last-child { margin-bottom: 0; }
+
+/* CTA actions row */
+.ctaActions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive additions */
+@media (max-width: 980px) {
+  .sectionDark { padding: var(--space-12) var(--space-6); }
+}
+
+@media (max-width: 640px) {
+  .sectionDark { padding: var(--space-10) var(--space-4); }
+  .whoItem { font-size: 14px; }
+  .billingToggle { flex-direction: column; border-radius: var(--radius-lg); width: 100%; }
+  .billingBtn, .billingBtnActive { width: 100%; justify-content: center; }
+  .ctaActions { flex-direction: column; align-items: stretch; }
+}
