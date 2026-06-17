@@ -624,6 +624,61 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Custom Intensive */}
+      <section className={styles.customSection}>
+        <div className={styles.customInner}>
+          <div className={styles.customKicker}>For Complex Presentations</div>
+          <h2 className={styles.customTitle}>The Custom Intensive</h2>
+          <p className={styles.customTagline}>
+            Some situations do not fit a structured curriculum. This one does not try to.
+          </p>
+          <p className={styles.customBody}>
+            If your health education needs extend beyond what a standard program covers, this is the path. You work directly with Dr. Hunter over a defined engagement period. Your history, your patterns, and your specific questions are addressed in sequence, using the full depth of her training as a Certified Functional and Nutritional Medicine Practitioner and Doctor of Pharmacy. Nothing generic. Everything purposeful.
+          </p>
+
+          <div className={styles.customCols}>
+            <div className={styles.customFeatures}>
+              <div className={styles.customFeaturesLabel}>What this includes</div>
+              <ul className={styles.customList}>
+                {[
+                  'Direct 1:1 engagement with Dr. Hunter, CFNMP, PharmD across a structured multi-week period',
+                  'Individualized functional and nutritional medicine education built entirely around your context',
+                  'Supplement and nutrition education specific to your history, goals, and current protocol',
+                  'Full platform membership for the duration of your engagement',
+                  'Structured follow-through between sessions',
+                ].map((item, i) => (
+                  <li key={i} className={styles.customListItem}>
+                    <CheckCircle size={15} className={styles.customCheck} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={styles.customRight}>
+              <div className={styles.customPricingBox}>
+                <div className={styles.customPricingLabel}>Pricing</div>
+                <p className={styles.customPricingText}>
+                  Disclosed after a brief application review. There is no public price because each engagement is scoped individually.
+                </p>
+                <div className={styles.customScarcity}>
+                  Limited availability. Dr. Hunter accepts a small number of custom engagements at any time.
+                </div>
+                <Link
+                  to="/clinical-inquiry"
+                  className={`${shared.btnTeal} ${shared.btnFull}`}
+                >
+                  Apply for a Custom Intensive <ChevronRight size={16} />
+                </Link>
+              </div>
+              <p className={styles.customDisclaimer}>
+                This is a Functional Medicine Educator engagement. It is educational in nature and does not create a patient-provider relationship. Dr. Hunter will not prescribe medications or diagnose conditions as part of this engagement. Individual situations and complexity determine scope and pricing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className={styles.ctaBand}>
         <div className={styles.ctaBandFrame}>
