@@ -2418,6 +2418,132 @@
   margin-bottom: var(--space-3);
 }
 
+/* ── Recipe Macros ─────────────────────────────────────── */
+.recipeMacroRow {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.recipeMacro {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  text-align: center;
+}
+
+.recipeMacroVal {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.recipeMacroLabel {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Quick Swap ─────────────────────────────────────────── */
+.recipeQuickSwap {
+  background: color-mix(in srgb, var(--teal) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--teal) 30%, transparent);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-top: var(--space-3);
+}
+
+.recipeQuickSwapLabel {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: var(--space-2);
+}
+
+/* ── Food Synergies Section ─────────────────────────────── */
+.synergiesSection {
+  margin-bottom: var(--space-6);
+}
+
+.synergiesHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.synergiesTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.synergiesSub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.synergiesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.synergyCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.synergyTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.synergyFoods {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.synergyBoost {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.synergyMechanism {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* ── Recipe Disclaimer ──────────────────────────────────── */
 .recipeDisclaimer {
   font-size: 12px;
   color: var(--text-muted);

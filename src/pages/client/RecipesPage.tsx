@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { BookOpen } from 'lucide-react'
-import { RECIPES, type Recipe, type RootsPhase } from '@/data/recipes'
+import { BookOpen, Zap } from 'lucide-react'
+import { RECIPES, SYNERGIES, type Recipe, type RootsPhase } from '@/data/recipes'
 import styles from './Client.module.css'
 
 const PHASE_ORDER: RootsPhase[] = ['Remove', 'Optimize', 'Observe', 'Transform', 'Sustain']
@@ -167,6 +167,26 @@ export default function RecipesPage() {
             {selectedRecipe.educationalNote}
           </div>
 
+          {/* Macros */}
+          <div className={styles.recipeMacroRow}>
+            <div className={styles.recipeMacro}>
+              <span className={styles.recipeMacroVal}>{selectedRecipe.calories}</span>
+              <span className={styles.recipeMacroLabel}>cal</span>
+            </div>
+            <div className={styles.recipeMacro}>
+              <span className={styles.recipeMacroVal}>{selectedRecipe.proteinGrams}g</span>
+              <span className={styles.recipeMacroLabel}>protein</span>
+            </div>
+            <div className={styles.recipeMacro}>
+              <span className={styles.recipeMacroVal}>{selectedRecipe.fatGrams}g</span>
+              <span className={styles.recipeMacroLabel}>fat</span>
+            </div>
+            <div className={styles.recipeMacro}>
+              <span className={styles.recipeMacroVal}>{selectedRecipe.carbGrams}g</span>
+              <span className={styles.recipeMacroLabel}>carbs</span>
+            </div>
+          </div>
+
           <div className={styles.recipeExpandedBody}>
             <div>
               <h3 className={styles.recipeExpandedSection}>Ingredients</h3>
@@ -185,6 +205,13 @@ export default function RecipesPage() {
               </ol>
             </div>
           </div>
+
+          {selectedRecipe.quickSwap && (
+            <div className={styles.recipeQuickSwap}>
+              <span className={styles.recipeQuickSwapLabel}>Quick Swap</span>
+              {selectedRecipe.quickSwap}
+            </div>
+          )}
         </div>
       )}
 
@@ -233,6 +260,25 @@ export default function RecipesPage() {
           </button>
         </div>
       )}
+
+      {/* Food Synergies */}
+      <div className={styles.synergiesSection}>
+        <div className={styles.synergiesHeader}>
+          <Zap size={18} color="var(--gold)" />
+          <h2 className={styles.synergiesTitle}>Food Synergies</h2>
+        </div>
+        <p className={styles.synergiesSub}>Pairs where eating both together measurably improves absorption or potency.</p>
+        <div className={styles.synergiesGrid}>
+          {SYNERGIES.map(syn => (
+            <div key={syn.id} className={styles.synergyCard} style={{ borderLeftColor: syn.color }}>
+              <div className={styles.synergyTitle}>{syn.title}</div>
+              <div className={styles.synergyFoods} style={{ color: syn.color }}>{syn.foods}</div>
+              <div className={styles.synergyBoost}>{syn.boost}</div>
+              <div className={styles.synergyMechanism}>{syn.mechanism}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <p className={styles.recipeDisclaimer}>
         These are educational recipe ideas, not a prescribed meal plan and not dietetic advice.
