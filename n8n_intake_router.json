@@ -1,0 +1,397 @@
+{
+  "name": "Intake Router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intake",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 540],
+      "webhookId": "hhh-intake-router"
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-early-access",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "early_access",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "early_access"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-support",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "support",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "support"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-feature-request",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "feature_request",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "feature_request"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-clinical-inquiry",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "clinical_inquiry",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "clinical_inquiry"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rule-app-feedback",
+                    "leftValue": "={{ $json.body.submissionType }}",
+                    "rightValue": "app_feedback",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "app_feedback"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-switch",
+      "name": "Route by Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [500, 540]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "1FTM966CEeWuW_SRgcSQe6mGKdUVY9Tq_xHtNHTrC7U4", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Early Access", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name": "={{ $json.body.firstName }} {{ $json.body.lastName }}",
+            "Email": "={{ $json.body.email }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Access Type": "={{ $json.body.accessType }}",
+            "App Goal": "={{ $json.body.appGoal }}",
+            "Feature Wishlist": "={{ $json.body.featureWishlist }}",
+            "Top Feature": "={{ $json.body.topFeature }}",
+            "Consent": "={{ $json.body.consent }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "node-sheets-early-access",
+      "name": "Log Early Access",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 120]
+    },
+    {
+      "parameters": {
+        "sendTo": "info@huntersholistichealth.com",
+        "subject": "New Early Access Request - Hunter's Holistic Health",
+        "message": "=<p>A new early access request was submitted.</p><p><strong>Name:</strong> {{ $('Log Early Access').item.json.body.firstName }} {{ $('Log Early Access').item.json.body.lastName }}<br><strong>Email:</strong> {{ $('Log Early Access').item.json.body.email }}<br><strong>Access Type:</strong> {{ $('Log Early Access').item.json.body.accessType }}<br><strong>Timestamp:</strong> {{ new Date().toLocaleString() }}</p><p>Log in to your Google Sheet to view full details.</p>",
+        "options": { "replyTo": "info@huntersholistichealth.com" }
+      },
+      "id": "node-gmail-early-access",
+      "name": "Email: Early Access Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 120],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "1FTM966CEeWuW_SRgcSQe6mGKdUVY9Tq_xHtNHTrC7U4", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Support Requests", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name": "={{ $json.body.firstName }} {{ $json.body.lastName }}",
+            "Email": "={{ $json.body.email }}",
+            "Category": "={{ $json.body.category }}",
+            "Short Description": "={{ $json.body.description }}",
+            "Preferred Contact Method": "={{ $json.body.preferredContact }}",
+            "Consent": "={{ $json.body.consent }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "node-sheets-support",
+      "name": "Log Support",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 290]
+    },
+    {
+      "parameters": {
+        "sendTo": "info@huntersholistichealth.com",
+        "subject": "New Support Request - Hunter's Holistic Health",
+        "message": "=<p>A new support request was submitted.</p><p><strong>Name:</strong> {{ $('Log Support').item.json.body.firstName }} {{ $('Log Support').item.json.body.lastName }}<br><strong>Email:</strong> {{ $('Log Support').item.json.body.email }}<br><strong>Category:</strong> {{ $('Log Support').item.json.body.category }}<br><strong>Timestamp:</strong> {{ new Date().toLocaleString() }}</p><p>Log in to your Google Sheet to view full details.</p>",
+        "options": { "replyTo": "info@huntersholistichealth.com" }
+      },
+      "id": "node-gmail-support",
+      "name": "Email: Support Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 290],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "1FTM966CEeWuW_SRgcSQe6mGKdUVY9Tq_xHtNHTrC7U4", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Feature Requests", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name or Anonymous": "={{ $json.body.firstName }}",
+            "Email": "={{ $json.body.email }}",
+            "Feature Description": "={{ $json.body.featureDescription }}",
+            "Category": "={{ $json.body.category }}",
+            "Importance Rating": "={{ $json.body.importance }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "node-sheets-feature",
+      "name": "Log Feature Request",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 460]
+    },
+    {
+      "parameters": {
+        "sendTo": "info@huntersholistichealth.com",
+        "subject": "New Feature Request - Hunter's Holistic Health",
+        "message": "=<p>A new feature request was submitted.</p><p><strong>From:</strong> {{ $('Log Feature Request').item.json.body.firstName }}<br><strong>Email:</strong> {{ $('Log Feature Request').item.json.body.email }}<br><strong>Category:</strong> {{ $('Log Feature Request').item.json.body.category }}<br><strong>Importance:</strong> {{ $('Log Feature Request').item.json.body.importance }}<br><strong>Timestamp:</strong> {{ new Date().toLocaleString() }}</p><p>Log in to your Google Sheet to view full details.</p>",
+        "options": { "replyTo": "info@huntersholistichealth.com" }
+      },
+      "id": "node-gmail-feature",
+      "name": "Email: Feature Request Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 460],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "1FTM966CEeWuW_SRgcSQe6mGKdUVY9Tq_xHtNHTrC7U4", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "Clinical Interest", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name": "={{ $json.body.firstName }} {{ $json.body.lastName }}",
+            "Email": "={{ $json.body.email }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Service Interest": "={{ $json.body.serviceInterest }}",
+            "Preferred Contact Method": "={{ $json.body.preferredContact }}",
+            "Brief Description": "={{ $json.body.briefDescription }}",
+            "Consent": "={{ $json.body.consent }}",
+            "Review Status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "node-sheets-clinical",
+      "name": "Log Clinical Inquiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 630]
+    },
+    {
+      "parameters": {
+        "sendTo": "info@huntersholistichealth.com",
+        "subject": "ACTION REQUIRED: New Clinical Inquiry - Hunter's Holistic Health",
+        "message": "=<p>A new clinical inquiry was submitted and requires your review.</p><p><strong>Name:</strong> {{ $('Log Clinical Inquiry').item.json.body.firstName }} {{ $('Log Clinical Inquiry').item.json.body.lastName }}<br><strong>Email:</strong> {{ $('Log Clinical Inquiry').item.json.body.email }}<br><strong>Service Interest:</strong> {{ $('Log Clinical Inquiry').item.json.body.serviceInterest }}<br><strong>Preferred Contact:</strong> {{ $('Log Clinical Inquiry').item.json.body.preferredContact }}<br><strong>Timestamp:</strong> {{ new Date().toLocaleString() }}</p><p>Review status is set to Pending. Log in to your Google Sheet to review and update status.</p>",
+        "options": { "replyTo": "info@huntersholistichealth.com" }
+      },
+      "id": "node-gmail-clinical",
+      "name": "Email: Clinical Inquiry Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 630],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "value": "1FTM966CEeWuW_SRgcSQe6mGKdUVY9Tq_xHtNHTrC7U4", "mode": "id" },
+        "sheetName": { "__rl": true, "value": "App Feedback", "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name": "={{ $json.body.firstName }}",
+            "Category": "={{ $json.body.category }}",
+            "App Area": "={{ $json.body.appArea }}",
+            "Message": "={{ $json.body.message }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "node-sheets-feedback",
+      "name": "Log App Feedback",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [760, 800]
+    },
+    {
+      "parameters": {
+        "sendTo": "info@huntersholistichealth.com",
+        "subject": "New App Feedback - Hunter's Holistic Health",
+        "message": "=<p>New feedback was submitted from inside the app.</p><p><strong>From:</strong> {{ $('Log App Feedback').item.json.body.firstName }}<br><strong>Category:</strong> {{ $('Log App Feedback').item.json.body.category }}<br><strong>App Area:</strong> {{ $('Log App Feedback').item.json.body.appArea }}<br><strong>Timestamp:</strong> {{ new Date().toLocaleString() }}</p><p>Log in to your Google Sheet to view full details.</p>",
+        "options": { "replyTo": "info@huntersholistichealth.com" }
+      },
+      "id": "node-gmail-feedback",
+      "name": "Email: App Feedback Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [1020, 800],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Route by Type", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by Type": {
+      "main": [
+        [{ "node": "Log Early Access", "type": "main", "index": 0 }],
+        [{ "node": "Log Support", "type": "main", "index": 0 }],
+        [{ "node": "Log Feature Request", "type": "main", "index": 0 }],
+        [{ "node": "Log Clinical Inquiry", "type": "main", "index": 0 }],
+        [{ "node": "Log App Feedback", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Early Access": {
+      "main": [
+        [{ "node": "Email: Early Access Alert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Support": {
+      "main": [
+        [{ "node": "Email: Support Alert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Feature Request": {
+      "main": [
+        [{ "node": "Email: Feature Request Alert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Clinical Inquiry": {
+      "main": [
+        [{ "node": "Email: Clinical Inquiry Alert", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log App Feedback": {
+      "main": [
+        [{ "node": "Email: App Feedback Alert", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

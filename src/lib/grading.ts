@@ -15,6 +15,7 @@ export interface WeekBreakdown {
 
 // Simple percentage-based grade — used on educator dashboard for at-a-glance client scoring
 export function calcGrade(score: number): GradeResult {
+  if (score === 0) return { grade: 'A', color: '#4be08a', message: 'Just getting started. Log the first day to protect this grade.' }
   if (score >= 90) return { grade: 'A+', color: '#4be08a', message: 'You are absolutely showing up. This is what consistency looks like.' }
   if (score >= 80) return { grade: 'A', color: '#4be08a', message: 'Solid week. You kept moving and that is what matters most.' }
   if (score >= 70) return { grade: 'B', color: '#c8a74b', message: 'Solid week. You kept moving and that is what matters most.' }
@@ -33,7 +34,7 @@ export function calcGradeFromData(logs: DailyLog[], feedPostCount: number): Grad
   const lateSlipsSubmitted = logs.filter(l => l.late_slip_reason != null && l.late_slip_reason !== '').length
 
   if (loggedDays === 0) {
-    return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
+    return { grade: 'A', color: '#4be08a', message: 'You made the decision. That is step one. Log your first day to protect this grade.' }
   }
 
   if (loggedDays === totalDays && feedPostCount >= 2) {
