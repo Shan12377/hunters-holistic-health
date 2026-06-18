@@ -152,7 +152,7 @@ export default function PrivacyScorecardPage() {
           <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Your Rights</h2>
             <p className={styles.sectionText}>
-              You have these rights regardless of where you live. Email <a href="mailto:hello@huntersholistichealth.com">hello@huntersholistichealth.com</a> and we will respond within 30 days.
+              You have these rights regardless of where you live. Email <a href="mailto:info@huntersholistichealth.com">info@huntersholistichealth.com</a> and we will respond within 30 days.
             </p>
             <div className={styles.rightsGrid}>
               {RIGHTS.map(r => (
@@ -173,8 +173,8 @@ export default function PrivacyScorecardPage() {
             </div>
             <p className={styles.footerCopy}>
               Questions? Email{' '}
-              <a href="mailto:hello@huntersholistichealth.com" className={styles.footerLink}>
-                hello@huntersholistichealth.com
+              <a href="mailto:info@huntersholistichealth.com" className={styles.footerLink}>
+                info@huntersholistichealth.com
               </a>
             </p>
           </div>

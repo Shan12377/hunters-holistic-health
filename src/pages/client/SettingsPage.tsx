@@ -90,7 +90,7 @@ export default function SettingsPage() {
           </div>
         </div>
         <div className={styles.infoNote}>
-          To update your profile information, contact your educator at <strong>hello@huntersholistichealth.com</strong>
+          To update your profile information, contact your educator at <strong>info@huntersholistichealth.com</strong>
         </div>
       </div>
 

@@ -19,7 +19,7 @@ const sections = [
   },
   {
     title: '5. Your Rights',
-    content: `You have the right to: (1) access all data we hold about you, (2) correct inaccurate data, (3) request deletion of all your data ("right to be forgotten"), and (4) export your data in a portable format.\n\nTo exercise any of these rights, email us at: hello@huntersholistichealth.com. We will respond within 30 days.`,
+    content: `You have the right to: (1) access all data we hold about you, (2) correct inaccurate data, (3) request deletion of all your data ("right to be forgotten"), and (4) export your data in a portable format.\n\nTo exercise any of these rights, email us at: info@huntersholistichealth.com. We will respond within 30 days.`,
   },
   {
     title: '6. HIPAA Notice',
@@ -31,7 +31,7 @@ const sections = [
   },
   {
     title: '8. Contact',
-    content: `Privacy questions or requests: hello@huntersholistichealth.com`,
+    content: `Privacy questions or requests: info@huntersholistichealth.com`,
   },
 ]
 
