@@ -5393,3 +5393,84 @@
   .exIntensityRow { flex-direction: column; }
   .exIntensityBtn, .exIntensityBtnActive { min-width: unset; }
 }
+
+/* ── Energy Check-In Card ─────────────────────────────── */
+.energyCheckInCard {
+  background: var(--surface);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.energyCheckInHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.energyCheckInTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.energyLevelRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2);
+}
+
+.energyLevelBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-1);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.energyLevelBtn:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
+.energyLevelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.energyLevelNum {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.energyLevelLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-align: center;
+}
+
+.energySkip {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.energySkip:hover {
+  color: var(--text-secondary);
+}

@@ -5,14 +5,14 @@ const PILLARS = [
   {
     letter: 'R',
     title: 'Review',
-    subtitle: 'We start where most programs stop: your full picture.',
-    body: 'Before anything changes, you get the full picture. You learn how to look at your health history, your medications, your supplements, and your daily habits as one connected story rather than a list of separate problems. Most people have never had someone put all of that together for them in plain language, showing how each piece influences the others. This is where that starts. You leave this pillar understanding where you are and why, which is the only honest starting point for real change.',
+    subtitle: 'You cannot build on what you do not understand.',
+    body: 'You learn how to actually look at your own health picture. Most people have a stack of lab results they have never had explained to them in plain language. This is where that changes. You stop guessing and start understanding what your body is telling you. Your health history, your medications, your supplements, and your daily habits become one connected story rather than a list of separate problems.',
     checklist: [
+      'Health history education and pattern recognition',
       'Medication and supplement interaction education',
-      'Functional lab contextualization (beyond standard panels)',
+      'Functional lab contextualization in plain language',
       'Metabolic history mapping',
       'Lifestyle and environmental factor assessment',
-      'Health history education and pattern recognition',
     ],
     fda: null,
     double_o: false,
@@ -20,13 +20,13 @@ const PILLARS = [
   {
     letter: 'O',
     title: 'Optimize Nutrition',
-    subtitle: 'Food as medicine. Personalized. Evidence-informed.',
-    body: 'You learn how food actually communicates with your body beyond calories in and calories out. How it influences your hormones, your energy, and your inflammatory load. The Functional Plate Framework gives you a practical structure: 50% protein first, strategic timing, and food choices built around your real life, your culture, and your specific goals. This is not a generic meal plan created for no one in particular. It is an education in how to eat in a way your body can actually use.',
+    subtitle: 'Not a generic handout. An education in how to eat for your body.',
+    body: 'You learn how to fuel your body in a way that supports your metabolism, fits your culture, and works for your real life. Not a generic meal plan created for no one in particular. An actual understanding of why food choices matter and how to make them work for you specifically. Depending on your health goals and current metabolic picture, this education is tailored to where you are right now.',
     checklist: [
-      'The Functional Plate Framework (50% protein first methodology)',
-      'Meal structure education and practical planning',
-      'Protein targets by body weight and activity level',
+      'Meal structure education for your specific metabolism',
+      'Understanding how food affects hormones and energy',
       'Strategic meal timing and its metabolic effects',
+      'Culturally relevant food choice education',
       'Foods that support vs. undermine your goals',
     ],
     fda: null,
@@ -34,28 +34,28 @@ const PILLARS = [
   },
   {
     letter: 'O',
-    title: 'Optimize Biochemistry',
+    title: 'Optimize Biochemical Balance',
     subtitle: 'Supplement education. Interaction awareness. Quality standards.',
-    body: 'You learn what is happening beneath the surface. Gut health, targeted supplementation, and the research behind both. The supplement industry is largely unregulated, and the gap between what a label claims and what research supports can be significant. You stop taking supplements on faith and start understanding what the evidence actually says, what quality standards to look for, and what is worth your time and money. Your physician guides your clinical care. This pillar gives you the education to be an informed participant in that conversation.',
+    body: 'You learn what might be quietly working against your progress and why. You stop taking supplements on faith and start understanding what the research actually says, how to read your own lab trends, and how to ask better questions of your provider. The supplement industry is largely unregulated. This pillar gives you the tools to tell the difference between what the evidence supports and what is marketing.',
     checklist: [
-      'Evidence-based supplement education for metabolic health',
+      'Evidence-informed supplement education',
       'Nutrient and supplement interaction awareness',
+      'How to read your own lab trends over time',
       'USP-verified product quality standards education',
-      'Micronutrient support education (B12, magnesium, zinc, D3)',
-      'Gut microbiome support education',
+      'Gut microbiome and micronutrient support education',
     ],
     fda: 'These statements have not been evaluated by the FDA. Supplement information is educational only and is not intended to diagnose, treat, cure, or prevent any disease. Consult your physician before starting any new supplement.',
     double_o: true,
   },
   {
     letter: 'T',
-    title: 'Transform Lifestyle',
-    subtitle: 'The factors that determine whether your results hold.',
-    body: 'You learn how sleep, stress, movement, and your environment are either building your health or quietly working against it every single day. No nutrition protocol holds long-term without addressing the lifestyle infrastructure beneath it. This is not about rigid rules. It is about understanding the specific levers that drive how you feel, how you recover, and how your metabolism responds, so you can make adjustments that actually hold when real life happens.',
+    title: 'Transform Lifestyle Factors',
+    subtitle: 'Most people never connect these dots. When you do, everything shifts.',
+    body: 'You learn how sleep, stress, movement, and your body\'s internal clock are either building you up or breaking you down every single day. Most people never connect these dots. When you do, everything else starts to make more sense. This is not about rigid rules. It is about understanding the specific levers that drive how you feel, how you recover, and how your metabolism responds.',
     checklist: [
       'Sleep quality and circadian rhythm education',
       'Stress and cortisol awareness strategies',
-      'Movement education for muscle preservation',
+      'Movement education for metabolic health',
       'Environmental toxin awareness (endocrine disruptors)',
       'Habit architecture for long-term consistency',
     ],
@@ -65,14 +65,14 @@ const PILLARS = [
   {
     letter: 'S',
     title: 'Sustain and Adapt',
-    subtitle: 'The exit strategy most participants are never given.',
-    body: 'You learn how to keep going when results come and how to course-correct when life shifts. The 68% weight regain statistic is not a personal failure. It is what happens when people are handed results without a system to maintain them. The goal is not a protocol you follow perfectly for ninety days and then abandon. It is a way of thinking about your health that stays with you and evolves as your life does. This pillar builds that system.',
+    subtitle: 'Not a one-time fix. A way of thinking that stays with you.',
+    body: 'You learn how to keep going when the results come and how to course-correct when life inevitably shifts. This is not a protocol you follow perfectly for ninety days and then abandon. It is a way of thinking about your health that stays with you and evolves as your life does. The system you build here is what makes the difference between a result that lasts and one that fades.',
     checklist: [
       'Long-term metabolic monitoring education',
-      'Transition planning education and prescriber coordination support',
-      'Muscle mass preservation strategies for maintenance',
-      'Metabolic adaptation awareness and support strategies',
-      'Accountability and progress tracking systems',
+      'Course-correction strategies when life shifts',
+      'Habit maintenance and accountability systems',
+      'Progress tracking and milestone recognition',
+      'Building a sustainable health infrastructure',
     ],
     fda: null,
     double_o: false,
@@ -96,9 +96,9 @@ export default function ProtocolPage() {
       {/* Origin story */}
       <div className={styles.rootsOriginCard}>
         <blockquote className={styles.rootsOriginQuote}>
-          "I personally reversed my own metabolic condition twice. Not once. Twice. The first time, I reversed it without a complete framework. I addressed the symptoms, changed my diet, lost weight, watched my labs normalize. Then life happened. Stress, cortisol, inconsistent habits, and I watched the metabolic drift begin again. The second time, I built the system first. That became the ROOTS Framework. What I built for myself became the foundation for everything I teach."
+          "I am a licensed pharmacist and Certified Functional Nutritional Medicine Practitioner. Years in pharmacy showed me what a prescription can do. Functional medicine training showed me what it cannot. The gap between those two things is exactly where I focus my education. And I personally reversed my own metabolic condition twice. Not once. Twice. Because the first time, I reversed it without a complete framework. I addressed the symptoms. Changed my diet, lost weight, watched my labs normalize. Then life happened. Stress, cortisol, inconsistent habits, and I watched the metabolic drift begin again. The second time, I built the system first. I did not just change what I was eating. I changed the infrastructure my health was running on. That became the ROOTS Framework. And what I built for myself became the foundation for everything I teach."
         </blockquote>
-        <div className={styles.rootsOriginAttrib}>Dr. Shallanda Hunter, PharmD, MBA, CFNMP</div>
+        <div className={styles.rootsOriginAttrib}>Dr. Shallanda Hunter, CFNMP, PharmD, MBA</div>
       </div>
 
       {/* R, T, S pillars + double-O group */}
@@ -145,7 +145,7 @@ export default function ProtocolPage() {
 
       {/* Full-width disclaimer */}
       <div className={styles.rootsFullDisclaimer}>
-        For educational purposes only. Not medical advice. Dr. Shallanda Hunter, PharmD, MBA, CFNMP is a licensed pharmacist and Certified Functional Nutritional Medicine Practitioner providing health education, not clinical pharmacy services. Always consult your doctor before changing your health routine.
+        For educational purposes only. Not medical advice. Dr. Shallanda Hunter, CFNMP, PharmD, MBA is a Certified Functional Nutritional Medicine Practitioner and licensed pharmacist providing health education, not clinical pharmacy services. Always consult your doctor before changing your health routine.
       </div>
 
     </div>

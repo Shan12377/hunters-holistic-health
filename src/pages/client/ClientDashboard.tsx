@@ -28,6 +28,14 @@ function fmtDate(dateStr: string): string {
   return format(new Date(dateStr + 'T12:00:00'), 'EEEE, MMMM d')
 }
 
+const ENERGY_LEVELS = [
+  { value: 1, label: 'Drained' },
+  { value: 2, label: 'Low' },
+  { value: 3, label: 'Okay' },
+  { value: 4, label: 'Good' },
+  { value: 5, label: 'Strong' },
+]
+
 export default function ClientDashboard() {
   const { profile } = useAuthStore()
   const [todayLog, setTodayLog] = useState<DailyLog | null>(null)
@@ -36,6 +44,8 @@ export default function ClientDashboard() {
   const [upcomingSession, setUpcomingSession] = useState<UpcomingSessionBrief | null>(null)
   const [showLateSlip, setShowLateSlip] = useState(false)
   const [totalPoints, setTotalPoints] = useState<number | null>(null)
+  const [showEnergyCheckIn, setShowEnergyCheckIn] = useState(false)
+  const [savingEnergy, setSavingEnergy] = useState(false)
   const today = format(new Date(), 'yyyy-MM-dd')
   const hour = new Date().getHours()
 
@@ -50,6 +60,29 @@ export default function ClientDashboard() {
       if (incomplete) setShowLateSlip(true)
     }
   }, [todayLog, hour])
+
+  useEffect(() => {
+    // Show midday energy check-in between 11am and 8pm if not already done today
+    if (hour >= 11 && hour < 20) {
+      const checkinKey = `energy_checkin_${today}`
+      if (!localStorage.getItem(checkinKey)) setShowEnergyCheckIn(true)
+    }
+  }, [today, hour])
+
+  const handleEnergyCheckIn = async (level: number) => {
+    setSavingEnergy(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase.from('daily_logs').upsert(
+        { user_id: user.id, log_date: today, energy_level: level },
+        { onConflict: 'user_id,log_date' }
+      )
+      localStorage.setItem(`energy_checkin_${today}`, String(level))
+      setTodayLog(prev => prev ? { ...prev, energy_level: level } : prev)
+    }
+    setSavingEnergy(false)
+    setShowEnergyCheckIn(false)
+  }
 
   const fetchTodayData = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -192,6 +225,35 @@ export default function ClientDashboard() {
         </div>
       </div>
 
+      {/* Midday Energy Check-In */}
+      {showEnergyCheckIn && (
+        <div className={styles.energyCheckInCard}>
+          <div className={styles.energyCheckInHeader}>
+            <Zap size={16} color="var(--gold)" />
+            <span className={styles.energyCheckInTitle}>Quick check-in: how's your energy right now?</span>
+          </div>
+          <div className={styles.energyLevelRow}>
+            {ENERGY_LEVELS.map(({ value, label }) => (
+              <button
+                key={value}
+                className={styles.energyLevelBtn}
+                onClick={() => handleEnergyCheckIn(value)}
+                disabled={savingEnergy}
+              >
+                <span className={styles.energyLevelNum}>{value}</span>
+                <span className={styles.energyLevelLabel}>{label}</span>
+              </button>
+            ))}
+          </div>
+          <button className={styles.energySkip} onClick={() => {
+            localStorage.setItem(`energy_checkin_${today}`, 'skipped')
+            setShowEnergyCheckIn(false)
+          }}>
+            Skip for today
+          </button>
+        </div>
+      )}
+
       {/* Quick Stats Grid */}
       <div className={styles.miniGrid}>
         {/* Latest BP */}
@@ -302,7 +364,7 @@ export default function ClientDashboard() {
       {/* Disclaimer */}
       <div className={styles.disclaimerBox}>
         <p className={styles.disclaimerText}>
-          <strong>Educational Purposes Only.</strong> This platform provides health education and lifestyle tracking tools. It does not constitute medical advice, diagnosis, or treatment. Dr. Shallanda Hunter, PharmD operates as a Functional Medicine Educator. Always consult your licensed healthcare provider before making changes to your health regimen.
+          <strong>Educational Purposes Only.</strong> This platform provides health education and lifestyle tracking tools. It does not constitute medical advice, diagnosis, or treatment. Dr. Shallanda Hunter, CFNMP, PharmD operates as a Functional Medicine Educator. Always consult your licensed healthcare provider before making changes to your health regimen.
         </p>
       </div>
 
