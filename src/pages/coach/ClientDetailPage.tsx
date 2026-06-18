@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Download, Heart, Activity, Pill } from 'lucide-react'
+import { ArrowLeft, BookOpen, Download, Heart, Activity, Pill, Save } from 'lucide-react'
 import { Line, Bar } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js'
 import { supabase } from '@/lib/supabase'
@@ -25,16 +25,42 @@ export default function ClientDetailPage() {
   const [loading, setLoading] = useState(true)
   const [generatingReport, setGeneratingReport] = useState(false)
 
+  type ProtocolRow = {
+    lever_priority: string
+    supplement_stack: string
+    daily_anchors: string
+    known_triggers: string
+    current_session: number
+    total_sessions: number
+    program_end_date: string
+    educator_notes: string
+    updated_at?: string
+  }
+  const defaultProtocol: ProtocolRow = {
+    lever_priority: 'all',
+    supplement_stack: '',
+    daily_anchors: '',
+    known_triggers: '',
+    current_session: 1,
+    total_sessions: 24,
+    program_end_date: '',
+    educator_notes: '',
+  }
+  const [protocol, setProtocol] = useState<ProtocolRow | null>(null)
+  const [protocolForm, setProtocolForm] = useState<ProtocolRow>(defaultProtocol)
+  const [savingProtocol, setSavingProtocol] = useState(false)
+
   useEffect(() => { if (clientId) fetchClientData(clientId) }, [clientId])
 
   const fetchClientData = async (id: string) => {
     const suppWindowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
-    const [profileRes, bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
+    const [profileRes, bpRes, logsRes, suppRes, suppLogsRes, protocolRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('blood_pressure_logs').select('*').eq('user_id', id).order('logged_at', { ascending: true }).limit(30),
       supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
       supabase.from('supplements').select('id,name,timing').eq('user_id', id).eq('active', true),
       supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
+      supabase.from('client_protocols').select('*').eq('user_id', id).maybeSingle(),
     ])
     if (profileRes.data) setProfile(profileRes.data as Profile)
     setBpReadings((bpRes.data as BPReading[]) ?? [])
@@ -42,7 +68,51 @@ export default function ClientDetailPage() {
     const supps = (suppRes.data ?? []) as { id: string; name: string; timing: string }[]
     const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
     if (supps.length > 0) setAdherence(calcSupplementAdherence(supps, suppLogs))
+    if (protocolRes.data) {
+      const pd = protocolRes.data
+      const loaded: ProtocolRow = {
+        lever_priority: pd.lever_priority ?? 'all',
+        supplement_stack: pd.supplement_stack ?? '',
+        daily_anchors: pd.daily_anchors ?? '',
+        known_triggers: pd.known_triggers ?? '',
+        current_session: pd.current_session ?? 1,
+        total_sessions: pd.total_sessions ?? 24,
+        program_end_date: pd.program_end_date ?? '',
+        educator_notes: pd.educator_notes ?? '',
+        updated_at: pd.updated_at,
+      }
+      setProtocol(loaded)
+      setProtocolForm(loaded)
+    }
     setLoading(false)
+  }
+
+  const saveProtocol = async () => {
+    if (!clientId) return
+    setSavingProtocol(true)
+    const now = new Date().toISOString()
+    const payload = {
+      user_id: clientId,
+      lever_priority: protocolForm.lever_priority,
+      supplement_stack: protocolForm.supplement_stack || null,
+      daily_anchors: protocolForm.daily_anchors || null,
+      known_triggers: protocolForm.known_triggers || null,
+      current_session: protocolForm.current_session,
+      total_sessions: protocolForm.total_sessions,
+      program_end_date: protocolForm.program_end_date || null,
+      educator_notes: protocolForm.educator_notes || null,
+      updated_at: now,
+    }
+    const { error } = await supabase
+      .from('client_protocols')
+      .upsert(payload, { onConflict: 'user_id' })
+    if (error) {
+      toast.error('Failed to save protocol.')
+    } else {
+      toast.success('Protocol saved.')
+      setProtocol({ ...protocolForm, updated_at: now })
+    }
+    setSavingProtocol(false)
   }
 
   const generateShareableReport = async () => {
@@ -303,6 +373,140 @@ new Chart(document.getElementById('stepsChart'), {
             </table>
           </div>
         )}
+      </div>
+
+      {/* Protocol Builder */}
+      <div className={styles.card}>
+        <h3 className={styles.cardSubTitle}>
+          <BookOpen size={16} color="var(--teal)" /> Protocol Builder
+        </h3>
+
+        <div className={styles.protocolProgressWrap}>
+          <div className={styles.protocolProgressRow}>
+            <span className={styles.protocolProgressLabel}>
+              Session {protocolForm.current_session} of {protocolForm.total_sessions}
+            </span>
+            {protocolForm.program_end_date && (
+              <span className={styles.protocolEndDate}>
+                Ends {format(new Date(protocolForm.program_end_date + 'T12:00:00'), 'MMM d, yyyy')}
+              </span>
+            )}
+          </div>
+          <div className={styles.protocolProgressTrack}>
+            <div
+              className={styles.protocolProgressFill}
+              style={{ width: `${Math.min(100, Math.round(protocolForm.current_session / protocolForm.total_sessions * 100))}%` }}
+            />
+          </div>
+        </div>
+
+        <div className={styles.protocolSessionGrid}>
+          <div>
+            <label className={styles.cohortsFormLabel}>Current Session</label>
+            <input
+              type="number"
+              min={1}
+              className={styles.cohortsInput}
+              value={protocolForm.current_session}
+              onChange={e => setProtocolForm(f => ({ ...f, current_session: parseInt(e.target.value) || 1 }))}
+            />
+          </div>
+          <div>
+            <label className={styles.cohortsFormLabel}>Total Sessions</label>
+            <input
+              type="number"
+              min={1}
+              className={styles.cohortsInput}
+              value={protocolForm.total_sessions}
+              onChange={e => setProtocolForm(f => ({ ...f, total_sessions: parseInt(e.target.value) || 24 }))}
+            />
+          </div>
+          <div>
+            <label className={styles.cohortsFormLabel}>Program End Date</label>
+            <input
+              type="date"
+              className={styles.cohortsInput}
+              value={protocolForm.program_end_date}
+              onChange={e => setProtocolForm(f => ({ ...f, program_end_date: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Active Lever Focus</label>
+          <div className={styles.protocolLeverGrid}>
+            {[
+              { value: 'all', label: 'All Three Levers' },
+              { value: '1', label: 'Lever 1: Blood Volume' },
+              { value: '2', label: 'Lever 2: Vessel Tone' },
+              { value: '3', label: 'Lever 3: Elasticity' },
+            ].map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                className={protocolForm.lever_priority === value ? styles.protocolLeverActive : styles.protocolLever}
+                onClick={() => setProtocolForm(f => ({ ...f, lever_priority: value }))}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Supplement Stack</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={3}
+            placeholder="e.g., Magnesium glycinate 400mg nightly, Beets + Garlic stack daily..."
+            value={protocolForm.supplement_stack}
+            onChange={e => setProtocolForm(f => ({ ...f, supplement_stack: e.target.value }))}
+          />
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Daily Anchors</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={3}
+            placeholder="e.g., 10 min morning sun before 9am, nasal breathing during walks, Wall Squat 3x30s..."
+            value={protocolForm.daily_anchors}
+            onChange={e => setProtocolForm(f => ({ ...f, daily_anchors: e.target.value }))}
+          />
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Known Disruptors</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={2}
+            placeholder="e.g., Late night blue light, high sodium weekends, prolonged sitting..."
+            value={protocolForm.known_triggers}
+            onChange={e => setProtocolForm(f => ({ ...f, known_triggers: e.target.value }))}
+          />
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Educator Notes</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={2}
+            placeholder="Session context, progress highlights, adjustments for next session..."
+            value={protocolForm.educator_notes}
+            onChange={e => setProtocolForm(f => ({ ...f, educator_notes: e.target.value }))}
+          />
+        </div>
+
+        <div className={styles.protocolSaveRow}>
+          {protocol?.updated_at && (
+            <span className={styles.protocolLastSaved}>
+              Last saved {format(new Date(protocol.updated_at), 'MMM d, yyyy')}
+            </span>
+          )}
+          <button className={shared.btnPrimary} onClick={saveProtocol} disabled={savingProtocol}>
+            <Save size={15} /> {savingProtocol ? 'Saving...' : 'Save Protocol'}
+          </button>
+        </div>
       </div>
 
       {/* Reflection Patterns (Educational) */}

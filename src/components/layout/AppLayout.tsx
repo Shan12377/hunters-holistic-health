@@ -52,8 +52,12 @@ export default function AppLayout() {
   useEffect(() => {
     if (!user?.id) return
     const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd')
-    supabase.from('daily_logs').select('id').eq('user_id', user.id).eq('log_date', yesterday).maybeSingle().then(({ data }) => {
-      if (!data) setShowLateSlip(true)
+    Promise.all([
+      supabase.from('daily_logs').select('id').eq('user_id', user.id).eq('log_date', yesterday).maybeSingle(),
+      supabase.from('daily_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id).limit(1),
+    ]).then(([yesterdayRes, countRes]) => {
+      const hasAnyLogs = (countRes.count ?? 0) > 0
+      if (hasAnyLogs && !yesterdayRes.data) setShowLateSlip(true)
     })
   }, [user?.id])
 
@@ -104,7 +108,7 @@ export default function AppLayout() {
       {showLateSlip && (
         <LateSlipModal
           onSubmit={handleLateSlipSubmit}
-          onClose={() => handleLateSlipSubmit('')}
+          onClose={() => setShowLateSlip(false)}
         />
       )}
       <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
