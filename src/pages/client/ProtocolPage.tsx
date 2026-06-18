@@ -130,7 +130,6 @@ export default function ProtocolPage() {
           {[
             { label: 'Schedule a Session (Doxy.me)', url: 'https://doxy.me/drshallandahunter', desc: 'HIPAA-compliant video education sessions' },
             { label: 'Supplement Dispensary (Fullscript)', url: 'https://fullscript.com/go/huntersholistichealth', desc: 'Practitioner-grade supplements at a discount' },
-            { label: "Dr. Hunter's Main Website", url: 'https://www.drshallandahunter.com', desc: 'Additional educational content and resources' },
           ].map(({ label, url, desc }) => (
             <a key={url} href={url} target="_blank" rel="noopener noreferrer" className={styles.resourceLink}>
               <div className={styles.resourceBody}>
