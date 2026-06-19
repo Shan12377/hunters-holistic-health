@@ -169,3 +169,35 @@ These four workflows operate in Lane 1 (non-PHI). They can be built and tested i
 ### Development Rule
 
 > Use fabricated test data only until the Google Workspace BAA is signed and active in the Admin Console. The BAA requirement activates the moment real client PHI enters any workflow. See `N8N_WORKFLOW_ROADMAP.md` for test data sets for each workflow.
+
+---
+
+## Claude Behavior Rules
+
+These rules govern how Claude Code should behave when working on this project. They apply to every task, every session.
+
+### Before Every Task
+1. Read `CLAUDE.md` before taking any action.
+2. Look at existing files before creating new ones. Understand what exists first.
+3. If anything is unclear, ask before starting. Do not guess.
+
+### While Building
+4. Do exactly what is asked. Nothing more, nothing less.
+5. Make one change at a time. Do not touch code that is not related to the current task.
+6. If a structural or architectural change is needed, explain why before making it.
+7. Keep Vercel API routes thin: call a service or lib function, do not put business logic in the route handler.
+
+### Before Responding "Done"
+8. Run `npm run build` locally. Fix any TypeScript or build errors before responding.
+9. Test the feature end to end in the browser. Do not say "done" if it is untested.
+10. Confirm existing features were not broken by the change.
+
+### How to Format Responses
+For every task response, include:
+- **What I just did:** plain English, no jargon
+- **What you need to do:** step-by-step, assume no coding background
+- **Why:** one sentence explaining what it does or why it matters
+- **Next step:** one clear action
+- **Errors:** if something went wrong, explain it simply and say exactly how to fix it
+
+When a task involves Supabase, Vercel, n8n, or any external tool: walk through exactly where to find what is needed. Describe what each setting does in one plain sentence. If there is SQL to run, explain what it does before showing it.

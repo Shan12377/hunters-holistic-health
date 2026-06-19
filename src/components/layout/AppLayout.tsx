@@ -20,6 +20,7 @@ const clientNav = [
   { to: '/app/sessions', icon: '◷', label: 'My Sessions' },
   { to: '/app/cohort', icon: '◑', label: 'My Cohort' },
   { to: '/app/recipes', icon: '◇', label: 'Recipe Ideas' },
+  { to: '/app/meal-plan', icon: '◉', label: 'Meal Plan' },
   { to: '/app/feed', icon: '◎', label: 'Community Feed' },
   { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
   { to: '/app/events', icon: '◷', label: 'Events' },

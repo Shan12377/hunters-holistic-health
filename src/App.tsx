@@ -43,6 +43,7 @@ import ManageClassroomPage from '@/pages/coach/ManageClassroomPage'
 import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
+import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -116,6 +117,7 @@ export default function App() {
           <Route path="cohort" element={<CohortPage />} />
           <Route path="sessions" element={<SessionsPage />} />
           <Route path="recipes" element={<RecipesPage />} />
+          <Route path="meal-plan" element={<ProtocolPlanPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="events" element={<EventsPage />} />

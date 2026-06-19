@@ -4,12 +4,11 @@ import { BookOpen, Zap } from 'lucide-react'
 import { RECIPES, SYNERGIES, type Recipe, type RootsPhase } from '@/data/recipes'
 import styles from './Client.module.css'
 
-const PHASE_ORDER: RootsPhase[] = ['Remove', 'Optimize', 'Observe', 'Transform', 'Sustain']
+const PHASE_ORDER: RootsPhase[] = ['Review', 'Optimize', 'Transform', 'Sustain']
 
 const PHASE_COLORS: Record<RootsPhase, string> = {
-  Remove: '#e05c5c',
+  Review: '#0b9e8e',
   Optimize: '#c8a74b',
-  Observe: '#0b9e8e',
   Transform: '#9b59b6',
   Sustain: '#4be08a',
 }

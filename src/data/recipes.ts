@@ -1,4 +1,4 @@
-export type RootsPhase = 'Remove' | 'Optimize' | 'Observe' | 'Transform' | 'Sustain'
+export type RootsPhase = 'Review' | 'Optimize' | 'Transform' | 'Sustain'
 
 export interface Recipe {
   id: string
@@ -109,11 +109,11 @@ export const SYNERGIES: FoodSynergy[] = [
 
 export const RECIPES: Recipe[] = [
 
-  // --- Remove ---
+  // --- Review ---
   {
     id: 'r01',
     name: 'Dense Bean Salad',
-    rootsPhase: 'Remove',
+    rootsPhase: 'Review',
     tags: ['meal-prep', 'anti-inflammatory', 'plant-based', 'high-fiber'],
     calories: 390,
     proteinGrams: 18,
@@ -146,7 +146,7 @@ export const RECIPES: Recipe[] = [
   {
     id: 'r02',
     name: 'Green Goddess Salad',
-    rootsPhase: 'Remove',
+    rootsPhase: 'Review',
     tags: ['10-minute', 'plant-based', 'anti-inflammatory', 'whole-food'],
     calories: 310,
     proteinGrams: 14,
@@ -173,13 +173,13 @@ export const RECIPES: Recipe[] = [
       'Serve immediately or refrigerate up to 2 days. Store dressing separately for up to 5 days.',
     ],
     educationalNote:
-      'Cabbage is among the most fiber-dense brassicas. Its glucosinolates convert to isothiocyanates in the gut that activate Nrf2, the master antioxidant regulatory switch. Tahini delivers sesamin and sesamolin, unique lignans with studied blood pressure-supporting effects. This meal creates a high-fiber, brassica-rich foundation that supports the Remove phase goal of reducing inflammatory load.',
+      'Cabbage is among the most fiber-dense brassicas. Its glucosinolates convert to isothiocyanates in the gut that activate Nrf2, the master antioxidant regulatory switch. Tahini delivers sesamin and sesamolin, unique lignans with studied blood pressure-supporting effects. This meal creates a high-fiber, brassica-rich foundation ideal for the Review phase, where the goal is learning how food choices affect your inflammatory picture.',
     quickSwap: 'Add 4 oz chopped grilled chicken to push protein to 30g and make this a complete anti-inflammatory meal.',
   },
   {
     id: 'r03',
     name: 'Anti-Inflammatory Golden Bowl',
-    rootsPhase: 'Remove',
+    rootsPhase: 'Review',
     tags: ['meal-prep', 'anti-inflammatory', 'plant-based', 'whole-food'],
     calories: 440,
     proteinGrams: 16,
@@ -332,11 +332,11 @@ export const RECIPES: Recipe[] = [
     quickSwap: 'Top with smashed avocado, smoked salmon, and capers for a high-fat, high-protein version that adds omega-3 and healthy fats.',
   },
 
-  // --- Observe ---
+  // --- Optimize (continued) ---
   {
     id: 'r08',
     name: 'Greek Chicken Rice Bowl',
-    rootsPhase: 'Observe',
+    rootsPhase: 'Optimize',
     tags: ['meal-prep', 'protein-rich', 'mediterranean', 'whole-food'],
     calories: 520,
     proteinGrams: 38,
@@ -366,13 +366,13 @@ export const RECIPES: Recipe[] = [
       'Finish with a squeeze of fresh lemon.',
     ],
     educationalNote:
-      'Oregano contains carvacrol and rosmarinic acid, some of the most potent antimicrobial phytonutrients identified in food. Kalamata olives deliver hydroxytyrosol, one of the strongest antioxidants measured per gram of food. The Greek yogurt base adds probiotic cultures, and the vitamin C from lemon supports non-heme iron absorption from chicken. This bowl is simple and clean enough to observe how your body responds to each component.',
+      'Oregano contains carvacrol and rosmarinic acid, some of the most potent antimicrobial phytonutrients identified in food. Kalamata olives deliver hydroxytyrosol, one of the strongest antioxidants measured per gram of food. The Greek yogurt base adds probiotic cultures, and the vitamin C from lemon supports non-heme iron absorption from chicken. This bowl supports the Optimize Nutrition phase goal of eating whole foods that fuel your metabolism without confusion.',
     quickSwap: 'Swap brown rice for cauliflower rice to make this lower-carb (reduces carbs to approximately 12g net).',
   },
   {
     id: 'r09',
     name: 'Sheet Pan Mediterranean Chicken',
-    rootsPhase: 'Observe',
+    rootsPhase: 'Optimize',
     tags: ['meal-prep', 'protein-rich', 'mediterranean', 'anti-inflammatory'],
     calories: 410,
     proteinGrams: 34,
@@ -398,13 +398,13 @@ export const RECIPES: Recipe[] = [
       'Squeeze fresh lemon over everything before serving. Batch makes 4 portions for the week.',
     ],
     educationalNote:
-      'Roasting concentrates lycopene in cherry tomatoes and increases carotenoid bioavailability from bell peppers. The fat from EVOO acts as a carrier for these fat-soluble compounds. Chicken thighs, unlike breast, provide carnosine, a dipeptide that buffers lactic acid during exercise recovery. Keeping this recipe simple with identifiable ingredients makes it easier to observe how your body responds across the Observe phase.',
+      'Roasting concentrates lycopene in cherry tomatoes and increases carotenoid bioavailability from bell peppers. The fat from EVOO acts as a carrier for these fat-soluble compounds. Chicken thighs, unlike breast, provide carnosine, a dipeptide that buffers lactic acid during exercise recovery. This is a straightforward Optimize Nutrition meal: whole ingredients, nothing ultra-processed, and a nutrient profile that supports metabolic function.',
     quickSwap: 'Sub chicken for wild-caught cod for a pescatarian version with lower fat and higher selenium.',
   },
   {
     id: 'r10',
     name: 'One-Pan Ginger Miso Salmon',
-    rootsPhase: 'Observe',
+    rootsPhase: 'Optimize',
     tags: ['18-minute', 'omega-3-rich', 'anti-inflammatory', 'protein-rich'],
     calories: 420,
     proteinGrams: 42,
@@ -430,7 +430,7 @@ export const RECIPES: Recipe[] = [
       'Finish with sesame seeds and sliced scallions.',
     ],
     educationalNote:
-      'This meal activates the Gut-Brain Axis food synergy: omega-3 EPA and DHA from wild salmon directly support neural membrane structure, while asparagus inulin (a prebiotic) and miso live cultures (a probiotic) support the enteric nervous system. Ginger\'s gingerols simultaneously reduce intestinal inflammation. The simplicity of the ingredient list makes it easy to observe your personal response to each element.',
+      'This meal activates the Gut-Brain Axis food synergy: omega-3 EPA and DHA from wild salmon directly support neural membrane structure, while asparagus inulin (a prebiotic) and miso live cultures (a probiotic) support the enteric nervous system. Ginger\'s gingerols simultaneously reduce intestinal inflammation. A strong Optimize phase choice for anyone working on biochemical balance and gut microbiome support.',
   },
 
   // --- Transform ---
