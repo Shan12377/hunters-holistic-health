@@ -159,6 +159,22 @@ const LEARN_CARDS = [
     study: 'Research: bjsm.bmj.com/content/57/20/1317',
   },
   {
+    id: 'hit',
+    icon: Dumbbell,
+    color: '#0b9e8e',
+    title: 'The Strength Protocol for Health Conditions',
+    intro: 'For individuals managing metabolic conditions, kidney concerns, or high blood pressure, standard heavy lifting carries unnecessary risk. This protocol uses Time Under Tension (slow, controlled movement) to build muscle safely without the creatinine spike from explosive effort.',
+    points: [
+      'Tempo: 3 seconds down (lowering phase), 1 second pause, 2 seconds up. Never rush through a rep.',
+      'One working set per exercise taken close to failure (roughly 12 reps). Less volume, more quality.',
+      'Routine A (Monday and Thursday): Goblet Squat, Lat Pulldown, Chest Press, Romanian Deadlift, Cable Row, Overhead Press.',
+      'Routine B (Wednesday and Saturday): Bicep Curls, Tricep Extensions, Lateral Raises, Calf Raises.',
+      'Calf raises are especially relevant for circulation support and managing lower-body fluid retention.',
+      'Slow controlled lifting builds the same muscle as heavy explosive lifting without spiking creatinine or blood pressure mid-set.',
+    ],
+    note: 'Rest 2 minutes between exercises. Do not rush. The adaptation happens in the slow, deliberate tension phase, not the momentum phase.',
+  },
+  {
     id: 'nutrition',
     icon: BookOpen,
     color: '#9b59b6',

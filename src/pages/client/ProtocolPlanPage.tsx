@@ -103,8 +103,10 @@ export default function ProtocolPlanPage() {
   const [expandedRecipe, setExpandedRecipe] = useState<ProtocolRecipe | null>(null)
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [copied, setCopied] = useState(false)
-  const [groceryPlan, setGroceryPlan] = useState<Record<string, string | null>>({})
-  const [groceryPickerSlot, setGroceryPickerSlot] = useState<{ dayIndex: number; slotKey: string; recipeType: MealSlotType } | null>(null)
+  const [groceryPlan, setGroceryPlan] = useState<Record<string, { id?: string; name: string } | null>>({})
+  const [editingSlot, setEditingSlot] = useState<{ dayIndex: number; slotKey: string; recipeType: MealSlotType } | null>(null)
+  const [editingInput, setEditingInput] = useState('')
+  const [expandedIngredients, setExpandedIngredients] = useState<Set<string>>(new Set())
   const [customGroceries, setCustomGroceries] = useState<string[]>([])
   const [customInput, setCustomInput] = useState('')
 
@@ -148,16 +150,16 @@ export default function ProtocolPlanPage() {
     return PROTOCOL_RECIPES.filter(r => r.type === modalSlot.slot)
   }, [modalSlot])
 
-  const groceryCandidates = useMemo(() => {
-    if (!groceryPickerSlot) return []
-    return PROTOCOL_RECIPES.filter(r => r.type === groceryPickerSlot.recipeType)
-  }, [groceryPickerSlot])
+  const hasAnyMeals = useMemo(() =>
+    Object.values(groceryPlan).some(m => m !== null),
+    [groceryPlan]
+  )
 
   const groceryListByCategory = useMemo(() => {
     const allIngredients = new Set<string>()
-    Object.entries(groceryPlan).forEach(([, id]) => {
-      if (!id) return
-      const recipe = PROTOCOL_RECIPES.find(r => r.id === id)
+    Object.entries(groceryPlan).forEach(([, meal]) => {
+      if (!meal?.id) return
+      const recipe = PROTOCOL_RECIPES.find(r => r.id === meal.id)
       recipe?.ingredients.forEach(ing => allIngredients.add(ing))
     })
     const categorized: Record<string, string[]> = {}
@@ -183,9 +185,25 @@ export default function ProtocolPlanPage() {
     })
   }
 
-  function setGroceryMeal(dayIndex: number, slotKey: string, id: string) {
-    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: id }))
-    setGroceryPickerSlot(null)
+  function startEditSlot(dayIndex: number, slotKey: string, recipeType: MealSlotType) {
+    const current = groceryPlan[`${dayIndex}-${slotKey}`]
+    setEditingSlot({ dayIndex, slotKey, recipeType })
+    setEditingInput(current?.name ?? '')
+  }
+
+  function saveSlot(dayIndex: number, slotKey: string) {
+    const name = editingInput.trim()
+    if (name) {
+      setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: { name } }))
+    }
+    setEditingSlot(null)
+    setEditingInput('')
+  }
+
+  function saveSlotFromRecipe(dayIndex: number, slotKey: string, recipe: ProtocolRecipe) {
+    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: { id: recipe.id, name: recipe.name } }))
+    setEditingSlot(null)
+    setEditingInput('')
   }
 
   function removeGroceryMeal(dayIndex: number, slotKey: string) {
@@ -200,7 +218,22 @@ export default function ProtocolPlanPage() {
   }
 
   function copyGroceryList() {
+    const COPY_SLOTS = [
+      { key: 'bev', label: 'Morning Beverage' },
+      { key: 'm1',  label: 'Meal 1' },
+      { key: 'm2',  label: 'Meal 2' },
+      { key: 'm3',  label: 'Meal 3' },
+    ]
     const parts: string[] = []
+    const mealLines: string[] = []
+    DAY_NAMES_FULL.forEach((dayName, dayIndex) => {
+      const slots = COPY_SLOTS.map(({ key, label }) => {
+        const meal = groceryPlan[`${dayIndex}-${key}`]
+        return meal ? `  ${label}: ${meal.name}` : null
+      }).filter(Boolean) as string[]
+      if (slots.length > 0) mealLines.push(`${dayName}:\n${slots.join('\n')}`)
+    })
+    if (mealLines.length > 0) parts.push(`MY MEAL PLAN:\n${mealLines.join('\n')}`)
     CATEGORY_ORDER.filter(cat => groceryListByCategory[cat]?.length > 0).forEach(cat => {
       parts.push(`${cat}:\n${groceryListByCategory[cat].map(i => `- ${i}`).join('\n')}`)
     })
@@ -565,15 +598,68 @@ export default function ProtocolPlanPage() {
                 <div className={styles.ppGroceryDaySlots}>
                   {GROCERY_SLOTS.map(({ key, label, recipeType }) => {
                     const planKey = `${dayIndex}-${key}`
-                    const id = groceryPlan[planKey]
-                    const recipe = id ? recipeById(id) : undefined
+                    const meal = groceryPlan[planKey]
+                    const isEditing = editingSlot?.dayIndex === dayIndex && editingSlot?.slotKey === key
+                    const quickPicks = PROTOCOL_RECIPES.filter(r => r.type === recipeType).slice(0, 5)
                     return (
                       <div key={key} className={styles.ppGroceryDaySlot}>
                         <div className={styles.ppGrocerySlotLabel}>{label}</div>
-                        {recipe ? (
+                        {isEditing ? (
+                          <div className={styles.ppGrocerySlotEditForm}>
+                            <input
+                              autoFocus
+                              type="text"
+                              className={styles.ppGrocerySlotInput}
+                              value={editingInput}
+                              onChange={e => setEditingInput(e.target.value)}
+                              placeholder="Any meal, any cuisine..."
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') saveSlot(dayIndex, key)
+                                if (e.key === 'Escape') { setEditingSlot(null); setEditingInput('') }
+                              }}
+                            />
+                            <div className={styles.ppGrocerySlotEditActions}>
+                              <button className={styles.ppGrocerySlotSaveBtn} onClick={() => saveSlot(dayIndex, key)}>Save</button>
+                              <button className={styles.ppGrocerySlotCancelBtn} onClick={() => { setEditingSlot(null); setEditingInput('') }}>Cancel</button>
+                            </div>
+                            {quickPicks.length > 0 && (
+                              <div className={styles.ppGroceryQuickPicks}>
+                                <div className={styles.ppGroceryQuickPickLabel}>From the example plan:</div>
+                                <div className={styles.ppGroceryQuickPickList}>
+                                  {quickPicks.map(r => (
+                                    <button key={r.id} className={styles.ppGroceryQuickPickBtn} onClick={() => saveSlotFromRecipe(dayIndex, key, r)}>
+                                      {r.name}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : meal ? (
                           <div className={styles.ppGrocerySlotFilled}>
-                            <span className={styles.ppGrocerySlotName}>{recipe.name}</span>
-                            <span className={styles.ppGrocerySlotCal}>{recipe.calories} cal</span>
+                            <button className={styles.ppGrocerySlotName} onClick={() => startEditSlot(dayIndex, key, recipeType)}>{meal.name}</button>
+                            <div className={styles.ppGrocerySlotMeta}>
+                              {meal.id && <span className={styles.ppGrocerySlotCal}>{recipeById(meal.id)?.calories} cal · {recipeById(meal.id)?.servings ?? 1} serving{(recipeById(meal.id)?.servings ?? 1) > 1 ? 's' : ''}</span>}
+                              {meal.id && (
+                                <button
+                                  className={styles.ppGroceryIngToggle}
+                                  onClick={() => setExpandedIngredients(prev => {
+                                    const next = new Set(prev)
+                                    next.has(planKey) ? next.delete(planKey) : next.add(planKey)
+                                    return next
+                                  })}
+                                >
+                                  {expandedIngredients.has(planKey) ? 'Hide' : 'Ingredients'}
+                                </button>
+                              )}
+                            </div>
+                            {meal.id && expandedIngredients.has(planKey) && (
+                              <div className={styles.ppGroceryIngList}>
+                                {recipeById(meal.id)?.ingredients.map(ing => (
+                                  <span key={ing} className={styles.ppGroceryIngChip}>{ing}</span>
+                                ))}
+                              </div>
+                            )}
                             <button className={styles.ppGrocerySlotRemove} onClick={() => removeGroceryMeal(dayIndex, key)}>
                               <X size={12} />
                             </button>
@@ -581,7 +667,7 @@ export default function ProtocolPlanPage() {
                         ) : (
                           <button
                             className={styles.ppGrocerySlotEmpty}
-                            onClick={() => setGroceryPickerSlot({ dayIndex, slotKey: key, recipeType })}
+                            onClick={() => startEditSlot(dayIndex, key, recipeType)}
                           >
                             <Plus size={13} /> Add
                           </button>
@@ -620,7 +706,7 @@ export default function ProtocolPlanPage() {
               {groceryTotalCount === 0 ? (
                 <div className={styles.ppGroceryEmpty}>
                   <ShoppingCart size={28} color="var(--text-secondary)" />
-                  <p>Assign meals above to generate your shopping list.</p>
+                  <p>{hasAnyMeals ? 'Your meals are planned. Add their ingredients to Extra Items below, or use example plan meals to auto-generate a list.' : 'Add meals above to build your shopping list.'}</p>
                 </div>
               ) : (
                 <>
@@ -670,37 +756,6 @@ export default function ProtocolPlanPage() {
           </div>
         )
       })()}
-
-      {/* ─── GROCERY PICKER MODAL ─── */}
-      {groceryPickerSlot && (
-        <div className={styles.ppModalOverlay} onClick={() => setGroceryPickerSlot(null)}>
-          <div className={styles.ppModal} onClick={e => e.stopPropagation()}>
-            <div className={styles.ppModalHeader}>
-              <div>
-                <div className={styles.ppModalLabel}>{DAY_NAMES_FULL[groceryPickerSlot.dayIndex]}</div>
-                <div className={styles.ppModalTitle}>Select {groceryPickerSlot.slotKey === 'bev' ? 'Morning Beverage' : groceryPickerSlot.slotKey === 'm1' ? 'Meal 1' : groceryPickerSlot.slotKey === 'm2' ? 'Meal 2' : 'Meal 3'}</div>
-              </div>
-              <button className={styles.ppModalClose} onClick={() => setGroceryPickerSlot(null)}><X size={22} /></button>
-            </div>
-            <div className={styles.ppModalList}>
-              {groceryCandidates.map(r => {
-                const current = groceryPlan[`${groceryPickerSlot.dayIndex}-${groceryPickerSlot.slotKey}`] === r.id
-                return (
-                  <button
-                    key={r.id}
-                    className={current ? styles.ppModalItemActive : styles.ppModalItem}
-                    onClick={() => setGroceryMeal(groceryPickerSlot.dayIndex, groceryPickerSlot.slotKey, r.id)}
-                  >
-                    <div className={styles.ppModalItemName}>{r.name}</div>
-                    <div className={styles.ppModalItemMeta}>{r.calories} cal</div>
-                    <div className={styles.ppModalItemNote}>{r.educationalNote.slice(0, 80)}...</div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ─── MEAL PICKER MODAL ─── */}
       {modalSlot && (

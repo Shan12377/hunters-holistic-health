@@ -473,6 +473,91 @@
   line-height: 1.6;
 }
 
+/* BP Education Section */
+.bpEduSection {
+  margin-top: 8px;
+}
+
+.bpEduSectionHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.bpEduCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.bpEduCardBtn {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+}
+
+.bpEduCardBtn:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bpEduCardTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.bpEduCardSub {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.bpEduChevron {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.bpEduCardBody {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.bpEduCardBody p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-top: 12px;
+}
+
+.bpEduCardBody p:first-child {
+  margin-top: 12px;
+}
+
+.bpEduStudy {
+  font-size: 11px;
+  color: var(--gold);
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: rgba(200, 167, 75, 0.08);
+  border-radius: 6px;
+  border-left: 3px solid var(--gold);
+}
+
 .chartEmpty {
   height: 280px;
   display: flex;
@@ -6794,6 +6879,10 @@
   flex-direction: column;
   gap: 3px;
   position: relative;
+  background: rgba(11, 158, 142, 0.08);
+  border-radius: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgba(11, 158, 142, 0.2);
 }
 
 .ppGrocerySlotName {
@@ -6804,10 +6893,48 @@
   padding-right: 18px;
 }
 
+.ppGrocerySlotMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .ppGrocerySlotCal {
   font-size: 10px;
   color: var(--gold);
   font-weight: 600;
+}
+
+.ppGroceryIngToggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 9px;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ppGroceryIngToggle:hover {
+  color: var(--gold);
+}
+
+.ppGroceryIngList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.ppGroceryIngChip {
+  background: rgba(200, 167, 75, 0.1);
+  border: 1px solid rgba(200, 167, 75, 0.2);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-size: 9px;
+  padding: 2px 5px;
+  line-height: 1.3;
 }
 
 .ppGrocerySlotRemove {
@@ -6832,20 +6959,21 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  border: 1px dashed var(--border);
+  border: 1px dashed rgba(200, 167, 75, 0.35);
   border-radius: 8px;
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  background: none;
-  transition: border-color 0.15s, color 0.15s;
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
   min-height: 44px;
 }
 
 .ppGrocerySlotEmpty:hover {
   border-color: var(--gold);
   color: var(--gold);
+  background: rgba(200, 167, 75, 0.06);
 }
 
 /* ─── Grocery Extras / Custom Input ─── */
@@ -6967,4 +7095,123 @@
 
 .ppGroceryRemoveCustom:hover {
   color: #e05c5c;
+}
+
+/* Grocery slot inline editing */
+.ppGrocerySlotEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.ppGrocerySlotInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(200, 167, 75, 0.4);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 11px;
+  padding: 6px 8px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ppGrocerySlotInput:focus {
+  border-color: var(--gold);
+}
+
+.ppGrocerySlotInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.ppGrocerySlotEditActions {
+  display: flex;
+  gap: 6px;
+}
+
+.ppGrocerySlotSaveBtn {
+  background: var(--gold);
+  color: #0e1c1b;
+  border: none;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.ppGrocerySlotSaveBtn:hover {
+  opacity: 0.85;
+}
+
+.ppGrocerySlotCancelBtn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.ppGrocerySlotCancelBtn:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.ppGroceryQuickPicks {
+  margin-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 6px;
+}
+
+.ppGroceryQuickPickLabel {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.ppGroceryQuickPickList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ppGroceryQuickPickBtn {
+  background: rgba(200, 167, 75, 0.1);
+  border: 1px solid rgba(200, 167, 75, 0.25);
+  border-radius: 4px;
+  color: var(--gold);
+  font-size: 9px;
+  padding: 3px 7px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.ppGroceryQuickPickBtn:hover {
+  background: rgba(200, 167, 75, 0.22);
+}
+
+/* Make slot name a clickable button for editing */
+.ppGrocerySlotFilled .ppGrocerySlotName {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  padding-right: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.ppGrocerySlotFilled .ppGrocerySlotName:hover {
+  color: var(--gold);
 }

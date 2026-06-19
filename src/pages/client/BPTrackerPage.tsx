@@ -10,11 +10,63 @@ import { format, parseISO } from 'date-fns'
 import type { BPReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS } from '@/types'
 import toast from 'react-hot-toast'
-import { Heart, Plus, Info } from 'lucide-react'
+import { Heart, Plus, Info, ChevronDown, ChevronUp } from 'lucide-react'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, annotationPlugin)
+
+const BP_EDU = [
+  {
+    id: 'vascular',
+    title: 'How Blood Pressure Actually Works',
+    sub: 'The vascular mechanism behind the numbers',
+    body: [
+      'Blood pressure is the force your blood exerts against the walls of your arteries with each heartbeat. The systolic number (top) is the pressure during a beat. The diastolic number (bottom) is the pressure between beats when the heart is resting.',
+      'Blood vessels are not rigid pipes. They are living tissue that expands and contracts in response to chemical signals. The endothelium (the inner lining of your blood vessels) produces nitric oxide, which is the body\'s natural vasodilator. When nitric oxide production is sufficient, vessels relax and pressure stays lower.',
+      'When the endothelium is damaged or inflamed, nitric oxide production drops. Vessels become stiffer and less responsive. Pressure rises to push the same blood through a narrower, more rigid channel.',
+      'This is why blood pressure is often described as a downstream signal of upstream problems, not a standalone disease.',
+    ],
+  },
+  {
+    id: 'root',
+    title: 'What Drives Blood Pressure Up',
+    sub: 'The functional root causes, not just the symptoms',
+    body: [
+      'Insulin resistance and endothelial dysfunction: High circulating insulin damages the endothelial lining over time, reducing nitric oxide output and increasing vascular stiffness. This is why metabolic conditions and high blood pressure so often appear together.',
+      'Chronic stress and cortisol: Cortisol is a vasoconstrictor. Sustained high cortisol from ongoing stress keeps blood vessels narrowed. The nervous system stays in sympathetic (fight-or-flight) mode, which keeps heart rate and pressure elevated.',
+      'Sodium and potassium imbalance: Excess sodium causes water retention, increasing blood volume and therefore pressure. Potassium counterbalances sodium by helping the kidneys excrete it. Most people with high blood pressure consume far too little potassium.',
+      'Magnesium deficiency: Magnesium is required for vascular smooth muscle relaxation. Without adequate magnesium, vessels cannot fully dilate. Studies estimate 50 to 80 percent of people with hypertension are magnesium insufficient.',
+      'Kidney function: The kidneys regulate blood volume through the renin-angiotensin-aldosterone system (RAAS). When kidney function is reduced, the RAAS can become overactive, retaining fluid and raising pressure.',
+      'Sleep disruption: Blood pressure drops naturally during deep sleep (nocturnal dipping). When sleep is poor or disrupted, this dip does not happen. Non-dippers have significantly higher cardiovascular risk than those whose pressure drops overnight.',
+    ],
+  },
+  {
+    id: 'exercise',
+    title: 'Exercise Protocol for Blood Pressure',
+    sub: 'The BJSM 2023 meta-analysis of 270 clinical trials',
+    body: [
+      'Isometric (static hold) training produces the strongest blood pressure reductions of any exercise type, outperforming aerobic and dynamic resistance training. The 2023 British Journal of Sports Medicine meta-analysis found an average reduction of 8.2/4.0 mmHg from isometric training alone.',
+      'Wall Sit Protocol: 4 sets of 2-minute wall sits with 2 minutes of rest between sets. 3 times per week. You can spread the 4 sets throughout the day if needed.',
+      'Why it works: During the static hold, blood vessels are compressed. When released, the rebound triggers a powerful burst of nitric oxide and vessel dilation. Repeated over time, this trains the endothelium to produce more nitric oxide at baseline.',
+      'Post-meal walking: A 10 to 15 minute walk after your largest meal clears post-meal glucose and avoids the blood sugar spike that raises insulin and contributes to vascular inflammation. It also activates the parasympathetic nervous system, which lowers heart rate.',
+      'Avoid breath-holding under heavy loads. Valsalva maneuver (holding breath while straining) sharply spikes pressure mid-set. Breathe steadily through all movement.',
+    ],
+    study: 'Reference: bjsm.bmj.com/content/57/20/1317',
+  },
+  {
+    id: 'nutrition',
+    title: 'Functional Nutrition for Blood Pressure',
+    sub: 'Foods that support vascular health from the inside',
+    body: [
+      'Nitric oxide precursors: Beets, arugula, spinach, and pomegranate are among the highest-nitrate foods available. Dietary nitrates convert to nitric oxide in the gut and bloodstream, supporting vessel dilation. These are not supplements, they are food.',
+      'Potassium-rich foods: Avocado, banana, sweet potato, white bean, and leafy greens help the kidneys excrete sodium and keep fluid balance in check. Aim for more potassium than sodium in your daily intake.',
+      'Magnesium sources: Dark leafy greens, pumpkin seeds, black beans, and dark chocolate (70% or higher) are among the best dietary magnesium sources. Magnesium glycinate is the most bioavailable form if supplementing.',
+      'Omega-3 fats: EPA and DHA from fatty fish (salmon, sardines, mackerel) reduce systemic inflammation, improving endothelial function over time. The anti-inflammatory effect on blood vessels is distinct from the cholesterol effect.',
+      'Limit: Ultra-processed sodium (different from sea salt used in whole food cooking), alcohol (which disrupts sleep architecture and raises cortisol), and added sugars (which directly promote insulin resistance and endothelial damage).',
+    ],
+  },
+]
 
 export default function BPTrackerPage() {
   const [readings, setReadings] = useState<BPReading[]>([])
@@ -22,6 +74,7 @@ export default function BPTrackerPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ systolic: '', diastolic: '', pulse: '', notes: '' })
+  const [openEdu, setOpenEdu] = useState<string | null>(null)
 
   useEffect(() => { fetchReadings() }, [])
 
@@ -298,6 +351,39 @@ export default function BPTrackerPage() {
         </div>
         <p className={styles.refNote}>
           This reference is for educational purposes only. Blood pressure classifications are based on AHA/ACC guidelines. Always consult your healthcare provider for clinical interpretation of your readings.
+        </p>
+      </div>
+
+      {/* BP Education Section */}
+      <div className={styles.bpEduSection}>
+        <div className={styles.bpEduSectionHead}>
+          <Info size={16} color="var(--gold)" />
+          <span>Understanding Blood Pressure: Functional Education</span>
+        </div>
+        {BP_EDU.map(({ id, title, sub, body, study }) => (
+          <div key={id} className={styles.bpEduCard}>
+            <button
+              className={styles.bpEduCardBtn}
+              onClick={() => setOpenEdu(openEdu === id ? null : id)}
+            >
+              <div>
+                <div className={styles.bpEduCardTitle}>{title}</div>
+                <div className={styles.bpEduCardSub}>{sub}</div>
+              </div>
+              <span className={styles.bpEduChevron}>
+                {openEdu === id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </span>
+            </button>
+            {openEdu === id && (
+              <div className={styles.bpEduCardBody}>
+                {body.map((para, i) => <p key={i}>{para}</p>)}
+                {study && <div className={styles.bpEduStudy}>{study}</div>}
+              </div>
+            )}
+          </div>
+        ))}
+        <p className={styles.refNote}>
+          Educational context only. This is not medical advice. Dr. Shallanda Hunter, CFNMP, PharmD, MBA provides functional medicine education. Always work with your healthcare team on treatment decisions.
         </p>
       </div>
     </div>
