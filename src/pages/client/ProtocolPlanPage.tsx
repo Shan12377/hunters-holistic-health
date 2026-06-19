@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check, Plus, Trash2 } from 'lucide-react'
 import {
   PROTOCOL_RECIPES,
   PROTOCOL_SYNERGIES,
@@ -44,6 +44,7 @@ const SLOT_ORDER: MealSlotType[] = ['beverage', 'meal1', 'meal2', 'snack']
 
 const WEEK_LABELS = ['Week 1', 'Week 2', 'Week 3', 'Week 4']
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const DAY_NAMES_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 function recipeById(id: string): ProtocolRecipe | undefined {
   return PROTOCOL_RECIPES.find(r => r.id === id)
@@ -102,8 +103,10 @@ export default function ProtocolPlanPage() {
   const [expandedRecipe, setExpandedRecipe] = useState<ProtocolRecipe | null>(null)
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [copied, setCopied] = useState(false)
-
-  useEffect(() => { setCheckedItems(new Set()) }, [selectedWeek])
+  const [groceryPlan, setGroceryPlan] = useState<Record<string, string | null>>({})
+  const [groceryPickerSlot, setGroceryPickerSlot] = useState<{ dayIndex: number; slotKey: string; recipeType: MealSlotType } | null>(null)
+  const [customGroceries, setCustomGroceries] = useState<string[]>([])
+  const [customInput, setCustomInput] = useState('')
 
   const weekDays = useMemo(() => {
     const start = selectedWeek * 7 + 1
@@ -145,18 +148,17 @@ export default function ProtocolPlanPage() {
     return PROTOCOL_RECIPES.filter(r => r.type === modalSlot.slot)
   }, [modalSlot])
 
-  const weekGroceryList = useMemo(() => {
-    const start = selectedWeek * 7 + 1
-    const days = Array.from({ length: 7 }, (_, i) => start + i).filter(d => d <= 30)
+  const groceryCandidates = useMemo(() => {
+    if (!groceryPickerSlot) return []
+    return PROTOCOL_RECIPES.filter(r => r.type === groceryPickerSlot.recipeType)
+  }, [groceryPickerSlot])
+
+  const groceryListByCategory = useMemo(() => {
     const allIngredients = new Set<string>()
-    days.forEach(day => {
-      SLOT_ORDER.forEach(slot => {
-        const key = `${day}-${slot}`
-        const planDay = PLAN_DATA.find(d => d.day === day)
-        const id = overrides[key] || planDay?.[slot as keyof typeof planDay] as string | undefined
-        const recipe = id ? PROTOCOL_RECIPES.find(r => r.id === id) : undefined
-        recipe?.ingredients.forEach(ing => allIngredients.add(ing))
-      })
+    Object.entries(groceryPlan).forEach(([, id]) => {
+      if (!id) return
+      const recipe = PROTOCOL_RECIPES.find(r => r.id === id)
+      recipe?.ingredients.forEach(ing => allIngredients.add(ing))
     })
     const categorized: Record<string, string[]> = {}
     allIngredients.forEach(ing => {
@@ -166,11 +168,11 @@ export default function ProtocolPlanPage() {
     })
     Object.values(categorized).forEach(arr => arr.sort())
     return categorized
-  }, [selectedWeek, overrides])
+  }, [groceryPlan])
 
-  const totalGroceryItems = useMemo(() =>
-    Object.values(weekGroceryList).reduce((sum, arr) => sum + arr.length, 0),
-    [weekGroceryList]
+  const groceryTotalCount = useMemo(() =>
+    Object.values(groceryListByCategory).reduce((sum, arr) => sum + arr.length, 0) + customGroceries.length,
+    [groceryListByCategory, customGroceries]
   )
 
   function toggleCheck(ing: string) {
@@ -181,12 +183,29 @@ export default function ProtocolPlanPage() {
     })
   }
 
+  function setGroceryMeal(dayIndex: number, slotKey: string, id: string) {
+    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: id }))
+    setGroceryPickerSlot(null)
+  }
+
+  function removeGroceryMeal(dayIndex: number, slotKey: string) {
+    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: null }))
+  }
+
+  function addCustomGrocery(e: React.FormEvent) {
+    e.preventDefault()
+    if (!customInput.trim()) return
+    setCustomGroceries(prev => [...prev, customInput.trim()])
+    setCustomInput('')
+  }
+
   function copyGroceryList() {
-    const text = CATEGORY_ORDER
-      .filter(cat => weekGroceryList[cat]?.length > 0)
-      .map(cat => `${cat}:\n${weekGroceryList[cat].map(ing => `- ${ing}`).join('\n')}`)
-      .join('\n\n')
-    navigator.clipboard.writeText(text)
+    const parts: string[] = []
+    CATEGORY_ORDER.filter(cat => groceryListByCategory[cat]?.length > 0).forEach(cat => {
+      parts.push(`${cat}:\n${groceryListByCategory[cat].map(i => `- ${i}`).join('\n')}`)
+    })
+    if (customGroceries.length > 0) parts.push(`Extra Items:\n${customGroceries.map(i => `- ${i}`).join('\n')}`)
+    navigator.clipboard.writeText(parts.join('\n\n'))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -515,62 +534,170 @@ export default function ProtocolPlanPage() {
       )}
 
       {/* ─── GROCERY TAB ─── */}
-      {activeTab === 'grocery' && (
-        <div className={styles.ppSection}>
-          <div className={styles.ppGroceryTop}>
-            <div>
-              <div className={styles.ppGroceryTitle}>
-                <ShoppingCart size={16} color="var(--gold)" />
-                Weekly Shopping List
+      {activeTab === 'grocery' && (() => {
+        const GROCERY_SLOTS = [
+          { key: 'bev', label: 'Morning Beverage', recipeType: 'beverage' as MealSlotType },
+          { key: 'm1',  label: 'Meal 1 (12-2 PM)', recipeType: 'meal1' as MealSlotType },
+          { key: 'm2',  label: 'Meal 2 (2-5 PM)',  recipeType: 'meal2' as MealSlotType },
+          { key: 'm3',  label: 'Meal 3 (5-7 PM)',  recipeType: 'meal2' as MealSlotType },
+        ]
+        return (
+          <div className={styles.ppSection}>
+            <div className={styles.ppGroceryTop}>
+              <div>
+                <div className={styles.ppGroceryTitle}>
+                  <ShoppingCart size={16} color="var(--gold)" />
+                  Weekly Meal Planner
+                </div>
+                <div className={styles.ppGroceryMeta}>
+                  Pick meals for each day. Your shopping list builds below.
+                </div>
               </div>
-              <div className={styles.ppGroceryMeta}>
-                {checkedItems.size} of {totalGroceryItems} items checked for Week {selectedWeek + 1}
-              </div>
-            </div>
-            <button className={styles.ppGroceryCopyBtn} onClick={copyGroceryList}>
-              {copied ? <Check size={14} /> : <Copy size={14} />}
-              {copied ? 'Copied!' : 'Copy list'}
-            </button>
-          </div>
-
-          <div className={styles.ppGroceryWeekRow}>
-            {WEEK_LABELS.map((label, i) => (
-              <button
-                key={i}
-                className={selectedWeek === i ? styles.ppWeekBtnActive : styles.ppWeekBtn}
-                onClick={() => setSelectedWeek(i)}
-              >
-                {label}
+              <button className={styles.ppGroceryCopyBtn} onClick={copyGroceryList}>
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? 'Copied!' : 'Copy list'}
               </button>
-            ))}
-          </div>
-
-          {CATEGORY_ORDER.filter(cat => weekGroceryList[cat]?.length > 0).map(cat => (
-            <div key={cat} className={styles.ppGroceryCat}>
-              <div className={styles.ppGroceryCatHead}>
-                {cat}
-                <span className={styles.ppGroceryCatCount}>
-                  {weekGroceryList[cat].filter(i => checkedItems.has(i)).length}/{weekGroceryList[cat].length}
-                </span>
-              </div>
-              <div className={styles.ppGroceryItems}>
-                {weekGroceryList[cat].map(ing => (
-                  <label key={ing} className={checkedItems.has(ing) ? styles.ppGroceryItemDone : styles.ppGroceryItem}>
-                    <input
-                      type="checkbox"
-                      className={styles.ppGroceryCheck}
-                      checked={checkedItems.has(ing)}
-                      onChange={() => toggleCheck(ing)}
-                    />
-                    <span className={styles.ppGroceryIngText}>{ing}</span>
-                  </label>
-                ))}
-              </div>
             </div>
-          ))}
 
-          <div className={styles.ppGroceryNote}>
-            This list is built from all meals in the selected week. Tap a week above to switch. Items carry over if you have swapped any meals in the Day Planner.
+            {DAY_NAMES_FULL.map((dayName, dayIndex) => (
+              <div key={dayIndex} className={styles.ppGroceryDayCard}>
+                <div className={styles.ppGroceryDayHead}>{dayName}</div>
+                <div className={styles.ppGroceryDaySlots}>
+                  {GROCERY_SLOTS.map(({ key, label, recipeType }) => {
+                    const planKey = `${dayIndex}-${key}`
+                    const id = groceryPlan[planKey]
+                    const recipe = id ? recipeById(id) : undefined
+                    return (
+                      <div key={key} className={styles.ppGroceryDaySlot}>
+                        <div className={styles.ppGrocerySlotLabel}>{label}</div>
+                        {recipe ? (
+                          <div className={styles.ppGrocerySlotFilled}>
+                            <span className={styles.ppGrocerySlotName}>{recipe.name}</span>
+                            <span className={styles.ppGrocerySlotCal}>{recipe.calories} cal</span>
+                            <button className={styles.ppGrocerySlotRemove} onClick={() => removeGroceryMeal(dayIndex, key)}>
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            className={styles.ppGrocerySlotEmpty}
+                            onClick={() => setGroceryPickerSlot({ dayIndex, slotKey: key, recipeType })}
+                          >
+                            <Plus size={13} /> Add
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+
+            <div className={styles.ppGroceryExtras}>
+              <div className={styles.ppGroceryExtrasTitle}>Extra Items</div>
+              <form className={styles.ppGroceryExtraForm} onSubmit={addCustomGrocery}>
+                <input
+                  type="text"
+                  className={styles.ppGroceryExtraInput}
+                  value={customInput}
+                  onChange={e => setCustomInput(e.target.value)}
+                  placeholder="Saratoga Water, Blackseed Oil..."
+                />
+                <button type="submit" className={styles.ppGroceryExtraBtn}>Add</button>
+              </form>
+            </div>
+
+            <div className={styles.ppGroceryListSection}>
+              <div className={styles.ppGroceryListHead}>
+                <ShoppingCart size={15} color="var(--gold)" />
+                <span>Complete Shopping List</span>
+                <span className={styles.ppGroceryListCount}>{groceryTotalCount} items</span>
+                {groceryTotalCount > 0 && (
+                  <span className={styles.ppGroceryCheckedCount}>{checkedItems.size} checked</span>
+                )}
+              </div>
+
+              {groceryTotalCount === 0 ? (
+                <div className={styles.ppGroceryEmpty}>
+                  <ShoppingCart size={28} color="var(--text-secondary)" />
+                  <p>Assign meals above to generate your shopping list.</p>
+                </div>
+              ) : (
+                <>
+                  {CATEGORY_ORDER.filter(cat => groceryListByCategory[cat]?.length > 0).map(cat => (
+                    <div key={cat} className={styles.ppGroceryCat}>
+                      <div className={styles.ppGroceryCatHead}>
+                        {cat}
+                        <span className={styles.ppGroceryCatCount}>
+                          {groceryListByCategory[cat].filter(i => checkedItems.has(i)).length}/{groceryListByCategory[cat].length}
+                        </span>
+                      </div>
+                      <div className={styles.ppGroceryItems}>
+                        {groceryListByCategory[cat].map(ing => (
+                          <label key={ing} className={checkedItems.has(ing) ? styles.ppGroceryItemDone : styles.ppGroceryItem}>
+                            <input type="checkbox" className={styles.ppGroceryCheck} checked={checkedItems.has(ing)} onChange={() => toggleCheck(ing)} />
+                            <span className={styles.ppGroceryIngText}>{ing}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  {customGroceries.length > 0 && (
+                    <div className={styles.ppGroceryCat}>
+                      <div className={styles.ppGroceryCatHead}>
+                        Extra Items
+                        <span className={styles.ppGroceryCatCount}>{customGroceries.filter(i => checkedItems.has(i)).length}/{customGroceries.length}</span>
+                      </div>
+                      <div className={styles.ppGroceryItems}>
+                        {customGroceries.map((item, idx) => (
+                          <div key={idx} className={styles.ppGroceryCustomRow}>
+                            <label className={checkedItems.has(item) ? styles.ppGroceryItemDone : styles.ppGroceryItem}>
+                              <input type="checkbox" className={styles.ppGroceryCheck} checked={checkedItems.has(item)} onChange={() => toggleCheck(item)} />
+                              <span className={styles.ppGroceryIngText}>{item}</span>
+                            </label>
+                            <button className={styles.ppGroceryRemoveCustom} onClick={() => setCustomGroceries(prev => prev.filter((_, i) => i !== idx))}>
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* ─── GROCERY PICKER MODAL ─── */}
+      {groceryPickerSlot && (
+        <div className={styles.ppModalOverlay} onClick={() => setGroceryPickerSlot(null)}>
+          <div className={styles.ppModal} onClick={e => e.stopPropagation()}>
+            <div className={styles.ppModalHeader}>
+              <div>
+                <div className={styles.ppModalLabel}>{DAY_NAMES_FULL[groceryPickerSlot.dayIndex]}</div>
+                <div className={styles.ppModalTitle}>Select {groceryPickerSlot.slotKey === 'bev' ? 'Morning Beverage' : groceryPickerSlot.slotKey === 'm1' ? 'Meal 1' : groceryPickerSlot.slotKey === 'm2' ? 'Meal 2' : 'Meal 3'}</div>
+              </div>
+              <button className={styles.ppModalClose} onClick={() => setGroceryPickerSlot(null)}><X size={22} /></button>
+            </div>
+            <div className={styles.ppModalList}>
+              {groceryCandidates.map(r => {
+                const current = groceryPlan[`${groceryPickerSlot.dayIndex}-${groceryPickerSlot.slotKey}`] === r.id
+                return (
+                  <button
+                    key={r.id}
+                    className={current ? styles.ppModalItemActive : styles.ppModalItem}
+                    onClick={() => setGroceryMeal(groceryPickerSlot.dayIndex, groceryPickerSlot.slotKey, r.id)}
+                  >
+                    <div className={styles.ppModalItemName}>{r.name}</div>
+                    <div className={styles.ppModalItemMeta}>{r.calories} cal</div>
+                    <div className={styles.ppModalItemNote}>{r.educationalNote.slice(0, 80)}...</div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}

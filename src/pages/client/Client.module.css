@@ -6734,3 +6734,237 @@
   padding: 14px 4px;
   font-style: italic;
 }
+
+/* ─── Grocery Planner (day cards) ─── */
+.ppGroceryDayCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.ppGroceryDayHead {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.ppGroceryDaySlots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+@media (max-width: 600px) {
+  .ppGroceryDaySlots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.ppGroceryDaySlot {
+  padding: 12px;
+  border-right: 1px solid var(--border);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ppGroceryDaySlot:last-child {
+  border-right: none;
+}
+
+.ppGrocerySlotLabel {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+
+.ppGrocerySlotFilled {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+
+.ppGrocerySlotName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  padding-right: 18px;
+}
+
+.ppGrocerySlotCal {
+  font-size: 10px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.ppGrocerySlotRemove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+}
+
+.ppGrocerySlotRemove:hover {
+  color: #e05c5c;
+}
+
+.ppGrocerySlotEmpty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  transition: border-color 0.15s, color 0.15s;
+  min-height: 44px;
+}
+
+.ppGrocerySlotEmpty:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ─── Grocery Extras / Custom Input ─── */
+.ppGroceryExtras {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.ppGroceryExtrasTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.ppGroceryExtraForm {
+  display: flex;
+  gap: 8px;
+}
+
+.ppGroceryExtraInput {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ppGroceryExtraInput:focus {
+  border-color: var(--gold);
+}
+
+.ppGroceryExtraBtn {
+  background: var(--gold);
+  color: #0e1c1b;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ─── Grocery Shopping List Section ─── */
+.ppGroceryListSection {
+  margin-top: 8px;
+}
+
+.ppGroceryListHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+.ppGroceryListCount {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.ppGroceryCheckedCount {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ppGroceryEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.ppGroceryEmpty p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ppGroceryCustomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.ppGroceryCustomRow:last-child {
+  border-bottom: none;
+}
+
+.ppGroceryCustomRow .ppGroceryItem,
+.ppGroceryCustomRow .ppGroceryItemDone {
+  flex: 1;
+  border-bottom: none;
+}
+
+.ppGroceryRemoveCustom {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.ppGroceryRemoveCustom:hover {
+  color: #e05c5c;
+}
