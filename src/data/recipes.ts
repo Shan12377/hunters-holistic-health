@@ -13,6 +13,7 @@ export interface Recipe {
   fatGrams: number
   carbGrams: number
   quickSwap?: string
+  synergyIds?: string[]
 }
 
 export interface FoodSynergy {
@@ -142,6 +143,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'Three different legume families deliver diverse prebiotic fibers that feed different Bifidobacterium strains in the gut. EVOO\'s oleocanthal suppresses the same COX-2 enzyme as ibuprofen. Parsley provides apigenin, a flavonoid studied for its role in supporting a balanced inflammatory response. This is one of the most cost-effective anti-inflammatory meals you can make.',
     quickSwap: 'Sub red onion with scallions (green tops only) to make this compatible with a low-FODMAP protocol.',
+    synergyIds: ['syn-2'],
   },
   {
     id: 'r02',
@@ -211,6 +213,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'The curcumin (turmeric) and piperine (black pepper) combination in this bowl is among the most studied anti-inflammatory food pairings in clinical nutrition. Black pepper increases curcumin bioavailability by up to 2,000%. Kale provides sulforaphane precursors that activate the Nrf2/HO-1 protective pathway. Including both in one meal creates a Remove-phase foundation that addresses oxidative stress from multiple directions simultaneously.',
     quickSwap: 'Add 4 oz wild salmon on top for the omega-3 anti-inflammatory amplifier, converting this into a near-complete functional medicine meal.',
+    synergyIds: ['syn-1', 'syn-2', 'syn-5', 'syn-9'],
   },
 
   // --- Optimize ---
@@ -302,6 +305,7 @@ export const RECIPES: Recipe[] = [
     ],
     educationalNote:
       'Cooking tomatoes in EVOO dramatically increases lycopene bioavailability. The fat acts as a lipophilic carrier for this fat-soluble antioxidant. Cumin contains thymoquinone, which has demonstrated anti-inflammatory properties in preliminary research. Eggs provide choline, one of the most commonly underconsumed nutrients in modern diets, essential for liver methylation and acetylcholine production.',
+    synergyIds: ['syn-2'],
   },
   {
     id: 'r07',
@@ -368,6 +372,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'Oregano contains carvacrol and rosmarinic acid, some of the most potent antimicrobial phytonutrients identified in food. Kalamata olives deliver hydroxytyrosol, one of the strongest antioxidants measured per gram of food. The Greek yogurt base adds probiotic cultures, and the vitamin C from lemon supports non-heme iron absorption from chicken. This bowl supports the Optimize Nutrition phase goal of eating whole foods that fuel your metabolism without confusion.',
     quickSwap: 'Swap brown rice for cauliflower rice to make this lower-carb (reduces carbs to approximately 12g net).',
+    synergyIds: ['syn-2'],
   },
   {
     id: 'r09',
@@ -400,6 +405,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'Roasting concentrates lycopene in cherry tomatoes and increases carotenoid bioavailability from bell peppers. The fat from EVOO acts as a carrier for these fat-soluble compounds. Chicken thighs, unlike breast, provide carnosine, a dipeptide that buffers lactic acid during exercise recovery. This is a straightforward Optimize Nutrition meal: whole ingredients, nothing ultra-processed, and a nutrient profile that supports metabolic function.',
     quickSwap: 'Sub chicken for wild-caught cod for a pescatarian version with lower fat and higher selenium.',
+    synergyIds: ['syn-2'],
   },
   {
     id: 'r10',
@@ -431,6 +437,7 @@ export const RECIPES: Recipe[] = [
     ],
     educationalNote:
       'This meal activates the Gut-Brain Axis food synergy: omega-3 EPA and DHA from wild salmon directly support neural membrane structure, while asparagus inulin (a prebiotic) and miso live cultures (a probiotic) support the enteric nervous system. Ginger\'s gingerols simultaneously reduce intestinal inflammation. A strong Optimize phase choice for anyone working on biochemical balance and gut microbiome support.',
+    synergyIds: ['syn-4', 'syn-10'],
   },
 
   // --- Transform ---
@@ -463,6 +470,7 @@ export const RECIPES: Recipe[] = [
     ],
     educationalNote:
       'Sun-dried tomatoes have up to 10 times the lycopene concentration of fresh tomatoes, and lycopene bioavailability increases significantly when cooked with fat. Spinach with garlic delivers the iron absorption synergy through allicin activation. The omega-3 EPA and DHA from wild salmon complete the anti-inflammatory foundation. This is a high-impact Transform phase meal that delivers functional nutrition without requiring complex preparation.',
+    synergyIds: ['syn-2', 'syn-9'],
   },
   {
     id: 'r12',
@@ -494,6 +502,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'Bone broth provides glycine and proline, the two amino acids that form collagen triple-helix structure. These directly support intestinal epithelial cell repair, which is why bone broth has appeared as a traditional gut-healing food across virtually every food culture. White cannellini beans deliver resistant starch that feeds colonocytes, the cells lining your gut. This is a Transform phase anchor meal: batch-cooked once, delivering gut support all week.',
     quickSwap: 'Add a Parmesan rind while simmering for umami depth without processed ingredients. Remove before serving.',
+    synergyIds: ['syn-9'],
   },
   {
     id: 'r13',
@@ -528,6 +537,7 @@ export const RECIPES: Recipe[] = [
     educationalNote:
       'Red lentils are uniquely high in resistant starch, a prebiotic fiber that colonocytes ferment into butyrate, the primary fuel of the gut lining. This meal activates two documented food synergies simultaneously: turmeric with black pepper (the 2,000% curcumin boost) and spinach with lemon (the +300% iron absorption amplifier). Two of the most powerful nutritional synergies in a single affordable bowl.',
     quickSwap: 'Add a poached egg on top for 6 additional grams of protein and choline, or a drizzle of tahini for sesamin and a fat carrier for curcumin absorption.',
+    synergyIds: ['syn-1', 'syn-2', 'syn-9'],
   },
 
   // --- Sustain ---
@@ -591,5 +601,6 @@ export const RECIPES: Recipe[] = [
     ],
     educationalNote:
       'This single bowl activates multiple documented food synergies: the Cognitive Synergy (blueberries and walnuts together support neuroplasticity), the Prebiotic and Probiotic Stack (chia fiber feeding beneficial gut bacteria), and delivers plant-based ALA omega-3 from both chia and walnuts. Chia hydrogel formation slows gastric emptying. The Sustain phase is built on systems, and batch-prepping this jar on Sunday removes all daily breakfast decisions.',
+    synergyIds: ['syn-3'],
   },
 ]

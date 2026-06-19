@@ -249,7 +249,7 @@ export default function ProtocolPlanPage() {
         <h1 className={styles.pageTopTitle}>
           <Utensils size={20} color="var(--gold)" /> 30-Day Metabolic Protocol
         </h1>
-        <p className={styles.pageTopDate}>Structured meal timing, food pairing intelligence, and the science behind every choice.</p>
+        <p className={styles.pageTopDate}>Structured meal timing, food pairing intelligence, and the science behind every choice. Powered by VitaPlate AI.</p>
       </div>
 
       {/* Tabs */}

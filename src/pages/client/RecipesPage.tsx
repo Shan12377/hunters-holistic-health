@@ -70,7 +70,7 @@ export default function RecipesPage() {
           <BookOpen size={22} color="var(--gold)" /> Recipe Ideas
         </h1>
         <p className={styles.pageTopDate}>
-          Simple whole-food recipes organized by ROOTS phase
+          Simple whole-food recipes organized by ROOTS phase. Powered by VitaPlate AI.
         </p>
       </div>
 
@@ -211,6 +211,30 @@ export default function RecipesPage() {
               {selectedRecipe.quickSwap}
             </div>
           )}
+
+          {selectedRecipe.synergyIds && selectedRecipe.synergyIds.length > 0 && (
+            <div className={styles.vitaplatePairings}>
+              <div className={styles.vitaplatePairingsHead}>
+                <Zap size={15} color="var(--gold)" />
+                <span>VitaPlate AI: Active Pairings</span>
+              </div>
+              <div className={styles.vitaplatePairingsList}>
+                {SYNERGIES.filter(s => selectedRecipe.synergyIds!.includes(s.id)).map(s => (
+                  <div
+                    key={s.id}
+                    className={styles.vitaplatePairingCard}
+                    style={{ borderLeftColor: s.color }}
+                  >
+                    <div className={styles.vitaplatePairingTitle} style={{ color: s.color }}>
+                      {s.title}
+                    </div>
+                    <div className={styles.vitaplatePairingFoods}>{s.foods}</div>
+                    <div className={styles.vitaplatePairingBoost}>{s.boost}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -233,6 +257,12 @@ export default function RecipesPage() {
                   {recipe.rootsPhase}
                 </span>
                 <div className={styles.recipeCardTitle}>{recipe.name}</div>
+                {recipe.synergyIds && recipe.synergyIds.length > 0 && (
+                  <div className={styles.recipeSynergyBadge}>
+                    <Zap size={11} />
+                    {recipe.synergyIds.length} active {recipe.synergyIds.length === 1 ? 'pairing' : 'pairings'}
+                  </div>
+                )}
                 <div className={styles.recipeTags}>
                   {recipe.tags.slice(0, 3).map(tag => (
                     <span key={tag} className={styles.recipeTag}>{tag}</span>
@@ -264,7 +294,7 @@ export default function RecipesPage() {
       <div className={styles.synergiesSection}>
         <div className={styles.synergiesHeader}>
           <Zap size={18} color="var(--gold)" />
-          <h2 className={styles.synergiesTitle}>Food Synergies</h2>
+          <h2 className={styles.synergiesTitle}>VitaPlate AI: Food Synergies</h2>
         </div>
         <p className={styles.synergiesSub}>Pairs where eating both together measurably improves absorption or potency.</p>
         <div className={styles.synergiesGrid}>

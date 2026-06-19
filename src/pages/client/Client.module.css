@@ -7371,3 +7371,70 @@
 .ppGrocerySlotFilled .ppGrocerySlotName:hover {
   color: var(--gold);
 }
+
+/* VitaPlate AI - recipe card synergy badge */
+.recipeSynergyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  background: rgba(200, 167, 75, 0.12);
+  border: 1px solid rgba(200, 167, 75, 0.3);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  margin-bottom: 4px;
+}
+
+/* VitaPlate AI - active pairings in expanded recipe detail */
+.vitaplatePairings {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(200, 167, 75, 0.06);
+  border: 1px solid rgba(200, 167, 75, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.vitaplatePairingsHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-3);
+}
+
+.vitaplatePairingsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.vitaplatePairingCard {
+  background: var(--bg-surface);
+  border-left: 3px solid;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--space-2) var(--space-3);
+}
+
+.vitaplatePairingTitle {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.vitaplatePairingFoods {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.vitaplatePairingBoost {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
