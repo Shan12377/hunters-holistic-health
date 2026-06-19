@@ -473,6 +473,162 @@
   line-height: 1.6;
 }
 
+/* BP Milestone Stats Row */
+.bpMilestoneRow {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.bpMilestoneStat {
+  flex: 1;
+  background: var(--surface-1);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bpMilestoneNum {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.bpMilestoneLabel {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* BP 3 Levers Section */
+.bpLeversSection {
+  margin-bottom: 8px;
+}
+
+.bpLeversSectionHead {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.bpLeversSubhead {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.bpLeversGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bpLeverCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-top-width: 3px;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.bpLeverNum {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 2px;
+}
+
+.bpLeverTitle {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.bpLeverSub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.bpLeverCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 500px) {
+  .bpLeverCols {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.bpLeverColHead {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 8px;
+}
+
+.bpLeverList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bpLeverList li {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  padding-left: 12px;
+  position: relative;
+}
+
+.bpLeverList li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.bpLeverQuestion {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  line-height: 1.5;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
 /* BP Education Section */
 .bpEduSection {
   margin-top: 8px;

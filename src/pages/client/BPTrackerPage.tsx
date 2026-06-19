@@ -68,6 +68,60 @@ const BP_EDU = [
   },
 ]
 
+const BP_LEVERS = [
+  {
+    id: 'volume',
+    number: '01',
+    title: 'Blood Volume',
+    subtitle: 'Excess volume means the heart pushes more fluid through the same pipes. Pressure rises.',
+    color: '#0b9e8e',
+    disruptors: [
+      'Processed and packaged sodium (triggers water retention)',
+      'Late-night blue light (suppresses ADH, disrupting overnight fluid regulation)',
+    ],
+    fixes: [
+      'Cucumber water (mild natural diuretic)',
+      'Morning sunlight: 10 minutes within 1 hour of waking (anchors cortisol and ADH rhythm)',
+      'Hourly calf raises (activates the venous pump to return blood from the legs)',
+    ],
+    question: 'Did I anchor my volume-regulating hormones with morning light today?',
+  },
+  {
+    id: 'tone',
+    number: '02',
+    title: 'Vessel Tone',
+    subtitle: 'Tight, contracted vessels create resistance. The heart works harder to push blood through.',
+    color: '#c8a74b',
+    disruptors: [
+      'Mouth breathing (bypasses nitric oxide production in nasal passages)',
+      'Chronic tension: jaw clenching, shoulder holding, unresolved stress',
+    ],
+    fixes: [
+      'Beets and garlic: highest dietary sources of nitrate precursors that convert to nitric oxide',
+      'Nasal breathing during all daily activity, not just exercise',
+      'Mid-day movement break to clear cortisol buildup',
+    ],
+    question: 'Did I breathe through my nose and eat something that feeds my vessels today?',
+  },
+  {
+    id: 'elasticity',
+    number: '03',
+    title: 'Vessel Elasticity',
+    subtitle: 'Stiff vessel walls cannot absorb pressure changes. Baseline pressure stays chronically elevated.',
+    color: '#4be08a',
+    disruptors: [
+      'Excess sugar and fried oils (glycate vessel walls, making them brittle over time)',
+      'Prolonged sitting (reduces the shear stress that keeps vessels flexible)',
+    ],
+    fixes: [
+      'Berries and walnuts: polyphenols and omega-3 directly reduce arterial stiffness',
+      '30-second all-out effort burst: shear stress trains vessel wall flexibility',
+      'Wall sit finisher: 2-minute hold then release triggers a nitric oxide surge',
+    ],
+    question: 'Did I create a shear stress event to train my vessel walls today?',
+  },
+]
+
 export default function BPTrackerPage() {
   const [readings, setReadings] = useState<BPReading[]>([])
   const [loading, setLoading] = useState(true)
@@ -123,6 +177,25 @@ export default function BPTrackerPage() {
 
   const latest = readings[readings.length - 1]
   const latestZone = latest ? getBPZone(latest.systolic, latest.diastolic) : null
+
+  const allTimeBest = readings.length > 0 ? {
+    systolic: Math.min(...readings.map(r => r.systolic)),
+    diastolic: Math.min(...readings.map(r => r.diastolic)),
+  } : null
+
+  const optimalCount = readings.filter(r => r.systolic < 120 && r.diastolic < 80).length
+
+  const recentTrend = (() => {
+    if (readings.length < 6) return null
+    const last3 = readings.slice(-3)
+    const prev3 = readings.slice(-6, -3)
+    const avgLast = last3.reduce((s, r) => s + r.systolic, 0) / 3
+    const avgPrev = prev3.reduce((s, r) => s + r.systolic, 0) / 3
+    const diff = avgLast - avgPrev
+    if (diff <= -4) return { label: 'Trending Down', color: '#4be08a', arrow: '↓' }
+    if (diff >= 4) return { label: 'Trending Up', color: '#e05c5c', arrow: '↑' }
+    return { label: 'Holding Steady', color: '#c8a74b', arrow: '→' }
+  })()
 
   // Chart data
   const labels = readings.map(r => format(parseISO(r.logged_at), 'MMM d'))
@@ -276,6 +349,34 @@ export default function BPTrackerPage() {
         </div>
       )}
 
+      {/* Milestone stats */}
+      {readings.length >= 2 && allTimeBest && (
+        <div className={styles.bpMilestoneRow}>
+          <div className={styles.bpMilestoneStat}>
+            <div className={styles.bpMilestoneNum} style={{ color: '#4be08a' }}>{allTimeBest.systolic}</div>
+            <div className={styles.bpMilestoneLabel}>Best Systolic</div>
+          </div>
+          <div className={styles.bpMilestoneStat}>
+            <div className={styles.bpMilestoneNum} style={{ color: '#4be08a' }}>{allTimeBest.diastolic}</div>
+            <div className={styles.bpMilestoneLabel}>Best Diastolic</div>
+          </div>
+          <div className={styles.bpMilestoneStat}>
+            <div className={styles.bpMilestoneNum}>{readings.length}</div>
+            <div className={styles.bpMilestoneLabel}>Total Readings</div>
+          </div>
+          <div className={styles.bpMilestoneStat}>
+            <div className={styles.bpMilestoneNum} style={{ color: '#4be08a' }}>{optimalCount}</div>
+            <div className={styles.bpMilestoneLabel}>Optimal Readings</div>
+          </div>
+          {recentTrend && (
+            <div className={styles.bpMilestoneStat}>
+              <div className={styles.bpMilestoneNum} style={{ color: recentTrend.color }}>{recentTrend.arrow}</div>
+              <div className={styles.bpMilestoneLabel}>{recentTrend.label}</div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Log form */}
       {showForm && (
         <div className={styles.card}>
@@ -352,6 +453,38 @@ export default function BPTrackerPage() {
         <p className={styles.refNote}>
           This reference is for educational purposes only. Blood pressure classifications are based on AHA/ACC guidelines. Always consult your healthcare provider for clinical interpretation of your readings.
         </p>
+      </div>
+
+      {/* 3 Levers Section */}
+      <div className={styles.bpLeversSection}>
+        <div className={styles.bpLeversSectionHead}>
+          Your Optimization Protocol
+          <span className={styles.bpLeversSubhead}>3 levers that directly control your blood pressure</span>
+        </div>
+        <div className={styles.bpLeversGrid}>
+          {BP_LEVERS.map(({ id, number, title, subtitle, color, disruptors, fixes, question }) => (
+            <div key={id} className={styles.bpLeverCard} style={{ borderTopColor: color }}>
+              <div className={styles.bpLeverNum} style={{ color }}>{number}</div>
+              <div className={styles.bpLeverTitle} style={{ color }}>{title}</div>
+              <div className={styles.bpLeverSub}>{subtitle}</div>
+              <div className={styles.bpLeverCols}>
+                <div>
+                  <div className={styles.bpLeverColHead} style={{ color: '#e05c5c' }}>Disruptors</div>
+                  <ul className={styles.bpLeverList}>
+                    {disruptors.map((d, i) => <li key={i}>{d}</li>)}
+                  </ul>
+                </div>
+                <div>
+                  <div className={styles.bpLeverColHead} style={{ color }}>Mechanical Fix</div>
+                  <ul className={styles.bpLeverList}>
+                    {fixes.map((f, i) => <li key={i}>{f}</li>)}
+                  </ul>
+                </div>
+              </div>
+              <div className={styles.bpLeverQuestion}>"{question}"</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* BP Education Section */}
