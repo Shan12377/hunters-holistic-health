@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils } from 'lucide-react'
+import { useState, useMemo, useEffect } from 'react'
+import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check } from 'lucide-react'
 import {
   PROTOCOL_RECIPES,
   PROTOCOL_SYNERGIES,
@@ -13,7 +13,25 @@ import {
 } from '@/data/protocolPlan'
 import styles from './Client.module.css'
 
-type Tab = 'guide' | 'planner' | 'science'
+type Tab = 'guide' | 'planner' | 'science' | 'grocery'
+
+const GROCERY_PRODUCE = ['sweet potato', 'callaloo', 'tomato', 'avocado', 'lettuce', 'celery', 'onion', 'garlic', 'bell pepper', 'spinach', 'berr', 'banana', 'broccoli', 'cabbage', 'kale', 'lemon', 'lime', 'mango', 'beet', 'cucumber', 'scallion', 'green onion', 'edamame', 'mushroom', 'arugula', 'carrot', 'apple', 'pear', 'papaya', 'pineapple', 'asparagus', 'zucchini', 'plantain', 'cilantro', 'parsley', 'mint', 'basil', 'dill', 'ginger root', 'mixed berries', 'fresh ginger']
+const GROCERY_PROTEINS = ['egg', 'tuna', 'salmon', 'chicken', 'turkey', 'shrimp', 'lentil', 'chickpea', 'black bean', 'white bean', 'kidney bean', 'tempeh', 'tofu', 'sardine', 'fish', 'beef', 'cod', 'tilapia', 'whitefish']
+const GROCERY_DAIRY = ['coconut milk', 'almond milk', 'oat milk', 'coconut cream', 'greek yogurt', 'yogurt', 'kefir']
+const GROCERY_OILS = ['coconut oil', 'olive oil', 'avocado oil', 'tahini', 'mustard', 'vinegar', 'soy sauce', 'tamari', 'sesame oil', 'fish sauce', 'hot sauce']
+const GROCERY_SPICES = ['matcha', 'tea', 'turmeric', 'cinnamon', 'black pepper', 'vanilla', 'stevia', 'monk fruit', 'ginger powder', 'sea salt', 'salt', 'paprika', 'cumin', 'oregano', 'bay leaf', 'cayenne', 'cardamom', 'nutmeg', 'clove', 'thyme', 'curry', 'chili', 'peppercorn']
+
+const CATEGORY_ORDER = ['Produce', 'Proteins', 'Dairy Alternatives', 'Pantry and Dry Goods', 'Spices and Beverages', 'Oils and Condiments']
+
+function categorizeIngredient(ing: string): string {
+  const lower = ing.toLowerCase()
+  if (GROCERY_PRODUCE.some(k => lower.includes(k))) return 'Produce'
+  if (GROCERY_PROTEINS.some(k => lower.includes(k))) return 'Proteins'
+  if (GROCERY_DAIRY.some(k => lower.includes(k))) return 'Dairy Alternatives'
+  if (GROCERY_OILS.some(k => lower.includes(k))) return 'Oils and Condiments'
+  if (GROCERY_SPICES.some(k => lower.includes(k))) return 'Spices and Beverages'
+  return 'Pantry and Dry Goods'
+}
 
 const SLOT_LABELS: Record<MealSlotType, string> = {
   beverage: 'Morning Beverage',
@@ -82,6 +100,10 @@ export default function ProtocolPlanPage() {
   const [expandedGuideDay, setExpandedGuideDay] = useState<number | null>(null)
   const [expandedSynergy, setExpandedSynergy] = useState<string | null>(null)
   const [expandedRecipe, setExpandedRecipe] = useState<ProtocolRecipe | null>(null)
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => { setCheckedItems(new Set()) }, [selectedWeek])
 
   const weekDays = useMemo(() => {
     const start = selectedWeek * 7 + 1
@@ -123,6 +145,52 @@ export default function ProtocolPlanPage() {
     return PROTOCOL_RECIPES.filter(r => r.type === modalSlot.slot)
   }, [modalSlot])
 
+  const weekGroceryList = useMemo(() => {
+    const start = selectedWeek * 7 + 1
+    const days = Array.from({ length: 7 }, (_, i) => start + i).filter(d => d <= 30)
+    const allIngredients = new Set<string>()
+    days.forEach(day => {
+      SLOT_ORDER.forEach(slot => {
+        const key = `${day}-${slot}`
+        const planDay = PLAN_DATA.find(d => d.day === day)
+        const id = overrides[key] || planDay?.[slot as keyof typeof planDay] as string | undefined
+        const recipe = id ? PROTOCOL_RECIPES.find(r => r.id === id) : undefined
+        recipe?.ingredients.forEach(ing => allIngredients.add(ing))
+      })
+    })
+    const categorized: Record<string, string[]> = {}
+    allIngredients.forEach(ing => {
+      const cat = categorizeIngredient(ing)
+      if (!categorized[cat]) categorized[cat] = []
+      categorized[cat].push(ing)
+    })
+    Object.values(categorized).forEach(arr => arr.sort())
+    return categorized
+  }, [selectedWeek, overrides])
+
+  const totalGroceryItems = useMemo(() =>
+    Object.values(weekGroceryList).reduce((sum, arr) => sum + arr.length, 0),
+    [weekGroceryList]
+  )
+
+  function toggleCheck(ing: string) {
+    setCheckedItems(prev => {
+      const next = new Set(prev)
+      next.has(ing) ? next.delete(ing) : next.add(ing)
+      return next
+    })
+  }
+
+  function copyGroceryList() {
+    const text = CATEGORY_ORDER
+      .filter(cat => weekGroceryList[cat]?.length > 0)
+      .map(cat => `${cat}:\n${weekGroceryList[cat].map(ing => `- ${ing}`).join('\n')}`)
+      .join('\n\n')
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <div className="animate-fade-in">
       <div className={styles.pageTop}>
@@ -134,13 +202,13 @@ export default function ProtocolPlanPage() {
 
       {/* Tabs */}
       <div className={styles.ppTabs}>
-        {(['guide', 'planner', 'science'] as Tab[]).map(tab => (
+        {(['guide', 'planner', 'science', 'grocery'] as Tab[]).map(tab => (
           <button
             key={tab}
             className={activeTab === tab ? styles.ppTabActive : styles.ppTab}
             onClick={() => setActiveTab(tab)}
           >
-            {tab === 'guide' ? '30-Day Guide' : tab === 'planner' ? 'Day Planner' : 'The Science'}
+            {tab === 'guide' ? '30-Day Guide' : tab === 'planner' ? 'Day Planner' : tab === 'science' ? 'The Science' : 'Grocery List'}
           </button>
         ))}
       </div>
@@ -443,6 +511,67 @@ export default function ProtocolPlanPage() {
             </div>
           </div>
 
+        </div>
+      )}
+
+      {/* ─── GROCERY TAB ─── */}
+      {activeTab === 'grocery' && (
+        <div className={styles.ppSection}>
+          <div className={styles.ppGroceryTop}>
+            <div>
+              <div className={styles.ppGroceryTitle}>
+                <ShoppingCart size={16} color="var(--gold)" />
+                Weekly Shopping List
+              </div>
+              <div className={styles.ppGroceryMeta}>
+                {checkedItems.size} of {totalGroceryItems} items checked for Week {selectedWeek + 1}
+              </div>
+            </div>
+            <button className={styles.ppGroceryCopyBtn} onClick={copyGroceryList}>
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+              {copied ? 'Copied!' : 'Copy list'}
+            </button>
+          </div>
+
+          <div className={styles.ppGroceryWeekRow}>
+            {WEEK_LABELS.map((label, i) => (
+              <button
+                key={i}
+                className={selectedWeek === i ? styles.ppWeekBtnActive : styles.ppWeekBtn}
+                onClick={() => setSelectedWeek(i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {CATEGORY_ORDER.filter(cat => weekGroceryList[cat]?.length > 0).map(cat => (
+            <div key={cat} className={styles.ppGroceryCat}>
+              <div className={styles.ppGroceryCatHead}>
+                {cat}
+                <span className={styles.ppGroceryCatCount}>
+                  {weekGroceryList[cat].filter(i => checkedItems.has(i)).length}/{weekGroceryList[cat].length}
+                </span>
+              </div>
+              <div className={styles.ppGroceryItems}>
+                {weekGroceryList[cat].map(ing => (
+                  <label key={ing} className={checkedItems.has(ing) ? styles.ppGroceryItemDone : styles.ppGroceryItem}>
+                    <input
+                      type="checkbox"
+                      className={styles.ppGroceryCheck}
+                      checked={checkedItems.has(ing)}
+                      onChange={() => toggleCheck(ing)}
+                    />
+                    <span className={styles.ppGroceryIngText}>{ing}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className={styles.ppGroceryNote}>
+            This list is built from all meals in the selected week. Tap a week above to switch. Items carry over if you have swapped any meals in the Day Planner.
+          </div>
         </div>
       )}
 
