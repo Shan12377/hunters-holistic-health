@@ -45,6 +45,9 @@ import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
+import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
+import FoodSearchPage from '@/pages/client/FoodSearchPage'
+import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -120,6 +123,9 @@ export default function App() {
           <Route path="recipes" element={<RecipesPage />} />
           <Route path="meal-plan" element={<ProtocolPlanPage />} />
           <Route path="build-your-plate" element={<BuildYourPlatePage />} />
+          <Route path="trending-meals" element={<TrendingMealsPage />} />
+          <Route path="food-search" element={<FoodSearchPage />} />
+          <Route path="recipe-builder" element={<SmartRecipeBuilderPage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="events" element={<EventsPage />} />
