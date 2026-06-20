@@ -65,7 +65,7 @@
     },
     {
       "parameters": {
-        "sendTo": "digitaldosesofjoy@gmail.com",
+        "sendTo": "info@huntersholistichealth.com",
         "subject": "URGENT Support Request: {{ $json.body.category }}",
         "emailType": "text",
         "message": "Urgent support request received.\n\nName: {{ $json.body.name }}\nEmail: {{ $json.body.email }}\nCategory: {{ $json.body.category }}\nPreferred Contact: {{ $json.body.preferredContact }}\nTimestamp: {{ $now.toISO() }}\n\n---\nReview full details in the Support Requests tab of your Google Sheet. Do not include health details in follow-up emails.",

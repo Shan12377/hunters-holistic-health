@@ -78,7 +78,7 @@
         "emailType": "text",
         "message": "Hi {{ $json['Client Name'] }},\n\nThank you for your session today. Here are your next steps:\n\n1. Log your meals in the Daily Plate Builder in your app.\n2. Track your supplements in the Supplement Log.\n3. Check your Weekly Grade to see your consistency score.\n\nIf you have questions between sessions, reply to this email or submit a support request at huntersholistichealth.com/support.\n\nIn health,\nDr. Hunter\nFunctional Medicine Educator\n\n---\nThis message is for educational and accountability purposes only. It is not medical advice.",
         "options": {
-          "replyTo": "digitaldosesofjoy@gmail.com"
+          "replyTo": "info@huntersholistichealth.com"
         }
       },
       "id": "node-send-email",

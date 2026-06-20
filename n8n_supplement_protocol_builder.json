@@ -83,7 +83,7 @@
     },
     {
       "parameters": {
-        "sendTo": "digitaldosesofjoy@gmail.com",
+        "sendTo": "info@huntersholistichealth.com",
         "subject": "New Supplement Protocol Request: {{ $json.body.activeProtocol }}",
         "emailType": "text",
         "message": "A new supplement protocol request has been submitted.\n\nEducator: {{ $json.body.educatorName }}\nClient Reference: {{ $json.body.clientReference }}\nActive Protocol: {{ $json.body.activeProtocol }}\nHealth Goal: {{ $json.body.healthGoal }}\nTimestamp: {{ $now.toISO() }}\n\nReview and complete this protocol request in your Protocol Requests sheet tab.",

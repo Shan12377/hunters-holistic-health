@@ -79,7 +79,7 @@
     },
     {
       "parameters": {
-        "sendTo": "digitaldosesofjoy@gmail.com",
+        "sendTo": "info@huntersholistichealth.com",
         "subject": "Pre-Session Brief: {{ $json['Client Name'] }} at {{ $json['Session DateTime'] }}",
         "emailType": "text",
         "message": "Pre-session brief for your upcoming session.\n\nClient: {{ $json['Client Name'] }}\nSession Time: {{ $json['Session DateTime'] }}\nSession Type: {{ $json['Session Type'] }}\nActive Protocol: {{ $json['Active Protocol'] }}\nFocus Area: {{ $json['Focus Area'] }}\nLast Session Note: {{ $json['Last Session Note'] }}\n\n---\nReminder: Review any clinical records in the secure Google Workspace clinical lane before joining the session. This brief contains non-PHI session logistics only.",
