@@ -1,0 +1,177 @@
+{
+  "name": "Workflow 8: Virtual Telehealth Intake (Pre-Session Brief)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Schedule Trigger (Hourly Check)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Session Intakes"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Brief Sent",
+              "lookupValue": "No"
+            },
+            {
+              "lookupColumn": "Session Status",
+              "lookupValue": "Scheduled"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-read-intakes",
+      "name": "Read Upcoming Sessions",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "check-window",
+              "leftValue": "={{ $now.plus({ hours: 2 }).toISO() }}",
+              "rightValue": "={{ $json['Session DateTime'] }}",
+              "operator": { "type": "dateTime", "operation": "after" }
+            },
+            {
+              "id": "check-future",
+              "leftValue": "={{ $json['Session DateTime'] }}",
+              "rightValue": "={{ $now.toISO() }}",
+              "operator": { "type": "dateTime", "operation": "after" }
+            }
+          ]
+        }
+      },
+      "id": "node-check-window",
+      "name": "Session Within 2 Hours?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "digitaldosesofjoy@gmail.com",
+        "subject": "Pre-Session Brief: {{ $json['Client Name'] }} at {{ $json['Session DateTime'] }}",
+        "emailType": "text",
+        "message": "Pre-session brief for your upcoming session.\n\nClient: {{ $json['Client Name'] }}\nSession Time: {{ $json['Session DateTime'] }}\nSession Type: {{ $json['Session Type'] }}\nActive Protocol: {{ $json['Active Protocol'] }}\nFocus Area: {{ $json['Focus Area'] }}\nLast Session Note: {{ $json['Last Session Note'] }}\n\n---\nReminder: Review any clinical records in the secure Google Workspace clinical lane before joining the session. This brief contains non-PHI session logistics only.",
+        "options": {}
+      },
+      "id": "node-send-brief",
+      "name": "Send Pre-Session Brief",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 220],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Client Email'] }}",
+        "subject": "Your session is coming up: joining instructions",
+        "emailType": "text",
+        "message": "Hi {{ $json['Client Name'] }},\n\nYour session is scheduled for {{ $json['Session DateTime'] }}.\n\nJoin here: {{ $json['Session Link'] }}\n\nBefore your session:\n- Log your meals for the past 3 days in your app if you haven't already.\n- Note any questions or wins you want to share.\n- Have your supplement log open so we can review it together.\n\nSee you soon.\n\nHunter's Holistic Health\nFunctional Medicine Education\n\n---\nThis message is a session reminder and does not constitute medical advice.",
+        "options": {}
+      },
+      "id": "node-client-reminder",
+      "name": "Send Client Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 380],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Session Intakes"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Brief Sent": "Yes",
+            "Brief Sent At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-mark-sent",
+      "name": "Mark Brief Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Hourly Check)": {
+      "main": [[ { "node": "Read Upcoming Sessions", "type": "main", "index": 0 } ]]
+    },
+    "Read Upcoming Sessions": {
+      "main": [[ { "node": "Session Within 2 Hours?", "type": "main", "index": 0 } ]]
+    },
+    "Session Within 2 Hours?": {
+      "main": [
+        [ { "node": "Send Pre-Session Brief", "type": "main", "index": 0 }, { "node": "Send Client Reminder", "type": "main", "index": 0 } ],
+        []
+      ]
+    },
+    "Send Pre-Session Brief": {
+      "main": [[ { "node": "Mark Brief Sent", "type": "main", "index": 0 } ]]
+    },
+    "Send Client Reminder": {
+      "main": [[ { "node": "Mark Brief Sent", "type": "main", "index": 0 } ]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "last",
+    "saveDataErrorExecution": "all",
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "notes": "SETUP: (1) Create 'Session Intakes' tab with columns: Client Name, Client Email, Session DateTime (ISO format: 2026-06-20T15:00:00), Session Type, Session Link (Doxy.me URL), Active Protocol, Focus Area, Last Session Note, Brief Sent (default: No), Brief Sent At, Session Status (default: Scheduled). (2) Connect Gmail credential. (3) Replace YOUR_GOOGLE_SHEET_ID. COMPLIANCE: Last Session Note in this sheet must be a non-PHI summary (e.g. 'Reviewed supplement timing'). Clinical notes live in Google Workspace clinical lane only. Educator brief email goes only to your own email - client email contains only logistics."
+  }
+}

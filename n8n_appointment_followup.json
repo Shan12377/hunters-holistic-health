@@ -1,0 +1,150 @@
+{
+  "name": "Workflow 10: Appointment Follow-Up Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 16 * * *"
+            }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Schedule Trigger (4pm Daily)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Session Follow-Ups"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Follow-Up Sent",
+              "lookupValue": "No"
+            },
+            {
+              "lookupColumn": "Session Date",
+              "lookupValue": "={{ $now.toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-read-sheet",
+      "name": "Read Session Follow-Ups Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "check-email",
+              "leftValue": "={{ $json['Client Email'] }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEquals" }
+            }
+          ]
+        }
+      },
+      "id": "node-check-email",
+      "name": "Has Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Client Email'] }}",
+        "subject": "Your session follow-up from Hunter's Holistic Health",
+        "emailType": "text",
+        "message": "Hi {{ $json['Client Name'] }},\n\nThank you for your session today. Here are your next steps:\n\n1. Log your meals in the Daily Plate Builder in your app.\n2. Track your supplements in the Supplement Log.\n3. Check your Weekly Grade to see your consistency score.\n\nIf you have questions between sessions, reply to this email or submit a support request at huntersholistichealth.com/support.\n\nIn health,\nDr. Hunter\nFunctional Medicine Educator\n\n---\nThis message is for educational and accountability purposes only. It is not medical advice.",
+        "options": {
+          "replyTo": "digitaldosesofjoy@gmail.com"
+        }
+      },
+      "id": "node-send-email",
+      "name": "Send Follow-Up Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 220],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Session Follow-Ups"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Follow-Up Sent": "Yes",
+            "Follow-Up Sent At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-mark-sent",
+      "name": "Mark Follow-Up Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [1120, 220]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (4pm Daily)": {
+      "main": [[ { "node": "Read Session Follow-Ups Sheet", "type": "main", "index": 0 } ]]
+    },
+    "Read Session Follow-Ups Sheet": {
+      "main": [[ { "node": "Has Email?", "type": "main", "index": 0 } ]]
+    },
+    "Has Email?": {
+      "main": [
+        [ { "node": "Send Follow-Up Email", "type": "main", "index": 0 } ],
+        []
+      ]
+    },
+    "Send Follow-Up Email": {
+      "main": [[ { "node": "Mark Follow-Up Sent", "type": "main", "index": 0 } ]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "last",
+    "saveDataErrorExecution": "all",
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "notes": "SETUP: (1) Add Google Sheet ID. (2) Create 'Session Follow-Ups' tab with columns: Client Name, Client Email, Session Date, Follow-Up Sent (default: No), Follow-Up Sent At. (3) Connect Gmail OAuth2 credential. (4) Use fabricated test data until ready for real clients."
+  }
+}

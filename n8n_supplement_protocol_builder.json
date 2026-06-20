@@ -1,0 +1,143 @@
+{
+  "name": "Workflow 5: Supplement Protocol Builder",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "supplement-protocol",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook (Protocol Request)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "hhh-supplement-protocol"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "check-token",
+              "leftValue": "={{ $json.headers['x-webhook-secret'] }}",
+              "rightValue": "YOUR_WEBHOOK_SECRET",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "node-auth",
+      "name": "Verify Secret Token",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"Unauthorized\" }",
+        "options": { "responseCode": 401 }
+      },
+      "id": "node-unauthorized",
+      "name": "Return 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 440]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Protocol Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Educator Name": "={{ $json.body.educatorName }}",
+            "Client Reference": "={{ $json.body.clientReference }}",
+            "Health Goal": "={{ $json.body.healthGoal }}",
+            "Active Protocol": "={{ $json.body.activeProtocol }}",
+            "Requested Supplements": "={{ $json.body.supplements.join(', ') }}",
+            "Notes": "={{ $json.body.notes }}",
+            "Status": "Pending Review"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-request",
+      "name": "Log to Protocol Requests Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [680, 220]
+    },
+    {
+      "parameters": {
+        "sendTo": "digitaldosesofjoy@gmail.com",
+        "subject": "New Supplement Protocol Request: {{ $json.body.activeProtocol }}",
+        "emailType": "text",
+        "message": "A new supplement protocol request has been submitted.\n\nEducator: {{ $json.body.educatorName }}\nClient Reference: {{ $json.body.clientReference }}\nActive Protocol: {{ $json.body.activeProtocol }}\nHealth Goal: {{ $json.body.healthGoal }}\nTimestamp: {{ $now.toISO() }}\n\nReview and complete this protocol request in your Protocol Requests sheet tab.",
+        "options": {}
+      },
+      "id": "node-notify",
+      "name": "Notify Educator",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 220],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Protocol request received.\" }",
+        "options": { "responseCode": 200 }
+      },
+      "id": "node-respond",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 220]
+    }
+  ],
+  "connections": {
+    "Webhook (Protocol Request)": {
+      "main": [[ { "node": "Verify Secret Token", "type": "main", "index": 0 } ]]
+    },
+    "Verify Secret Token": {
+      "main": [
+        [ { "node": "Log to Protocol Requests Sheet", "type": "main", "index": 0 } ],
+        [ { "node": "Return 401", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Log to Protocol Requests Sheet": {
+      "main": [[ { "node": "Notify Educator", "type": "main", "index": 0 } ]]
+    },
+    "Notify Educator": {
+      "main": [[ { "node": "Respond OK", "type": "main", "index": 0 } ]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "last",
+    "saveDataErrorExecution": "all",
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "notes": "SETUP: (1) Create 'Protocol Requests' sheet tab with columns: Timestamp, Educator Name, Client Reference, Health Goal, Active Protocol, Requested Supplements, Notes, Status. (2) Set YOUR_WEBHOOK_SECRET to match your existing webhook secret token. (3) This is an internal educator form - POST to this webhook from an educator-only UI or directly via n8n form. COMPLIANCE: Client Reference is a non-PHI identifier only (e.g. initials + ID). No medical diagnoses or lab values in this sheet."
+  }
+}

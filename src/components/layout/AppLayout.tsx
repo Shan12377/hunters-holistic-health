@@ -25,6 +25,8 @@ const clientNav = [
   { to: '/app/trending-meals', icon: '◎', label: 'Trending Meals' },
   { to: '/app/food-search', icon: '◇', label: 'Food Search' },
   { to: '/app/recipe-builder', icon: '◈', label: 'Recipe Builder' },
+  { to: '/app/daily-plate', icon: '◉', label: 'Daily Plate' },
+  { to: '/app/protocol-matrix', icon: '⬡', label: 'Protocol Matrix' },
   { to: '/app/feed', icon: '◎', label: 'Community Feed' },
   { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
   { to: '/app/events', icon: '◷', label: 'Events' },

@@ -8622,3 +8622,695 @@
   text-align: center;
   margin-top: var(--space-2);
 }
+
+/* ===== Protocol Compatibility Matrix ===== */
+
+.pmLegend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: 13px;
+}
+
+.pmLegendLabel {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pmLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pmCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.pmTableWrap {
+  overflow-x: auto;
+}
+
+.pmTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.pmThBase {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  min-width: 120px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.pmTh {
+  text-align: center;
+  padding: var(--space-3) var(--space-2);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 90px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.pmRowEven {
+  background: var(--bg-surface);
+}
+
+.pmRowOdd {
+  background: var(--bg-card);
+}
+
+.pmTdBase {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 13px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pmTd {
+  padding: var(--space-3) var(--space-2);
+  text-align: center;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pmBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.pmNote {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: rgba(200, 167, 75, 0.06);
+  border: 1px solid rgba(200, 167, 75, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.pmNoteTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.pmNoteBody {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ===== Daily Plate Builder ===== */
+
+.dpHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+.dpHeaderLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.dpMacroBars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  max-width: 320px;
+}
+
+.dpMacroBar {}
+
+.dpMacroBarTop {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.dpMacroBarVal {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dpMacroBarGoal {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.dpMacroTrack {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.dpMacroFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.dpHeaderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.dpVitaLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.dpRingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.dpRingSvg {
+  width: 88px;
+  height: 88px;
+}
+
+.dpRingInner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.dpRingScore {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.dpRingOf {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.dpRingLabel {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.dpSynergyPill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(200, 167, 75, 0.12);
+  border: 1px solid rgba(200, 167, 75, 0.25);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.dpSlotGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.dpSlot {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dpSlotHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dpSlotTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dpSlotIcon {
+  color: var(--teal);
+  display: flex;
+}
+
+.dpSlotMacros {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.dpSlotProtein {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.dpSlotCal {
+  color: var(--text-muted);
+}
+
+.dpSlotFoods {
+  padding: var(--space-3) var(--space-4);
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.dpSlotEmpty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.dpFoodRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+
+.dpFoodDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex-shrink: 0;
+}
+
+.dpFoodName {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.dpFoodP {
+  font-size: 11px;
+  color: var(--teal);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.dpFoodRemove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.dpFoodRemove:hover {
+  color: #e05c5c;
+}
+
+.dpAddBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - var(--space-8));
+  margin: var(--space-2) var(--space-4) var(--space-4);
+  padding: var(--space-2) 0;
+  border: 2px dashed rgba(11, 158, 142, 0.3);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dpAddBtn:hover {
+  border-color: var(--teal);
+  background: rgba(11, 158, 142, 0.04);
+}
+
+/* Food picker modal */
+
+.dpModalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .dpModalOverlay {
+    align-items: center;
+  }
+}
+
+.dpModal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dpModalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dpModalTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dpModalClose {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+}
+
+.dpModalClose:hover {
+  color: var(--text-primary);
+}
+
+.dpModalSearch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dpModalInput {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.dpModalInput::placeholder {
+  color: var(--text-muted);
+}
+
+.dpModalList {
+  overflow-y: auto;
+  flex: 1;
+  padding: var(--space-2);
+}
+
+.dpModalEmpty {
+  text-align: center;
+  padding: var(--space-8) 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dpModalItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.dpModalItem:hover {
+  background: var(--bg-surface);
+}
+
+.dpModalItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.dpModalItemName {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dpModalItemNotes {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dpModalItemMacros {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.dpModalItemP {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.dpModalItemCal {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Synergies panel */
+
+.dpSynergies {
+  margin-bottom: var(--space-4);
+}
+
+.dpSynergiesHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.dpSynergyCount {
+  background: rgba(200, 167, 75, 0.12);
+  color: var(--gold);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.dpSynergyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.dpSynergyCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.dpSynergyCardBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dpSynergyTitle {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dpSynergyBoost {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dpSynergyMechanism {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+/* AI analysis */
+
+.dpAiSection {
+  border: 1px solid rgba(11, 158, 142, 0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.dpAiBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, var(--teal), #0a7a6f);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.dpAiBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dpAiBtn:not(:disabled):hover {
+  opacity: 0.9;
+}
+
+@keyframes dp-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dpSpinner {
+  animation: dp-spin 0.8s linear infinite;
+}
+
+.dpAiResult {
+  background: var(--bg-card);
+  padding: var(--space-5);
+}
+
+.dpAiResultHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--teal);
+  margin-bottom: var(--space-3);
+}
+
+.dpAiResultBody {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.dpEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}

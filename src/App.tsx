@@ -44,6 +44,8 @@ import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
+import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
+import DailyPlatePage from '@/pages/client/DailyPlatePage'
 import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
 import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
 import FoodSearchPage from '@/pages/client/FoodSearchPage'
@@ -126,6 +128,8 @@ export default function App() {
           <Route path="trending-meals" element={<TrendingMealsPage />} />
           <Route path="food-search" element={<FoodSearchPage />} />
           <Route path="recipe-builder" element={<SmartRecipeBuilderPage />} />
+          <Route path="protocol-matrix" element={<ProtocolMatrixPage />} />
+          <Route path="daily-plate" element={<DailyPlatePage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="events" element={<EventsPage />} />

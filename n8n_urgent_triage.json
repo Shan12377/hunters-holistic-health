@@ -1,0 +1,171 @@
+{
+  "name": "Workflow 12: Urgent Triage and Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "intake",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook (Existing Intake)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "hhh-intake-router"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "check-support",
+              "leftValue": "={{ $json.body.submissionType }}",
+              "rightValue": "support",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "node-is-support",
+      "name": "Is Support Request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "check-urgent-1",
+              "leftValue": "={{ $json.body.category }}",
+              "rightValue": "urgent",
+              "operator": { "type": "string", "operation": "equals" }
+            },
+            {
+              "id": "check-urgent-2",
+              "leftValue": "={{ $json.body.category }}",
+              "rightValue": "technical",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "id": "node-triage",
+      "name": "Triage: Urgent or Technical?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 220]
+    },
+    {
+      "parameters": {
+        "sendTo": "digitaldosesofjoy@gmail.com",
+        "subject": "URGENT Support Request: {{ $json.body.category }}",
+        "emailType": "text",
+        "message": "Urgent support request received.\n\nName: {{ $json.body.name }}\nEmail: {{ $json.body.email }}\nCategory: {{ $json.body.category }}\nPreferred Contact: {{ $json.body.preferredContact }}\nTimestamp: {{ $now.toISO() }}\n\n---\nReview full details in the Support Requests tab of your Google Sheet. Do not include health details in follow-up emails.",
+        "options": {}
+      },
+      "id": "node-urgent-alert",
+      "name": "Send Urgent Alert Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [900, 140],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Support Requests"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Submission Type": "={{ $json.body.submissionType }}",
+            "Name": "={{ $json.body.name }}",
+            "Email": "={{ $json.body.email }}",
+            "Category": "={{ $json.body.category }}",
+            "Short Description": "={{ $json.body.shortDescription }}",
+            "Preferred Contact Method": "={{ $json.body.preferredContact }}",
+            "Consent": "={{ $json.body.consent }}",
+            "Triage Level": "={% if $json.body.category === 'urgent' %}HIGH{% elseif $json.body.category === 'technical' %}MEDIUM{% else %}STANDARD{% endif %}",
+            "Resolved": "No"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-log-support",
+      "name": "Log to Support Requests Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [900, 360]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.email }}",
+        "subject": "We received your support request",
+        "emailType": "text",
+        "message": "Hi {{ $json.body.name }},\n\nWe received your support request and will follow up within 1 to 2 business days via your preferred contact method.\n\nIf this is an emergency, please contact emergency services. This platform is for educational support only.\n\nHunter's Holistic Health\nFunctional Medicine Education",
+        "options": {}
+      },
+      "id": "node-confirm-email",
+      "name": "Send Confirmation to Submitter",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1120, 360],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook (Existing Intake)": {
+      "main": [[ { "node": "Is Support Request?", "type": "main", "index": 0 } ]]
+    },
+    "Is Support Request?": {
+      "main": [
+        [ { "node": "Triage: Urgent or Technical?", "type": "main", "index": 0 } ],
+        []
+      ]
+    },
+    "Triage: Urgent or Technical?": {
+      "main": [
+        [ { "node": "Send Urgent Alert Email", "type": "main", "index": 0 }, { "node": "Log to Support Requests Sheet", "type": "main", "index": 0 } ],
+        [ { "node": "Log to Support Requests Sheet", "type": "main", "index": 0 } ]
+      ]
+    },
+    "Log to Support Requests Sheet": {
+      "main": [[ { "node": "Send Confirmation to Submitter", "type": "main", "index": 0 } ]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "last",
+    "saveDataErrorExecution": "all",
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "notes": "SETUP: (1) Add 'Triage Level' and 'Resolved' columns to existing Support Requests sheet tab. (2) Connect Gmail credential. (3) Replace YOUR_GOOGLE_SHEET_ID. (4) This workflow shares the same webhook as the Intake Router - add this as a downstream branch, not a new webhook. COMPLIANCE: Alert email includes only Name, Email, Category, Timestamp. No health details in email body."
+  }
+}
