@@ -44,6 +44,7 @@ import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
+import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -118,6 +119,7 @@ export default function App() {
           <Route path="sessions" element={<SessionsPage />} />
           <Route path="recipes" element={<RecipesPage />} />
           <Route path="meal-plan" element={<ProtocolPlanPage />} />
+          <Route path="build-your-plate" element={<BuildYourPlatePage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="leaderboard" element={<LeaderboardPage />} />
           <Route path="events" element={<EventsPage />} />
