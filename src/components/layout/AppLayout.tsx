@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { supabase } from '@/lib/supabase'
 import { flushQueue } from '@/lib/offlineQueue'
@@ -8,42 +9,109 @@ import toast from 'react-hot-toast'
 import LateSlipModal from '@/components/ui/LateSlipModal'
 import styles from './AppLayout.module.css'
 
-const clientNav = [
-  { to: '/app/dashboard', icon: '⬡', label: 'Dashboard' },
-  { to: '/app/daily-log', icon: '✓', label: 'Daily Log' },
-  { to: '/app/blood-pressure', icon: '♥', label: 'BP Tracker' },
-  { to: '/app/blood-sugar', icon: '◉', label: 'Blood Sugar' },
-  { to: '/app/meal-guard', icon: '⚡', label: 'Meal Guard' },
-  { to: '/app/protocol', icon: '◈', label: 'My Protocol' },
-  { to: '/app/supplements', icon: '⬡', label: 'Supplements' },
-  { to: '/app/weekly-grade', icon: '★', label: 'Weekly Grade' },
-  { to: '/app/sessions', icon: '◷', label: 'My Sessions' },
-  { to: '/app/cohort', icon: '◑', label: 'My Cohort' },
-  { to: '/app/recipes', icon: '◇', label: 'Recipe Ideas' },
-  { to: '/app/meal-plan', icon: '◉', label: 'Meal Plan' },
-  { to: '/app/build-your-plate', icon: '⚡', label: 'Build Your Plate' },
-  { to: '/app/trending-meals', icon: '◎', label: 'Trending Meals' },
-  { to: '/app/food-search', icon: '◇', label: 'Food Search' },
-  { to: '/app/recipe-builder', icon: '◈', label: 'Recipe Builder' },
-  { to: '/app/daily-plate', icon: '◉', label: 'Daily Plate' },
-  { to: '/app/protocol-matrix', icon: '⬡', label: 'Protocol Matrix' },
-  { to: '/app/feed', icon: '◎', label: 'Community Feed' },
-  { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
-  { to: '/app/events', icon: '◷', label: 'Events' },
-  { to: '/app/exercise', icon: '◎', label: 'Movement Log' },
-  { to: '/app/challenges', icon: '⚡', label: 'Challenges' },
-  { to: '/app/classroom', icon: '◈', label: 'Classroom' },
-  { to: '/app/messages', icon: '✉', label: 'Messages' },
-  { to: '/app/feedback', icon: '◎', label: 'Give Feedback' },
+interface NavItem {
+  to: string
+  icon: string
+  label: string
+}
+
+interface NavGroup {
+  label: string
+  items: NavItem[]
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: 'Track',
+    items: [
+      { to: '/app/daily-log',      icon: '✓', label: 'Daily Log' },
+      { to: '/app/blood-pressure', icon: '♥', label: 'BP Tracker' },
+      { to: '/app/blood-sugar',    icon: '◉', label: 'Blood Sugar' },
+      { to: '/app/supplements',    icon: '⬡', label: 'Supplements' },
+      { to: '/app/exercise',       icon: '◎', label: 'Movement Log' },
+      { to: '/app/weekly-grade',   icon: '★', label: 'Weekly Grade' },
+    ],
+  },
+  {
+    label: 'Nutrition',
+    items: [
+      { to: '/app/meal-guard',       icon: '⚡', label: 'Meal Guard' },
+      { to: '/app/meal-plan',        icon: '◉', label: 'Meal Plan' },
+      { to: '/app/daily-plate',      icon: '◉', label: 'Daily Plate' },
+      { to: '/app/build-your-plate', icon: '⚡', label: 'Build Your Plate' },
+      { to: '/app/trending-meals',   icon: '◎', label: 'Trending Meals' },
+      { to: '/app/food-search',      icon: '◇', label: 'Food Search' },
+      { to: '/app/recipe-builder',   icon: '◈', label: 'Recipe Builder' },
+      { to: '/app/recipes',          icon: '◇', label: 'Recipe Ideas' },
+    ],
+  },
+  {
+    label: 'Learn',
+    items: [
+      { to: '/app/protocol',        icon: '◈', label: 'My Protocol' },
+      { to: '/app/protocol-matrix', icon: '⬡', label: 'Protocol Matrix' },
+      { to: '/app/classroom',       icon: '◈', label: 'Classroom' },
+    ],
+  },
+  {
+    label: 'Community',
+    items: [
+      { to: '/app/feed',        icon: '◎', label: 'Community Feed' },
+      { to: '/app/cohort',      icon: '◑', label: 'My Cohort' },
+      { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
+      { to: '/app/challenges',  icon: '⚡', label: 'Challenges' },
+      { to: '/app/events',      icon: '◷', label: 'Events' },
+      { to: '/app/messages',    icon: '✉', label: 'Messages' },
+    ],
+  },
+  {
+    label: 'Sessions',
+    items: [
+      { to: '/app/sessions',  icon: '◷', label: 'My Sessions' },
+      { to: '/app/feedback',  icon: '◎', label: 'Give Feedback' },
+    ],
+  },
 ]
+
+function activeGroup(pathname: string): string {
+  for (const group of NAV_GROUPS) {
+    if (group.items.some(item => pathname.startsWith(item.to))) return group.label
+  }
+  return 'Track'
+}
 
 export default function AppLayout() {
   const { profile, user, signOut } = useAuthStore()
   const navigate = useNavigate()
-  const [mobileOpen, setMobileOpen]   = useState(false)
-  const [isOnline, setIsOnline]       = useState(navigator.onLine)
+  const location = useLocation()
+
+  const [mobileOpen, setMobileOpen]     = useState(false)
+  const [isOnline, setIsOnline]         = useState(navigator.onLine)
   const [showLateSlip, setShowLateSlip] = useState(false)
-  const [feedBadge, setFeedBadge]     = useState(0)
+  const [feedBadge, setFeedBadge]       = useState(0)
+  const [openGroups, setOpenGroups]     = useState<Set<string>>(
+    () => new Set([activeGroup(location.pathname)])
+  )
+
+  // Keep the active group open when navigating
+  useEffect(() => {
+    const current = activeGroup(location.pathname)
+    setOpenGroups(prev => {
+      if (prev.has(current)) return prev
+      const next = new Set(prev)
+      next.add(current)
+      return next
+    })
+  }, [location.pathname])
+
+  function toggleGroup(label: string) {
+    setOpenGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!user?.id) return
@@ -86,13 +154,9 @@ export default function AppLayout() {
   useEffect(() => {
     function handleOnline() {
       setIsOnline(true)
-      flushQueue().then(count => {
-        if (count > 0) toast.success('Offline logs synced.')
-      })
+      flushQueue().then(count => { if (count > 0) toast.success('Offline logs synced.') })
     }
-    function handleOffline() {
-      setIsOnline(false)
-    }
+    function handleOffline() { setIsOnline(false) }
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
     return () => {
@@ -118,6 +182,7 @@ export default function AppLayout() {
           onClose={() => setShowLateSlip(false)}
         />
       )}
+
       <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarLogo}>
           <img src="/logo-mark.png" alt="Hunter's Holistic Health emblem" className={styles.sidebarLogoImg} />
@@ -128,112 +193,92 @@ export default function AppLayout() {
         </div>
 
         <nav className={styles.nav}>
-          <div className={styles.navSection}>My Health</div>
-          {clientNav.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-              }
-              onClick={() => {
-                setMobileOpen(false)
-                if (item.to === '/app/feed') {
-                  localStorage.setItem('feed_last_visit', new Date().toISOString())
-                  setFeedBadge(0)
-                }
-              }}
-            >
-              <span className={styles.navIcon}>{item.icon}</span>
-              {item.label}
-              {item.to === '/app/feed' && feedBadge > 0 && (
-                <span className={styles.feedBadge}>{feedBadge > 99 ? '99+' : feedBadge}</span>
-              )}
-            </NavLink>
-          ))}
+          {/* Dashboard: always visible, no group */}
+          <NavLink
+            to="/app/dashboard"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <span className={styles.navIcon}>⬡</span>
+            Dashboard
+          </NavLink>
 
+          {/* Collapsible groups */}
+          {NAV_GROUPS.map(group => {
+            const isOpen = openGroups.has(group.label)
+            return (
+              <div key={group.label} className={styles.navGroup}>
+                <button
+                  className={styles.navGroupHeader}
+                  onClick={() => toggleGroup(group.label)}
+                >
+                  <span>{group.label}</span>
+                  <ChevronDown
+                    size={13}
+                    className={`${styles.navGroupChevron} ${isOpen ? styles.navGroupChevronOpen : ''}`}
+                  />
+                </button>
+
+                {isOpen && (
+                  <div className={styles.navGroupItems}>
+                    {group.items.map(item => (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                        onClick={() => {
+                          setMobileOpen(false)
+                          if (item.to === '/app/feed') {
+                            localStorage.setItem('feed_last_visit', new Date().toISOString())
+                            setFeedBadge(0)
+                          }
+                        }}
+                      >
+                        <span className={styles.navIcon}>{item.icon}</span>
+                        {item.label}
+                        {item.to === '/app/feed' && feedBadge > 0 && (
+                          <span className={styles.feedBadge}>{feedBadge > 99 ? '99+' : feedBadge}</span>
+                        )}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+
+          {/* Educator section */}
           {profile?.role === 'educator' && (
             <>
               <div className={styles.navSection}>Educator</div>
-              <NavLink
-                to="/coach"
-                end
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>◈</span>
-                Educator View
+              <NavLink to="/coach" end className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>◈</span>Educator View
               </NavLink>
-              <NavLink
-                to="/coach/messages"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>✉</span>
-                Participant Messages
+              <NavLink to="/coach/messages" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>✉</span>Participant Messages
               </NavLink>
-              <NavLink
-                to="/coach/challenges"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>⚡</span>
-                Manage Challenges
+              <NavLink to="/coach/challenges" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>⚡</span>Manage Challenges
               </NavLink>
-              <NavLink
-                to="/coach/classroom"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>◈</span>
-                Manage Classroom
+              <NavLink to="/coach/classroom" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>◈</span>Manage Classroom
               </NavLink>
-              <NavLink
-                to="/coach/events"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>◷</span>
-                Manage Events
+              <NavLink to="/coach/events" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>◷</span>Manage Events
               </NavLink>
-              <NavLink
-                to="/coach/compliance-guard"
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className={styles.navIcon}>✓</span>
-                FTC Compliance Guard
+              <NavLink to="/coach/compliance-guard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>✓</span>FTC Compliance Guard
               </NavLink>
             </>
           )}
 
+          {/* Account */}
           <div className={styles.navSection}>Account</div>
-          <NavLink
-            to="/app/settings"
-            className={({ isActive }) =>
-              `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-            }
-            onClick={() => setMobileOpen(false)}
-          >
-            <span className={styles.navIcon}>⚙</span>
-            Settings
+          <NavLink to="/app/settings" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+            <span className={styles.navIcon}>⚙</span>Settings
           </NavLink>
-
           <button className={styles.navLink} onClick={handleSignOut}>
-            <span className={styles.navIcon}>↩</span>
-            Sign Out
+            <span className={styles.navIcon}>↩</span>Sign Out
           </button>
         </nav>
 
@@ -241,9 +286,7 @@ export default function AppLayout() {
           <div className={styles.userCard}>
             <div className={styles.userAvatar}>{initials}</div>
             <div>
-              <div className={styles.userName}>
-                {profile?.first_name} {profile?.last_name}
-              </div>
+              <div className={styles.userName}>{profile?.first_name} {profile?.last_name}</div>
               <div className={styles.userRole}>{profile?.role ?? 'member'}</div>
             </div>
           </div>
@@ -267,9 +310,7 @@ export default function AppLayout() {
                 Offline
               </span>
             )}
-            <span className={styles.topbarUser}>
-              {profile?.first_name}
-            </span>
+            <span className={styles.topbarUser}>{profile?.first_name}</span>
           </div>
         </div>
 
