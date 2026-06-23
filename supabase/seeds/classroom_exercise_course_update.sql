@@ -1,42 +1,26 @@
--- Seed: "The One Thing the Medication Can't Do for You"
--- Course: 5 lessons on movement, muscle preservation, GLP-1 context,
---         blood pressure, and blood sugar interruption.
---
+-- Update: Enrich classroom lesson notes and add exercise videos
 -- Run this in Supabase SQL Editor (Dashboard > SQL Editor > New Query).
--- After running, go to Manage Classroom and toggle the course to Unlocked.
 
 DO $$
 DECLARE
-  v_course_id   uuid;
-  v_educator_id uuid;
+  v_course_id uuid;
 BEGIN
 
-  SELECT id INTO v_educator_id
-  FROM public.profiles
-  WHERE role = 'educator'
+  SELECT id INTO v_course_id
+  FROM public.courses
+  WHERE title = 'The One Thing the Medication Can''t Do for You'
   LIMIT 1;
 
-  INSERT INTO public.courses (
-    id, created_by, title, description, sort_order, is_locked
-  ) VALUES (
-    gen_random_uuid(),
-    v_educator_id,
-    'The One Thing the Medication Can''t Do for You',
-    'An evidence-informed look at why movement is the missing piece in GLP-1 therapy, insulin resistance management, and blood pressure control.',
-    10,
-    true
-  )
-  RETURNING id INTO v_course_id;
+  IF v_course_id IS NULL THEN
+    RAISE EXCEPTION 'Course not found. Check the course title matches exactly.';
+  END IF;
 
 
   -- Lesson 1: What the Trials Actually Found
-  INSERT INTO public.course_modules (
-    course_id, title, youtube_url, notes, sort_order
-  ) VALUES (
-    v_course_id,
-    'What the Trials Actually Found',
-    null,
-    'THE NUMBERS THE HEADLINES MISSED
+  UPDATE public.course_modules
+  SET
+    youtube_url = null,
+    notes = 'THE NUMBERS THE HEADLINES MISSED
 
 The STEP and SURMOUNT trials are the largest clinical studies on GLP-1 receptor agonists to date. Everyone covered the weight loss results. Almost no one covered this part:
 
@@ -52,23 +36,19 @@ This is not a case against GLP-1 therapy. It is the case for pairing it with a p
 
 KEY TAKEAWAY
 
-The number on the scale goes down. What comes off that scale matters just as much as how much comes off. Your job is to protect the tissue that keeps your metabolism working after the weight is gone.',
-    0
-  );
+The number on the scale goes down. What comes off that scale matters just as much as how much comes off. Your job is to protect the tissue that keeps your metabolism working after the weight is gone.'
+  WHERE course_id = v_course_id AND sort_order = 0;
 
 
   -- Lesson 2: Why Muscle Is Your Metabolic Engine
-  INSERT INTO public.course_modules (
-    course_id, title, youtube_url, notes, sort_order
-  ) VALUES (
-    v_course_id,
-    'Why Muscle Is Your Metabolic Engine',
-    null,
-    'THIS IS THE BIOLOGY THAT CHANGES EVERYTHING
+  UPDATE public.course_modules
+  SET
+    youtube_url = null,
+    notes = 'THIS IS THE BIOLOGY THAT CHANGES EVERYTHING
 
 Muscle is your primary glucose disposal tissue.
 
-Every time you contract a muscle, glucose moves from your bloodstream into the cell. This happens through a pathway called GLUT4 translocation. It does not require insulin. The more muscle you carry, the more efficiently your body handles glucose from every meal.
+Every time you contract a muscle, glucose moves from your bloodstream into the cell. This happens through a pathway called GLUT4 translocation. It does not require insulin. The more muscle you carry, the more efficiently your body clears glucose from every meal.
 
 WHAT HAPPENS WHEN YOU LOSE MUSCLE
 
@@ -80,19 +60,15 @@ THE BOTTOM LINE
 
 This is not a warning to scare you. It is the reason building and preserving muscle is the most important lifestyle lever you have alongside any medication.
 
-Muscle is not aesthetic. It is metabolic infrastructure.',
-    1
-  );
+Muscle is not aesthetic. It is metabolic infrastructure.'
+  WHERE course_id = v_course_id AND sort_order = 1;
 
 
-  -- Lesson 3: The Minimum Effective Dose (Dead Bug starter video)
-  INSERT INTO public.course_modules (
-    course_id, title, youtube_url, notes, sort_order
-  ) VALUES (
-    v_course_id,
-    'The Minimum Effective Dose for Muscle Preservation',
-    'https://youtu.be/o4GKiEoYClI',
-    'YOU DO NOT NEED HOURS IN THE GYM
+  -- Lesson 3: The Minimum Effective Dose (+ Dead Bug starter video)
+  UPDATE public.course_modules
+  SET
+    youtube_url = 'https://youtu.be/o4GKiEoYClI',
+    notes = 'YOU DO NOT NEED HOURS IN THE GYM
 
 The research is clear on what it takes to preserve and build muscle without overcomplicating it. Here is the minimum effective dose.
 
@@ -116,19 +92,15 @@ The video above shows the Dead Bug, one of the most effective core exercises for
 
 The medication is doing significant metabolic work. But it cannot create a training stimulus. That part has always been yours.
 
-This is an educational resource. Coordinate any new exercise program with your healthcare provider before starting.',
-    2
-  );
+This is an educational resource. Coordinate any new exercise program with your healthcare provider before starting.'
+  WHERE course_id = v_course_id AND sort_order = 2;
 
 
   -- Lesson 4: Blood Pressure: The Wall Sit Protocol
-  INSERT INTO public.course_modules (
-    course_id, title, youtube_url, notes, sort_order
-  ) VALUES (
-    v_course_id,
-    'Blood Pressure: The Wall Sit Protocol',
-    'https://www.youtube.com/shorts/Nh5XijaZrm8',
-    'WHAT THE RESEARCH ACTUALLY SAYS
+  UPDATE public.course_modules
+  SET
+    youtube_url = 'https://www.youtube.com/shorts/Nh5XijaZrm8',
+    notes = 'WHAT THE RESEARCH ACTUALLY SAYS
 
 A 2023 meta-analysis in the British Journal of Sports Medicine compared every major exercise category for blood pressure reduction. The results surprised most clinicians.
 
@@ -158,19 +130,15 @@ A NOTE ON GLUCOSE
 
 Dynamic squats (15 reps, 3 to 4 times daily) are most effective in the post-meal window because they act as a glucose sink. The two movements serve different purposes. Use both.
 
-Source: BJSM 2023 Meta-Analysis on exercise training and resting blood pressure. Educational use only. Not a substitute for medical evaluation or treatment.',
-    3
-  );
+Source: BJSM 2023 Meta-Analysis on exercise training and resting blood pressure. Educational use only. Not a substitute for medical evaluation or treatment.'
+  WHERE course_id = v_course_id AND sort_order = 3;
 
 
   -- Lesson 5: Blood Sugar: The 45-Minute Rule
-  INSERT INTO public.course_modules (
-    course_id, title, youtube_url, notes, sort_order
-  ) VALUES (
-    v_course_id,
-    'Blood Sugar: The 45-Minute Rule',
-    'https://www.youtube.com/watch?v=CyHKGCmXW7o',
-    'A FINDING THAT CHALLENGES THE STANDARD ADVICE
+  UPDATE public.course_modules
+  SET
+    youtube_url = 'https://www.youtube.com/watch?v=CyHKGCmXW7o',
+    notes = 'A FINDING THAT CHALLENGES THE STANDARD ADVICE
 
 A study published in the Scandinavian Journal of Medicine and Science in Sports asked a simple question: is it more effective to take a single 30-minute walk, or to move briefly throughout the day?
 
@@ -198,8 +166,7 @@ Watch the video above for squat technique.
 
 This does not replace structured exercise. It fills the gaps between sessions and targets the hours when blood sugar tends to drift most.
 
-Source: doi.org/10.1111/sms.14628. Educational use only. Not medical advice.',
-    4
-  );
+Source: doi.org/10.1111/sms.14628. Educational use only. Not medical advice.'
+  WHERE course_id = v_course_id AND sort_order = 4;
 
 END $$;
