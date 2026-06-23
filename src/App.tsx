@@ -45,6 +45,8 @@ import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
+import MetabolicToolsPage from '@/pages/client/MetabolicToolsPage'
+import ToolsPage from '@/pages/ToolsPage'
 import DailyPlatePage from '@/pages/client/DailyPlatePage'
 import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
 import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
@@ -107,6 +109,7 @@ export default function App() {
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
         <Route path="/shop" element={<ShopPage />} />
+        <Route path="/tools" element={<ToolsPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
@@ -138,6 +141,7 @@ export default function App() {
           <Route path="classroom" element={<ClassroomPage />} />
           <Route path="feedback" element={<FeedbackPage />} />
           <Route path="classroom/:courseId" element={<CoursePage />} />
+          <Route path="metabolic-tools" element={<MetabolicToolsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

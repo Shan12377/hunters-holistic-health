@@ -275,6 +275,7 @@ export default function LandingPage() {
           <span className={styles.navLogo}>Hunter's Holistic Health</span>
         </Link>
         <div className={styles.navLinks}>
+          <Link to="/tools" className={styles.navLink}>Free Tools</Link>
           <Link to="/login" className={styles.navLink}>Sign In</Link>
           <button onClick={scrollToPricing} className={shared.btnPrimary}>See Pricing</button>
         </div>
@@ -714,6 +715,7 @@ export default function LandingPage() {
       <footer className={styles.footer}>
         <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.footerEmblem} />
         <div className={styles.footerLinks}>
+          <Link to="/tools" className={styles.footerLink}>Free Tools</Link>
           <Link to="/shop" className={styles.footerLink}>Shop</Link>
           <Link to="/join" className={styles.footerLink}>Join Waitlist</Link>
           <Link to="/support" className={styles.footerLink}>Support</Link>
