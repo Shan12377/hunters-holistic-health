@@ -112,7 +112,7 @@ export default function App() {
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
-        <Route path="/shop" element={<ShopPage />} />
+        <Route path="/shop" element={<Navigate to="/creatine" replace />} />
         <Route path="/creatine" element={<CreatinePage />} />
         <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
         <Route path="/tools" element={<ToolsPage />} />
