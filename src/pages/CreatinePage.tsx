@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CheckCircle, Download, ChevronDown } from 'lucide-react'
+
+const STORE_URL = 'https://tidycal.com/drshallandahunter/store'
 import styles from './CreatinePage.module.css'
 
 const BUNDLE_ITEMS = [
@@ -74,7 +76,7 @@ export default function CreatinePage() {
       {/* Nav */}
       <nav className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
-        <Link to="/checkout" className={styles.navCta}>Get the Bundle $47</Link>
+        <a href={STORE_URL} target="_blank" rel="noopener" className={styles.navCta}>Get the Bundle $47</a>
       </nav>
 
       {/* Hero */}
@@ -85,10 +87,10 @@ export default function CreatinePage() {
           A 90-day creatine system built by a PharmD. Evidence-based. Fully cited. Built for brain health, performance, and everyone the research actually covers.
         </p>
         <div className={styles.ctaWrap}>
-          <Link to="/checkout" className={styles.ctaBtn}>
+          <a href={STORE_URL} target="_blank" rel="noopener" className={styles.ctaBtn}>
             <Download size={18} />
             Get Instant Access for $47
-          </Link>
+          </a>
           <span className={styles.ctaPrice}>One price. Instant download. 8 files included.</span>
         </div>
       </header>
@@ -153,10 +155,10 @@ export default function CreatinePage() {
           <div className={styles.priceCard}>
             <p className={styles.priceAmount}>$47</p>
             <p className={styles.priceLabel}>One price. Instant download. Everything included.</p>
-            <Link to="/checkout" className={styles.ctaBtn}>
+            <a href={STORE_URL} target="_blank" rel="noopener" className={styles.ctaBtn}>
               <Download size={18} />
               Get Instant Access
-            </Link>
+            </a>
           </div>
         </div>
       </section>
