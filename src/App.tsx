@@ -43,6 +43,8 @@ import ManageClassroomPage from '@/pages/coach/ManageClassroomPage'
 import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
 import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
+import CreatinePage from '@/pages/CreatinePage'
+import CreatineNotWhatYouThink from '@/pages/blog/CreatineNotWhatYouThink'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
 import MetabolicToolsPage from '@/pages/client/MetabolicToolsPage'
@@ -109,6 +111,8 @@ export default function App() {
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
         <Route path="/shop" element={<ShopPage />} />
+        <Route path="/creatine" element={<CreatinePage />} />
+        <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
         <Route path="/tools" element={<ToolsPage />} />
 
         {/* Client app routes */}

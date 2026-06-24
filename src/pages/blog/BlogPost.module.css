@@ -1,0 +1,235 @@
+/* BlogPost.module.css */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.navLogo {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.navLogo:hover { color: var(--teal); }
+
+.navCta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+  border: 1px solid var(--teal);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navCta:hover {
+  background: var(--teal);
+  color: #0e1c1b;
+}
+
+/* Article */
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.articleHeader {
+  margin-bottom: 2.5rem;
+}
+
+.byline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+}
+
+.h1 {
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Body prose */
+.body p,
+.body li {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
+}
+
+.body h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 2.5rem 0 0.75rem;
+}
+
+.body ul {
+  padding-left: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+.body ul li { margin-bottom: 0.4rem; }
+
+.body a {
+  color: var(--teal);
+  text-decoration: none;
+}
+
+.body a:hover { text-decoration: underline; }
+
+.body strong { color: var(--text); }
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.sig {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
+}
+
+/* Blog images */
+.blogImg {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  margin: 2rem 0;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.imgCaption {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: -1.25rem 0 2rem;
+  font-style: italic;
+}
+
+/* Sources */
+.sources {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.sources p { color: var(--text-secondary); font-weight: 600; margin: 0 0 0.4rem; }
+.sources ul { padding-left: 1.25rem; margin: 0; }
+.sources li { margin-bottom: 0.3rem; }
+
+/* Disclaimer */
+.disclaimer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+.disclaimer p { margin: 0 0 0.6rem; }
+.disclaimer p:last-child { margin: 0; }
+.disclaimer a { color: var(--teal); }
+
+/* Email opt-in */
+.optIn {
+  background: var(--card-bg, #152423);
+  border: 1px solid var(--teal);
+  border-radius: 12px;
+  padding: 1.75rem;
+  text-align: center;
+}
+
+.optInHeadline {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1.25rem;
+}
+
+.optInForm {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+@media (max-width: 500px) {
+  .optInForm { flex-direction: column; }
+}
+
+.optInInput {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+}
+
+.optInInput:focus { border-color: var(--teal); }
+
+.optInBtn {
+  background: var(--teal);
+  color: #0e1c1b;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.optInBtn:hover { opacity: 0.88; }
+.optInBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.optInSuccess {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--teal);
+  margin: 0;
+}
+
+.optInError {
+  font-size: 0.82rem;
+  color: #e05c5c;
+  margin: 0.5rem 0 0;
+}

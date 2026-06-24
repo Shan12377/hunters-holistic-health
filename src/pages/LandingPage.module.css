@@ -353,6 +353,15 @@
   transform: scale(1.12) rotate(-3deg);
 }
 
+.featureImg {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  display: block;
+}
+
 .featureTitle {
   font-family: var(--font-headline);
   font-size: 16px;

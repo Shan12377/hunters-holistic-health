@@ -36,16 +36,16 @@ const checkoutUrl = (key: keyof typeof STRIPE) => STRIPE[key] || '/join'
 
 // --- Static data ---
 const FEATURES = [
-  { icon: Heart,       color: '#e05c5c', title: 'Blood Pressure Tracker',   desc: 'Log readings and visualize trends with AHA-zone color-coding. Understand the pattern, not just the number.' },
-  { icon: Shield,      color: '#c8a74b', title: 'AI Meal Guard',             desc: 'Get instant educational context on a food choice before you eat. Grounded in functional and nutritional medicine.' },
-  { icon: Activity,    color: '#0b9e8e', title: 'Daily Command Center',      desc: 'Fasting, meals, supplements, steps, and water in one 10-minute daily check-in.' },
-  { icon: Award,       color: '#9b59b6', title: 'Weekly Report Card',        desc: 'Your consistency score and grade across every tracked habit, every week.' },
-  { icon: Users,       color: '#4be08a', title: 'Community Rooms',           desc: 'Private group rooms with levels, streaks, and a leaderboard. Progress is more visible when others see it.' },
-  { icon: BookOpen,    color: '#c8a74b', title: 'ROOTS Curriculum',          desc: 'The structured functional and nutritional medicine curriculum. Evidence-informed. Fully cited where the science is strong.' },
-  { icon: Pill,        color: '#9b59b6', title: 'Supplement Log',            desc: 'Track your daily protocol. Know what you took and when.' },
-  { icon: Dumbbell,    color: '#4be08a', title: 'Movement Log',              desc: 'Log exercise with condition-specific education on why that movement matters for your metabolic patterns.' },
-  { icon: Zap,         color: '#e08a4b', title: 'Challenges and Events',     desc: 'Community challenges with points, accountability, and recognition for showing up consistently.' },
-  { icon: ExternalLink,color: '#0b9e8e', title: 'Progress Reports',          desc: 'Shareable HTML reports to bring to your own healthcare appointments.' },
+  { img: '/features/blood-pressure-tracker.jpeg', title: 'Blood Pressure Tracker',   desc: 'Log readings and visualize trends with AHA-zone color-coding. Understand the pattern, not just the number.' },
+  { img: '/features/ai-meal-guard.jpeg',           title: 'AI Meal Guard',             desc: 'Get instant educational context on a food choice before you eat. Grounded in functional and nutritional medicine.' },
+  { img: '/features/daily-command-center.jpeg',    title: 'Daily Command Center',      desc: 'Fasting, meals, supplements, steps, and water in one 10-minute daily check-in.' },
+  { img: '/features/weekly-report-card.jpeg',      title: 'Weekly Report Card',        desc: 'Your consistency score and grade across every tracked habit, every week.' },
+  { img: '/features/community-rooms.jpeg',         title: 'Community Rooms',           desc: 'Private group rooms with levels, streaks, and a leaderboard. Progress is more visible when others see it.' },
+  { img: '/features/roots-curriculum.jpeg',        title: 'ROOTS Curriculum',          desc: 'The structured functional and nutritional medicine curriculum. Evidence-informed. Fully cited where the science is strong.' },
+  { img: '/features/supplement-log.jpeg',          title: 'Supplement Log',            desc: 'Track your daily protocol. Know what you took and when.' },
+  { img: '/features/movement-log.jpeg',            title: 'Movement Log',              desc: 'Log exercise with condition-specific education on why that movement matters for your metabolic patterns.' },
+  { img: '/features/challenges-events.jpeg',       title: 'Challenges and Events',     desc: 'Community challenges with points, accountability, and recognition for showing up consistently.' },
+  { img: '/features/progress-reports.jpeg',        title: 'Progress Reports',          desc: 'Shareable HTML reports to bring to your own healthcare appointments.' },
 ]
 
 const WHO_FOR = [
@@ -506,11 +506,9 @@ export default function LandingPage() {
         <h2 className={styles.sectionTitle}>Every tool you need to track, learn, and understand.</h2>
         <p className={styles.sectionSubtitle}>Built for functional and nutritional medicine education participants. Not generic wellness. Specific and purposeful.</p>
         <div className={styles.featuresGrid}>
-          {FEATURES.map(({ icon: Icon, color, title, desc }) => (
+          {FEATURES.map(({ img, title, desc }) => (
             <div key={title} className={styles.featureCard}>
-              <div className={styles.featureIcon} style={{ background: `${color}15`, borderColor: `${color}30` }}>
-                <Icon size={20} color={color} />
-              </div>
+              <img src={img} alt={title} className={styles.featureImg} />
               <h3 className={styles.featureTitle}>{title}</h3>
               <p className={styles.featureDesc}>{desc}</p>
             </div>
