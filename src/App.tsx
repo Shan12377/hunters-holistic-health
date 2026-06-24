@@ -29,6 +29,7 @@ import JoinPage from '@/pages/intake/JoinPage'
 import SupportPage from '@/pages/intake/SupportPage'
 import FeatureRequestPage from '@/pages/intake/FeatureRequestPage'
 import ClinicalInquiryPage from '@/pages/intake/ClinicalInquiryPage'
+import ContactPage from '@/pages/intake/ContactPage'
 import MessagesPage from '@/pages/client/MessagesPage'
 import LeaderboardPage from '@/pages/client/LeaderboardPage'
 import EventsPage from '@/pages/client/EventsPage'
@@ -109,6 +110,7 @@ export default function App() {
         <Route path="/support" element={<SupportPage />} />
         <Route path="/feature-request" element={<FeatureRequestPage />} />
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/creatine" element={<CreatinePage />} />
