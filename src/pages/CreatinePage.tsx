@@ -86,6 +86,11 @@ export default function CreatinePage() {
         <p className={styles.heroSub}>
           A 90-day creatine system built by a PharmD. Evidence-based. Fully cited. Built for brain health, performance, and everyone the research actually covers.
         </p>
+        <img
+          src="/creatine-bundle-hero.jpeg"
+          alt="Creatine Stack Bundle: Science Guide on tablet, 30-Day Supplement Tracker on phone, Workout Performance Log, Brain Health Bonus Guide, Hydration Tracker, and creatine jar"
+          className={styles.heroImg}
+        />
         <div className={styles.ctaWrap}>
           <a href={STORE_URL} target="_blank" rel="noopener" className={styles.ctaBtn}>
             <Download size={18} />
