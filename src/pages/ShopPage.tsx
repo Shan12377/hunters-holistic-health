@@ -1,25 +1,18 @@
 import { Link } from 'react-router-dom'
-import { CheckCircle, Lock, Download, Clock } from 'lucide-react'
+import { CheckCircle, Lock, Download } from 'lucide-react'
 import styles from './ShopPage.module.css'
+
+const STORE_URL = 'https://tidycal.com/drshallandahunter/store'
 
 const BUNDLE_ITEMS = [
   'Quick Start Guide (2 pages): Loading vs. maintenance decision tree, Day 1 checklist, your personal protocol setup',
-  'Creatine Science Guide (14 pages): How it works, athletic performance, cognitive benefits, women vs. men, safety, myths debunked, quality guide, clinical cautions, and primary sources cited',
+  'Creatine Science Guide (20+ pages): How it works, athletic performance, cognitive benefits, women vs. men, safety, myths debunked, quality guide, and primary sources cited',
+  'Brain Health Bonus Guide (8 pages): The cognitive performance evidence, depression research, who benefits most, tracker guidance, and what the research does not yet show',
   '30-Day Supplement Tracker: Daily dose, water, workout, energy, mood, and notes, plus weekly reflection pages',
   'Workout Performance Log: Baseline benchmarks plus Day 30, 60, and 90 re-tests for 10 key exercises',
-  'Hydration and Nutrition Tracker: Daily creatine, water, protein, carbs, fats, and calories with auto-calculated targets on the cover page',
+  'Hydration and Nutrition Tracker: Daily creatine, water, protein, carbs, fats, and calories with auto-calculated targets',
   'Supplement Stack Cheat Sheet (1 page): Evidence-graded pairings, what works, what to use with caution, what to skip',
   'Google Sheets Workbook: 5 tabs, auto-calculating, progress charts that update as you log',
-  '90-Day Notion Template: Full linked workspace with protocol setup, daily tracker, workout log, nutrition log, progress summary, and science quick reference',
-]
-
-const BRAIN_GUIDE_TOPICS = [
-  'Why creatine matters for cognitive function (the ATP mechanism explained plainly)',
-  'The depression research: what happened when creatine was added to SSRIs and to CBT in women',
-  'Why women have lower baseline creatine and why that matters for mood, perimenopause, and postpartum recovery',
-  'Cognitive benefits in adults 66 and older',
-  'Why vegetarians and vegans respond most strongly to supplementation',
-  'How to use the 90-day tracker specifically for brain health outcomes, not just physical performance',
 ]
 
 const WHO_LIST = [
@@ -35,20 +28,7 @@ const WHO_LIST = [
 const FORMATS = [
   { label: 'PDFs', detail: 'Fillable in Adobe Acrobat, Preview (Mac), GoodNotes, Notability, or any PDF viewer. Also printable.' },
   { label: 'Google Sheets', detail: 'Open in Google Drive (free) or Microsoft Excel.' },
-  { label: 'Notion Template', detail: 'Import via File > Import > Markdown and CSV in Notion (free plan compatible).' },
 ]
-
-function ComingSoonBtn({ price }: { price: string }) {
-  return (
-    <div className={styles.csnWrap}>
-      <button className={styles.csnBtn} disabled>
-        <Clock size={16} /> Coming Soon
-      </button>
-      <p className={styles.csnNote}>Secure checkout opens soon. Bookmark this page.</p>
-      <p className={styles.csnPrice}>{price}</p>
-    </div>
-  )
-}
 
 export default function ShopPage() {
   return (
@@ -56,7 +36,7 @@ export default function ShopPage() {
       {/* Nav */}
       <header className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
-        <Link to="/login" className={styles.navCta}>Sign In</Link>
+        <a href={STORE_URL} target="_blank" rel="noopener" className={styles.navCta}>Get the Bundle $47</a>
       </header>
 
       {/* Hero */}
@@ -77,7 +57,7 @@ export default function ShopPage() {
         <div className={styles.container}>
           <h2 className={styles.sectionH2}>What This Is</h2>
           <p className={styles.bodyText}>
-            The Creatine Stack Bundle is 8 files covering everything from the science (what creatine actually does in your brain and body) to a full 90-day tracking system across PDF, Google Sheets, and Notion.
+            The Creatine Stack Bundle is 8 files covering everything from the science (what creatine actually does in your brain and body) to a full 90-day tracking system across PDF and Google Sheets.
           </p>
           <p className={styles.bodyText}>
             Every claim in the science guide is cited against peer-reviewed research. No marketing language. No proprietary blend hype. Just the mechanism, the evidence, and the tools to track your results.
@@ -90,8 +70,8 @@ export default function ShopPage() {
         <div className={styles.container}>
           <h2 className={styles.sectionH2}>Who This Is For</h2>
           <ul className={styles.checkList}>
-            {WHO_LIST.map((item, i) => (
-              <li key={i} className={styles.checkItem}>
+            {WHO_LIST.map((item) => (
+              <li key={item} className={styles.checkItem}>
                 <CheckCircle size={16} className={styles.checkIcon} />
                 <span>{item}</span>
               </li>
@@ -100,79 +80,27 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Pricing tiers */}
+      {/* Single price + what's included */}
       <section className={styles.section} id="pricing">
         <div className={styles.container}>
-          <h2 className={styles.sectionH2}>Choose Your Tier</h2>
-          <div className={styles.tierGrid}>
-
-            {/* Tier 1 */}
-            <div className={styles.tierCard}>
-              <div className={styles.tierLabel}>TIER 1</div>
-              <h3 className={styles.tierTitle}>The Bundle</h3>
-              <p className={styles.tierTagline}>Everything you need to start, track, and measure your creatine protocol.</p>
-              <ul className={styles.tierList}>
-                {BUNDLE_ITEMS.map((item, i) => (
-                  <li key={i} className={styles.tierItem}>
-                    <CheckCircle size={14} className={styles.tierCheck} />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className={styles.tierCount}>8 files. Instant access after purchase.</p>
-              <ComingSoonBtn price="$27" />
-            </div>
-
-            {/* Tier 2 */}
-            <div className={`${styles.tierCard} ${styles.tierCardFeatured}`}>
-              <div className={styles.tierBestBadge}>Most Popular</div>
-              <div className={styles.tierLabel}>TIER 2</div>
-              <h3 className={styles.tierTitle}>Bundle + Brain Health Guide</h3>
-              <p className={styles.tierTagline}>Everything in Tier 1, plus the bonus guide: Creatine and Your Brain.</p>
-              <p className={styles.tierSubhead}>The brain health guide covers:</p>
-              <ul className={styles.tierList}>
-                {BRAIN_GUIDE_TOPICS.map((item, i) => (
-                  <li key={i} className={styles.tierItem}>
-                    <CheckCircle size={14} className={styles.tierCheck} />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className={styles.tierGuideNote}>
-                This guide was written from the clinical literature by Dr. Hunter directly. It is not a summary of a summary. It is the research explained the way she would explain it to a patient sitting across from her.
-              </p>
-              <ComingSoonBtn price="$47" />
-            </div>
-
-            {/* Tier 3 */}
-            <div className={styles.tierCard}>
-              <div className={styles.tierLabel}>TIER 3</div>
-              <h3 className={styles.tierTitle}>VIP: Bundle + Brain Health Guide + Consultation</h3>
-              <p className={styles.tierTagline}>Everything in Tier 2, plus a 30-minute 1:1 session with Dr. Shallanda Hunter, PharmD.</p>
-              <p className={styles.tierSubhead}>In the session you will:</p>
-              <ul className={styles.tierList}>
-                <li className={styles.tierItem}>
+          <h2 className={styles.sectionH2}>The Complete Bundle</h2>
+          <div className={`${styles.tierCard} ${styles.tierCardFeatured}`} style={{ maxWidth: 560, margin: '0 auto' }}>
+            <p className={styles.csnPrice} style={{ fontSize: '2.5rem', marginBottom: '0.25rem' }}>$47</p>
+            <p className={styles.tierTagline}>One price. Instant download. 8 files included. Everything to start, track, and measure your 90-day protocol.</p>
+            <ul className={styles.tierList}>
+              {BUNDLE_ITEMS.map((item) => (
+                <li key={item} className={styles.tierItem}>
                   <CheckCircle size={14} className={styles.tierCheck} />
-                  <span>Review your specific situation: medications, health history, goals</span>
+                  <span>{item}</span>
                 </li>
-                <li className={styles.tierItem}>
-                  <CheckCircle size={14} className={styles.tierCheck} />
-                  <span>Get a personalized protocol recommendation (loading vs. maintenance, timing, pairings)</span>
-                </li>
-                <li className={styles.tierItem}>
-                  <CheckCircle size={14} className={styles.tierCheck} />
-                  <span>Ask questions directly and get clinical-level answers, not generic supplement advice</span>
-                </li>
-              </ul>
-              <p className={styles.tierNote}>
-                Booking link sent immediately after purchase. Session conducted via secure telehealth.
-              </p>
-              <p className={styles.tierDisclaimer}>
-                This is a Functional Medicine Educator consultation. It is educational in nature and does not create a patient-provider relationship. Dr. Hunter will not prescribe medications or diagnose conditions in this session.
-              </p>
-              <ComingSoonBtn price="$97" />
+              ))}
+            </ul>
+            <div className={styles.csnWrap}>
+              <a href={STORE_URL} target="_blank" rel="noopener" className={styles.navCta} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.75rem', fontSize: '1rem', justifyContent: 'center' }}>
+                <Download size={16} /> Get Instant Access
+              </a>
+              <p className={styles.csnNote}>Secure checkout. Files delivered immediately after purchase.</p>
             </div>
-
           </div>
         </div>
       </section>
@@ -218,7 +146,7 @@ export default function ShopPage() {
           </div>
           <div className={styles.purchaseNote}>
             <Lock size={14} />
-            <span>This is a digital download. No physical product is shipped. Files are available immediately after purchase. For personal and clinical use. Not for resale or redistribution.</span>
+            <span>This is a digital download. No physical product is shipped. Files are available immediately after purchase. For personal use. Not for resale or redistribution.</span>
           </div>
           <p className={styles.legalDisclaimer}>
             This resource is for educational purposes only and does not constitute medical advice, diagnosis, or treatment. Consult a qualified healthcare provider before starting any supplement protocol.

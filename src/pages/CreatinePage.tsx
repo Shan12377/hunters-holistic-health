@@ -240,6 +240,18 @@ export default function CreatinePage() {
         </div>
       </section>
 
+      {/* Blog callout */}
+      <section className={styles.section}>
+        <div className={styles.container}>
+          <p className={styles.bodyText} style={{ borderLeft: '3px solid var(--teal)', paddingLeft: '1rem' }}>
+            Want the full science breakdown before you buy? Read:{' '}
+            <Link to="/blog/creatine-not-what-you-think" style={{ color: 'var(--teal)', fontWeight: 600 }}>
+              Creatine: Not What You Think It Is
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className={styles.sectionAlt}>
         <div className={styles.container}>
