@@ -655,17 +655,14 @@ export default function LandingPage() {
         <div className={styles.ctaBandFrame}>
           <div className={styles.ctaBandInner}>
             <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.ctaEmblem} />
-            <h2 className={styles.ctaTitle}>Your roots grow one day at a time.</h2>
+            <h2 className={styles.ctaTitle}>Lasting health starts at the roots.</h2>
             <p className={styles.ctaText}>
-              Join the platform and start learning what your numbers actually mean.
+              Join the platform to stop guessing and finally understand what your body is telling you.
             </p>
             <div className={styles.ctaActions}>
               <button onClick={scrollToPricing} className={shared.btnPrimary}>
                 See Membership Options <ChevronRight size={18} />
               </button>
-              <Link to="/join" className={shared.btnGhost}>
-                Join the Waitlist
-              </Link>
             </div>
           </div>
         </div>
@@ -687,7 +684,7 @@ export default function LandingPage() {
         <div className={styles.footerLinks}>
           <Link to="/tools" className={styles.footerLink}>Free Tools</Link>
           <Link to="/shop" className={styles.footerLink}>Shop</Link>
-          <Link to="/join" className={styles.footerLink}>Join Waitlist</Link>
+          <Link to="/join" className={styles.footerLink}>Join</Link>
           <Link to="/support" className={styles.footerLink}>Support</Link>
           <Link to="/feature-request" className={styles.footerLink}>Request a Feature</Link>
           <Link to="/clinical-inquiry" className={styles.footerLink}>Clinical Inquiry</Link>
