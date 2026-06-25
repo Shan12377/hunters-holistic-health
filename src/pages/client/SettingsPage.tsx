@@ -8,8 +8,34 @@ import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 import type { WellnessGoals, PrivacySettings } from '@/types'
 
-const GOAL_OPTIONS = ['', 'Energy', 'Weight Management', 'Cardiovascular Health', 'Digestive Health', 'Stress and Sleep', 'General Wellness', 'Other']
-const DIET_OPTIONS = ['', 'No restriction', 'Plant-based', 'Gluten-free', 'Dairy-free', 'Low sodium', 'Other']
+const GOAL_OPTIONS = [
+  '',
+  'Blood Pressure Support',
+  'Blood Sugar Balance',
+  'Weight Management',
+  'Energy and Fatigue',
+  'Cardiovascular Health',
+  'Digestive Health',
+  'Hormonal Balance',
+  'Inflammation Reduction',
+  'Stress and Sleep',
+  'Metabolic Health',
+  'General Wellness',
+  'Other',
+]
+const DIET_OPTIONS = [
+  '',
+  'No restriction',
+  'Plant-based',
+  'Mediterranean',
+  'Anti-inflammatory',
+  'Gluten-free',
+  'Dairy-free',
+  'Low sodium',
+  'Low carb',
+  'Caribbean',
+  'Other',
+]
 
 export default function SettingsPage() {
   const { profile, setProfile } = useAuthStore()
@@ -100,7 +126,7 @@ export default function SettingsPage() {
           <Target size={16} color="var(--gold)" /> Your Wellness Goals
         </h3>
         <p className={styles.settingsSectionNote}>
-          Used to personalize your AI Meal Guard experience. Not clinical data. Not shared with third parties.
+          Used to personalize your AI Meal Guard, Smart Recipe Builder, and VitaPlate Plate Coach. Not clinical data. Not shared with third parties.
         </p>
         <div className={styles.settingsRow}>
           <label className={styles.label}>Primary wellness goal</label>
