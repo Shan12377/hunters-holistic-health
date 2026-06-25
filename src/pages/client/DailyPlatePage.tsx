@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Coffee, Sun, Moon, Apple, Plus, X, Zap, ChevronDown, ChevronUp, Search, Sparkles, Loader2, Target, TrendingUp, ShieldCheck } from 'lucide-react'
 import { FOOD_DATABASE, MEAL_SLOT_LABELS, type MealSlot, type FoodItem } from '@/data/foodDatabase'
 import { detectSynergies, type FoodSynergy } from '@/data/synergies'
 import styles from './Client.module.css'
+import { usePlan } from '@/hooks/usePlan'
 
 type Plate = Record<MealSlot, FoodItem[]>
 
@@ -73,13 +74,22 @@ function MacroBar({ label, value, goal, color }: { label: string; value: number;
   )
 }
 
+const PLATE_ANALYSIS_LIMIT = 3
+const PA_KEY = () => `pa_count_${new Date().toISOString().split('T')[0]}`
+
 export default function DailyPlatePage() {
+  const { vitaPlateDailyLimit } = usePlan()
   const [plate, setPlate] = useState<Plate>(EMPTY_PLATE)
   const [addingTo, setAddingTo] = useState<MealSlot | null>(null)
   const [searchQ, setSearchQ] = useState('')
   const [expandedSynergy, setExpandedSynergy] = useState<string | null>(null)
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisCount, setAnalysisCount] = useState(0)
+
+  useEffect(() => {
+    setAnalysisCount(parseInt(localStorage.getItem(PA_KEY()) ?? '0', 10))
+  }, [])
 
   const allFoods = useMemo(() => Object.values(plate).flat(), [plate])
   const allFoodIds = useMemo(() => allFoods.map(f => f.id), [allFoods])
@@ -115,6 +125,13 @@ export default function DailyPlatePage() {
 
   async function runAiAnalysis() {
     if (allFoods.length === 0) return
+    if (analysisCount >= vitaPlateDailyLimit) {
+      setAiAnalysis(`You have used your ${PLATE_ANALYSIS_LIMIT} daily AI analyses. Upgrade to The Program for unlimited access.`)
+      return
+    }
+    const next = analysisCount + 1
+    localStorage.setItem(PA_KEY(), String(next))
+    setAnalysisCount(next)
     setIsAnalyzing(true)
     setAiAnalysis(null)
     const plateDescription = SLOTS.map(slot => {
