@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Flame, Send, Loader2, Info, CheckCircle2, AlertTriangle, BadgeCheck } from 'lucide-react'
 import styles from './Client.module.css'
 import PlanGate from '@/components/ui/PlanGate'
+import { useAuthStore } from '@/store/authStore'
 
 type Restriction =
   | 'dairy_free' | 'gluten_free' | 'soy_free' | 'nut_free'
@@ -51,6 +52,9 @@ interface RecipeResult {
 
 export default function SmartRecipeBuilderPage() {
   const [searchParams] = useSearchParams()
+  const { profile } = useAuthStore()
+  const userGoal = profile?.wellness_goals?.primary_goal ?? ''
+  const dietaryStyle = profile?.wellness_goals?.dietary_preference ?? ''
   const [prompt, setPrompt] = useState('')
   const [restrictions, setRestrictions] = useState<Restriction[]>([])
   const [loading, setLoading] = useState(false)
@@ -78,7 +82,7 @@ export default function SmartRecipeBuilderPage() {
       const res = await fetch('/api/recipe-builder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: prompt.trim(), restrictions }),
+        body: JSON.stringify({ prompt: prompt.trim(), restrictions, userGoal, dietaryStyle }),
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))

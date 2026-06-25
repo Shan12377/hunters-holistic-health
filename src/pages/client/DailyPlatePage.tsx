@@ -4,6 +4,7 @@ import { FOOD_DATABASE, MEAL_SLOT_LABELS, type MealSlot, type FoodItem } from '@
 import { detectSynergies, type FoodSynergy } from '@/data/synergies'
 import styles from './Client.module.css'
 import { usePlan } from '@/hooks/usePlan'
+import { useAuthStore } from '@/store/authStore'
 
 type Plate = Record<MealSlot, FoodItem[]>
 
@@ -79,6 +80,9 @@ const PA_KEY = () => `pa_count_${new Date().toISOString().split('T')[0]}`
 
 export default function DailyPlatePage() {
   const { vitaPlateDailyLimit } = usePlan()
+  const { profile } = useAuthStore()
+  const userGoal = profile?.wellness_goals?.primary_goal ?? ''
+  const dietaryStyle = profile?.wellness_goals?.dietary_preference ?? ''
   const [plate, setPlate] = useState<Plate>(EMPTY_PLATE)
   const [addingTo, setAddingTo] = useState<MealSlot | null>(null)
   const [searchQ, setSearchQ] = useState('')
@@ -143,7 +147,7 @@ export default function DailyPlatePage() {
       const res = await fetch('/api/plate-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plateDescription, vitaScore, synergiesDetected: synergies.map(s => s.title), dayTotals }),
+        body: JSON.stringify({ plateDescription, vitaScore, synergiesDetected: synergies.map(s => s.title), dayTotals, userGoal, dietaryStyle }),
       })
       if (!res.ok) throw new Error('Analysis failed')
       const data = await res.json()

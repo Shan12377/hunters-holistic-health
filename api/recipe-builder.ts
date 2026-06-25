@@ -1,12 +1,7 @@
-// Vercel Serverless Function: Smart Recipe Builder
-// Accepts a recipe prompt and optional dietary restrictions.
-// Calls OpenAI to generate a protocol-optimized recipe, then enriches each
-// ingredient with USDA FoodData Central nutrition data when a key is available.
-// Lane 1 (non-PHI). No user data is stored or transmitted in this function.
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const COMPLIANCE_SUFFIX =
   ' This recipe is provided for educational purposes by a Functional Medicine Educator. It is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before making changes to your nutrition plan.'
@@ -26,18 +21,22 @@ const RESTRICTION_RULES: Record<string, string> = {
 const HIGH_GMO_TERMS = ['corn', 'soy', 'soybeans', 'canola', 'canola oil', 'cottonseed', 'cottonseed oil', 'sugar beet', 'beet sugar', 'papaya', 'summer squash', 'alfalfa', 'zucchini']
 
 const SYSTEM_PROMPT_BASE = `You are the Smart Recipe Builder for Hunter's Holistic Health, powered by VitaPlate AI.
-You are an educational tool created by a Functional Medicine Educator.
+You are an educational tool created by a Certified Functional and Nutritional Medicine Practitioner and PharmD.
+
+YOUR ROLE: Generate practical, whole-food recipes optimized for metabolic and functional health education.
+Prioritize: nutrient density, blood sugar stability, anti-inflammatory ingredients, and real food over processed alternatives.
+When a user provides a cultural dish (Caribbean, Southern, etc.), honor the flavors while optimizing the ingredients functionally.
 
 COMPLIANCE RULES (non-negotiable):
 1. You are NOT a medical device, prescribing physician, Registered Dietitian, or Nutritionist. Never claim to be.
-2. Never use the words: treat, cure, diagnose, prescribe, heal, or prevent. Use: support, optimize, promote, balance, identify.
+2. Never use: treat, cure, diagnose, prescribe, heal, prevent. Use: support, optimize, promote, balance, nourish.
 3. Every recipe description MUST end with this exact compliance notice:${COMPLIANCE_SUFFIX}
 4. Never recommend stopping or changing medication.
 5. Never use em dashes in any output.
 
-GMO FLAGGING: For each ingredient, set "gmoFlag": true if the ingredient is a commonly genetically modified crop (corn, soy, soybeans, canola oil, cottonseed oil, beet sugar, conventional papaya, zucchini, summer squash). Otherwise set "gmoFlag": false.
+GMO FLAGGING: For each ingredient, set "gmoFlag": true if it is a commonly genetically modified crop (corn, soy, canola oil, cottonseed oil, beet sugar, conventional papaya, zucchini, summer squash). Otherwise set "gmoFlag": false.
 
-Generate a Nutrition Quality Score out of 100 based on: protein density (30pts), micronutrient richness (40pts), and overall food quality (30pts).
+NUTRITION SCORE: Generate a score out of 100 based on protein density (30pts), micronutrient richness (40pts), and whole-food quality (30pts).
 
 Return ONLY valid JSON (no markdown, no code fences) matching this exact schema:
 {
@@ -53,9 +52,11 @@ Return ONLY valid JSON (no markdown, no code fences) matching this exact schema:
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { prompt, restrictions } = req.body as {
+  const { prompt, restrictions, userGoal, dietaryStyle } = req.body as {
     prompt?: string
     restrictions?: string[]
+    userGoal?: string
+    dietaryStyle?: string
   }
 
   if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
@@ -70,21 +71,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ? `\n\nACTIVE DIETARY RESTRICTIONS (MUST BE HONORED — NO EXCEPTIONS):\n${activeRestrictions.join('\n')}`
     : ''
 
-  const systemPrompt = SYSTEM_PROMPT_BASE + restrictionBlock
+  const userContextBlock = (userGoal || dietaryStyle)
+    ? `\n\nUSER CONTEXT (use this to personalize the recipe):\n${userGoal ? `- Primary health goal: ${userGoal}` : ''}${dietaryStyle ? `\n- Dietary style: ${dietaryStyle}` : ''}\nOptimize ingredient choices, portion guidance, and description to align with this context.`
+    : ''
+
+  const systemPrompt = SYSTEM_PROMPT_BASE + userContextBlock + restrictionBlock
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.4,
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 2000,
-      response_format: { type: 'json_object' },
+      system: systemPrompt,
+      messages: [{ role: 'user', content: prompt }],
     })
 
-    const recipeData = JSON.parse(completion.choices[0].message.content ?? '{}')
+    const raw = response.content.find(b => b.type === 'text')?.text ?? ''
+    const jsonStart = raw.indexOf('{')
+    const jsonEnd = raw.lastIndexOf('}')
+    const recipeData = JSON.parse(raw.slice(jsonStart, jsonEnd + 1))
 
     // Flag GMO ingredients
     if (Array.isArray(recipeData.ingredients)) {
@@ -95,66 +99,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const hasUsdaKey = !!process.env.USDA_API_KEY
-
-    let totalProtein = 0
-    let totalCarbs = 0
-    let totalFat = 0
-    let totalZinc = 0
-    let totalIron = 0
-    let totalVitaminD = 0
-    let totalVitaminB12 = 0
+    let totalProtein = 0, totalCarbs = 0, totalFat = 0
+    let totalZinc = 0, totalIron = 0, totalVitaminD = 0, totalVitaminB12 = 0
 
     const ingredientsWithNutrition = await Promise.all(
       (recipeData.ingredients ?? []).map(async (ing: { name: string; amountGrams: number; displayAmount: string; gmoFlag: boolean }) => {
         if (!hasUsdaKey) {
-          const mock = {
-            protein: ing.amountGrams * 0.2,
-            carbs: ing.amountGrams * 0.1,
-            fat: ing.amountGrams * 0.05,
-            zinc: 0.5,
-            iron: 0.5,
-            vitaminD: 0,
-            vitaminB12: 0,
-          }
-          totalProtein += mock.protein
-          totalCarbs += mock.carbs
-          totalFat += mock.fat
+          const mock = { protein: ing.amountGrams * 0.2, carbs: ing.amountGrams * 0.1, fat: ing.amountGrams * 0.05, zinc: 0.5, iron: 0.5, vitaminD: 0, vitaminB12: 0 }
+          totalProtein += mock.protein; totalCarbs += mock.carbs; totalFat += mock.fat
           return { ...ing, nutrients: mock, matchedName: ing.name + ' (Estimated)' }
         }
-
         try {
-          const usdaRes = await fetch(
-            `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(ing.name)}&api_key=${process.env.USDA_API_KEY}&pageSize=1`
-          )
+          const usdaRes = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(ing.name)}&api_key=${process.env.USDA_API_KEY}&pageSize=1`)
           if (!usdaRes.ok) return { ...ing, nutrients: null }
-
           const usdaData = await usdaRes.json()
           const food = usdaData.foods?.[0]
           if (!food) return { ...ing, nutrients: null }
-
           const get = (re: RegExp) => {
             const n = food.foodNutrients?.find((fn: { nutrientName: string; value: number }) => re.test(fn.nutrientName))
             return n ? (n.value * ing.amountGrams) / 100 : 0
           }
-
-          const nutrients = {
-            protein: get(/Protein/i),
-            carbs: get(/Carbohydrate/i),
-            fat: get(/Total lipid \(fat\)/i),
-            zinc: get(/Zinc/i),
-            iron: get(/Iron/i),
-            vitaminD: get(/Vitamin D/i),
-            vitaminB12: get(/Vitamin B-12/i),
-          }
-
-          totalProtein += nutrients.protein
-          totalCarbs += nutrients.carbs
-          totalFat += nutrients.fat
-          totalZinc += nutrients.zinc
-          totalIron += nutrients.iron
-          totalVitaminD += nutrients.vitaminD
-          totalVitaminB12 += nutrients.vitaminB12
-
+          const nutrients = { protein: get(/Protein/i), carbs: get(/Carbohydrate/i), fat: get(/Total lipid \(fat\)/i), zinc: get(/Zinc/i), iron: get(/Iron/i), vitaminD: get(/Vitamin D/i), vitaminB12: get(/Vitamin B-12/i) }
+          totalProtein += nutrients.protein; totalCarbs += nutrients.carbs; totalFat += nutrients.fat
+          totalZinc += nutrients.zinc; totalIron += nutrients.iron; totalVitaminD += nutrients.vitaminD; totalVitaminB12 += nutrients.vitaminB12
           return { ...ing, nutrients, fdcId: food.fdcId, matchedName: food.description }
         } catch {
           return { ...ing, nutrients: null }
@@ -165,13 +132,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({
       recipe: { ...recipeData, ingredients: ingredientsWithNutrition },
       totals: {
-        protein: Math.round(totalProtein),
-        carbs: Math.round(totalCarbs),
-        fat: Math.round(totalFat),
-        zinc: Math.round(totalZinc * 10) / 10,
-        iron: Math.round(totalIron * 10) / 10,
-        vitaminD: Math.round(totalVitaminD * 10) / 10,
-        vitaminB12: Math.round(totalVitaminB12 * 10) / 10,
+        protein: Math.round(totalProtein), carbs: Math.round(totalCarbs), fat: Math.round(totalFat),
+        zinc: Math.round(totalZinc * 10) / 10, iron: Math.round(totalIron * 10) / 10,
+        vitaminD: Math.round(totalVitaminD * 10) / 10, vitaminB12: Math.round(totalVitaminB12 * 10) / 10,
         usdaVerified: hasUsdaKey,
       },
     })
