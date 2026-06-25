@@ -1231,6 +1231,114 @@
    CUSTOM INTENSIVE SECTION
    ============================================================ */
 
+/* 6-Month Overhaul anchor card */
+.overhaulCard {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-8);
+  align-items: start;
+  background: linear-gradient(135deg, rgba(200, 167, 75, 0.08), rgba(11, 158, 142, 0.06));
+  border: 1px solid rgba(200, 167, 75, 0.35);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  margin-bottom: var(--space-10);
+}
+
+@media (max-width: 860px) {
+  .overhaulCard { grid-template-columns: 1fr; }
+}
+
+.overhaulKicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--space-2);
+}
+
+.overhaulTitle {
+  font-family: var(--font-headline);
+  font-size: clamp(1.3rem, 3vw, 1.75rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-4);
+  line-height: 1.2;
+}
+
+.overhaulBody {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.overhaulList {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.overhaulItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.overhaulCheck { color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+
+.overhaulRight {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(200, 167, 75, 0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.overhaulPriceLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.overhaulPrice {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.overhaulScarcity {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.overhaulPriceNote {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.overhaulDisclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
 .customSection {
   padding: var(--space-16) var(--space-8);
   background:
