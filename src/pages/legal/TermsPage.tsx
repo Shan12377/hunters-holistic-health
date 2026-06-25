@@ -131,7 +131,7 @@ We reserve the right to investigate and take appropriate action against anyone w
 
 (c) Community Feed Standards. Content posted to the Accountability Feed must be supportive, honest, and respectful. We reserve the right to remove any User Content that we determine, in our sole discretion, violates these standards or these Terms. We are not obligated to monitor User Content but may do so at our discretion.
 
-(d) No Medical Content. You agree not to post content that constitutes medical advice, clinical recommendations, or diagnoses directed at other users. The Platform is an educational community, not a clinical setting.
+(d) No Medical Content. You agree not to post content that constitutes medical advice, clinical recommendations, diagnoses, dosing instructions, or treatment suggestions directed at other users. This specifically includes: responding to another user's health symptoms with supplement recommendations; suggesting specific medication dosages; recommending that another user start, stop, or change any prescription medication; or providing any guidance that could constitute the unlicensed practice of medicine, pharmacy, or dietetics. The Platform is an educational community, not a clinical setting. First violations result in content removal. Repeat violations result in permanent account termination without refund.
 
 (e) Feedback. Any feedback, suggestions, or ideas you provide to us about the Platform may be used by us without any obligation to you.`,
   },
@@ -159,7 +159,7 @@ We reserve the right to investigate and take appropriate action against anyone w
 (d) Stripe (payment processing)
 (e) Doxy.me (video session platform)
 (f) Fullscript (supplement dispensary)
-(g) Calendly (appointment scheduling)
+(g) TidyCal (appointment scheduling)
 
 Your use of any third-party service is governed by that service's own terms of service and privacy policy. We are not responsible for the content, privacy practices, or terms of any third-party service. The inclusion of any link or integration does not imply our endorsement of the third-party service.
 
@@ -191,9 +191,13 @@ Fullscript Affiliate Disclosure: We maintain an affiliate relationship with Full
 
 (c) Supplement Information. Information about supplements provided through the Platform is for educational purposes only. Supplements can interact with prescription medications and may not be appropriate for all individuals. The statements made about supplements have not been evaluated by the Food and Drug Administration. No supplement discussed on the Platform is intended to diagnose, treat, cure, or prevent any disease.
 
-(d) AI-Generated Content. The Platform uses artificial intelligence to generate educational content, including the AI Meal Guard feature. AI-generated content is for educational purposes only, may contain errors, and should not be relied upon as clinical guidance. Always verify AI-generated health information with a qualified healthcare professional.
+(d) AI-Generated Content. The Platform uses artificial intelligence to generate educational content, including the AI Meal Guard feature. AI-generated content is for educational purposes only, may contain errors or omissions, and is not an FDA-cleared medical device. Artificial intelligence systems can produce inaccurate, incomplete, or contextually inappropriate health information. Do not use AI-generated content as the basis for any medical decision. Always verify with a licensed healthcare professional.
 
-(e) Individual Variation. Human biology is highly individual. Educational information that is appropriate for one person may not be appropriate for another. The Platform does not account for your individual medical history, current medications, allergies, or other personal health factors.`,
+(e) Individual Variation. Human biology is highly individual. Educational information that is appropriate for one person may not be appropriate for another. The Platform does not account for your individual medical history, current medications, allergies, or other personal health factors.
+
+(f) Assumption of Risk. You voluntarily assume all risks associated with your use of the Platform and any health decisions you make based on educational content obtained through the Platform. The Company cannot predict or control your individual response to any educational information, supplement, food, or lifestyle practice discussed herein.
+
+(g) Drug Interactions. Supplements and natural compounds can interact with prescription medications, over-the-counter drugs, and other supplements in ways that may be serious. Educational content on this Platform does not account for your individual medication list. Consult a licensed pharmacist or physician before starting any supplement.`,
   },
   {
     id: '12',
@@ -209,6 +213,10 @@ Key privacy principles we follow:
 (c) Security: We implement industry-standard security measures to protect your data.
 
 (d) Your Rights: You have the right to access, correct, and delete your personal data at any time.
+
+(e) Electronic Communications. By creating an account, you consent to receive transactional emails (confirmations, receipts, security alerts). If you opt in, you may also receive educational content and program updates. You can unsubscribe from marketing emails at any time by clicking "unsubscribe" in any email or contacting info@huntersholistichealth.com. Transactional emails cannot be opted out of while your account is active.
+
+(f) State Privacy Rights. Residents of California and Wyoming have additional data rights including the right to know what data is collected, the right to delete it, and the right to opt out of any sale of personal data. We do not sell personal data. To exercise these rights, email info@huntersholistichealth.com with subject line "Privacy Rights Request" and your state of residence.
 
 Please review our Privacy Policy at app.huntersholistichealth.com/privacy for complete details.`,
   },
@@ -282,9 +290,9 @@ We reserve the right, at your expense, to assume the exclusive defense and contr
 
 (d) Exceptions. Notwithstanding the foregoing, either party may seek injunctive or other equitable relief in any court of competent jurisdiction to prevent the actual or threatened infringement, misappropriation, or violation of a party's intellectual property rights.
 
-(e) Governing Law. These Terms and any disputes arising hereunder shall be governed by and construed in accordance with the laws of the State of Texas, without regard to its conflict of law provisions.
+(e) Governing Law. These Terms and any disputes arising hereunder shall be governed by and construed in accordance with the laws of the State of Wyoming, without regard to its conflict of law provisions.
 
-(f) Venue. To the extent any dispute is not subject to arbitration, you consent to the exclusive jurisdiction of the state and federal courts located in Texas.`,
+(f) Venue. To the extent any dispute is not subject to arbitration, you consent to the exclusive jurisdiction of the state and federal courts located in Wyoming.`,
   },
   {
     id: '17',
@@ -328,8 +336,8 @@ We may also update the Platform's features, pricing, and content at any time. Ma
 
 Hunter's Holistic Health LLC
 Attn: Legal
-[ADDRESS LINE 1]
-[CITY, STATE ZIP]
+30 N Gould St, Ste R
+Sheridan, WY 82801
 
 Email: info@huntersholistichealth.com
 Website: app.huntersholistichealth.com

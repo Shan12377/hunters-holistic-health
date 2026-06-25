@@ -193,7 +193,7 @@ export default function SettingsPage() {
           <a href="https://doxy.me/drshallandahunter" target="_blank" rel="noopener noreferrer" className={shared.btnTeal}>
             <Video size={16} /> Join Session Room
           </a>
-          <a href="https://calendly.com/huntersholistichealth" target="_blank" rel="noopener noreferrer" className={shared.btnSecondary}>
+          <a href="https://tidycal.com/huntersholistichealth" target="_blank" rel="noopener noreferrer" className={shared.btnSecondary}>
             <ExternalLink size={16} /> Schedule Appointment
           </a>
         </div>
