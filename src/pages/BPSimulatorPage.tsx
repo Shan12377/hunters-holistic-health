@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, Title, Tooltip, Legend, Filler,
 } from 'chart.js'
-import { Activity, Wind, Droplets, Heart } from 'lucide-react'
+import { Activity, Wind, Droplets, Heart, TrendingUp, Lock } from 'lucide-react'
+import { useAuthStore } from '@/store/authStore'
+import BPGauge from '@/components/ui/BPGauge'
 import styles from './BPSimulatorPage.module.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
@@ -16,23 +19,6 @@ type ActivityLevel = 'none' | 'aerobic' | 'wallsquat'
 interface BpPoint { stage: string; sys: number; dia: number }
 interface Gauges { volume: number; tone: number; elasticity: number; sns: number }
 
-// ---- gauge bar ----
-function Gauge({ label, value, color, icon, tip }: { label: string; value: number; color: string; icon: React.ReactNode; tip: string }) {
-  const pct = Math.max(0, Math.min(100, value))
-  return (
-    <div className={styles.gauge}>
-      <div className={styles.gaugeHeader}>
-        <span className={styles.gaugeIcon} style={{ color }}>{icon}</span>
-        <span className={styles.gaugeLabel}>{label}</span>
-        <span className={styles.gaugeVal} style={{ color }}>{Math.round(pct)}%</span>
-      </div>
-      <div className={styles.gaugeTrack}>
-        <div className={styles.gaugeFill} style={{ width: `${pct}%`, background: color }} />
-      </div>
-      <p className={styles.gaugeTip}>{tip}</p>
-    </div>
-  )
-}
 
 // ---- core engine ----
 function simulate(sys: number, dia: number, age: number, sex: string, salt: SaltLevel, stress: number, act: ActivityLevel): { points: BpPoint[]; gauges: Gauges } {
@@ -110,6 +96,8 @@ const ACT_OPTIONS: { value: ActivityLevel; label: string }[] = [
 ]
 
 export default function BPSimulatorPage() {
+  const { profile } = useAuthStore()
+  const isLoggedIn = !!profile
   const [sys, setSys] = useState(128)
   const [dia, setDia] = useState(82)
   const [age, setAge] = useState(45)
@@ -336,13 +324,13 @@ export default function BPSimulatorPage() {
           <div className={styles.gaugesCard}>
             <div className={styles.gaugesTitle}>What is happening inside your arteries</div>
             <div className={styles.gaugeGrid}>
-              <Gauge label="Blood Volume" value={gauges.volume} color="#58a6ff" icon={<Droplets size={14} />}
+              <BPGauge label="Blood Volume" value={gauges.volume} color="#58a6ff" icon={<Droplets size={14} />}
                 tip="Sodium makes your body hold water. More water means more pressure on your artery walls." />
-              <Gauge label="Artery Tightness" value={gauges.tone} color={gauges.tone > 65 ? '#e05c5c' : '#c8a74b'} icon={<Wind size={14} />}
+              <BPGauge label="Artery Tightness" value={gauges.tone} color={gauges.tone > 65 ? '#e05c5c' : '#c8a74b'} icon={<Wind size={14} />}
                 tip="Stress and high-sodium foods tighten your blood vessels. Movement and calm help them relax." />
-              <Gauge label="Artery Flexibility" value={gauges.elasticity} color={gauges.elasticity < 55 ? '#e05c5c' : '#0B9E8E'} icon={<Activity size={14} />}
+              <BPGauge label="Artery Flexibility" value={gauges.elasticity} color={gauges.elasticity < 55 ? '#e05c5c' : '#0B9E8E'} icon={<Activity size={14} />}
                 tip="Flexible arteries act as shock absorbers. Flexibility decreases with age and processed food over time." />
-              <Gauge label="Stress Signal Strength" value={gauges.sns} color="#c8a74b" icon={<Heart size={14} />}
+              <BPGauge label="Stress Signal Strength" value={gauges.sns} color="#c8a74b" icon={<Heart size={14} />}
                 tip="Your nervous system controls how tight your vessels stay. High stress keeps them clamped." />
             </div>
           </div>
@@ -357,6 +345,28 @@ export default function BPSimulatorPage() {
               This tool is for educational purposes only and is operated by a Certified Functional and Nutritional Medicine Practitioner. It does not diagnose, treat, or prescribe. Consult your healthcare provider before making changes to your health routine.
             </p>
           </div>
+
+          {/* Upgrade CTA */}
+          {isLoggedIn ? (
+            <div className={styles.upgradeCard}>
+              <TrendingUp size={20} color="var(--teal)" />
+              <div className={styles.upgradeText}>
+                <strong>You have the full BP Tracker.</strong> See your real readings, track your trend over time, and connect your daily habits to your numbers.
+              </div>
+              <Link to="/app/blood-pressure" className={styles.upgradeBtn}>Go to My BP Tracker</Link>
+            </div>
+          ) : (
+            <div className={styles.upgradeCard}>
+              <Lock size={20} color="var(--gold)" />
+              <div className={styles.upgradeText}>
+                <strong>This is the preview.</strong> Members track their real readings over time, see their trend chart, and get a personalized weekly pattern analysis tied to their daily habits.
+              </div>
+              <div className={styles.upgradeBtns}>
+                <Link to="/signup" className={styles.upgradeBtn}>Start Foundation ($37/mo)</Link>
+                <Link to="/#pricing" className={styles.upgradeBtnSecondary}>See All Plans</Link>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

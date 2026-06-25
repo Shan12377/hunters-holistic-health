@@ -201,3 +201,43 @@
   margin-top: var(--space-2);
   line-height: 1.5;
 }
+
+/* ---- upgrade CTA ---- */
+.upgradeCard {
+  background: linear-gradient(135deg, rgba(200,167,75,0.08) 0%, rgba(11,158,142,0.08) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+.upgradeText { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; max-width: 440px; }
+.upgradeText strong { color: var(--text-primary); }
+.upgradeBtns { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+.upgradeBtn {
+  display: inline-block;
+  padding: var(--space-3) var(--space-6);
+  background: var(--gradient-teal);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+.upgradeBtn:hover { opacity: 0.9; }
+.upgradeBtnSecondary {
+  display: inline-block;
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+.upgradeBtnSecondary:hover { border-color: var(--gold); color: var(--gold); }

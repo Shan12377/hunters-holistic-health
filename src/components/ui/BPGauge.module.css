@@ -1,0 +1,8 @@
+.gauge { display: flex; flex-direction: column; gap: 6px; }
+.header { display: flex; align-items: center; gap: 8px; }
+.icon { display: flex; }
+.label { font-size: 0.78rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+.val { font-size: 0.75rem; font-weight: 700; }
+.track { height: 8px; background: var(--bg-page); border-radius: 99px; overflow: hidden; }
+.fill { height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(0.16,1,0.3,1); }
+.tip { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; margin: 0; }

@@ -10,7 +10,8 @@ import { format, parseISO } from 'date-fns'
 import type { BPReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS } from '@/types'
 import toast from 'react-hot-toast'
-import { Heart, Plus, Info, ChevronDown, ChevronUp } from 'lucide-react'
+import { Heart, Plus, Info, ChevronDown, ChevronUp, Activity, Wind, Droplets } from 'lucide-react'
+import BPGauge from '@/components/ui/BPGauge'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -122,6 +123,29 @@ const BP_LEVERS = [
   },
 ]
 
+// context tags appended to notes when logging a reading
+const DIET_TAGS = ['Whole foods', 'Average day', 'Salty snacks', 'Fast food / heavy processed'] as const
+const STRESS_TAGS = ['Very calm', 'Moderate', 'High stress', 'Very high stress'] as const
+const MOVE_TAGS = ['No movement', 'Light walk', 'Moderate exercise', 'Intense workout'] as const
+
+type DietTag = typeof DIET_TAGS[number]
+type StressTag = typeof STRESS_TAGS[number]
+type MoveTag = typeof MOVE_TAGS[number]
+
+// derive gauge values from daily log data + last reading trend
+function deriveGauges(energyLevel: number, steps: number, recentTrendDir: number) {
+  // energy 1-10: low energy = high stress signal
+  const sns = Math.round((11 - energyLevel) * 9)
+  // steps: 8000+ = high flexibility, 0 = low
+  const elas = Math.round(40 + Math.min(steps / 8000, 1) * 45)
+  // tone: driven by stress + trend
+  const tone = Math.round(sns * 0.6 + (recentTrendDir > 0 ? 15 : 0))
+  // volume: neutral baseline, slightly elevated if trending up
+  const vol = Math.round(50 + (recentTrendDir > 0 ? 12 : recentTrendDir < 0 ? -8 : 0))
+  const clamp = (v: number) => Math.max(5, Math.min(95, v))
+  return { vol: clamp(vol), tone: clamp(tone), elas: clamp(elas), sns: clamp(sns) }
+}
+
 export default function BPTrackerPage() {
   const [readings, setReadings] = useState<BPReading[]>([])
   const [loading, setLoading] = useState(true)
@@ -129,8 +153,34 @@ export default function BPTrackerPage() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ systolic: '', diastolic: '', pulse: '', notes: '' })
   const [openEdu, setOpenEdu] = useState<string | null>(null)
+  // context tags
+  const [dietTag, setDietTag] = useState<DietTag | null>(null)
+  const [stressTag, setStressTag] = useState<StressTag | null>(null)
+  const [moveTag, setMoveTag] = useState<MoveTag | null>(null)
+  // today's daily log for gauges
+  const [todayEnergy, setTodayEnergy] = useState(5)
+  const [todaySteps, setTodaySteps] = useState(0)
 
-  useEffect(() => { fetchReadings() }, [])
+  useEffect(() => {
+    fetchReadings()
+    fetchTodayLog()
+  }, [])
+
+  const fetchTodayLog = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const today = new Date().toISOString().split('T')[0]
+    const { data } = await supabase
+      .from('daily_logs')
+      .select('energy_level, steps')
+      .eq('user_id', user.id)
+      .eq('log_date', today)
+      .maybeSingle()
+    if (data) {
+      setTodayEnergy(data.energy_level ?? 5)
+      setTodaySteps(data.steps ?? 0)
+    }
+  }
 
   const fetchReadings = async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -161,7 +211,12 @@ export default function BPTrackerPage() {
       systolic: sys,
       diastolic: dia,
       pulse: form.pulse ? parseInt(form.pulse) : null,
-      notes: form.notes || null,
+      notes: [
+        dietTag && `Diet: ${dietTag}`,
+        stressTag && `Stress: ${stressTag}`,
+        moveTag && `Movement: ${moveTag}`,
+        form.notes,
+      ].filter(Boolean).join(' | ') || null,
       logged_at: new Date().toISOString(),
     })
     if (error) {
@@ -169,6 +224,7 @@ export default function BPTrackerPage() {
     } else {
       toast.success('Blood pressure reading saved!')
       setForm({ systolic: '', diastolic: '', pulse: '', notes: '' })
+      setDietTag(null); setStressTag(null); setMoveTag(null)
       setShowForm(false)
       fetchReadings()
     }
@@ -196,6 +252,9 @@ export default function BPTrackerPage() {
     if (diff >= 4) return { label: 'Trending Up', color: '#e05c5c', arrow: '↑' }
     return { label: 'Holding Steady', color: '#c8a74b', arrow: '→' }
   })()
+
+  const trendDir = recentTrend?.arrow === '↑' ? 1 : recentTrend?.arrow === '↓' ? -1 : 0
+  const gauges = deriveGauges(todayEnergy, todaySteps, trendDir)
 
   // Chart data
   const labels = readings.map(r => format(parseISO(r.logged_at), 'MMM d'))
@@ -396,8 +455,39 @@ export default function BPTrackerPage() {
                 <input className={styles.input} type="number" placeholder="72" value={form.pulse} onChange={e => setForm(f => ({...f, pulse: e.target.value}))} min={30} max={220} />
               </div>
             </div>
+            {/* Context tags */}
             <div className={styles.field}>
-              <label className={styles.label}>Notes (optional)</label>
+              <label className={styles.label}>What did you eat today? (optional)</label>
+              <div className={styles.tagRow}>
+                {DIET_TAGS.map(t => (
+                  <button key={t} type="button"
+                    className={dietTag === t ? styles.tagActive : styles.tag}
+                    onClick={() => setDietTag(dietTag === t ? null : t)}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Stress level today? (optional)</label>
+              <div className={styles.tagRow}>
+                {STRESS_TAGS.map(t => (
+                  <button key={t} type="button"
+                    className={stressTag === t ? styles.tagActive : styles.tag}
+                    onClick={() => setStressTag(stressTag === t ? null : t)}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Movement today? (optional)</label>
+              <div className={styles.tagRow}>
+                {MOVE_TAGS.map(t => (
+                  <button key={t} type="button"
+                    className={moveTag === t ? styles.tagActive : styles.tag}
+                    onClick={() => setMoveTag(moveTag === t ? null : t)}>{t}</button>
+                ))}
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Additional notes (optional)</label>
               <input className={styles.input} type="text" placeholder="After morning walk, before coffee..." value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))} maxLength={200} />
             </div>
             <div className={styles.formActions}>
@@ -452,6 +542,31 @@ export default function BPTrackerPage() {
         </div>
         <p className={styles.refNote}>
           This reference is for educational purposes only. Blood pressure classifications are based on AHA/ACC guidelines. Always consult your healthcare provider for clinical interpretation of your readings.
+        </p>
+      </div>
+
+      {/* Live Artery Gauges */}
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardLabel}>
+            <Activity size={16} color="var(--teal)" /> What Your Body Is Doing Right Now
+          </h3>
+        </div>
+        <p className={styles.cardText} style={{ marginBottom: '1rem' }}>
+          These gauges update based on today's energy level and step count from your Daily Log. Tag your readings with diet and stress context to see these shift over time.
+        </p>
+        <div className={styles.bpGaugeGrid}>
+          <BPGauge label="Blood Volume" value={gauges.vol} color="#58a6ff" icon={<Droplets size={14} />}
+            tip="Driven by sodium intake and hydration. More volume means more pressure on artery walls." />
+          <BPGauge label="Artery Tightness" value={gauges.tone} color={gauges.tone > 65 ? '#e05c5c' : '#c8a74b'} icon={<Wind size={14} />}
+            tip="Rises with stress and low energy. Movement and calm bring it down." />
+          <BPGauge label="Artery Flexibility" value={gauges.elas} color={gauges.elas < 55 ? '#e05c5c' : '#0B9E8E'} icon={<Activity size={14} />}
+            tip="Built by consistent daily movement. Estimated from your step count today." />
+          <BPGauge label="Stress Signal" value={gauges.sns} color="#c8a74b" icon={<Heart size={14} />}
+            tip="Inverted from your energy level today. Low energy often signals high nervous system load." />
+        </div>
+        <p className={styles.refNote} style={{ marginTop: '1rem' }}>
+          Gauges are educational estimates derived from your Daily Log. Log your energy and steps daily for the most accurate picture. Not a clinical measurement.
         </p>
       </div>
 
