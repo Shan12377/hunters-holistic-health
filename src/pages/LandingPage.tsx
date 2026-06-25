@@ -316,7 +316,7 @@ export default function LandingPage() {
           Root cause education. Evidence-informed. Built and taught by a Certified Functional and Nutritional Medicine Practitioner and PharmD.
         </p>
         <p className={styles.heroSubtitle}>
-          Hunter's Holistic Health teaches you what your readings mean, what drives your patterns, and which lifestyle factors the research actually supports. No guesswork. No generic advice.
+          Lasting health starts at the roots. Join the platform to stop guessing and finally understand what your body is telling you.
         </p>
         <div className={styles.heroActions}>
           <button onClick={scrollToPricing} className={shared.btnPrimary}>
