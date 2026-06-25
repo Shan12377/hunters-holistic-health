@@ -114,7 +114,6 @@ const TIERS: Tier[] = [
       'Direct educator messaging with 24-hour response',
       'Early access to all new classroom content',
       'VIP community badge',
-      'Creatine Stack Bundle included ($47 value)',
     ],
     cta: 'Apply for VIP',
     ctaStyle: 'secondary',
