@@ -1,0 +1,203 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: var(--space-8) var(--space-6);
+}
+
+.hero {
+  max-width: 860px;
+  margin: 0 auto var(--space-8);
+  text-align: center;
+}
+
+.heroTitle {
+  font-family: var(--font-headline);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.heroSub {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+
+.disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  line-height: 1.5;
+}
+
+/* ---- layout ---- */
+.layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ---- input panel ---- */
+.inputs { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.inputCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.inputCardTitle {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.inputCardNote { font-size: 0.78rem; color: var(--text-muted); }
+
+.bpRow { display: flex; align-items: center; gap: var(--space-2); }
+.bpField { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.bpLabel { font-size: 0.7rem; color: var(--text-muted); }
+.bpInput {
+  width: 100%;
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  outline: none;
+}
+.bpInput:focus { border-color: var(--gold); }
+.bpSlash { font-size: 1.5rem; color: var(--text-muted); font-weight: 200; }
+
+.demoRow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+
+.sliderGroup, .sexGroup { display: flex; flex-direction: column; gap: var(--space-2); }
+.sliderHeader { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-secondary); }
+.sliderLabel { font-size: 0.68rem; color: var(--text-muted); }
+.sliderVal { font-weight: 700; color: var(--gold); font-size: 0.85rem; }
+.slider { width: 100%; accent-color: var(--gold); height: 4px; cursor: pointer; }
+
+.sexLabel { font-size: 0.78rem; color: var(--text-secondary); }
+.sexBtns { display: flex; gap: var(--space-2); }
+.sexBtn, .sexBtnActive {
+  flex: 1;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: var(--transition-fast);
+  background: var(--bg-page);
+  color: var(--text-muted);
+}
+.sexBtnActive {
+  border-color: var(--gold);
+  background: rgba(200,167,75,0.12);
+  color: var(--gold);
+}
+
+.optionList { display: flex; flex-direction: column; gap: var(--space-2); }
+.option, .optionActive {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--bg-page);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.option:hover { background: var(--bg-hover); color: var(--text-secondary); }
+.optionActive {
+  border-color: var(--teal);
+  background: rgba(11,158,142,0.12);
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ---- output panel ---- */
+.output { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.resultCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  text-align: center;
+}
+.resultLabel { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: var(--space-2); }
+.resultBp { display: flex; align-items: flex-end; justify-content: center; gap: var(--space-2); line-height: 1; margin-bottom: var(--space-3); }
+.resultSys, .resultDia { font-size: 4rem; font-weight: 900; font-family: var(--font-headline); transition: color 0.3s; }
+.resultSlash { font-size: 2rem; color: var(--text-muted); font-weight: 200; padding-bottom: 8px; }
+.resultRange { font-size: 0.9rem; font-weight: 600; }
+
+.chartCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.chartTitle { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-4); }
+.chartWrap { height: 240px; }
+
+.gaugesCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.gaugesTitle { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-4); }
+.gaugeGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+
+@media (max-width: 600px) { .gaugeGrid { grid-template-columns: 1fr; } }
+
+.gauge { display: flex; flex-direction: column; gap: var(--space-2); }
+.gaugeHeader { display: flex; align-items: center; gap: var(--space-2); }
+.gaugeIcon { display: flex; }
+.gaugeLabel { font-size: 0.78rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+.gaugeVal { font-size: 0.75rem; font-weight: 700; }
+.gaugeTrack { height: 8px; background: var(--bg-page); border-radius: 99px; overflow: hidden; }
+.gaugeFill { height: 100%; border-radius: 99px; transition: width 0.5s var(--ease-primary); }
+.gaugeTip { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+
+.analysisCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.analysisTitle { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-4); }
+.analysisLine { font-size: 0.85rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: var(--space-3); }
+.analysisFooter {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-3);
+  margin-top: var(--space-2);
+  line-height: 1.5;
+}

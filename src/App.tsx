@@ -55,6 +55,7 @@ import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
 import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
 import FoodSearchPage from '@/pages/client/FoodSearchPage'
 import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
+import BPSimulatorPage from '@/pages/BPSimulatorPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -116,6 +117,7 @@ export default function App() {
         <Route path="/creatine" element={<CreatinePage />} />
         <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
         <Route path="/tools" element={<ToolsPage />} />
+        <Route path="/bp-simulator" element={<BPSimulatorPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

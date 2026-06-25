@@ -389,10 +389,10 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className={styles.toolCTA}>
-                  <p className={styles.toolCTAText}>Track your trend over time and learn the ROOTS approach to cardiovascular education.</p>
-                  <button onClick={scrollToPricing} className={shared.btnPrimary}>
-                    See Membership Options <ChevronRight size={16} />
-                  </button>
+                  <p className={styles.toolCTAText}>Want to see how diet, stress, and movement actually move this number? Try the interactive simulator.</p>
+                  <Link to="/bp-simulator" className={shared.btnTeal}>
+                    Try the BP Simulator (Free) <ChevronRight size={16} />
+                  </Link>
                 </div>
               </div>
             )}
