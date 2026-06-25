@@ -8,6 +8,7 @@ import shared from '../../styles/shared.module.css'
 export default function SignupPage() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -23,6 +24,10 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!termsAccepted) {
+      toast.error('Please agree to the Terms of Service and Privacy Policy to continue.')
+      return
+    }
     if (form.password !== form.confirmPassword) {
       toast.error('Passwords do not match')
       return
@@ -33,6 +38,8 @@ export default function SignupPage() {
     }
     setLoading(true)
 
+    const acceptedAt = new Date().toISOString()
+
     const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
@@ -42,6 +49,8 @@ export default function SignupPage() {
           last_name: form.lastName,
           age: form.age || null,
           display_handle: form.displayHandle || null,
+          terms_accepted_at: acceptedAt,
+          terms_version: '2026-06-25',
         },
       },
     })
@@ -113,11 +122,23 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <div className={styles.disclaimer}>
-            By creating an account, you acknowledge that this platform provides <strong>educational content only</strong> and does not constitute medical advice, diagnosis, or treatment. Always consult your healthcare provider.
-          </div>
+          <label className={styles.termsCheck}>
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={e => setTermsAccepted(e.target.checked)}
+              className={styles.termsCheckbox}
+            />
+            <span>
+              I agree to the{' '}
+              <Link to="/terms" target="_blank" className={styles.footerLink}>Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/privacy" target="_blank" className={styles.footerLink}>Privacy Policy</Link>.
+              {' '}I understand this is an educational platform, not a medical service.
+            </span>
+          </label>
 
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
+          <button type="submit" className={styles.submitBtn} disabled={loading || !termsAccepted}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
