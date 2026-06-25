@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './BlogPost.module.css'
+import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'Creatine: Not What You Think It Is | Hunter\'s Holistic Health'
 const META_DESC = 'Creatine is not a gym supplement. It is a cellular energy supplement. Here is what the research actually shows, and what I now recommend.'
@@ -32,68 +32,6 @@ function MetaTags() {
   return null
 }
 
-type OptInStatus = 'idle' | 'submitting' | 'success' | 'error'
-
-function EmailOptIn() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<OptInStatus>('idle')
-  const [errMsg, setErrMsg] = useState('')
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL
-    if (!webhookUrl) { setErrMsg('Webhook not configured.'); setStatus('error'); return }
-    setStatus('submitting')
-    try {
-      const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Webhook-Secret': import.meta.env.VITE_N8N_WEBHOOK_SECRET || '',
-        },
-        body: JSON.stringify({
-          submissionType: 'early_access',
-          email,
-          source: 'blog_creatine_optin',
-          consent: true,
-        }),
-      })
-      if (!res.ok) throw new Error('Network error')
-      setStatus('success')
-    } catch {
-      setStatus('error')
-      setErrMsg('Something went wrong. Try again or email info@huntersholistichealth.com.')
-    }
-  }
-
-  if (status === 'success') {
-    return (
-      <div className={styles.optIn}>
-        <p className={styles.optInSuccess}>Got it. Check your inbox.</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className={styles.optIn}>
-      <p className={styles.optInHeadline}>Want the 1-page Creatine Quick Start? Drop your email.</p>
-      <form onSubmit={handleSubmit} className={styles.optInForm}>
-        <input
-          className={styles.optInInput}
-          type="email"
-          required
-          placeholder="you@example.com"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <button type="submit" disabled={status === 'submitting'} className={styles.optInBtn}>
-          {status === 'submitting' ? 'Sending...' : 'Send it'}
-        </button>
-      </form>
-      {status === 'error' && <p className={styles.optInError}>{errMsg}</p>}
-    </div>
-  )
-}
 
 export default function CreatineNotWhatYouThink() {
   return (
@@ -204,7 +142,7 @@ export default function CreatineNotWhatYouThink() {
 
           <hr className={styles.rule} />
 
-          <EmailOptIn />
+          <NewsletterEmbed />
 
           <hr className={styles.rule} />
 

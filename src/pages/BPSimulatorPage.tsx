@@ -8,6 +8,7 @@ import {
 import { Activity, Wind, Droplets, Heart, TrendingUp, Lock } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import BPGauge from '@/components/ui/BPGauge'
+import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 import styles from './BPSimulatorPage.module.css'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
@@ -345,6 +346,9 @@ export default function BPSimulatorPage() {
               This tool is for educational purposes only and is operated by a Certified Functional and Nutritional Medicine Practitioner. It does not diagnose, treat, or prescribe. Consult your healthcare provider before making changes to your health routine.
             </p>
           </div>
+
+          {/* Newsletter */}
+          <NewsletterEmbed />
 
           {/* Upgrade CTA */}
           {isLoggedIn ? (

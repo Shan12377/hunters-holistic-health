@@ -1,0 +1,10 @@
+.wrap {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.label {
+  font-size: 0.95rem;
+  color: var(--text-muted, #888);
+  margin-bottom: 0.75rem;
+}

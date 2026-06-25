@@ -46,6 +46,7 @@ import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
 import ShopPage from '@/pages/ShopPage'
 import CreatinePage from '@/pages/CreatinePage'
 import CreatineNotWhatYouThink from '@/pages/blog/CreatineNotWhatYouThink'
+import ReboundingBenefits from '@/pages/blog/ReboundingBenefits'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
 import MetabolicToolsPage from '@/pages/client/MetabolicToolsPage'
@@ -116,6 +117,7 @@ export default function App() {
         <Route path="/shop" element={<Navigate to="/creatine" replace />} />
         <Route path="/creatine" element={<CreatinePage />} />
         <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
+        <Route path="/blog/rebounding-benefits" element={<ReboundingBenefits />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />
 
