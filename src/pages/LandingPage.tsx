@@ -46,7 +46,7 @@ const FEATURES = [
   { img: '/features/supplement-log.jpeg',          title: 'Supplement Log',            desc: 'Track your daily protocol. Know what you took and when.' },
   { img: '/features/movement-log.jpeg',            title: 'Movement Log',              desc: 'Log exercise with condition-specific education on why that movement matters for your metabolic patterns.' },
   { img: '/features/challenges-events.jpeg',       title: 'Challenges and Events',     desc: 'Community challenges with points, accountability, and recognition for showing up consistently.' },
-  { img: '/features/progress-reports.jpeg',        title: 'Progress Reports',          desc: 'Shareable HTML reports to bring to your own healthcare appointments.' },
+  { img: '/features/progress-reports.jpeg',        title: 'Progress Reports',          desc: 'A clean, printable summary of your progress to bring to your own healthcare appointments.' },
 ]
 
 const WHO_FOR = [
