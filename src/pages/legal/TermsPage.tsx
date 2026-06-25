@@ -83,7 +83,7 @@ We reserve the right to suspend or terminate your account if any information you
 
 (c) Cancellation. You may cancel your subscription at any time through your account settings or by contacting us at info@huntersholistichealth.com. Cancellation takes effect at the end of the current billing period. You will retain access to paid features through the end of the period for which you have paid.
 
-(d) Refunds. Subscription fees are generally non-refundable. If you believe you are entitled to a refund due to a technical error or billing mistake, contact us within thirty (30) days of the charge at info@huntersholistichealth.com and we will review your request in good faith.
+(d) Refunds. Monthly subscription fees are non-refundable for the current billing period but you may cancel anytime to stop future charges. Annual subscription fees are eligible for a full refund within 14 days of purchase. After 14 days, annual fees are non-refundable. Annual members may pause their membership for up to 3 months by contacting info@huntersholistichealth.com. The 6-Month VIP Functional Overhaul is non-refundable once the first session has been completed. If you believe you are entitled to a refund due to a technical error or billing mistake, contact us at info@huntersholistichealth.com and we will review your request in good faith.
 
 (e) Free Trial. If we offer a free trial, your payment method will be charged the applicable subscription fee at the end of the trial period unless you cancel before the trial ends.
 

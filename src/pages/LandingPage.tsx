@@ -570,7 +570,7 @@ export default function LandingPage() {
       <section className={styles.section} id="pricing">
         <div className={styles.sectionKicker}>Membership</div>
         <h2 className={styles.sectionTitle}>Choose Your Track</h2>
-        <p className={styles.sectionSubtitle}>Monthly or annual. Cancel monthly plans anytime. Annual plans are non-refundable after 7 days; pause up to 3 months.</p>
+        <p className={styles.sectionSubtitle}>Monthly or annual. Cancel monthly plans anytime. Annual plans are non-refundable after 14 days; pause up to 3 months.</p>
 
         {/* Billing toggle */}
         <div className={styles.billingToggle}>
@@ -636,7 +636,7 @@ export default function LandingPage() {
             This curriculum is built on functional and nutritional medicine principles. Where strong research supports a recommendation, you will see the citation. Where evidence is emerging or traditional, that is stated honestly. The functional and nutritional medicine framework is the lens. The PharmD training is what ensures the science is read correctly.
           </p>
           <p className={styles.qualityText}>
-            Monthly memberships: cancel anytime from Settings. Annual memberships: non-refundable after 7 days from purchase. Pause your annual membership for up to 3 months if you need a break.
+            Monthly memberships: cancel anytime from Settings. Annual memberships: non-refundable after 14 days from purchase. Pause your annual membership for up to 3 months if you need a break.
           </p>
         </div>
       </section>
