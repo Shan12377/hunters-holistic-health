@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { sanitizeForPulse, type RawPulseData } from '@/lib/deidSanitizer'
 import styles from '@/pages/client/Client.module.css'
+import PlanGate from './PlanGate'
 
 interface PulseResult {
   headline: string
@@ -158,6 +159,7 @@ export default function WeeklyPulseCard() {
   if (!pulse) return null
 
   return (
+    <PlanGate requiredPlan="program" label="Weekly Pulse AI is available on The Program and above.">
     <div className={styles.pulseCard}>
       <div className={styles.pulseHeader}>
         <Sparkles size={16} color="var(--gold)" />
@@ -188,5 +190,6 @@ export default function WeeklyPulseCard() {
         </p>
       )}
     </div>
+    </PlanGate>
   )
 }

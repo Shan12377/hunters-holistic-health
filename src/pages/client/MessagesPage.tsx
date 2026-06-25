@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { MessageCircle, Send, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { looksClinical } from '@/lib/clinicalNudge'
+import PlanGate from '@/components/ui/PlanGate'
 import { parseISO, format } from 'date-fns'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
@@ -85,6 +86,7 @@ export default function MessagesPage() {
   const clinicalNudge = looksClinical(draft)
 
   return (
+    <PlanGate requiredPlan="vip" label="Direct messaging is available on VIP: The Intensive and above.">
     <div className="animate-fade-in">
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTopTitle}>
@@ -156,5 +158,6 @@ export default function MessagesPage() {
         Messages are part of the educational program record, not a medical record. For urgent concerns, use the support form. For emergencies, call 911.
       </p>
     </div>
+    </PlanGate>
   )
 }

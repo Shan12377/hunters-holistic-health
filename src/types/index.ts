@@ -48,12 +48,15 @@ export interface PrivacySettings {
   share_meals: boolean
 }
 
+export type Plan = 'foundation' | 'program' | 'vip' | 'overhaul'
+
 export interface Profile {
   id: string
   first_name: string
   last_name: string
   age: number | null
   role: 'client' | 'educator'
+  plan: Plan
   display_handle: string | null
   wellness_goals?: WellnessGoals
   privacy_settings?: PrivacySettings

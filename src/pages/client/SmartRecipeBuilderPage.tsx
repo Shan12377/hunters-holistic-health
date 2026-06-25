@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Flame, Send, Loader2, Info, CheckCircle2, AlertTriangle, BadgeCheck } from 'lucide-react'
 import styles from './Client.module.css'
+import PlanGate from '@/components/ui/PlanGate'
 
 type Restriction =
   | 'dairy_free' | 'gluten_free' | 'soy_free' | 'nut_free'
@@ -96,6 +97,7 @@ export default function SmartRecipeBuilderPage() {
     : 0
 
   return (
+    <PlanGate requiredPlan="program" label="The Smart Recipe Builder is available on The Program and above.">
     <div className="animate-fade-in">
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
@@ -294,5 +296,6 @@ export default function SmartRecipeBuilderPage() {
         Consult a registered dietitian for personalized dietary guidance.
       </p>
     </div>
+    </PlanGate>
   )
 }

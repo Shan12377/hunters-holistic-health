@@ -10,6 +10,7 @@ import { format, parseISO } from 'date-fns'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+import { usePlan } from '@/hooks/usePlan'
 
 const MEAL_TYPES = [
   { value: 'morning_fast', label: 'Morning Fast Window' },
@@ -20,6 +21,7 @@ const MEAL_TYPES = [
 
 export default function MealGuardPage() {
   const { profile } = useAuthStore()
+  const { mealGuardDailyLimit } = usePlan()
   const [foodInput, setFoodInput] = useState('')
   const [mealType, setMealType] = useState('meal1')
   const [checking, setChecking] = useState(false)
@@ -90,6 +92,10 @@ export default function MealGuardPage() {
   const handleCheck = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!foodInput.trim() && !photo) return
+    if (logs.length >= mealGuardDailyLimit) {
+      toast.error(`You have reached your ${mealGuardDailyLimit} daily Meal Guard queries. Upgrade to The Program for unlimited access.`)
+      return
+    }
     setChecking(true)
     setResult(null)
     setNutrition(null)
