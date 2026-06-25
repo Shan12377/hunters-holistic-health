@@ -35,7 +35,7 @@ export default function GutHealthProtocol() {
 
         <p className={styles.logo}>Hunter's Holistic Health</p>
 
-        <h1 className={styles.title}>Gut Health Protocol</h1>
+        <h1 className={styles.title}>Parasite Cleanse Protocol</h1>
         <p className={styles.subtitle}>
           This is an educational reference for the supplement products discussed in your session.
           Dosing notes below are general starting points. Follow the guidance specific to your situation.
