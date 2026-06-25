@@ -31,6 +31,7 @@ const STRIPE = {
   program_annual:     import.meta.env.VITE_STRIPE_PROGRAM_ANNUAL     || '',
   vip_monthly:        import.meta.env.VITE_STRIPE_VIP_MONTHLY        || '',
   vip_annual:         import.meta.env.VITE_STRIPE_VIP_ANNUAL         || '',
+  overhaul:           '',
 }
 const checkoutUrl = (key: keyof typeof STRIPE) => STRIPE[key] || '/join'
 
@@ -72,9 +73,31 @@ interface Tier {
   ctaStyle: 'primary' | 'gold' | 'secondary'
   popular?: boolean
   scarcity?: string
+  oneTime?: boolean
 }
 
 const TIERS: Tier[] = [
+  {
+    name: 'The 6-Month Overhaul',
+    tagline: 'For complex wellness goals. Completely tailored. Nothing generic.',
+    color: '#c8a74b',
+    monthly: '$4,997',
+    annual: '$4,997',
+    annualSavings: '',
+    stripeMonthly: 'overhaul',
+    stripeAnnual: 'overhaul',
+    features: [
+      'Direct 1-on-1 educational engagement with Dr. Hunter across 6 months',
+      'Individualized functional and nutritional medicine education built entirely around your context',
+      'Supplement and nutrition education specific to your history, goals, and current protocol',
+      'Full platform membership for the duration of your engagement',
+      'Structured accountability and follow-through between sessions',
+    ],
+    cta: 'Apply for the VIP Overhaul',
+    ctaStyle: 'gold',
+    scarcity: 'Limited to 3 active clients',
+    oneTime: true,
+  },
   {
     name: 'VIP: The Intensive',
     tagline: 'For members who want to move fast with 1:1 attention.',
@@ -574,46 +597,6 @@ export default function LandingPage() {
           </button>
         </div>
 
-        {/* 6-Month Overhaul anchor card */}
-        <div className={styles.overhaulCard}>
-          <div className={styles.overhaulLeft}>
-            <div className={styles.overhaulKicker}>For Complex Wellness Goals</div>
-            <h3 className={styles.overhaulTitle}>The 6-Month VIP Functional Overhaul</h3>
-            <p className={styles.overhaulBody}>
-              Some situations do not fit a standard curriculum. If your health education needs require a completely tailored approach, this is the path.
-            </p>
-            <p className={styles.overhaulBody}>
-              You work directly with Dr. Hunter over a defined 6-month engagement. Your history, your patterns, and your specific questions are addressed in sequence, using the full depth of her training as a Certified Functional and Nutritional Medicine Practitioner and Doctor of Pharmacy. Nothing generic. Everything purposeful.
-            </p>
-            <ul className={styles.overhaulList}>
-              {[
-                'Direct 1-on-1 educational engagement with Dr. Hunter across 6 months',
-                'Individualized functional and nutritional medicine education built entirely around your context',
-                'Supplement and nutrition education specific to your history, goals, and current protocol',
-                'Full platform membership for the duration of your engagement',
-                'Structured accountability and follow-through between sessions',
-              ].map(item => (
-                <li key={item} className={styles.overhaulItem}>
-                  <CheckCircle size={15} className={styles.overhaulCheck} />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.overhaulRight}>
-            <div className={styles.overhaulPriceLabel}>Investment</div>
-            <div className={styles.overhaulPrice}>$4,997</div>
-            <div className={styles.overhaulScarcity}>Limited to 3 active clients.</div>
-            <p className={styles.overhaulPriceNote}>Apply below to ensure this overhaul is the right fit for your educational goals.</p>
-            <Link to="/clinical-inquiry" className={`${shared.btnTeal} ${shared.btnFull}`}>
-              Apply for the VIP Overhaul <ChevronRight size={16} />
-            </Link>
-            <p className={styles.overhaulDisclaimer}>
-              This is a Functional Medicine Educator engagement. Educational in nature. Does not create a patient-provider relationship. Dr. Hunter will not prescribe medications or diagnose conditions.
-            </p>
-          </div>
-        </div>
-
         <div className={styles.pricingGrid}>
           {TIERS.map((tier) => (
             <div key={tier.name} className={tier.popular ? styles.pricingCardFeatured : styles.pricingCard}>
@@ -622,10 +605,10 @@ export default function LandingPage() {
               <div className={styles.pricingName} style={{ color: tier.color }}>{tier.name}</div>
               <p className={styles.pricingTagline}>{tier.tagline}</p>
               <div className={styles.pricingPrice}>
-                {billing === 'monthly' ? tier.monthly : tier.annual}
-                <span className={styles.pricingPeriod}>{billing === 'monthly' ? '/mo' : '/yr'}</span>
+                {tier.oneTime ? tier.monthly : (billing === 'monthly' ? tier.monthly : tier.annual)}
+                {!tier.oneTime && <span className={styles.pricingPeriod}>{billing === 'monthly' ? '/mo' : '/yr'}</span>}
               </div>
-              {billing === 'annual' && (
+              {!tier.oneTime && billing === 'annual' && tier.annualSavings && (
                 <div className={styles.pricingAnnualSave}>{tier.annualSavings}</div>
               )}
               <ul className={styles.pricingFeatures}>
@@ -635,7 +618,11 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              {STRIPE[billing === 'monthly' ? tier.stripeMonthly : tier.stripeAnnual] ? (
+              {tier.oneTime ? (
+                <Link to="/clinical-inquiry" className={`${shared.btnTeal} ${shared.btnFull}`}>
+                  {tier.cta} <ChevronRight size={16} />
+                </Link>
+              ) : STRIPE[billing === 'monthly' ? tier.stripeMonthly : tier.stripeAnnual] ? (
                 <a
                   href={checkoutUrl(billing === 'monthly' ? tier.stripeMonthly : tier.stripeAnnual)}
                   className={`${tier.popular ? shared.btnPrimary : shared.btnSecondary} ${shared.btnFull}`}
