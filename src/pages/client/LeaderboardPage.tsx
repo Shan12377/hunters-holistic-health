@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Trophy, Flame, CheckCircle, Award, MessageCircle, Heart, Star } from 'lucide-react'
+import { Trophy, Flame, CheckCircle, Award, MessageCircle, Star, Zap, Activity } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { subDays, format } from 'date-fns'
@@ -9,85 +9,96 @@ interface RankEntry {
   user_id: string
   name: string
   initials: string
-  posts: number
-  likes: number
   score: number
-  topPostType: string | null
-}
-
-const POST_PTS: Record<string, number> = {
-  check_in: 5,
-  win: 4,
-  milestone: 4,
-  late_slip: 3,
-  general: 2,
+  breakdown: Record<string, number>
 }
 
 const MEDAL = ['🥇', '🥈', '🥉']
 
 const SCORE_RULES = [
-  { icon: CheckCircle, color: '#4be08a', label: 'Check-in post', pts: 5 },
-  { icon: Flame, color: '#e08a4b', label: 'Win post', pts: 4 },
-  { icon: Award, color: '#c8a74b', label: 'Milestone post', pts: 4 },
-  { icon: MessageCircle, color: '#e0b84b', label: 'Late Slip (accountability)', pts: 3 },
-  { icon: Star, color: '#91a0ac', label: 'General post', pts: 2 },
-  { icon: Heart, color: '#e05c5c', label: 'Each like received', pts: 1 },
+  { icon: Zap,          color: '#c8a74b', label: 'Streak bonus (7+ days)',     pts: 20 },
+  { icon: CheckCircle,  color: '#4be08a', label: 'Daily log completed',        pts: 10 },
+  { icon: CheckCircle,  color: '#4be08a', label: 'Challenge check-in',         pts: 5  },
+  { icon: Activity,     color: '#4b9ee0', label: 'Exercise logged',            pts: 5  },
+  { icon: Flame,        color: '#e08a4b', label: 'Win or milestone post',      pts: 4  },
+  { icon: MessageCircle,color: '#e0b84b', label: 'Late Slip (accountability)', pts: 3  },
+  { icon: Star,         color: '#91a0ac', label: 'General post',               pts: 2  },
+  { icon: Award,        color: '#c8a74b', label: 'Each like received',         pts: 1  },
 ]
+
+const EVENT_LABELS: Record<string, string> = {
+  daily_log:        '📋 daily logs',
+  streak_bonus:     '🔥 streak bonus',
+  challenge_checkin:'⚡ challenge days',
+  exercise_log:     '🏋️ workouts',
+  feed_post:        '💬 posts',
+}
 
 export default function LeaderboardPage() {
   const { user } = useAuthStore()
   const [rankings, setRankings] = useState<RankEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [myRank, setMyRank] = useState<number | null>(null)
+  const [loading, setLoading]   = useState(true)
+  const [myRank, setMyRank]     = useState<number | null>(null)
 
   useEffect(() => { fetchRankings() }, [])
 
   const fetchRankings = async () => {
     const since = format(subDays(new Date(), 30), 'yyyy-MM-dd') + 'T00:00:00'
-    const { data } = await supabase
-      .from('feed_posts')
-      .select('user_id, post_type, likes, profiles(first_name, last_name, display_handle)')
+
+    const { data: pts } = await supabase
+      .from('points_log')
+      .select('user_id, points, event_type')
       .gte('created_at', since)
 
-    if (!data) { setLoading(false); return }
+    if (!pts || pts.length === 0) { setLoading(false); return }
 
-    const map = new Map<string, RankEntry>()
-
-    for (const post of data) {
-      const uid = post.user_id
-      const p = post.profiles as unknown as { first_name: string; last_name: string; display_handle: string | null }
-      if (!p) continue
-
-      if (!map.has(uid)) {
-        map.set(uid, {
-          user_id: uid,
-          name: p.display_handle ? `@${p.display_handle}` : `${p.first_name} ${p.last_name?.[0] ?? ''}.`,
-          initials: `${p.first_name?.[0] ?? ''}${p.last_name?.[0] ?? ''}`.toUpperCase(),
-          posts: 0,
-          likes: 0,
-          score: 0,
-          topPostType: null,
-        })
-      }
-
-      const entry = map.get(uid)!
-      entry.posts++
-      entry.likes += post.likes ?? 0
-      entry.score += (POST_PTS[post.post_type] ?? 2) + (post.likes ?? 0)
-      if (!entry.topPostType || (POST_PTS[post.post_type] ?? 2) > (POST_PTS[entry.topPostType] ?? 2)) {
-        entry.topPostType = post.post_type
-      }
+    const map = new Map<string, { score: number; breakdown: Record<string, number> }>()
+    for (const row of pts) {
+      if (!map.has(row.user_id)) map.set(row.user_id, { score: 0, breakdown: {} })
+      const e = map.get(row.user_id)!
+      e.score += row.points
+      e.breakdown[row.event_type] = (e.breakdown[row.event_type] ?? 0) + 1
     }
 
-    const sorted = [...map.values()].sort((a, b) => b.score - a.score)
-    setRankings(sorted)
+    const userIds = [...map.keys()]
+    const { data: profs } = await supabase
+      .from('profiles')
+      .select('id, first_name, last_name, display_handle')
+      .in('id', userIds)
 
-    const idx = sorted.findIndex(e => e.user_id === user?.id)
+    const profMap = new Map((profs ?? []).map((p: { id: string; first_name: string; last_name: string; display_handle: string | null }) => [p.id, p]))
+
+    const entries: RankEntry[] = userIds
+      .map(uid => {
+        const p = profMap.get(uid)
+        const agg = map.get(uid)!
+        return {
+          user_id: uid,
+          name: p?.display_handle
+            ? `@${p.display_handle}`
+            : `${p?.first_name ?? '?'} ${p?.last_name?.[0] ?? ''}.`,
+          initials: `${p?.first_name?.[0] ?? ''}${p?.last_name?.[0] ?? ''}`.toUpperCase(),
+          score: agg.score,
+          breakdown: agg.breakdown,
+        }
+      })
+      .filter(e => e.initials.trim() !== '')
+      .sort((a, b) => b.score - a.score)
+
+    setRankings(entries)
+    const idx = entries.findIndex(e => e.user_id === user?.id)
     setMyRank(idx >= 0 ? idx + 1 : null)
     setLoading(false)
   }
 
   const myEntry = rankings.find(e => e.user_id === user?.id)
+
+  const breakdownLabel = (breakdown: Record<string, number>) => {
+    const parts = Object.entries(breakdown)
+      .filter(([, count]) => count > 0)
+      .map(([type, count]) => `${count} ${EVENT_LABELS[type] ?? type}`)
+    return parts.slice(0, 3).join(' · ')
+  }
 
   return (
     <div className={styles.lbPage}>
@@ -111,7 +122,6 @@ export default function LeaderboardPage() {
       {/* Top 3 podium */}
       {!loading && rankings.length >= 3 && (
         <div className={styles.lbPodium}>
-          {/* 2nd */}
           <div className={styles.lbPodiumSpot}>
             <div className={styles.lbPodiumMedal}>🥈</div>
             <div className={`${styles.lbPodiumAvatar} ${styles.lbPodiumAvatarSilver}`}>
@@ -121,7 +131,6 @@ export default function LeaderboardPage() {
             <div className={styles.lbPodiumScore}>{rankings[1].score} pts</div>
             <div className={styles.lbPodiumBar} style={{ height: 60, background: 'rgba(145,160,172,0.2)' }} />
           </div>
-          {/* 1st */}
           <div className={`${styles.lbPodiumSpot} ${styles.lbPodiumFirst}`}>
             <div className={styles.lbPodiumMedal}>🥇</div>
             <div className={`${styles.lbPodiumAvatar} ${styles.lbPodiumAvatarGold}`}>
@@ -131,7 +140,6 @@ export default function LeaderboardPage() {
             <div className={styles.lbPodiumScore}>{rankings[0].score} pts</div>
             <div className={styles.lbPodiumBar} style={{ height: 90, background: 'rgba(200,167,75,0.2)' }} />
           </div>
-          {/* 3rd */}
           <div className={styles.lbPodiumSpot}>
             <div className={styles.lbPodiumMedal}>🥉</div>
             <div className={`${styles.lbPodiumAvatar} ${styles.lbPodiumAvatarBronze}`}>
@@ -152,7 +160,7 @@ export default function LeaderboardPage() {
         ) : rankings.length === 0 ? (
           <div className={styles.lbEmptyState}>
             <Trophy size={40} color="var(--border)" />
-            <p>No activity yet this month. Post to the community feed to get on the board!</p>
+            <p>No activity yet this month. Log your daily habits, join a challenge, or post in the community to get on the board!</p>
           </div>
         ) : (
           <div className={styles.lbList}>
@@ -162,7 +170,10 @@ export default function LeaderboardPage() {
               return (
                 <div key={entry.user_id} className={`${styles.lbRow} ${isMe ? styles.lbRowMe : ''}`}>
                   <div className={styles.lbRank}>
-                    {isTop3 ? <span className={styles.lbMedal}>{MEDAL[i]}</span> : <span className={styles.lbRankNum}>#{i + 1}</span>}
+                    {isTop3
+                      ? <span className={styles.lbMedal}>{MEDAL[i]}</span>
+                      : <span className={styles.lbRankNum}>#{i + 1}</span>
+                    }
                   </div>
                   <div className={`${styles.lbAvatar} ${isMe ? styles.lbAvatarMe : ''}`}>
                     {entry.initials}
@@ -173,7 +184,7 @@ export default function LeaderboardPage() {
                       {isMe && <span className={styles.lbYouBadge}>You</span>}
                     </div>
                     <div className={styles.lbRowMeta}>
-                      {entry.posts} {entry.posts === 1 ? 'post' : 'posts'} · {entry.likes} {entry.likes === 1 ? 'like' : 'likes'} received
+                      {breakdownLabel(entry.breakdown)}
                     </div>
                   </div>
                   <div className={styles.lbRowScore} style={{ color: isTop3 ? 'var(--gold)' : 'var(--text-secondary)' }}>
@@ -199,7 +210,7 @@ export default function LeaderboardPage() {
           ))}
         </div>
         <p className={styles.lbRuleNote}>
-          Rankings update in real time based on your community feed activity. Scores reset every 30 days.
+          Every healthy habit earns points: daily logs, challenge check-ins, exercise, community posts. Scores reset every 30 days.
         </p>
       </div>
 

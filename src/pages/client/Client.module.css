@@ -9346,3 +9346,100 @@
   gap: var(--space-5);
 }
 @media (max-width: 600px) { .bpGaugeGrid { grid-template-columns: 1fr; } }
+
+/* ---- Feed comments & report ---- */
+.postActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.commentToggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.commentToggleBtn:hover { color: var(--teal); background: rgba(11,158,142,0.08); }
+.reportBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: auto;
+}
+.reportBtn:hover { color: #e05c5c; background: rgba(224,92,92,0.08); }
+.commentThread {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.commentItem {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.commentAvatar {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.commentBody { flex: 1; }
+.commentAuthor { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+.commentText { font-size: 0.82rem; color: var(--text-primary); margin-top: 1px; }
+.commentTime { font-size: 0.7rem; color: var(--text-muted); margin-top: 1px; }
+.commentInputRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+.commentInput {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  outline: none;
+}
+.commentInput:focus { border-color: var(--teal); }
+.commentSubmitBtn {
+  display: flex;
+  align-items: center;
+  background: var(--teal);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  cursor: pointer;
+  color: #fff;
+  justify-content: center;
+}
+.commentSubmitBtn:disabled { opacity: 0.5; cursor: default; }

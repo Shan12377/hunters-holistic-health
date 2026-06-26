@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin } from 'lucide-react'
+import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { parseISO, formatDistanceToNow, format } from 'date-fns'
@@ -24,6 +24,14 @@ interface FeedPost {
   created_at: string
   profiles: { first_name: string; last_name: string; display_handle: string | null; privacy_settings?: PrivacySettings }
   user_liked?: boolean
+}
+
+interface FeedComment {
+  id: string
+  user_id: string
+  content: string
+  created_at: string
+  profiles: { first_name: string; last_name: string; display_handle: string | null }
 }
 
 interface NextEvent {
@@ -106,6 +114,10 @@ export default function FeedPage() {
   const [activeRoom, setActiveRoom]     = useState<Room>('all')
   const [nextEvent, setNextEvent]       = useState<NextEvent | null>(null)
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
+  const [expandedPostId, setExpandedPostId]     = useState<string | null>(null)
+  const [comments, setComments]                 = useState<FeedComment[]>([])
+  const [commentText, setCommentText]           = useState('')
+  const [commentSending, setCommentSending]     = useState(false)
 
   const userId = user?.id ?? null
   const initials = profile
@@ -191,6 +203,47 @@ export default function FeedPage() {
     toast.success(newVal ? 'Post pinned.' : 'Post unpinned.')
   }
 
+  const toggleComments = async (postId: string) => {
+    if (expandedPostId === postId) { setExpandedPostId(null); return }
+    setExpandedPostId(postId)
+    setCommentText('')
+    const { data } = await supabase
+      .from('feed_comments')
+      .select('*, profiles(first_name, last_name, display_handle)')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+    setComments((data as FeedComment[]) ?? [])
+  }
+
+  const handleComment = async (postId: string) => {
+    if (!commentText.trim() || !userId) return
+    setCommentSending(true)
+    const { data } = await supabase
+      .from('feed_comments')
+      .insert({ post_id: postId, user_id: userId, content: commentText.trim() })
+      .select('*, profiles(first_name, last_name, display_handle)')
+      .single()
+    if (data) {
+      setComments(c => [...c, data as FeedComment])
+      setCommentText('')
+    }
+    setCommentSending(false)
+  }
+
+  const handleReport = async (postId: string) => {
+    if (!userId) return
+    const { error } = await supabase
+      .from('feed_reports')
+      .insert({ post_id: postId, user_id: userId, reason: 'flagged' })
+    if (error?.code === '23505') {
+      toast('You already reported this post.', { icon: '🚩' })
+    } else if (error) {
+      toast.error('Could not send report.')
+    } else {
+      toast('Post reported. Our educator will review it.', { icon: '🚩' })
+    }
+  }
+
   const isEducator = profile?.role === 'educator'
   const activeRoomConfig = ROOMS.find(r => r.id === activeRoom)!
 
@@ -251,7 +304,7 @@ export default function FeedPage() {
               )}
             </div>
             <p className={styles.postContent}>{applyPrivacy(post)}</p>
-            <div>
+            <div className={styles.postActions}>
               <button
                 onClick={() => handleLike(post)}
                 className={post.user_liked ? styles.likeBtnLiked : styles.likeBtn}
@@ -259,7 +312,61 @@ export default function FeedPage() {
                 <Heart size={16} fill={post.user_liked ? '#e05c5c' : 'none'} />
                 {post.likes > 0 && post.likes}
               </button>
+              <button
+                className={styles.commentToggleBtn}
+                onClick={() => toggleComments(post.id)}
+              >
+                <MessageCircle size={14} />
+                Comment
+              </button>
+              <button
+                className={styles.reportBtn}
+                onClick={() => handleReport(post.id)}
+                title="Report post"
+              >
+                <Flag size={13} />
+              </button>
             </div>
+            {expandedPostId === post.id && (
+              <div className={styles.commentThread}>
+                {comments.map(c => {
+                  const name = c.profiles.display_handle
+                    ? `@${c.profiles.display_handle}`
+                    : `${c.profiles.first_name} ${c.profiles.last_name?.[0] ?? ''}.`
+                  return (
+                    <div key={c.id} className={styles.commentItem}>
+                      <div className={styles.commentAvatar}>
+                        {c.profiles.first_name?.[0]}{c.profiles.last_name?.[0]}
+                      </div>
+                      <div className={styles.commentBody}>
+                        <div className={styles.commentAuthor}>{name}</div>
+                        <div className={styles.commentText}>{c.content}</div>
+                        <div className={styles.commentTime}>
+                          {formatDistanceToNow(parseISO(c.created_at), { addSuffix: true })}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+                <div className={styles.commentInputRow}>
+                  <input
+                    className={styles.commentInput}
+                    placeholder="Write a comment..."
+                    value={commentText}
+                    onChange={e => setCommentText(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleComment(post.id) } }}
+                    maxLength={500}
+                  />
+                  <button
+                    className={styles.commentSubmitBtn}
+                    onClick={() => handleComment(post.id)}
+                    disabled={commentSending || !commentText.trim()}
+                  >
+                    <Send size={13} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

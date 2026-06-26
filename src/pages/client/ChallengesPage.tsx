@@ -87,21 +87,45 @@ export default function ChallengesPage() {
     return differenceInDays(parseISO(end), parseISO(start)) + 1
   }
 
-  const handleCheckIn = async (challengeId: string) => {
+  const handleCheckIn = async (ch: Challenge) => {
     if (!user?.id) return
     const today = format(new Date(), 'yyyy-MM-dd')
-    setCheckingIn(challengeId)
+    setCheckingIn(ch.id)
     const { error } = await supabase.from('challenge_logs').insert({
-      challenge_id: challengeId,
+      challenge_id: ch.id,
       user_id: user.id,
       log_date: today,
     })
     if (error) {
       toast.error('Already checked in today.')
     } else {
-      toast.success('Check-in logged!')
-      setMyLogs(prev => [...prev, { challenge_id: challengeId, log_date: today }])
-      await awardPoints(user.id, 'challenge_checkin', 5, `${challengeId}_${today}`)
+      setMyLogs(prev => [...prev, { challenge_id: ch.id, log_date: today }])
+      await awardPoints(user.id, 'challenge_checkin', 5, `${ch.id}_${today}`)
+      const dayNum = myDaysLogged(ch.id) + 1
+      toast.success(
+        (t) => (
+          <span style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span>Day {dayNum} logged! +5 pts</span>
+            <button
+              style={{ background: 'var(--teal, #0B9E8E)', color: '#fff', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', fontSize: '0.8rem' }}
+              onClick={async () => {
+                toast.dismiss(t.id)
+                await supabase.from('feed_posts').insert({
+                  user_id: user!.id,
+                  content: `Just checked in to the "${ch.title}" challenge! Day ${dayNum} in the books. 🔥`,
+                  post_type: 'check_in',
+                  room: 'general',
+                  likes: 0,
+                })
+                toast.success('Shared to community!')
+              }}
+            >
+              Share to community
+            </button>
+          </span>
+        ),
+        { duration: 6000 }
+      )
     }
     setCheckingIn(null)
   }
@@ -169,7 +193,7 @@ export default function ChallengesPage() {
         {status === 'active' && (
           <button
             className={doneToday ? styles.challengeCheckedBtn : styles.challengeCheckInBtn}
-            onClick={() => !doneToday && handleCheckIn(ch.id)}
+            onClick={() => !doneToday && handleCheckIn(ch)}
             disabled={doneToday || checkingIn === ch.id}
           >
             {doneToday
