@@ -11,7 +11,7 @@ import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 type PostType = 'check_in' | 'late_slip' | 'milestone' | 'win' | 'general' | 'intro' | 'announcement' | 'question'
-type Room = 'general' | 'wins' | 'questions' | 'challenges' | 'resources'
+type Room = 'all' | 'general' | 'wins' | 'questions' | 'challenges' | 'resources'
 
 interface FeedPost {
   id: string
@@ -65,6 +65,7 @@ const FILTER_PILLS: { label: string; value: PostType | null; emoji: string }[] =
 ]
 
 const ROOMS: { id: Room; label: string; emoji: string; defaultPostType: PostType; placeholder: string }[] = [
+  { id: 'all',        label: 'All',        emoji: '🏠', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
   { id: 'general',    label: 'General',    emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
   { id: 'wins',       label: 'Wins',       emoji: '🔥', defaultPostType: 'win',      placeholder: 'Share a win or milestone...' },
   { id: 'questions',  label: 'Questions',  emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...' },
@@ -102,7 +103,7 @@ export default function FeedPage() {
   const [posting, setPosting]           = useState(false)
   const [composerOpen, setComposerOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState<PostType | null>(null)
-  const [activeRoom, setActiveRoom]     = useState<Room>('general')
+  const [activeRoom, setActiveRoom]     = useState<Room>('all')
   const [nextEvent, setNextEvent]       = useState<NextEvent | null>(null)
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
 
@@ -158,7 +159,7 @@ export default function FeedPage() {
       user_id: userId,
       content: content.trim(),
       post_type: postType,
-      room: activeRoom,
+      room: activeRoom === 'all' ? 'general' : activeRoom,
       likes: 0,
     }).select('id').single()
     if (error) {
@@ -194,7 +195,7 @@ export default function FeedPage() {
   const activeRoomConfig = ROOMS.find(r => r.id === activeRoom)!
 
   const roomPosts = useMemo(() =>
-    posts.filter(p => (p.room ?? 'general') === activeRoom),
+    activeRoom === 'all' ? posts : posts.filter(p => (p.room ?? 'general') === activeRoom),
     [posts, activeRoom]
   )
 
@@ -349,23 +350,21 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* Filter pills: General room only */}
-      {activeRoom === 'general' && (
-        <div className={styles.feedFilterRow}>
-          {FILTER_PILLS.map(({ label, value, emoji }) => (
-            <button
-              key={label}
-              className={activeFilter === value ? styles.feedFilterPillActive : styles.feedFilterPill}
-              onClick={() => setActiveFilter(value)}
-            >
-              {emoji && <span>{emoji}</span>} {label}
-            </button>
-          ))}
-          <button className={styles.feedFilterIcon} title="More filters">
-            <SlidersHorizontal size={16} />
+      {/* Filter pills: all rooms */}
+      <div className={styles.feedFilterRow}>
+        {FILTER_PILLS.map(({ label, value, emoji }) => (
+          <button
+            key={label}
+            className={activeFilter === value ? styles.feedFilterPillActive : styles.feedFilterPill}
+            onClick={() => setActiveFilter(value)}
+          >
+            {emoji && <span>{emoji}</span>} {label}
           </button>
-        </div>
-      )}
+        ))}
+        <button className={styles.feedFilterIcon} title="More filters">
+          <SlidersHorizontal size={16} />
+        </button>
+      </div>
 
       {/* Pinned posts */}
       {pinned.length > 0 && (
