@@ -105,7 +105,7 @@ export default function ProtocolMatrixPage() {
       </div>
 
       <p className={styles.recipeDisclaimer}>
-        Protocol combinations in this matrix are curated by a Certified Functional Nutrition Medicine Practitioner. Follow your personalized protocol plan as directed.
+        These materials are for nutrition education only. Hunter's Holistic Health provides functional nutrition education, not clinical care. For personalized clinical guidance, consult your licensed nutritionist or healthcare provider.
       </p>
     </div>
   )
