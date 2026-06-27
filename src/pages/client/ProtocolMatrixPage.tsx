@@ -105,8 +105,7 @@ export default function ProtocolMatrixPage() {
       </div>
 
       <p className={styles.recipeDisclaimer}>
-        This matrix is for educational reference only. Protocol compatibility varies by individual health status.
-        Consult your functional medicine educator before combining protocols.
+        Protocol combinations in this matrix are curated by a Certified Functional Nutrition Medicine Practitioner. Follow your personalized protocol plan as directed.
       </p>
     </div>
   )
