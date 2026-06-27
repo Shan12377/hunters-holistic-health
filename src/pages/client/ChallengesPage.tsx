@@ -17,6 +17,13 @@ interface Challenge {
   is_active: boolean
 }
 
+interface ChalLeader {
+  user_id: string
+  name: string
+  initials: string
+  days: number
+}
+
 interface ChallengeLog {
   challenge_id: string
   log_date: string
@@ -44,7 +51,8 @@ export default function ChallengesPage() {
   const [myLogs, setMyLogs]           = useState<ChallengeLog[]>([])
   const [counts, setCounts]           = useState<ParticipantCount[]>([])
   const [loading, setLoading]         = useState(true)
-  const [checkingIn, setCheckingIn]   = useState<string | null>(null)
+  const [checkingIn, setCheckingIn]       = useState<string | null>(null)
+  const [challengeLeaders, setChallengeLeaders] = useState<Record<string, ChalLeader[]>>({})
 
   useEffect(() => { if (user?.id) fetchAll() }, [user?.id])
 
@@ -72,6 +80,40 @@ export default function ChallengesPage() {
     }
 
     setLoading(false)
+    if (ch && ch.length > 0) {
+      const activeIds = (ch as Challenge[])
+        .filter(c => getStatus(c.start_date, c.end_date) === 'active')
+        .map(c => c.id)
+      if (activeIds.length > 0) fetchLeaders(activeIds)
+    }
+  }
+
+  const fetchLeaders = async (activeIds: string[]) => {
+    const { data } = await supabase
+      .from('challenge_logs')
+      .select('challenge_id, user_id, profiles(first_name, last_name, display_handle)')
+      .in('challenge_id', activeIds)
+    const map: Record<string, Record<string, { days: number; name: string; initials: string }>> = {}
+    for (const row of data ?? []) {
+      const cid = row.challenge_id
+      const uid = row.user_id
+      const p = row.profiles as unknown as { first_name: string; last_name: string; display_handle: string | null } | null
+      if (!map[cid]) map[cid] = {}
+      if (!map[cid][uid]) map[cid][uid] = {
+        days: 0,
+        name: p?.display_handle ? `@${p.display_handle}` : `${p?.first_name ?? '?'} ${p?.last_name?.[0] ?? ''}.`,
+        initials: `${p?.first_name?.[0] ?? ''}${p?.last_name?.[0] ?? ''}`.toUpperCase(),
+      }
+      map[cid][uid].days++
+    }
+    const leaders: Record<string, ChalLeader[]> = {}
+    for (const [cid, users] of Object.entries(map)) {
+      leaders[cid] = Object.entries(users)
+        .map(([uid, v]) => ({ user_id: uid, ...v }))
+        .sort((a, b) => b.days - a.days)
+        .slice(0, 5)
+    }
+    setChallengeLeaders(leaders)
   }
 
   const checkedInToday = (challengeId: string) => {
@@ -208,6 +250,20 @@ export default function ChallengesPage() {
         {status === 'upcoming' && (
           <div className={styles.challengeUpcomingNote}>
             <Clock size={13} /> Starts {format(parseISO(ch.start_date), 'EEEE, MMMM d')}
+          </div>
+        )}
+
+        {status === 'active' && challengeLeaders[ch.id]?.length > 0 && (
+          <div className={styles.chalLeaderboard}>
+            <div className={styles.chalLeaderboardTitle}>Top Members</div>
+            {challengeLeaders[ch.id].map((entry, i) => (
+              <div key={entry.user_id} className={styles.chalLeaderRow}>
+                <span className={styles.chalLeaderRank}>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}</span>
+                <span className={styles.chalLeaderAvatar}>{entry.initials}</span>
+                <span className={styles.chalLeaderName}>{entry.name}</span>
+                <span className={styles.chalLeaderDays}>{entry.days} {entry.days === 1 ? 'day' : 'days'}</span>
+              </div>
+            ))}
           </div>
         )}
       </div>

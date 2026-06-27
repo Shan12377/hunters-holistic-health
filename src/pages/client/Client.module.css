@@ -9443,3 +9443,108 @@
   justify-content: center;
 }
 .commentSubmitBtn:disabled { opacity: 0.5; cursor: default; }
+
+/* ---- Post level badge ---- */
+.postLevelBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: rgba(11,158,142,0.15);
+  border: 1px solid rgba(11,158,142,0.3);
+  color: var(--teal);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* ---- New member welcome banner ---- */
+.feedWelcomeBanner {
+  background: linear-gradient(135deg, rgba(11,158,142,0.12), rgba(200,167,75,0.08));
+  border: 1px solid rgba(11,158,142,0.25);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.feedWelcomeTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+.feedWelcomeSteps {
+  margin: 0 0 0.75rem 1.1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.feedWelcomeSteps li {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.feedWelcomeDismiss {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.feedWelcomeDismiss:hover { opacity: 0.88; }
+
+/* ---- Per-challenge leaderboard ---- */
+.chalLeaderboard {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.chalLeaderboardTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+.chalLeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3px 0;
+}
+.chalLeaderRank {
+  font-size: 0.78rem;
+  min-width: 22px;
+  text-align: center;
+}
+.chalLeaderAvatar {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chalLeaderName {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chalLeaderDays {
+  font-size: 0.75rem;
+  color: var(--teal);
+  font-weight: 600;
+  white-space: nowrap;
+}

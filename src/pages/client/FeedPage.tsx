@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { parseISO, formatDistanceToNow, format } from 'date-fns'
 import toast from 'react-hot-toast'
 import type { PrivacySettings } from '@/types'
-import { awardPoints } from '@/lib/points'
+import { awardPoints, getLevelInfo } from '@/lib/points'
 import MemberCard from '@/components/ui/MemberCard'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
@@ -114,6 +114,7 @@ export default function FeedPage() {
   const [activeRoom, setActiveRoom]     = useState<Room>('all')
   const [nextEvent, setNextEvent]       = useState<NextEvent | null>(null)
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
+  const [userPoints, setUserPoints]             = useState<Record<string, number>>({})
   const [expandedPostId, setExpandedPostId]     = useState<string | null>(null)
   const [comments, setComments]                 = useState<FeedComment[]>([])
   const [commentText, setCommentText]           = useState('')
@@ -135,8 +136,20 @@ export default function FeedPage() {
       .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
       .order('created_at', { ascending: false })
       .limit(100)
-    setPosts((data as FeedPost[]) ?? [])
+    const posts = (data as FeedPost[]) ?? []
+    setPosts(posts)
     setLoading(false)
+    // fetch points for all authors in one query
+    const ids = [...new Set(posts.map(p => p.user_id))]
+    if (ids.length > 0) {
+      const { data: pts } = await supabase
+        .from('points_log')
+        .select('user_id, points')
+        .in('user_id', ids)
+      const map: Record<string, number> = {}
+      for (const r of pts ?? []) map[r.user_id] = (map[r.user_id] ?? 0) + r.points
+      setUserPoints(map)
+    }
   }
 
   const fetchNextEvent = async () => {
@@ -282,6 +295,7 @@ export default function FeedPage() {
           <div className={styles.postBody}>
             <div className={styles.postHeader}>
               <button className={styles.memberNameBtn} onClick={() => setSelectedMemberId(post.user_id)}>{authorName}</button>
+              {(() => { const lvl = getLevelInfo(userPoints[post.user_id] ?? 0).level; return lvl > 1 ? <span className={styles.postLevelBadge}>LVL {lvl}</span> : null })()}
               {post.post_type !== 'general' && (
                 <span
                   className={styles.typeBadge}
@@ -472,6 +486,21 @@ export default function FeedPage() {
           <SlidersHorizontal size={16} />
         </button>
       </div>
+
+      {/* New member welcome banner */}
+      {!loading && userId && posts.filter(p => p.user_id === userId).length === 0 && (
+        <div className={styles.feedWelcomeBanner}>
+          <div className={styles.feedWelcomeTitle}>Welcome to the community! Here is how to get started:</div>
+          <ol className={styles.feedWelcomeSteps}>
+            <li>Post an intro in the feed: who you are and what brought you here</li>
+            <li>Share your first win, no matter how small</li>
+            <li>Check in to an active challenge to earn your first points</li>
+          </ol>
+          <button className={styles.feedWelcomeDismiss} onClick={() => setComposerOpen(true)}>
+            Write your intro now
+          </button>
+        </div>
+      )}
 
       {/* Pinned posts */}
       {pinned.length > 0 && (
