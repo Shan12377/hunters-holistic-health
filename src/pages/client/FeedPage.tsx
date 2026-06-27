@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag } from 'lucide-react'
+import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag, BarChart2, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { parseISO, formatDistanceToNow, format } from 'date-fns'
@@ -24,6 +24,15 @@ interface FeedPost {
   created_at: string
   profiles: { first_name: string; last_name: string; display_handle: string | null; privacy_settings?: PrivacySettings }
   user_liked?: boolean
+}
+
+interface PollOption {
+  id: string
+  post_id: string
+  option_text: string
+  display_order: number
+  vote_count: number
+  user_voted: boolean
 }
 
 interface FeedComment {
@@ -115,6 +124,9 @@ export default function FeedPage() {
   const [nextEvent, setNextEvent]       = useState<NextEvent | null>(null)
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null)
   const [userPoints, setUserPoints]             = useState<Record<string, number>>({})
+  const [postPolls, setPostPolls]               = useState<Record<string, PollOption[]>>({})
+  const [isPoll, setIsPoll]                     = useState(false)
+  const [pollOptions, setPollOptions]           = useState(['', ''])
   const [expandedPostId, setExpandedPostId]     = useState<string | null>(null)
   const [comments, setComments]                 = useState<FeedComment[]>([])
   const [commentText, setCommentText]           = useState('')
@@ -149,6 +161,33 @@ export default function FeedPage() {
       const map: Record<string, number> = {}
       for (const r of pts ?? []) map[r.user_id] = (map[r.user_id] ?? 0) + r.points
       setUserPoints(map)
+    }
+    // fetch polls
+    const postIds = posts.map(p => p.id)
+    const { data: opts } = await supabase
+      .from('poll_options')
+      .select('*')
+      .in('post_id', postIds)
+      .order('display_order')
+    if (opts && opts.length > 0) {
+      const optIds = opts.map((o: { id: string }) => o.id)
+      const { data: votes } = await supabase
+        .from('poll_votes')
+        .select('poll_option_id, user_id')
+        .in('poll_option_id', optIds)
+      const voteCount: Record<string, number> = {}
+      const userVoted = new Set<string>()
+      const currentUser = (await supabase.auth.getUser()).data.user?.id
+      for (const v of votes ?? []) {
+        voteCount[v.poll_option_id] = (voteCount[v.poll_option_id] ?? 0) + 1
+        if (v.user_id === currentUser) userVoted.add(v.poll_option_id)
+      }
+      const grouped: Record<string, PollOption[]> = {}
+      for (const o of opts as { id: string; post_id: string; option_text: string; display_order: number }[]) {
+        if (!grouped[o.post_id]) grouped[o.post_id] = []
+        grouped[o.post_id].push({ ...o, vote_count: voteCount[o.id] ?? 0, user_voted: userVoted.has(o.id) })
+      }
+      setPostPolls(grouped)
     }
   }
 
@@ -193,8 +232,18 @@ export default function FeedPage() {
       toast.success('Posted!')
       if (newPost?.id) {
         await awardPoints(userId, 'feed_post', POST_PTS[postType] ?? 2, newPost.id)
+        if (isPoll) {
+          const valid = pollOptions.filter(o => o.trim())
+          if (valid.length >= 2) {
+            await supabase.from('poll_options').insert(
+              valid.map((text, i) => ({ post_id: newPost.id, option_text: text.trim(), display_order: i }))
+            )
+          }
+        }
       }
       setContent('')
+      setIsPoll(false)
+      setPollOptions(['', ''])
       const def = ROOMS.find(r => r.id === activeRoom)
       setPostType(def?.defaultPostType ?? 'general')
       setComposerOpen(false)
@@ -214,6 +263,28 @@ export default function FeedPage() {
     await supabase.from('feed_posts').update({ is_pinned: newVal }).eq('id', post.id)
     setPosts(p => p.map(x => x.id === post.id ? { ...x, is_pinned: newVal } : x))
     toast.success(newVal ? 'Post pinned.' : 'Post unpinned.')
+  }
+
+  const handleVote = async (post: FeedPost, optionId: string) => {
+    if (!userId || post.user_id === userId) return
+    const options = postPolls[post.id] ?? []
+    const prev = options.find(o => o.user_voted)
+    if (prev) {
+      await supabase.from('poll_votes').delete().eq('poll_option_id', prev.id).eq('user_id', userId)
+    }
+    if (prev?.id !== optionId) {
+      await supabase.from('poll_votes').insert({ poll_option_id: optionId, user_id: userId })
+    }
+    setPostPolls(p => ({
+      ...p,
+      [post.id]: (p[post.id] ?? []).map(o => ({
+        ...o,
+        vote_count: o.id === optionId
+          ? o.vote_count + (prev?.id !== optionId ? 1 : 0)
+          : o.id === prev?.id ? o.vote_count - 1 : o.vote_count,
+        user_voted: o.id === optionId && prev?.id !== optionId,
+      })),
+    }))
   }
 
   const toggleComments = async (postId: string) => {
@@ -318,6 +389,36 @@ export default function FeedPage() {
               )}
             </div>
             <p className={styles.postContent}>{applyPrivacy(post)}</p>
+            {postPolls[post.id]?.length > 0 && (() => {
+              const opts = postPolls[post.id]
+              const total = opts.reduce((s, o) => s + o.vote_count, 0)
+              const voted = opts.some(o => o.user_voted)
+              const isOwn = post.user_id === userId
+              const revealed = voted || isOwn
+              return (
+                <div className={styles.pollWrap}>
+                  {opts.map(opt => {
+                    const pct = total > 0 ? Math.round((opt.vote_count / total) * 100) : 0
+                    return (
+                      <button
+                        key={opt.id}
+                        className={`${styles.pollOption} ${opt.user_voted ? styles.pollOptionVoted : ''} ${revealed ? styles.pollOptionRevealed : ''}`}
+                        onClick={() => !revealed && !isOwn && handleVote(post, opt.id)}
+                        disabled={isOwn}
+                      >
+                        {revealed && <div className={styles.pollBar} style={{ width: `${pct}%` }} />}
+                        <span className={styles.pollOptionText}>{opt.option_text}</span>
+                        {revealed && <span className={styles.pollPct}>{pct}%</span>}
+                      </button>
+                    )
+                  })}
+                  <div className={styles.pollMeta}>
+                    {total} {total === 1 ? 'vote' : 'votes'}
+                    {!voted && !isOwn && <span> · tap to vote</span>}
+                  </div>
+                </div>
+              )
+            })()}
             <div className={styles.postActions}>
               <button
                 onClick={() => handleLike(post)}
@@ -429,6 +530,39 @@ export default function FeedPage() {
                 autoFocus
               />
             </div>
+            {isPoll && (
+              <div className={styles.pollComposerWrap}>
+                {pollOptions.map((opt, i) => (
+                  <div key={i} className={styles.pollComposerRow}>
+                    <input
+                      className={styles.pollComposerInput}
+                      placeholder={`Option ${i + 1}`}
+                      value={opt}
+                      onChange={e => setPollOptions(prev => prev.map((o, j) => j === i ? e.target.value : o))}
+                      maxLength={80}
+                    />
+                    {pollOptions.length > 2 && (
+                      <button
+                        type="button"
+                        className={styles.pollComposerRemove}
+                        onClick={() => setPollOptions(prev => prev.filter((_, j) => j !== i))}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {pollOptions.length < 4 && (
+                  <button
+                    type="button"
+                    className={styles.pollComposerAdd}
+                    onClick={() => setPollOptions(prev => [...prev, ''])}
+                  >
+                    <Plus size={13} /> Add option
+                  </button>
+                )}
+              </div>
+            )}
             <div className={styles.feedComposerBar}>
               <div className={styles.feedComposerPills}>
                 {COMPOSER_TYPES.map(({ value, label, emoji }) => (
@@ -443,6 +577,14 @@ export default function FeedPage() {
                 ))}
               </div>
               <div className={styles.feedComposerActions}>
+                <button
+                  type="button"
+                  className={isPoll ? styles.pollToggleActive : styles.pollToggle}
+                  onClick={() => { setIsPoll(p => !p); if (isPoll) setPollOptions(['', '']) }}
+                  title="Add a poll"
+                >
+                  <BarChart2 size={14} /> Poll
+                </button>
                 <span className={styles.charCount}>{content.length}/500</span>
                 <button type="button" className={styles.feedComposerCancel} onClick={() => { setComposerOpen(false); setContent('') }}>
                   Cancel
