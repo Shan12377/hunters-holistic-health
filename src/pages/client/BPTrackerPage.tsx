@@ -12,6 +12,7 @@ import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS } from '@/types'
 import toast from 'react-hot-toast'
 import { Heart, Plus, Info, ChevronDown, ChevronUp, Activity, Wind, Droplets } from 'lucide-react'
 import BPGauge from '@/components/ui/BPGauge'
+import PlanGate from '@/components/ui/PlanGate'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -524,19 +525,27 @@ export default function BPTrackerPage() {
         </div>
         <div className={styles.zoneGrid}>
           {[
-            { zone: 'Normal', range: 'Below 120/80', color: '#4be08a' },
-            { zone: 'Elevated', range: '120-129 / below 80', color: '#e0b84b' },
-            { zone: 'High Stage 1', range: '130-139 / 80-89', color: '#e08a4b' },
-            { zone: 'High Stage 2', range: '140+ / 90+', color: '#e05c5c' },
-            { zone: 'Very High', range: 'Above 180 / above 120', color: '#c0392b' },
-          ].map(({ zone, range, color }) => (
-            <div key={zone} className={styles.zoneItem}>
-              {/* Dot color comes from the zone data, so it stays inline */}
+            { zone: 'Normal',      range: 'Below 120/80',          color: '#4be08a', alert: null },
+            { zone: 'Elevated',    range: '120-129 / below 80',    color: '#e0b84b', alert: null },
+            { zone: 'High Stage 1', range: '130-139 / 80-89',      color: '#e08a4b', alert: 'Take action' },
+            { zone: 'High Stage 2', range: '140+ / 90+',           color: '#e05c5c', alert: 'Seek guidance' },
+            { zone: 'Very High',   range: 'Above 180 / above 120', color: '#c0392b', alert: 'Urgent' },
+          ].map(({ zone, range, color, alert }) => (
+            <div
+              key={zone}
+              className={styles.zoneItem}
+              style={alert ? { background: `${color}12`, border: `1px solid ${color}40`, borderRadius: 8, padding: '0.5rem 0.75rem' } : undefined}
+            >
               <div className={styles.dot} style={{ background: color }} />
-              <div>
-                <div className={styles.zoneItemName}>{zone}</div>
+              <div style={{ flex: 1 }}>
+                <div className={styles.zoneItemName} style={alert ? { color, fontWeight: 700 } : undefined}>{zone}</div>
                 <div className={styles.zoneItemRange}>{range}</div>
               </div>
+              {alert && (
+                <span style={{ fontSize: '0.65rem', fontWeight: 700, color, background: `${color}20`, border: `1px solid ${color}50`, borderRadius: 4, padding: '2px 6px', whiteSpace: 'nowrap' }}>
+                  {alert}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -570,7 +579,8 @@ export default function BPTrackerPage() {
         </p>
       </div>
 
-      {/* 3 Levers Section */}
+      {/* 3 Levers Section — Program+ only */}
+      <PlanGate requiredPlan="program" label="Your Optimization Protocol is available on The Program and above.">
       <div className={styles.bpLeversSection}>
         <div className={styles.bpLeversSectionHead}>
           Your Optimization Protocol
@@ -601,6 +611,8 @@ export default function BPTrackerPage() {
           ))}
         </div>
       </div>
+
+      </PlanGate>
 
       {/* BP Education Section */}
       <div className={styles.bpEduSection}>
