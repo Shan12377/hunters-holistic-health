@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BPSimulatorWidget } from './BPSimulatorPage'
 import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink, ChevronDown, CheckCircle, Dumbbell, Zap } from 'lucide-react'
 import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
@@ -373,6 +374,7 @@ export default function LandingPage() {
               <button className={styles.toolBtn} onClick={checkBP}>Check My Reading</button>
             </div>
             {bpResult && (
+              <>
               <div className={styles.toolResult}>
                 <div className={styles.toolZoneBadge} style={{ background: `${bpResult.color}18`, border: `1px solid ${bpResult.color}40`, color: bpResult.color }}>
                   {bpResult.zone}
@@ -388,13 +390,10 @@ export default function LandingPage() {
                     <ul className={styles.bpFactorList}>{bpResult.supporting.map(f => <li key={f}>{f}</li>)}</ul>
                   </div>
                 </div>
-                <div className={styles.toolCTA}>
-                  <p className={styles.toolCTAText}>Want to see how diet, stress, and movement actually move this number? Try the interactive simulator.</p>
-                  <Link to="/bp-simulator" className={shared.btnTeal}>
-                    Try the BP Simulator (Free) <ChevronRight size={16} />
-                  </Link>
-                </div>
+                <p className={styles.toolCTAText}>Now see how your everyday choices move this number:</p>
               </div>
+              <BPSimulatorWidget initialSys={+bpSys} initialDia={+bpDia} showFooter={false} />
+              </>
             )}
           </div>
         )}

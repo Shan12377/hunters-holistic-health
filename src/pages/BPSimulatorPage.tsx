@@ -96,11 +96,13 @@ const ACT_OPTIONS: { value: ActivityLevel; label: string }[] = [
   { value: 'wallsquat', label: 'Wall squat (2 minutes)' },
 ]
 
-export default function BPSimulatorPage() {
+interface BPSimWidgetProps { initialSys?: number; initialDia?: number; showFooter?: boolean }
+
+export function BPSimulatorWidget({ initialSys = 128, initialDia = 82, showFooter = true }: BPSimWidgetProps) {
   const { profile } = useAuthStore()
   const isLoggedIn = !!profile
-  const [sys, setSys] = useState(128)
-  const [dia, setDia] = useState(82)
+  const [sys, setSys] = useState(initialSys)
+  const [dia, setDia] = useState(initialDia)
   const [age, setAge] = useState(45)
   const [sex, setSex] = useState('M')
   const [salt, setSalt] = useState<SaltLevel>(1)
@@ -178,23 +180,8 @@ export default function BPSimulatorPage() {
     },
   }
 
-  // scroll to top on mount
-  useEffect(() => { window.scrollTo(0, 0) }, [])
-
   return (
-    <div className={styles.page}>
-      {/* Header */}
-      <div className={styles.hero}>
-        <h1 className={styles.heroTitle}>Blood Pressure Simulator</h1>
-        <p className={styles.heroSub}>
-          Enter your baseline numbers and adjust the sliders to see how everyday choices move your blood pressure. No account needed.
-        </p>
-        <p className={styles.disclaimer}>
-          Numbers shown are educational estimates based on published research averages. They are not a diagnosis and do not reflect your individual physiology. Always work with your own healthcare provider.
-        </p>
-      </div>
-
-      <div className={styles.layout}>
+    <div className={styles.layout}>
         {/* LEFT: inputs */}
         <aside className={styles.inputs}>
 
@@ -347,10 +334,10 @@ export default function BPSimulatorPage() {
             </p>
           </div>
 
-          {/* Newsletter */}
+          {/* Newsletter + Upgrade CTA — page only */}
+          {showFooter && <>
           <NewsletterEmbed />
 
-          {/* Upgrade CTA */}
           {isLoggedIn ? (
             <div className={styles.upgradeCard}>
               <TrendingUp size={20} color="var(--teal)" />
@@ -371,9 +358,27 @@ export default function BPSimulatorPage() {
               </div>
             </div>
           )}
+          </>}
 
         </div>
       </div>
+  )
+}
+
+export default function BPSimulatorPage() {
+  useEffect(() => { window.scrollTo(0, 0) }, [])
+  return (
+    <div className={styles.page}>
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>Blood Pressure Simulator</h1>
+        <p className={styles.heroSub}>
+          Enter your baseline numbers and adjust the sliders to see how everyday choices move your blood pressure. No account needed.
+        </p>
+        <p className={styles.disclaimer}>
+          Numbers shown are educational estimates based on published research averages. They are not a diagnosis and do not reflect your individual physiology. Always work with your own healthcare provider.
+        </p>
+      </div>
+      <BPSimulatorWidget showFooter={true} />
     </div>
   )
 }
