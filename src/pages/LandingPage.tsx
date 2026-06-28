@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BPSimulatorWidget } from './BPSimulatorPage'
+import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
 import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink, ChevronDown, CheckCircle, Dumbbell, Zap } from 'lucide-react'
 import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
 
 // --- Types ---
-type ToolTab = 'bp' | 'symptom' | 'homa'
+type ToolTab = 'bp' | 'symptom' | 'homa' | 'hormone'
 type BillingCycle = 'monthly' | 'annual'
 
 interface BPResult {
@@ -325,7 +326,7 @@ export default function LandingPage() {
       {/* Free Tools */}
       <section className={styles.section} id="free-tools">
         <div className={styles.sectionKicker}>No Account Needed</div>
-        <h2 className={styles.sectionTitle}>Three Free Education Tools</h2>
+        <h2 className={styles.sectionTitle}>Four Free Education Tools</h2>
         <p className={styles.sectionSubtitle}>These tools give you educational context about your numbers. They are not a clinical assessment and do not replace your healthcare provider.</p>
 
         <div className={styles.toolTabs}>
@@ -333,6 +334,7 @@ export default function LandingPage() {
             { id: 'bp',      label: 'Blood Pressure Check' },
             { id: 'symptom', label: 'Metabolic Pattern Check' },
             { id: 'homa',    label: 'Insulin Resistance Check' },
+            { id: 'hormone', label: 'Hormone Cycle Snapshot' },
           ] as { id: ToolTab; label: string }[]).map(t => (
             <button
               key={t.id}
@@ -429,6 +431,9 @@ export default function LandingPage() {
             )}
           </div>
         )}
+
+        {/* Hormone Cycle Snapshot */}
+        {toolTab === 'hormone' && <HormoneCyclePreview />}
       </section>
 
       {/* Who This Is For */}
