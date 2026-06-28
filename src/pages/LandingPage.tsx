@@ -218,23 +218,12 @@ export default function LandingPage() {
   const [toolTab, setToolTab] = useState<ToolTab>('bp')
   const [billing, setBilling] = useState<BillingCycle>('monthly')
 
-  const [bpSys, setBpSys] = useState('')
-  const [bpDia, setBpDia] = useState('')
-  const [bpResult, setBpResult] = useState<BPResult | null>(null)
-
   const [symptoms, setSymptoms] = useState<Set<string>>(new Set())
   const [symptomPatterns, setSymptomPatterns] = useState<string[] | null>(null)
 
   const [homaGlucose, setHomaGlucose] = useState('')
   const [homaInsulin, setHomaInsulin] = useState('')
   const [homaResult, setHomaResult] = useState<HomaResult | null>(null)
-
-  const checkBP = () => {
-    const sys = parseInt(bpSys)
-    const dia = parseInt(bpDia)
-    if (isNaN(sys) || isNaN(dia) || sys < 60 || dia < 40) return
-    setBpResult(getBPZone(sys, dia))
-  }
 
   const toggleSymptom = (id: string) => {
     setSymptoms(prev => {
@@ -355,48 +344,8 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* BP Tool */}
-        {toolTab === 'bp' && (
-          <div className={styles.toolPanel}>
-            <p className={styles.toolDesc}>Enter your most recent reading to see where it falls on the AHA scale and learn about the lifestyle factors that may be influencing it.</p>
-            <div className={styles.bpInputRow}>
-              <div className={styles.bpField}>
-                <label className={styles.toolLabel}>Systolic (top number)</label>
-                <input className={styles.toolInput} type="number" placeholder="e.g. 128"
-                  value={bpSys} onChange={e => { setBpSys(e.target.value); setBpResult(null) }} min={60} max={250} />
-              </div>
-              <div className={styles.bpSlash}>/</div>
-              <div className={styles.bpField}>
-                <label className={styles.toolLabel}>Diastolic (bottom number)</label>
-                <input className={styles.toolInput} type="number" placeholder="e.g. 82"
-                  value={bpDia} onChange={e => { setBpDia(e.target.value); setBpResult(null) }} min={40} max={150} />
-              </div>
-              <button className={styles.toolBtn} onClick={checkBP}>Check My Reading</button>
-            </div>
-            {bpResult && (
-              <>
-              <div className={styles.toolResult}>
-                <div className={styles.toolZoneBadge} style={{ background: `${bpResult.color}18`, border: `1px solid ${bpResult.color}40`, color: bpResult.color }}>
-                  {bpResult.zone}
-                </div>
-                <p className={styles.toolResultMsg}>{bpResult.message}</p>
-                <div className={styles.bpFactorCols}>
-                  <div className={styles.bpFactorCol}>
-                    <div className={styles.bpFactorHeader} style={{ color: '#e08a4b' }}>Factors that may elevate readings</div>
-                    <ul className={styles.bpFactorList}>{bpResult.elevating.map(f => <li key={f}>{f}</li>)}</ul>
-                  </div>
-                  <div className={styles.bpFactorCol}>
-                    <div className={styles.bpFactorHeader} style={{ color: '#4be08a' }}>Factors that may support healthier readings</div>
-                    <ul className={styles.bpFactorList}>{bpResult.supporting.map(f => <li key={f}>{f}</li>)}</ul>
-                  </div>
-                </div>
-                <p className={styles.toolCTAText}>Now see how your everyday choices move this number:</p>
-              </div>
-              <BPSimulatorWidget initialSys={+bpSys} initialDia={+bpDia} showFooter={false} />
-              </>
-            )}
-          </div>
-        )}
+        {/* BP Tool — full simulator embedded */}
+        {toolTab === 'bp' && <BPSimulatorWidget showFooter={false} />}
 
         {/* Symptom Tool */}
         {toolTab === 'symptom' && (
