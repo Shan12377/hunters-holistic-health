@@ -26,6 +26,7 @@ export default function ClientDetailPage() {
   const [generatingReport, setGeneratingReport] = useState(false)
 
   type ProtocolRow = {
+    protocol_type: string
     lever_priority: string
     supplement_stack: string
     daily_anchors: string
@@ -42,6 +43,7 @@ export default function ClientDetailPage() {
     updated_at?: string
   }
   const defaultProtocol: ProtocolRow = {
+    protocol_type: 'blood_pressure',
     lever_priority: 'all',
     supplement_stack: '',
     daily_anchors: '',
@@ -56,6 +58,15 @@ export default function ClientDetailPage() {
     protocol_start_date: '',
     supplement_link: '',
   }
+
+  const PROTOCOL_TYPES = [
+    { value: 'blood_pressure',   label: 'Blood Pressure Protocol' },
+    { value: 'parasite_cleanse', label: 'Parasite Cleanse Protocol' },
+    { value: 'gut_healing',      label: 'Gut Healing Protocol' },
+    { value: 'metabolic_reset',  label: 'Metabolic Reset Protocol' },
+    { value: 'hormone_balance',  label: 'Hormone Balance Protocol' },
+    { value: 'custom',           label: 'Custom Protocol' },
+  ]
   const [protocol, setProtocol] = useState<ProtocolRow | null>(null)
   const [protocolForm, setProtocolForm] = useState<ProtocolRow>(defaultProtocol)
   const [savingProtocol, setSavingProtocol] = useState(false)
@@ -81,6 +92,7 @@ export default function ClientDetailPage() {
     if (protocolRes.data) {
       const pd = protocolRes.data
       const loaded: ProtocolRow = {
+        protocol_type: pd.protocol_type ?? 'blood_pressure',
         lever_priority: pd.lever_priority ?? 'all',
         supplement_stack: pd.supplement_stack ?? '',
         daily_anchors: pd.daily_anchors ?? '',
@@ -108,6 +120,7 @@ export default function ClientDetailPage() {
     const now = new Date().toISOString()
     const payload = {
       user_id: clientId,
+      protocol_type: protocolForm.protocol_type,
       lever_priority: protocolForm.lever_priority,
       supplement_stack: protocolForm.supplement_stack || null,
       daily_anchors: protocolForm.daily_anchors || null,
@@ -401,6 +414,23 @@ new Chart(document.getElementById('stepsChart'), {
           <BookOpen size={16} color="var(--teal)" /> Protocol Builder
         </h3>
 
+        {/* Protocol Type */}
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Protocol Type</label>
+          <div className={styles.protocolLeverGrid}>
+            {PROTOCOL_TYPES.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                className={protocolForm.protocol_type === value ? styles.protocolLeverActive : styles.protocolLever}
+                onClick={() => setProtocolForm(f => ({ ...f, protocol_type: value }))}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Client Goals */}
         <div className={styles.protocolFieldGroup}>
           <label className={styles.cohortsFormLabel}>Goal 1 — Primary Protocol Goal</label>
@@ -507,26 +537,28 @@ new Chart(document.getElementById('stepsChart'), {
           </div>
         </div>
 
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Active Lever Focus</label>
-          <div className={styles.protocolLeverGrid}>
-            {[
-              { value: 'all', label: 'All Three Levers' },
-              { value: '1', label: 'Lever 1: Blood Volume' },
-              { value: '2', label: 'Lever 2: Vessel Tone' },
-              { value: '3', label: 'Lever 3: Elasticity' },
-            ].map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                className={protocolForm.lever_priority === value ? styles.protocolLeverActive : styles.protocolLever}
-                onClick={() => setProtocolForm(f => ({ ...f, lever_priority: value }))}
-              >
-                {label}
-              </button>
-            ))}
+        {protocolForm.protocol_type === 'blood_pressure' && (
+          <div className={styles.protocolFieldGroup}>
+            <label className={styles.cohortsFormLabel}>Active Lever Focus</label>
+            <div className={styles.protocolLeverGrid}>
+              {[
+                { value: 'all', label: 'All Three Levers' },
+                { value: '1', label: 'Lever 1: Blood Volume' },
+                { value: '2', label: 'Lever 2: Vessel Tone' },
+                { value: '3', label: 'Lever 3: Elasticity' },
+              ].map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={protocolForm.lever_priority === value ? styles.protocolLeverActive : styles.protocolLever}
+                  onClick={() => setProtocolForm(f => ({ ...f, lever_priority: value }))}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={styles.protocolFieldGroup}>
           <label className={styles.cohortsFormLabel}>Supplement Stack</label>
