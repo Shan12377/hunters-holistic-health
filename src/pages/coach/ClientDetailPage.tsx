@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, BookOpen, Download, Heart, Activity, Pill, Save } from 'lucide-react'
+import ProtocolBuilder from './ProtocolBuilder'
 import { Line, Bar } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js'
 import { supabase } from '@/lib/supabase'
@@ -81,7 +82,7 @@ export default function ClientDetailPage() {
       supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
       supabase.from('supplements').select('id,name,timing').eq('user_id', id).eq('active', true),
       supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
-      supabase.from('client_protocols').select('*').eq('user_id', id).maybeSingle(),
+      supabase.from('client_protocols').select('*, protocol_data').eq('user_id', id).maybeSingle(),
     ])
     if (profileRes.data) setProfile(profileRes.data as Profile)
     setBpReadings((bpRes.data as BPReading[]) ?? [])
@@ -413,218 +414,13 @@ new Chart(document.getElementById('stepsChart'), {
         <h3 className={styles.cardSubTitle}>
           <BookOpen size={16} color="var(--teal)" /> Protocol Builder
         </h3>
-
-        {/* Protocol Type */}
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Protocol Type</label>
-          <div className={styles.protocolLeverGrid}>
-            {PROTOCOL_TYPES.map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                className={protocolForm.protocol_type === value ? styles.protocolLeverActive : styles.protocolLever}
-                onClick={() => setProtocolForm(f => ({ ...f, protocol_type: value }))}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Client Goals */}
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Goal 1 — Primary Protocol Goal</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={2}
-            placeholder="e.g., Gut Prep and Parasite Cleanse — Open drainage pathways, eradicate parasites using a targeted herbal stack, and restore microbiome and gut barrier integrity."
-            value={protocolForm.goal_1}
-            onChange={e => setProtocolForm(f => ({ ...f, goal_1: e.target.value }))}
+        {clientId && (
+          <ProtocolBuilder
+            clientId={clientId}
+            protocolType={protocolForm.protocol_type}
+            savedData={protocol ? (protocol as unknown as { protocol_data?: import('@/data/protocols/types').ProtocolData }).protocol_data ?? null : null}
           />
-        </div>
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Goal 2 — Secondary Protocol Goal</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={2}
-            placeholder="e.g., Anti-Mucus Cleanse — Reduce systemic mucus burden alongside the parasite protocol."
-            value={protocolForm.goal_2}
-            onChange={e => setProtocolForm(f => ({ ...f, goal_2: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolProgressWrap}>
-          <div className={styles.protocolProgressRow}>
-            <span className={styles.protocolProgressLabel}>
-              Session {protocolForm.current_session} of {protocolForm.total_sessions}
-            </span>
-            {protocolForm.program_end_date && (
-              <span className={styles.protocolEndDate}>
-                Ends {format(new Date(protocolForm.program_end_date + 'T12:00:00'), 'MMM d, yyyy')}
-              </span>
-            )}
-          </div>
-          <div className={styles.protocolProgressTrack}>
-            <div
-              className={styles.protocolProgressFill}
-              style={{ width: `${Math.min(100, Math.round(protocolForm.current_session / protocolForm.total_sessions * 100))}%` }}
-            />
-          </div>
-        </div>
-
-        <div className={styles.protocolSessionGrid}>
-          <div>
-            <label className={styles.cohortsFormLabel}>Current Session</label>
-            <input
-              type="number"
-              min={1}
-              className={styles.cohortsInput}
-              value={protocolForm.current_session}
-              onChange={e => setProtocolForm(f => ({ ...f, current_session: parseInt(e.target.value) || 1 }))}
-            />
-          </div>
-          <div>
-            <label className={styles.cohortsFormLabel}>Total Sessions</label>
-            <input
-              type="number"
-              min={1}
-              className={styles.cohortsInput}
-              value={protocolForm.total_sessions}
-              onChange={e => setProtocolForm(f => ({ ...f, total_sessions: parseInt(e.target.value) || 24 }))}
-            />
-          </div>
-          <div>
-            <label className={styles.cohortsFormLabel}>Program End Date</label>
-            <input
-              type="date"
-              className={styles.cohortsInput}
-              value={protocolForm.program_end_date}
-              onChange={e => setProtocolForm(f => ({ ...f, program_end_date: e.target.value }))}
-            />
-          </div>
-        </div>
-
-        {/* Protocol Start Date */}
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Protocol Start Date</label>
-          <input
-            type="date"
-            className={styles.cohortsInput}
-            value={protocolForm.protocol_start_date}
-            onChange={e => setProtocolForm(f => ({ ...f, protocol_start_date: e.target.value }))}
-          />
-        </div>
-
-        {/* Active Phase */}
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Active Phase</label>
-          <div className={styles.protocolLeverGrid}>
-            {[
-              { value: 'phase_0', label: 'Phase 0: Open Drainage' },
-              { value: 'phase_1', label: 'Phase 1: Kill Phase' },
-              { value: 'phase_2', label: 'Phase 2: Gut Healing' },
-              { value: 'phase_3', label: 'Phase 3: Restore' },
-            ].map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                className={protocolForm.active_phase === value ? styles.protocolLeverActive : styles.protocolLever}
-                onClick={() => setProtocolForm(f => ({ ...f, active_phase: value }))}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {protocolForm.protocol_type === 'blood_pressure' && (
-          <div className={styles.protocolFieldGroup}>
-            <label className={styles.cohortsFormLabel}>Active Lever Focus</label>
-            <div className={styles.protocolLeverGrid}>
-              {[
-                { value: 'all', label: 'All Three Levers' },
-                { value: '1', label: 'Lever 1: Blood Volume' },
-                { value: '2', label: 'Lever 2: Vessel Tone' },
-                { value: '3', label: 'Lever 3: Elasticity' },
-              ].map(({ value, label }) => (
-                <button
-                  key={value}
-                  type="button"
-                  className={protocolForm.lever_priority === value ? styles.protocolLeverActive : styles.protocolLever}
-                  onClick={() => setProtocolForm(f => ({ ...f, lever_priority: value }))}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
         )}
-
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Supplement Stack</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={3}
-            placeholder="e.g., Magnesium glycinate 400mg nightly, Beets + Garlic stack daily..."
-            value={protocolForm.supplement_stack}
-            onChange={e => setProtocolForm(f => ({ ...f, supplement_stack: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Supplement Purchase Link</label>
-          <input
-            type="url"
-            className={styles.cohortsInput}
-            placeholder="https://huntersholistichealth.com/protocol/parasite-cleanse"
-            value={protocolForm.supplement_link}
-            onChange={e => setProtocolForm(f => ({ ...f, supplement_link: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Daily Anchors</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={3}
-            placeholder="e.g., 10 min morning sun before 9am, nasal breathing during walks, Wall Squat 3x30s..."
-            value={protocolForm.daily_anchors}
-            onChange={e => setProtocolForm(f => ({ ...f, daily_anchors: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Known Disruptors</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={2}
-            placeholder="e.g., Late night blue light, high sodium weekends, prolonged sitting..."
-            value={protocolForm.known_triggers}
-            onChange={e => setProtocolForm(f => ({ ...f, known_triggers: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolFieldGroup}>
-          <label className={styles.cohortsFormLabel}>Educator Notes</label>
-          <textarea
-            className={styles.protocolTextarea}
-            rows={2}
-            placeholder="Session context, progress highlights, adjustments for next session..."
-            value={protocolForm.educator_notes}
-            onChange={e => setProtocolForm(f => ({ ...f, educator_notes: e.target.value }))}
-          />
-        </div>
-
-        <div className={styles.protocolSaveRow}>
-          {protocol?.updated_at && (
-            <span className={styles.protocolLastSaved}>
-              Last saved {format(new Date(protocol.updated_at), 'MMM d, yyyy')}
-            </span>
-          )}
-          <button className={shared.btnPrimary} onClick={saveProtocol} disabled={savingProtocol}>
-            <Save size={15} /> {savingProtocol ? 'Saving...' : 'Save Protocol'}
-          </button>
-        </div>
       </div>
 
       {/* Reflection Patterns (Educational) */}
