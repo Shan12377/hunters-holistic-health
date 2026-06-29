@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hormone Cycle Intelligence - Hunter's Holistic Health</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --teal:#1a7a7a; --teal-light:#2aa8a8; --teal-pale:#e8f5f5;
+  --gold:#c9922a; --gold-pale:#fdf3e3;
+  --navy:#1a2a3a; --white:#fff;
+  --gray-100:#f4f6f8; --gray-200:#e2e8f0; --gray-400:#94a3b8; --gray-600:#475569; --gray-800:#1e293b;
+  --phase-menstrual:#7c3aed; --phase-menstrual-pale:#f3e8ff;
+  --phase-follicular:#0891b2; --phase-follicular-pale:#e0f7fa;
+  --phase-ovulatory:#16a34a; --phase-ovulatory-pale:#dcfce7;
+  --phase-luteal:#d97706; --phase-luteal-pale:#fef3c7;
+  --female:#8b5cf6; --male:#3b82f6;
+  --shadow:0 2px 8px rgba(0,0,0,.1); --shadow-lg:0 4px 20px rgba(0,0,0,.15);
+  --radius:12px; --radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--gray-100);color:var(--gray-800);min-height:100vh}
+
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--teal) 100%);color:white;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg)}
+.header-brand{display:flex;align-items:center;gap:12px}
+.header-logo{width:40px;height:40px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:white}
+.header-title{font-size:16px;font-weight:700}
+.header-sub{font-size:11px;opacity:.7;margin-top:1px}
+
+.controls{background:white;border-bottom:1px solid var(--gray-200);padding:12px 24px;display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+.control-group{display:flex;flex-direction:column;gap:5px}
+.control-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400)}
+.control-select,.control-input{padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;background:white;cursor:pointer;min-width:170px}
+.control-select:focus,.control-input:focus{border-color:var(--teal)}
+.cycle-day-display{background:var(--teal-pale);border:1.5px solid var(--teal);border-radius:var(--radius-sm);padding:7px 14px;font-size:13px;font-weight:700;color:var(--teal);white-space:nowrap}
+
+.main{display:grid;grid-template-columns:380px 1fr;gap:20px;padding:20px 24px;min-height:calc(100vh - 120px)}
+
+/* LEFT COLUMN */
+.left-col{display:flex;flex-direction:column;gap:16px}
+
+.phase-card{border-radius:var(--radius);padding:22px;color:white;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.phase-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12)}
+.phase-card::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.phase-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;margin-bottom:6px}
+.phase-name{font-size:26px;font-weight:800;margin-bottom:4px;position:relative;z-index:1}
+.phase-subtitle{font-size:15px;opacity:.9;margin-bottom:16px;position:relative;z-index:1}
+.phase-meta{display:flex;gap:20px;position:relative;z-index:1}
+.meta-item{text-align:center}
+.meta-value{font-size:20px;font-weight:800}
+.meta-label{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:.5px}
+
+.energy-bar-wrap{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.energy-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:8px}
+.energy-bar-outer{height:10px;background:var(--gray-200);border-radius:5px;overflow:hidden;margin-bottom:6px}
+.energy-bar-inner{height:100%;border-radius:5px;transition:width .4s}
+.energy-text{font-size:13px;font-weight:600;color:var(--gray-800)}
+.mood-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-200)}
+.mood-emoji{font-size:20px}
+.mood-text{font-size:13px;color:var(--gray-600);line-height:1.4}
+
+.rec-card{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.rec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.rec-icon{font-size:16px}
+.rec-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.rec-list li{font-size:13px;color:var(--gray-600);padding-left:12px;position:relative;line-height:1.4}
+.rec-list li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4}
+
+.condition-note{background:var(--teal-pale);border-left:4px solid var(--teal);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 14px;margin-top:4px}
+.condition-note-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--teal);margin-bottom:5px}
+.condition-note-text{font-size:13px;color:var(--gray-700);line-height:1.5}
+
+/* RIGHT COLUMN */
+.right-col{display:flex;flex-direction:column;gap:16px}
+
+.chart-card{background:white;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-title{font-size:14px;font-weight:700;color:var(--navy)}
+.chart-legend{display:flex;gap:14px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-600)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.chart-wrap{height:240px;position:relative}
+
+.phase-timeline{background:white;border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow)}
+.timeline-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);margin-bottom:10px}
+.timeline-bar{display:flex;border-radius:6px;overflow:hidden;height:36px}
+.tl-segment{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;cursor:pointer;transition:opacity .15s;position:relative}
+.tl-segment:hover{opacity:.85}
+.tl-today-marker{position:absolute;top:0;width:3px;height:100%;background:white;border-radius:2px;box-shadow:0 0 6px rgba(0,0,0,.4)}
+.timeline-days{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--gray-400);padding:0 2px}
+
+.what-card{background:white;border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+.what-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:12px}
+.what-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.what-item{padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--gray-200)}
+.what-item-icon{font-size:18px;margin-bottom:5px}
+.what-item-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gray-400);margin-bottom:5px}
+.what-item-content{font-size:12.5px;color:var(--gray-700);line-height:1.5}
+
+.male-daily{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.male-time-card{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-top:4px solid var(--teal)}
+
+.btn{padding:8px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s}
+.btn-teal{background:var(--teal);color:white}
+.btn-teal:hover{background:var(--teal-light)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.tag-female{background:var(--female-pale,#f3e8ff);color:var(--female)}
+.tag-male{background:#dbeafe;color:var(--male)}
+.tag-new{background:#dcfce7;color:#16a34a}
+
+.anon-banner{background:#fef3c7;border:1.5px solid #d97706;border-radius:var(--radius);padding:10px 14px;font-size:11.5px;font-weight:600;color:#92400e;display:none;line-height:1.5}
+.anon-banner strong{color:#7c2d12}
+.consult-card{background:#fff5f5;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-left:4px solid #ef4444}
+.consult-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#ef4444;margin-bottom:8px}
+.consult-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+.consult-list li{font-size:11.5px;color:#7f1d1d;padding-left:18px;position:relative;line-height:1.4}
+.consult-list li::before{content:'⚠';position:absolute;left:0;font-size:10px;top:1px}
+.lab-card{background:white;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border-top:3px solid #7c3aed}
+.lab-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7c3aed;margin-bottom:10px}
+.lab-section-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-top:10px;margin-bottom:4px}
+.lab-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+.lab-list li{font-size:11.5px;color:var(--gray-600);padding-left:14px;position:relative;line-height:1.4}
+.lab-list li::before{content:'▸';position:absolute;left:0;color:var(--teal);font-size:10px;top:2px}
+.supp-warn{font-size:10.5px;color:#92400e;background:#fef3c7;border-radius:6px;padding:6px 9px;margin-top:8px;line-height:1.45}
+.insight-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.insight-card{background:white;border-radius:var(--radius);padding:14px 12px;box-shadow:var(--shadow);border-top:3px solid var(--teal);display:flex;flex-direction:column;gap:4px}
+.insight-header{display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.insight-emoji{font-size:16px}
+.insight-label-sm{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400)}
+.insight-mode{font-size:13px;font-weight:700;color:var(--gray-800)}
+.insight-desc{font-size:11.5px;color:var(--gray-600);line-height:1.45}
+
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .what-grid{grid-template-columns:1fr}
+  .male-daily{grid-template-columns:1fr}
+}
+
+/* GATE DISCLAIMER MODAL */
+.gate-overlay{position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.gate-overlay.hidden{display:none}
+.gate-modal{background:#fff;border-radius:16px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden}
+.gate-modal-top{background:linear-gradient(135deg,var(--navy) 0%,var(--teal) 100%);padding:22px 28px 18px;color:white}
+.gate-modal-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:.75;margin-bottom:6px}
+.gate-modal-title{font-size:20px;font-weight:800;line-height:1.2}
+.gate-modal-body{padding:22px 28px}
+.gate-modal-intro{font-size:13.5px;color:var(--gray-600);line-height:1.6;margin-bottom:16px}
+.gate-modal-list{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:8px}
+.gate-modal-list li{font-size:13px;color:var(--gray-700);padding-left:20px;position:relative;line-height:1.5}
+.gate-modal-list li::before{content:'✕';position:absolute;left:0;color:#ef4444;font-size:11px;font-weight:900;top:2px}
+.gate-modal-emergency{font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 13px;color:#991b1b;margin-bottom:18px;line-height:1.5}
+.gate-modal-ack{font-size:12px;color:var(--gray-400);line-height:1.5;margin-bottom:20px}
+.gate-btn{width:100%;padding:14px 20px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:opacity .15s}
+.gate-btn:hover{opacity:.9}
+.gate-footer{font-size:11px;color:var(--gray-400);text-align:center;margin-top:12px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- GATE DISCLAIMER — shown once per browser session -->
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-modal">
+    <div class="gate-modal-top">
+      <div class="gate-modal-badge">Hunter's Holistic Health LLC</div>
+      <div class="gate-modal-title">Before You Continue —<br>Educational Use Only</div>
+    </div>
+    <div class="gate-modal-body">
+      <p class="gate-modal-intro">This tool provides <strong>general educational and wellness information only.</strong> It does not constitute medical advice, diagnosis, or a clinical treatment plan.</p>
+      <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--gray-400);margin-bottom:8px">Do not use this tool to:</p>
+      <ul class="gate-modal-list">
+        <li>Replace consultation with a licensed healthcare provider</li>
+        <li>Start or stop any prescription medication</li>
+        <li>Self-diagnose any medical condition</li>
+        <li>Make treatment decisions without provider guidance</li>
+      </ul>
+      <div class="gate-modal-emergency">🚨 <strong>Medical emergency?</strong> Call 911 or your local emergency number immediately. Do not use this tool to seek emergency assistance.</div>
+      <p class="gate-modal-ack">By continuing, you acknowledge this tool is for <strong>educational purposes only</strong> and that you will consult a qualified healthcare provider before making health decisions. Supplement suggestions in this tool have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <button class="gate-btn" onclick="dismissGate()">I Understand — Continue to Educational Tool</button>
+      <div class="gate-footer">Dr. Shallanda Hunter, PharmD, MBA, CFNMP · Functional Medicine Educator<br>Not a licensed clinical service · No provider-patient relationship is created</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dismissGate(){
+  document.getElementById('gateOverlay').classList.add('hidden');
+  try{localStorage.setItem('hhh_gate_ack','1')}catch(e){}
+}
+(function(){
+  try{if(localStorage.getItem('hhh_gate_ack')==='1')document.getElementById('gateOverlay').classList.add('hidden')}catch(e){}
+})();
+</script>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">HH</div>
+    <div>
+      <div class="header-title">Hormone Cycle Intelligence</div>
+      <div class="header-sub">Hunter's Holistic Health LLC - Dr. Shallanda Hunter, PharmD, MBA, CFNMP</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.6);text-align:right;">
+    Daily hormone guidance<br>based on cycle phase
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="control-group">
+    <div class="control-label">Sex</div>
+    <select class="control-select" id="sexSelect" onchange="onSexChange()">
+      <option value="female">Woman</option>
+      <option value="male">Man</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <div class="control-label">Condition</div>
+    <select class="control-select" id="conditionSelect" onchange="onConditionChange()"></select>
+  </div>
+  <div id="femaleControls" style="display:flex;gap:16px;align-items:flex-end;">
+    <div class="control-group">
+      <div class="control-label">Last Period Start Date</div>
+      <input type="date" class="control-input" id="periodDate" onchange="updateCycleDay()" style="min-width:170px">
+    </div>
+    <div class="control-group">
+      <div class="control-label">Cycle Length</div>
+      <select class="control-select" id="cycleLength" onchange="updateCycleDay()" style="min-width:110px">
+        <option value="24">24 Days</option>
+        <option value="25">25 Days</option>
+        <option value="26">26 Days</option>
+        <option value="27">27 Days</option>
+        <option value="28" selected>28 Days</option>
+        <option value="29">29 Days</option>
+        <option value="30">30 Days</option>
+        <option value="32">32 Days</option>
+        <option value="35">35 Days</option>
+        <option value="38">38 Days (PCOS/PMMOS)</option>
+      </select>
+    </div>
+    <div id="cycleDayDisplay" class="cycle-day-display" style="display:none"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT -->
+  <div class="left-col" id="leftCol">
+    <div class="phase-card" id="phaseCard">
+      <div class="phase-tag" id="phaseTag">Loading...</div>
+      <div class="phase-name" id="phaseName">--</div>
+      <div class="phase-subtitle" id="phaseSubtitle">Select a condition above</div>
+      <div class="phase-meta">
+        <div class="meta-item"><div class="meta-value" id="metaDay">--</div><div class="meta-label">Cycle Day</div></div>
+        <div class="meta-item"><div class="meta-value" id="metaPhaseLen">--</div><div class="meta-label">Phase Days</div></div>
+        <div class="meta-item"><div class="meta-value" id="metaNext">--</div><div class="meta-label">Days to Next</div></div>
+      </div>
+    </div>
+
+    <div class="energy-bar-wrap">
+      <div class="energy-label">Energy Level Today</div>
+      <div class="energy-bar-outer"><div class="energy-bar-inner" id="energyBar" style="width:60%;background:var(--teal)"></div></div>
+      <div class="energy-text" id="energyText">--</div>
+      <div class="mood-row">
+        <div class="mood-emoji" id="moodEmoji">--</div>
+        <div class="mood-text" id="moodText">Select a condition and date to see today's forecast.</div>
+      </div>
+    </div>
+
+    <div class="anon-banner" id="anovBanner">
+      <strong>⚠️ Anovulatory Cycle Possible:</strong> With a cycle this long, regular ovulation may not be occurring. Without ovulation there is no true luteal phase — only extended follicular. The luteal guidance shown may not apply to you. Confirm ovulation with BBT charting or LH strips each cycle.
+    </div>
+
+    <div class="insight-row" id="insightRow">
+      <div class="insight-card" id="brainCard">
+        <div class="insight-header">
+          <span class="insight-emoji" id="brainEmoji">🧠</span>
+          <span class="insight-label-sm">Brain Mode</span>
+        </div>
+        <div class="insight-mode" id="brainMode">--</div>
+        <div class="insight-desc" id="brainText">Select a condition and date above.</div>
+      </div>
+      <div class="insight-card" id="skinCard">
+        <div class="insight-header">
+          <span class="insight-emoji" id="skinEmoji">✨</span>
+          <span class="insight-label-sm">Skin Forecast</span>
+        </div>
+        <div class="insight-mode" id="skinMode">--</div>
+        <div class="insight-desc" id="skinText">Select a condition and date above.</div>
+      </div>
+    </div>
+
+    <div class="rec-card">
+      <div class="rec-title"><span class="rec-icon">🥗</span><span style="color:var(--teal)">Eat Today</span></div>
+      <ul class="rec-list" id="eatList" style="color:var(--teal)"></ul>
+    </div>
+    <div class="rec-card">
+      <div class="rec-title"><span class="rec-icon">🏃</span><span style="color:#0891b2">Move Today</span></div>
+      <ul class="rec-list" id="moveList" style="color:#0891b2"></ul>
+    </div>
+    <div class="rec-card">
+      <div class="rec-title"><span class="rec-icon">💊</span><span style="color:#7c3aed">Supplement Focus</span></div>
+      <ul class="rec-list" id="suppList" style="color:#7c3aed"></ul>
+      <div class="supp-warn">⚕️ If you are on any prescription medication, review all supplements with your provider before starting. Hormone supplements can interact with birth control, blood thinners, thyroid medication, and psychiatric drugs.</div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-title"><span class="rec-icon">✨</span><span style="color:var(--gold)">Self-Care Focus</span></div>
+      <ul class="rec-list" id="selfCareList" style="color:var(--gold)"></ul>
+    </div>
+    <div class="consult-card" id="consultCard" style="display:none">
+      <div class="consult-title">🚨 When to See a Provider</div>
+      <ul class="consult-list" id="consultList"></ul>
+    </div>
+
+    <div class="condition-note" id="conditionNote" style="display:none">
+      <div class="condition-note-label">Condition Note</div>
+      <div class="condition-note-text" id="conditionNoteText"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title" id="chartTitle">Hormone Curve</div>
+        <div class="chart-legend" id="chartLegend"></div>
+      </div>
+      <div class="chart-wrap"><canvas id="hormoneChart"></canvas></div>
+    </div>
+
+    <div class="phase-timeline" id="phaseTimelineCard">
+      <div class="timeline-label">Cycle Phase Timeline</div>
+      <div class="timeline-bar" id="timelineBar"></div>
+      <div class="timeline-days" id="timelineDays"></div>
+    </div>
+
+    <div class="what-card" id="whatCard">
+      <div class="what-title" id="whatTitle">What's Happening Today</div>
+      <div class="what-grid" id="whatGrid"></div>
+    </div>
+
+    <div class="lab-card" id="labCard" style="display:none">
+      <div class="lab-title">🧪 What to Test</div>
+      <div class="lab-section-label" style="color:#ef4444">Priority Labs</div>
+      <ul class="lab-list" id="labPriority"></ul>
+      <div class="lab-section-label" style="color:#0891b2">When to Test</div>
+      <ul class="lab-list" id="labTiming"></ul>
+      <div class="lab-section-label" style="color:var(--gray-400)">Consider Also</div>
+      <ul class="lab-list" id="labOptional"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONDITIONS DATA
+// ============================================================
+const FEMALE_CONDITIONS = [
+  { key:'healthy',      label:'Healthy Cycle / No Condition' },
+  { key:'pmmos',        label:'PCOS / PMMOS (Polycystic Metabolic Ovarian Syndrome)' },
+  { key:'hypothyroid',  label:'Hypothyroidism / Hashimoto\'s' },
+  { key:'perimenopause',label:'Perimenopause / Menopause' },
+  { key:'endo',         label:'Endometriosis' },
+  { key:'estrogendominance', label:'Estrogen Dominance' },
+  { key:'adrenal',      label:'Adrenal / HPA Axis Dysregulation' },
+  { key:'fibroids',     label:'Uterine Fibroids' },
+  { key:'fertility_f',  label:'Female Fertility / Conception' },
+  { key:'hyperthyroid', label:'Hyperthyroidism / Graves\' Disease' },
+];
+const MALE_CONDITIONS = [
+  { key:'lowt',         label:'Low Testosterone' },
+  { key:'highe',        label:'High Estrogen / Gynecomastia' },
+  { key:'dht',          label:'DHT / BPH / Hair Loss' },
+  { key:'fertility_m',  label:'Male Fertility / Sperm Health' },
+];
+
+// ============================================================
+// PHASE DEFINITIONS
+// ============================================================
+const PHASES = [
+  { key:'menstrual',  name:'Menstrual',  subtitle:'Rest & Renew',     days:[1,5],  color:'#7c3aed', pale:'#f3e8ff', emoji:'🌑' },
+  { key:'follicular', name:'Follicular', subtitle:'Rise & Build',     days:[6,13], color:'#0891b2', pale:'#e0f7fa', emoji:'🌒' },
+  { key:'ovulatory',  name:'Ovulatory',  subtitle:'Peak & Connect',   days:[14,16],color:'#16a34a', pale:'#dcfce7', emoji:'🌕' },
+  { key:'luteal',     name:'Luteal',     subtitle:'Deepen & Restore', days:[17,28],color:'#d97706', pale:'#fef3c7', emoji:'🌖' },
+];
+
+// ============================================================
+// PHASE DATA PER CONDITION
+// ============================================================
+const PHASE_DATA = {
+
+  // ---- HEALTHY CYCLE / NO CONDITION ----
+  healthy: {
+    menstrual: {
+      energy:2, energyLabel:'Low - Rest Intentionally',
+      mood:'Introspective, reflective, drawn inward. A natural signal to slow down and renew.',
+      moodEmoji:'🌑',
+      what: [
+        'Estrogen and progesterone drop to their lowest point — signaling the lining to shed',
+        'FSH begins quietly rising to recruit next month\'s follicle cohort',
+        'Prostaglandins cause uterine contractions — mild cramping is normal for 1-2 days',
+        'Left brain and right brain are most connected this week — intuition and big-picture thinking are strongest'
+      ],
+      eat:['Iron-rich foods: grass-fed beef, lentils, spinach with Vitamin C (aids absorption)','Anti-inflammatory: turmeric, ginger, fatty fish, bone broth','Warming cooked foods — soups, stews, roasted root vegetables','Dark chocolate 85%+ and pumpkin seeds — natural magnesium for cramping'],
+      move:['Restorative yoga: child\'s pose, supine twist, legs up the wall','Gentle walking 20-30 min — moves blood without taxing the body','Slow stretching — this is recovery, not performance'],
+      supp:['Magnesium glycinate 400mg — reduces uterine cramping and supports sleep','Omega-3 EPA/DHA 2g — anti-inflammatory, reduces prostaglandin-driven pain','Iron bisglycinate if bleeding is heavy (take separate from calcium/coffee by 2 hrs)','Vitamin B12 + methylfolate — supports energy and red blood cell renewal'],
+      selfCare:['Castor oil pack on lower abdomen 30-60 min (not during active heavy flow)','Heat therapy — low setting heating pad','Early bedtime — this is your body\'s monthly reset week','Journaling: what do I want to release this cycle?'],
+      note:'A healthy period lasts 3-7 days with moderate, manageable flow. Pain should resolve with OTC pain relief if needed — it should not stop your day. If tracking BBT, temperature stays below your coverline this week. Your period is your monthly report card on the previous cycle\'s hormone balance. A healthy one is the result of good ovulation 14 days prior.'
+    },
+    follicular: {
+      energy:4, energyLabel:'Rising - Best Building Phase',
+      mood:'Fresh start energy, optimistic, mentally sharp. Increasingly social and creative as estrogen climbs.',
+      moodEmoji:'🌱',
+      what: [
+        'FSH recruits a cohort of 10-20 follicles — one will become dominant',
+        'Estrogen rises steadily as the dominant follicle grows and produces it',
+        'Serotonin and dopamine rise with estrogen — brain fog lifts completely',
+        'Cervical fluid progresses from dry → sticky → creamy as ovulation approaches'
+      ],
+      eat:['Fermented foods: kimchi, sauerkraut, kefir — build microbiome ahead of ovulation','Cruciferous vegetables: broccoli, Brussels sprouts, arugula — support liver estrogen metabolism','Leafy greens and sprouted legumes — folate for egg quality','Seed cycling: 1 tbsp ground flaxseed + 1 tbsp pumpkin seeds daily — lignans and zinc'],
+      move:['HIIT 2-3x this week — best phase for high-intensity training (fastest recovery)','Strength training 2-3x — build muscle while cortisol response is lowest','Cardio, cycling, dance — your body is at its most resilient and coordinated'],
+      supp:['Methylfolate 400-800mcg — supports healthy ovulation and egg quality','B-complex (methylated) — cofactor for estrogen metabolism and energy','Vitamin D to maintain 60-80 ng/mL — supports follicle development','Maca root 1-2g/day — adaptogen that supports hormonal tone and libido'],
+      selfCare:['Start new projects, habits, or creative work — initiation energy is highest','Track cervical fluid daily (write it down — it tells you when ovulation is coming)','BBT stays below the coverline all week — temperature rise confirms ovulation later','Social plans, networking, anything requiring your best energy — schedule it here'],
+      note:'This phase is named after the follicle growing inside your ovary. As the dominant follicle grows, it produces more estrogen — which is what makes you feel increasingly good. In a healthy cycle, estrogen rises cleanly and gradually. If you notice breast tenderness or mood swings during what should be the "feel good" follicular phase, estrogen clearance may need attention (see Estrogen Dominance).'
+    },
+    ovulatory: {
+      energy:5, energyLabel:'Peak - Maximum Output',
+      mood:'Confident, magnetic, charismatic, quick-thinking. Your most "on" days of the month.',
+      moodEmoji:'✨',
+      what: [
+        'LH surge triggers the dominant follicle to release the egg — ovulation',
+        'Estrogen peaks at its highest point, then briefly dips just before ovulation',
+        'Testosterone spikes briefly — drives libido, motivation, and assertiveness',
+        'Egg is viable for only 12-24 hours — sperm can survive 3-5 days'
+      ],
+      eat:['Zinc-rich foods: pumpkin seeds, oysters, sesame — supports LH surge and egg release','Cruciferous vegetables: DIM precursors to support healthy estrogen metabolism post-ovulation','Antioxidants: berries, colorful vegetables — protect the egg from oxidative damage','Light, vibrant meals — digestion is efficient, energy is high'],
+      move:['Highest intensity training of your cycle — body is at its physical peak','Running, sprinting, heavy lifting, competitive sports','Group fitness or team sports — social and competitive drive is strongest'],
+      supp:['CoQ10 200mg — mitochondrial support for egg quality (especially important over 35)','Zinc 15mg — supports ovulation and post-ovulation corpus luteum formation','Vitamin C 1g — supports ovarian function and collagen for follicle rupture','NAC 600mg — antioxidant protection during ovulation'],
+      selfCare:['Schedule presentations, difficult conversations, dates, and creative peaks this week','OPK strips (ovulation predictor kit) if tracking: test around Day 11-14','Mittelschmerz — a brief one-sided twinge is normal as the follicle ruptures','After ovulation: BBT rises 0.2-0.5°C and stays elevated — confirms it happened'],
+      note:'Ovulation is not a guaranteed event — it must be confirmed, not assumed. A positive OPK means the LH surge occurred; actual ovulation happens 24-36 hours after the peak. BBT rise the following morning is the only home confirmation that ovulation actually occurred. If BBT never rises, ovulation may not have happened (anovulatory cycle). This matters even in women not trying to conceive — ovulation is the source of progesterone.'
+    },
+    luteal: {
+      energy:3, energyLabel:'Steady then Declining',
+      mood:'Focused and detail-oriented early on. Slower, more emotional, and deeply intuitive in the final week. Both are healthy.',
+      moodEmoji:'🌖',
+      what: [
+        'The empty follicle becomes the corpus luteum and produces progesterone',
+        'Progesterone peaks around Day 21 — its calming GABA effect supports sleep and mood',
+        'Body temperature rises 0.2-0.5°C and stays elevated until the day before the next period',
+        'Metabolism increases 100-300 calories per day — the body prepares for possible implantation'
+      ],
+      eat:['Complex carbs + protein combinations: sweet potato and chicken, rice and eggs — satisfies cravings healthily','Magnesium-rich foods: dark chocolate, leafy greens, avocado, pumpkin seeds','Warm, cooked meals — digestion slows in luteal phase, raw foods become harder to process','Reduce caffeine in the final 5 days — worsens breast tenderness and PMS anxiety'],
+      move:['Pilates and yoga — best match for luteal energy (strength without cortisol spike)','Swimming, long walks, hiking','Reduce HIIT intensity in the final week — recovery takes longer now'],
+      supp:['Magnesium glycinate 400mg — the #1 luteal supplement for cramp prevention and mood stability','B6 / P5P 50mg — reduces PMS, supports progesterone production, essential for serotonin','Evening Primrose Oil 1g (Days 14-ovulation only) — GLA reduces breast tenderness and luteal inflammation','Seed cycling: 1 tbsp sunflower seeds + 1 tbsp sesame seeds daily — Vitamin E and lignans'],
+      selfCare:['Complete projects and decisions in the first half of luteal — the second half is for finishing, not starting','Journal: what is not working, what needs to change? Luteal insight is sharper than any other phase','Sleep 8+ hours: progesterone supports deep sleep — protect this','Reduce social obligations in final 3-4 days — this is not antisocial, it is self-regulation'],
+      note:'Healthy PMS is mild: a day or two of fatigue, slight moodiness, or breast tenderness in the final days. It should not stop your life. Severe PMS, PMDD-level mood changes, flooding, or pain that requires medication every cycle are signals that something is off — not that you are "just hormonal." In a healthy luteal phase, progesterone on Day 21 should read above 10 ng/mL (ideally above 15).'
+    }
+  },
+
+  // ---- PMMOS / PCOS ----
+  pmmos: {
+    menstrual: {
+      energy:2, energyLabel:'Low - Rest Required',
+      mood:'Fatigued, crampy, emotionally flat. Blood sugar swings make mood unstable.',
+      moodEmoji:'😔',
+      what: [
+        'Estrogen and progesterone drop to their lowest point',
+        'LH remains chronically elevated (2-3x normal) even during period',
+        'Prostaglandin excess causes stronger cramping than average',
+        'Insulin resistance spikes during menstruation - blood sugar control harder'
+      ],
+      eat:['Protein + fat at every meal - prevents blood sugar crashes','Iron-rich foods: grass-fed beef, lentils, spinach with Vitamin C','Anti-inflammatory: turmeric, ginger, bone broth','Avoid sugar and refined carbs - they worsen cramps and mood'],
+      move:['Gentle walking 20-30 min','Restorative yoga - child\'s pose, legs up the wall','Avoid HIIT - cortisol already elevated, will spike LH further'],
+      supp:['Magnesium glycinate 400mg - reduces uterine cramping','NAC 1,800mg on empty stomach','Myo-inositol 4g (40:1 ratio) - continue throughout cycle','Omega-3 EPA/DHA 2-3g - anti-inflammatory'],
+      selfCare:['Castor oil pack on lower abdomen 30-60 min','Heat therapy - heating pad on low','This is a biological signal to slow down - honor it'],
+      note:'PMMOS update: The medical community is moving away from "PCOS" toward Polycystic Metabolic Ovarian Syndrome (PMMOS) to better reflect its metabolic root cause. The cycle in PMMOS may be irregular - if your cycle is longer than 35 days or absent, the phases above are approximate. LH remains elevated throughout, which suppresses normal follicular signaling. Myo-inositol every day of the cycle is the single most important intervention.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Rebuilding - Moderate',
+      mood:'Gradually brighter, more motivated. Best cognitive window in PMMOS cycle.',
+      moodEmoji:'🌱',
+      what: [
+        'Estrogen rises but may be irregular or blunted compared to normal',
+        'LH:FSH ratio remains elevated - follicular development may be sluggish',
+        'Multiple small follicles may develop without one becoming dominant',
+        'Insulin sensitivity slightly better in this phase - window to optimize'
+      ],
+      eat:['Mediterranean diet foundation: olive oil, colorful vegetables, legumes','Spearmint tea 2 cups daily - reduces free testosterone','Ground flaxseed 2 tbsp daily - fiber + lignans regulate estrogen','Protein 1.2-1.6g/kg body weight across the day'],
+      move:['HIIT 2-3x/week - best phase for high-intensity (improves insulin sensitivity)','Strength training 2-3x/week - builds insulin-sensitive muscle','Dance, cycling, group fitness - social energy is higher'],
+      supp:['Myo-inositol 4g + D-chiro inositol 100mg (Ovasitol) - continue daily','Berberine 500mg 3x with meals - matches metformin for insulin sensitization ⚠️ Do NOT combine with Metformin without provider monitoring (additive blood sugar lowering effect); avoid with cyclosporine or certain antibiotics','Vitamin D to target 60-80 ng/mL','Zinc 30mg - inhibits excess androgen production'],
+      selfCare:['Fertility apps: start tracking if conception is a goal','BBT charting begins Day 1 - follicular temps are lower','Cold shower finish in morning - boosts dopamine, reduces LH'],
+      note:'Follicular phase is the window to maximize insulin-sensitizing interventions. This phase prepares the dominant follicle - in PMMOS, multiple follicles often compete but none mature. Berberine + myo-inositol combination most studied for restoring follicular dominance and ovulation induction. LH:FSH ratio goal: below 2:1. If trying to conceive, OPKs may show multiple partial LH surges before a true surge.'
+    },
+    ovulatory: {
+      energy:4, energyLabel:'Peak - High Energy',
+      mood:'Most confident, social, and clear-headed phase. Charismatic, communicative.',
+      moodEmoji:'✨',
+      what: [
+        'In PMMOS: ovulation may or may not occur - LH surge may be absent or blunted',
+        'If ovulating: estrogen peaks before the LH surge triggers egg release',
+        'Testosterone also peaks slightly - drives libido and motivation',
+        'Cervical mucus becomes egg-white consistency if ovulating'
+      ],
+      eat:['Cruciferous vegetables: broccoli, cauliflower, arugula (DIM precursors)','Zinc-rich foods: pumpkin seeds, oysters','Light, vibrant meals - energy is high, digestion is efficient','Continue spearmint tea'],
+      move:['High-intensity training, running, challenging workouts','Social sports or group exercise','This is your strongest performance window'],
+      supp:['Continue myo-inositol 4g','If trying to conceive: CoQ10 600mg for egg quality','Vitex (Chaste Tree) 400mg in morning if cycles are long/irregular','NAC 1,800mg'],
+      selfCare:['Use OPK (ovulation predictor kit) strips Days 10-20 to detect LH surge','Cervical mucus monitoring','High-quality sleep continues as priority'],
+      note:'This is the fertility window. In PMMOS, ovulation may be delayed (Day 18-25 in a 38-day cycle) or absent. If using OPKs, a positive result (LH surge) means ovulation occurs approximately 24-36 hours later. The egg is viable only 12-24 hours. Sperm survive 3-5 days, so intercourse before the LH surge is key for conception. If OPKs are never positive, discuss inositol + clomiphene or letrozole with your provider.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining - Restore',
+      mood:'Increasing moodiness, PMS symptoms, food cravings. Progesterone too low to counterbalance estrogen.',
+      moodEmoji:'🌀',
+      what: [
+        'Progesterone often insufficient in PMMOS luteal phase (anovulatory cycles produce none)',
+        'Estrogen without progesterone opposition = worsened PMS, bloating, breast tenderness',
+        'Blood sugar instability returns - carb cravings intensify',
+        'If ovulation occurred, progesterone rises but often lower than ideal'
+      ],
+      eat:['Complex carbs + protein combos to stabilize blood sugar (sweet potato + chicken)','Magnesium-rich foods: dark chocolate (85%), leafy greens, pumpkin seeds','Reduce caffeine - worsens breast tenderness and PMS anxiety','Bitter foods: arugula, dandelion greens - support liver estrogen clearance'],
+      move:['Moderate yoga, pilates, swimming','Reduce HIIT intensity as PMS approaches','Walking is excellent - regulates blood sugar, boosts serotonin'],
+      supp:['Magnesium glycinate 400mg - critical for luteal phase PMS in PMMOS','Vitex (Chaste Tree) 400mg in morning - increases progesterone via LH effect ⚠️ Do NOT use with hormonal birth control or dopamine antagonist medications (antipsychotics, metoclopramide)','P5P (active B6) 50mg - reduces PMS symptoms, supports progesterone','Ashwagandha 300-600mg - cortisol dysregulation worsens luteal symptoms'],
+      selfCare:['Journaling - thoughts are more inward, creative, and insightful this phase','Reduce social obligations in final 3-4 days before period','Castor oil packs preventively'],
+      note:'Luteal phase defect is very common in PMMOS. Normal luteal progesterone should exceed 10 ng/mL on Day 21. In anovulatory PMMOS cycles, progesterone may be near zero. If trying to conceive, Day 21 progesterone testing confirms whether ovulation occurred. Consider bioidentical progesterone cream or oral micronized progesterone (discussion with provider) if confirmed low. Vitex takes 3-6 months to show benefit - it is not immediate.'
+    }
+  },
+
+  // ---- HYPOTHYROID / HASHIMOTO'S ----
+  hypothyroid: {
+    menstrual: {
+      energy:1, energyLabel:'Very Low - Rest Essential',
+      mood:'Emotionally flat, heavy, fatigued beyond what is typical. Brain fog at its worst.',
+      moodEmoji:'😴',
+      what: [
+        'Slowed thyroid function reduces the rate at which estrogen is cleared from the body',
+        'Heavier and longer periods are common - thyroid hormone regulates uterine lining shedding',
+        'Clots more likely due to impaired fibrinolysis when T3 is low',
+        'Cold intolerance worsens during menstruation - body has less metabolic reserve'
+      ],
+      eat:['Warm, easy-to-digest foods: soups, stews, bone broth','Iron-rich foods: heavy periods deplete iron, which further impairs T4-to-T3 conversion','Selenium-rich Brazil nuts (2 per day)','Avoid raw cruciferous in large quantities - lightly steam broccoli/kale instead'],
+      move:['Gentle walking only - this is not a time to push','Restorative yoga, slow stretching','Rest as needed - hypothyroidism + menstruation together demand more recovery'],
+      supp:['Selenium 200mcg (selenomethionine) - reduces TPO antibodies in Hashimoto\'s','Iron bisglycinate if ferritin below 70 - separate from levothyroxine by 4+ hours','Magnesium glycinate 400mg - relaxes uterus, supports T4 conversion','Vitamin D if not already optimized'],
+      selfCare:['Heat therapy - heating pad, warm baths with Epsom salts','Castor oil pack on lower abdomen and over thyroid area (gentle)','Sleep as early as 9-10pm if possible - cortisol disruption worsens thyroid'],
+      note:'Hypothyroidism and Hashimoto\'s directly impair the menstrual cycle. Heavy periods (menorrhagia) are one of the most common presenting complaints in women with undiagnosed hypothyroidism. Ferritin below 70 ng/mL impairs T4-to-T3 conversion - low ferritin from heavy periods creates a feedback loop that worsens hypothyroid symptoms. Test ferritin, not just hemoglobin. Levothyroxine absorption: take on empty stomach with water, wait 60 min before food, calcium, or iron.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Building - Use This Window',
+      mood:'Gradually improving with estrogen rise. Still cognitively sluggish if T3 is low.',
+      moodEmoji:'🌤',
+      what: [
+        'Rising estrogen supports mood and energy - best phase for Hashimoto\'s patients',
+        'Thyroid antibody levels may fluctuate with immune activity',
+        'TSH should be rechecked in this phase (Days 6-10) for most accurate reading',
+        'Cortisol rise in follicular phase can worsen T4-to-T3 conversion if HPA is also dysregulated'
+      ],
+      eat:['Selenium: 200mcg from food + supplement (Brazil nuts + selenomethionine)','Zinc-rich foods: oysters, pumpkin seeds, beef - required for T3 synthesis','Adequate iodine from food only (seafood, seaweed in moderation)','Avoid gluten strictly if Hashimoto\'s - 90-day trial minimum for antibody response'],
+      move:['Progressive increase in activity - this is the best exercise window','Strength training supports thyroid function via muscle mass and insulin sensitivity','Morning movement anchors circadian rhythm which supports TSH pattern'],
+      supp:['Selenium 200mcg (selenomethionine)','Zinc 25-30mg','Magnesium glycinate 400mg','Vitamin D3 + K2 to target 60-80 ng/mL'],
+      selfCare:['Schedule thyroid labs in this phase (Day 6-10) for most accurate reading','Thyroid-supporting neck exercises / gentle massage over thyroid area','Reduce exposure to fluoride (use filtered water) and perchlorate'],
+      note:'The follicular phase offers the best energy and immune tolerance window for Hashimoto\'s patients. Selenium 200mcg/day has 12 meta-analyses supporting reduction in TPO antibodies. It takes 3-6 months of consistent use. If on levothyroxine: absorption is the most important variable. Coffee, calcium, iron, and fiber all reduce absorption. Take alone with water and wait 60 min minimum before food.'
+    },
+    ovulatory: {
+      energy:3, energyLabel:'Moderate Peak',
+      mood:'Best mood in cycle - estrogen peak supports serotonin and dopamine.',
+      moodEmoji:'😊',
+      what: [
+        'Estrogen peak at ovulation supports mood and cognition - take advantage of this window',
+        'LH surge may be blunted or delayed in hypothyroidism',
+        'Ovulatory window may be shorter than average',
+        'Progesterone begins to rise after ovulation - requires adequate thyroid for conversion'
+      ],
+      eat:['Protein emphasis for progesterone synthesis in upcoming luteal phase','Tyrosine-rich foods: chicken, eggs, almonds - thyroid hormone precursor','Continue selenium and zinc','Cruciferous vegetables lightly cooked - DIM for estrogen metabolite support'],
+      move:['Social, energizing activities - energy is highest now','High-intensity training if desired - T3 supports recovery','Outdoor exercise for Vitamin D'],
+      supp:['Continue selenium, zinc, magnesium, Vitamin D3+K2','Ashwagandha 300-600mg if not already taking - supports thyroid T4/T3 levels','CoQ10 200mg - mitochondrial support for energy (often low in hypothyroid)'],
+      selfCare:['Schedule important conversations and appointments in this phase','Creative work flows more easily','Good time for social reconnection'],
+      note:'Research shows ashwagandha (KSM-66) increases both T3 and T4 levels and reduces TSH in subclinical hypothyroidism (2019 RCT). Note 2026 caution: limit to 300-600mg/day. If client has DIO2 gene variant, they cannot convert T4 to T3 - no amount of thyroid support supplements will fully compensate. They need T3 prescription (compounded or liothyronine). Suspect DIO2 when client feels well only when Free T3 is in upper third of range.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining - Prioritize Sleep',
+      mood:'PMS amplified in hypothyroidism. Anxiety, depression, brain fog worsen pre-menstrually.',
+      moodEmoji:'🌧',
+      what: [
+        'Low T3 impairs progesterone receptor sensitivity - the protective luteal effect is blunted',
+        'Thyroid conversion worsens under the high cortisol of late luteal phase',
+        'Sleep disruption in late luteal compounds thyroid fatigue',
+        'Depression and anxiety before period - serotonin pathway requires T3'
+      ],
+      eat:['Iodine-containing foods: seaweed soup, baked potato with skin, eggs','Complex carbohydrates for serotonin support: oats, sweet potato','Magnesium-rich: dark chocolate 85%, pumpkin seeds, leafy greens','Reduce alcohol - directly impairs thyroid hormone activity'],
+      move:['Moderate yoga, walking, swimming','Avoid overtraining - elevated cortisol inhibits T3 production','Evening walks reduce cortisol and support sleep'],
+      supp:['Magnesium glycinate 400-500mg - highest priority in luteal phase','B complex with methylated B12 and folate','5-HTP 100mg if depression is severe pre-menstrually (supports serotonin)','Continue selenium, zinc, Vitamin D'],
+      selfCare:['Sleep is the single most important intervention in this phase','Morning sunlight exposure to anchor circadian rhythm and support TSH','Reduce screen time after 8pm - blue light suppresses melatonin AND TSH'],
+      note:'The luteal phase reveals subclinical hypothyroidism most clearly - women who feel fine most of the month often have a "luteal crash" that is driven by thyroid + progesterone interaction. Short luteal phase (under 10 days) is a red flag for both thyroid dysfunction and low progesterone. If luteal phase is consistently 8 days or less, retest TSH, Free T3, and Day 21 progesterone together. This is a common missed pattern.'
+    }
+  },
+
+  // ---- PERIMENOPAUSE ----
+  perimenopause: {
+    menstrual: {
+      energy:1, energyLabel:'Low - Heavier Than Before',
+      mood:'Grief, emotional processing, exhaustion. Periods are heavier and longer in perimenopause.',
+      moodEmoji:'🌊',
+      what: [
+        'Periods may be heavier, longer, and more unpredictable than in earlier years',
+        'Estrogen drops sharply at period start but baseline is erratic - may have surged very high before',
+        'Progesterone deficiency throughout the luteal phase means estrogen dominance peak now releasing',
+        'Hot flashes and night sweats often worst during menstruation due to rapid estrogen withdrawal'
+      ],
+      eat:['Iron-rich foods: heavy periods deplete iron, causing fatigue on top of hormonal fatigue','Phytoestrogen foods: ground flaxseed 2 tbsp, edamame - gentle estrogenic support','Anti-inflammatory: turmeric, ginger, EVOO','Reduce alcohol and caffeine - both trigger hot flashes'],
+      move:['Rest-dominant: gentle yoga, walking only','Listen to your body - this is not the phase to push through fatigue','Heat/cold contrast therapy (shower) supports vasomotor symptoms'],
+      supp:['Magnesium glycinate 400-500mg - reduces hot flash severity, improves sleep','Black cohosh 40-80mg (Remifemin) - 4-8 weeks to reduce vasomotor symptoms','Vitamin E 400 IU - shown to reduce hot flash frequency','Iron bisglycinate if ferritin is dropping from heavier periods'],
+      selfCare:['Track period changes: note flow, duration, cycle length - bring this to provider','This is a threshold - honor what your body is going through','Warm baths with lavender for pain and transition support'],
+      note:'February 2026: FDA removed the black box warning from HRT. If this client has bothersome symptoms, she is a candidate for bioidentical HRT discussion. Key: within 10 years of menopause or under 60 = cardiovascular protection, bone protection, reduced dementia risk. Transdermal estradiol + micronized progesterone (Prometrium) is the preferred bioidentical formulation. First-line treatment according to the Menopause Society 2026 guidelines.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Variable - Unpredictable',
+      mood:'Estrogen may surge HIGH or stay low. Energy is inconsistent day to day.',
+      moodEmoji:'🎢',
+      what: [
+        'FSH is elevated as pituitary works harder to stimulate failing ovarian response',
+        'Estrogen rises erratically - may surge much higher than in earlier years',
+        'Cycle may be shortened (follicular phase compressed) - periods coming closer together',
+        'Hot flashes may lessen temporarily as estrogen rises in this phase'
+      ],
+      eat:['Mediterranean diet: most evidence for menopause symptom reduction','Phytoestrogens: soy isoflavones (edamame, tempeh), flaxseed, sesame','Protein 1.2-1.6g/kg: muscle preservation is critical - sarcopenia accelerates post-menopause','Calcium from food: dairy, sardines with bones, fortified plant milk (1,000mg/day)'],
+      move:['Resistance training 2-3x/week - non-negotiable for bone density and muscle','Walking increases bone density and reduces hot flash frequency','This is the best exercise window in perimenopausal cycle'],
+      supp:['Vitamin D3 5,000 IU + K2 MK-7 200mcg - bone and cardiovascular protection','Magnesium glycinate 400mg','DIM 200-300mg - improves estrogen metabolite ratio','DHEA 10-25mg if DHEA-S is low (assess first)'],
+      selfCare:['Vaginal estrogen (low-dose, local): safe even for women with contraindications to systemic HRT','Keep bedroom cool - 65-68°F optimal for sleep and hot flash reduction','This is the phase with most energy - use it wisely'],
+      note:'In perimenopause, the follicular phase becomes increasingly erratic and often shorter. FSH above 10 suggests diminished ovarian reserve; above 40 confirms menopause. However, FSH fluctuates dramatically in perimenopause - a single result is not definitive. The DUTCH Complete hormone panel shows the full picture including metabolite ratios. DIM shifts estrogen from proliferative 16-OH toward protective 2-OH metabolites - important as estrogen becomes less regulated.'
+    },
+    ovulatory: {
+      energy:4, energyLabel:'Highest in Cycle',
+      mood:'Clearer thinking, higher libido, more connected and outward-facing.',
+      moodEmoji:'🌟',
+      what: [
+        'Ovulation may still occur but timing is erratic and fertility is declining',
+        'LH surge may be present but estrogen peak is less reliable',
+        'This phase shortens as perimenopause progresses - may become undetectable',
+        'Testosterone still peaks slightly at ovulation - drives motivation and libido'
+      ],
+      eat:['Zinc-rich foods for hormonal synthesis: oysters, beef, pumpkin seeds','Cruciferous vegetables: broccoli, cauliflower, Brussels sprouts - 1-2 cups daily','Lean protein emphasis: amino acids required for hormone production','Berries and antioxidants: protect mitochondria as hormone production shifts'],
+      move:['Peak performance window - challenging workouts, social exercise','Yoga inversions support lymphatic and hormone clearance','Outdoor activities for Vitamin D and mood'],
+      supp:['Continue Vitamin D3+K2, Magnesium, DIM','Ashwagandha 300-600mg - reduces hot flashes and supports DHEA conversion','Black cohosh 40-80mg if vasomotor symptoms persist','Maca 1.5-3g - adaptogenic root shown to reduce menopause symptoms in some trials'],
+      selfCare:['Important conversations, negotiations, presentations - peak communication window','Connect with community and relationships','Libido may be present but declining - intimacy is still important for hormonal health'],
+      note:'Progesterone cream or oral micronized progesterone in the second half of the cycle (Day 14-28) is the most targeted intervention for perimenopausal estrogen dominance and sleep disruption. 50-200mg oral micronized progesterone at bedtime has sedating effects (acts at GABA receptors). This is bioidentical, not synthetic progestin. If client has not had a period in 12 consecutive months, she is postmenopausal and continuous HRT (not cyclic) is more appropriate.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining - Sleep Critical',
+      mood:'Sleep disrupted, irritable, night sweats may worsen. Pre-menstrual tension amplified.',
+      moodEmoji:'🌙',
+      what: [
+        'Progesterone increasingly insufficient - less corpus luteum function as ovarian reserve depletes',
+        'Without adequate progesterone, sleep architecture is disrupted (progesterone activates GABA)',
+        'Hot flashes and night sweats often worst in late luteal and around menstruation',
+        'Mood: anxiety, irritability, and depression can be severe in perimenopausal luteal phase'
+      ],
+      eat:['Magnesium-rich foods at dinner: pumpkin seeds, spinach, dark chocolate','Tryptophan-rich foods for serotonin: turkey, eggs, pumpkin seeds + complex carb to shuttle it to brain','Reduce caffeine after noon - worsens hot flashes and sleep fragmentation','Hibiscus tea: cooling, anti-inflammatory, supportive for hot flashes'],
+      move:['Evening walks - reduces cortisol, supports sleep onset','Gentle yoga / yin yoga','Avoid vigorous evening exercise - raises core temperature, worsens night sweats'],
+      supp:['Magnesium glycinate 400mg at bedtime - most critical intervention for sleep','L-Theanine 200mg at bedtime - calming without drowsiness','Melatonin 0.5-1mg timed-release if sleep onset is the issue','Black cohosh 40-80mg for vasomotor symptoms'],
+      selfCare:['Bedroom: blackout curtains, 65-68°F, white noise or fan (also cools)','Moisture-wicking sleepwear for night sweats','If sleep has been consistently poor for 3+ months, HRT consultation is warranted'],
+      note:'Progesterone decline in the luteal phase is what makes the perimenopausal luteal phase so disruptive. Progesterone at 50-100mg oral micronized (Prometrium) at bedtime in the second half of the cycle (Day 14-28) is one of the most effective interventions for perimenopausal sleep disruption and mood - and it is bioidentical. This is a legitimate and safe clinical option. Track symptom improvement with the symptom tracker over 2-3 cycles.'
+    }
+  },
+
+  // ---- ENDOMETRIOSIS ----
+  endo: {
+    menstrual: {
+      energy:1, energyLabel:'Very Low - Severe Symptoms',
+      mood:'Pain-dominant. Exhaustion, nausea, emotional rawness. This is the highest-symptom phase.',
+      moodEmoji:'😣',
+      what: [
+        'Endometrial-like lesions bleed along with the uterine lining - causing inflammation at lesion sites',
+        'Prostaglandins are markedly elevated - driving severe cramping and pelvic pain',
+        'Retrograde menstruation deposits debris on lesions, driving inflammatory cycle',
+        'Energy expenditure for pain processing is significant - fatigue is physiologic, not weakness'
+      ],
+      eat:['Omega-3 emphasis: wild salmon, sardines, mackerel - reduces prostaglandin E2 directly','Anti-inflammatory: turmeric 1 tsp with black pepper, ginger tea','Magnesium-rich foods: pumpkin seeds, dark chocolate - reduces uterine spasm','Avoid: dairy (casein + arachidonic acid), gluten, red meat during period - all increase prostaglandins'],
+      move:['Rest. Gentle movement only if pain allows.','Legs up the wall (Viparita Karani) - reduces pelvic congestion','Gentle hip circles and child\'s pose only'],
+      supp:['Omega-3 EPA+DHA 3-4g daily - most important supplement for endo pain','Magnesium glycinate 400-500mg - reduces cramping','NAC 600mg 3x daily (1,800mg total) - shown in Italian RCT to reduce endometrioma size','Resveratrol 500mg - anti-angiogenic, reduces blood vessel supply to lesions'],
+      selfCare:['Castor oil pack on lower abdomen for 45-60 min daily during period','Heat therapy: heating pad on abdomen AND lower back','Magnesium sulfate (Epsom) sitz bath for pelvic pain relief'],
+      note:'2026 ACOG Guideline update: Excision surgery (complete removal) is now preferred over ablation for endometriosis. If this client has not been offered excision, refer to a specialist. The functional protocol reduces inflammation and slows lesion growth but does not eliminate existing disease. NAC 1,800mg/day showed reduction in endometrioma size in a 3-month Italian RCT - this is the strongest evidence for a single supplement in endometriosis. Average diagnosis delay is 4-11 years - validate this client\'s pain history.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Building - Best Phase for Endo',
+      mood:'Pain subsides, energy returns, most livable phase of the cycle.',
+      moodEmoji:'🌱',
+      what: [
+        'Estrogen rises to stimulate follicle development - lesions remain quiet as estrogen is still moderate',
+        'Inflammation subsides as period ends - this is the relative "window" in the endo cycle',
+        'Best time for restorative work, meaningful activities, medical appointments',
+        'Start anti-estrogen protocol NOW to prevent the ovulatory estrogen spike from feeding lesions'
+      ],
+      eat:['DIM-containing cruciferous vegetables daily: broccoli, cauliflower, kale','Calcium D-glucarate foods: grapefruit, apples, oranges (or supplement form)','Ground flaxseed 2 tbsp: lignans compete at estrogen receptors','Minimize alcohol: even 1 drink increases estrogen clearance impairment'],
+      move:['This is the best exercise window - use it','Moderate-high intensity if pain is absent: hiking, cycling, swimming','Pelvic floor physiotherapy - if not in active treatment, start now'],
+      supp:['DIM 300-400mg daily - shifts estrogen to protective 2-OH pathway','Calcium D-glucarate 500mg - inhibits beta-glucuronidase, reduces estrogen recirculation','Curcumin 500mg with piperine - anti-inflammatory, inhibits NF-kB driving lesion inflammation','Continue NAC 1,800mg, Omega-3s','Lactobacillus acidophilus 50 billion CFU: gut dysbiosis is now directly implicated in endometriosis development via immune dysregulation and enhanced estrogen reabsorption through the estrobolome - microbiome restoration is a root-level intervention, not optional'],
+      selfCare:['Pelvic floor physiotherapy (seek provider who specializes in endo)','Somatic movement: gentle dance, Qigong - releases pelvic holding patterns','Journal physical symptoms to bring to next appointment'],
+      note:'Estrogen dominance is the primary driver of endometriosis lesion growth. The follicular phase is the critical window to support liver estrogen metabolism (DIM, calcium D-glucarate, cruciferous vegetables) before estrogen peaks at ovulation. The gut-estrogen connection: beta-glucuronidase-producing gut bacteria recirculate estrogen. Probiotics + calcium D-glucarate directly address this. Organic cotton menstrual products eliminate dioxin exposure which worsens estrogen metabolism.'
+    },
+    ovulatory: {
+      energy:4, energyLabel:'Higher Energy - Pain Possible',
+      mood:'Good energy but potential for ovulatory pain (Mittelschmerz) and intercourse pain.',
+      moodEmoji:'⚡',
+      what: [
+        'Estrogen peaks - this is when lesions are most "activated" by estrogen stimulation',
+        'LH surge and ovulation may cause sharp ovulatory pain (Mittelschmerz)',
+        'Intercourse pain (dyspareunia) is most likely around ovulation if lesions are on uterosacral ligaments',
+        'Progesterone begins to rise after ovulation - this will help reduce lesion activity'
+      ],
+      eat:['Anti-inflammatory emphasis today: omega-3s, turmeric, berries','Liver support: beet root, dandelion greens, artichoke - enhance estrogen clearance','Green tea 2-3 cups: EGCG is anti-estrogenic and anti-angiogenic','Adequate fiber (35g) to bind and excrete estrogen metabolites'],
+      move:['Listen to your body - ovulatory pain may limit intensity','Swimming or cycling if no pain: lower impact on pelvic floor than running','Avoid deep yoga twists or inversions if experiencing ovulatory pain'],
+      supp:['Resveratrol 500mg - anti-angiogenic effect most relevant at estrogen peak','DIM 300mg','Omega-3s 3-4g','Progesterone cream (transdermal) post-ovulation if cycles confirmed: Day 15 onward until period'],
+      selfCare:['Sexual positions that minimize deep penetration if dyspareunia is present','Track pain severity (1-10) in hormone tracker to document pattern for provider','Castor oil packs 3x/week prophylactically this phase'],
+      note:'Bioidentical progesterone beginning at ovulation (Day 14) and continuing through Day 28 can significantly reduce endo pain by opposing the estrogen dominance that drives lesion growth. This requires confirmation of ovulation and prescription from a provider comfortable with bioidentical HRT. Natural progesterone (not synthetic progestins) has a different - and better - receptor profile for endometriosis than Norethindrone or other synthetic options.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining - Pre-menstrual Inflammation',
+      mood:'Building dread as period approaches. Pre-menstrual spotting, pelvic pressure, fatigue.',
+      moodEmoji:'⛈',
+      what: [
+        'Progesterone resistance: endo lesions may not respond normally to progesterone\'s anti-inflammatory signal',
+        'Pre-menstrual spotting is common in endo - lesions begin to bleed before full period',
+        'Inflammation begins building 3-5 days before period - early anti-inflammatory protocol critical',
+        'Endo belly bloating increases as pelvic inflammatory mediators accumulate'
+      ],
+      eat:['Ramp up anti-inflammatory protocol 5 days before expected period: omega-3s, turmeric, ginger','Reduce histamine-containing foods in last 5 days if histamine intolerance is suspected: fermented foods, wine, aged cheese','Magnesium-rich foods daily: dark leafy greens, pumpkin seeds, dark chocolate','Gut-healing foods: bone broth, cooked vegetables, slippery elm tea'],
+      move:['Moderate, gentle: yin yoga, walking, swimming','Pelvic floor relaxation exercises (not Kegels - these may worsen pain in endo)','Avoid high impact as period approaches'],
+      supp:['Magnesium glycinate 400-500mg','Omega-3s 3-4g','Quercetin 500mg - anti-inflammatory, mast cell stabilizing (relevant if histamine component)','Iron bisglycinate if ferritin is dropping from monthly blood loss'],
+      selfCare:['Pre-emptive castor oil packing starting 5 days before expected period','Prepare heat therapy supplies for menstrual phase','Communicate needs to household/work - planning around cycle reduces stress of period pain'],
+      note:'Progesterone resistance in endometriosis is an active area of research. Unlike PMMOS where the issue is insufficient progesterone, in endo the issue is partially that lesions do not respond normally to progesterone\'s anti-inflammatory signal. High-dose DIM, resveratrol, and omega-3s all improve progesterone receptor sensitivity. Histamine connection: mast cells are activated in endo lesions and release histamine, which itself stimulates estrogen production. Quercetin is a natural mast cell stabilizer - add in luteal phase if bloating and skin reactions worsen pre-menstrually.'
+    }
+  },
+
+  // ---- FIBROIDS (NEW) ----
+  fibroids: {
+    menstrual: {
+      energy:1, energyLabel:'Very Low - Heavy Blood Loss',
+      mood:'Exhausted, often anemic, possible flooding and clotting. Emotionally depleted.',
+      moodEmoji:'🩸',
+      what: [
+        'Fibroids expand the uterine surface area - significantly heavier bleeding than normal',
+        'Clots larger than a quarter are a clinical sign of fibroid-driven heavy menstrual bleeding',
+        'Iron deficiency anemia from chronic heavy loss causes fatigue on top of hormonal fatigue',
+        'Submucosal fibroids (inside the uterine cavity) cause the heaviest bleeding'
+      ],
+      eat:['Iron priority: grass-fed liver, beef, lentils, spinach ALWAYS with Vitamin C for absorption','Blackstrap molasses 1-2 tbsp: high iron, highly bioavailable','Nettle leaf tea: high in iron and Vitamin K - supports blood building','Avoid caffeine and alcohol during period - both worsen bleeding volume'],
+      move:['Rest completely if flooding. Light walking only if bleeding is controlled.','Any significant exertion increases blood pressure and can worsen bleeding','Swimming NOT recommended during period with heavy flow'],
+      supp:['Iron bisglycinate 25-50mg on empty stomach - taken AWAY from levothyroxine if applicable','Vitamin C 500mg with iron to enhance absorption','Tranexamic acid: prescription medication that dramatically reduces fibroid bleeding - discuss with provider','Magnesium glycinate 400mg for cramping','PAUSE systemic enzymes this phase - they increase circulation and can significantly worsen heavy fibroid bleeding','Liquid Chlorophyll 1-2 tbsp in water daily: structurally mirrors hemoglobin, accelerates blood building between meals','Red Raspberry Leaf Tea 2-3 cups: uterine toner that helps regulate contractility and reduce clotting during heavy flow'],
+      selfCare:['Period underwear + menstrual disc for managing heavy flow','Track flooding episodes (soaking a pad/tampon in under an hour = flooding)','Schedule CBC and ferritin check after period ends to assess iron status','Warm castor oil pack on lower abdomen 30-45 mins (light heat only) - supports lymphatic drainage without increasing flow'],
+      note:'Uterine fibroids are the most common benign gynecological tumor, affecting up to 80% of Black women by age 50 and 70% of white women. They are significantly underdiagnosed in Black women whose symptoms are often normalized or dismissed. Heavy menstrual bleeding from fibroids is the most common cause of iron deficiency anemia in reproductive-age women. Conventional treatment options: GnRH agonists (Lupron), SPRMs (Oriahnn/relugolix), myomectomy, uterine fibroid embolization (UFE), or hysterectomy. Functional protocol slows growth; surgery/intervention stops bleeding.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Rebuilding Post-Blood-Loss',
+      mood:'Gradually recovering. Iron and energy returning if diet is adequate.',
+      moodEmoji:'🌿',
+      what: [
+        'Estrogen begins rising - estrogen is the primary driver of fibroid growth',
+        'This is the critical phase to aggressively support liver estrogen metabolism',
+        'Fibroids have estrogen receptors and grow in response to estrogen',
+        'DIM, fiber, and liver support now reduce the estrogen signal that feeds fibroid growth'
+      ],
+      eat:['Cruciferous vegetables 2 cups daily: broccoli, cauliflower, Brussels sprouts (DIM precursors)','Ground flaxseed 2 tbsp: lignans compete at estrogen receptors','High fiber: 35g daily minimum to bind and excrete estrogen metabolites','Green tea 2 cups: EGCG is anti-proliferative in fibroid cells (animal studies)','Raw carrot daily (1 medium, shredded): unique indigestible fiber binds estrogen metabolites in the intestine before reabsorption - the Ray Peat protocol for estrogen clearance'],
+      move:['Progressive return to normal activity after period ends','Rebounding 10 mins daily: stimulates lymphatic drainage through the pelvic basin where fibroid waste clears - most effective in follicular','Yoga supports lymphatic drainage and pelvic circulation','Strength training: builds muscle that competes with fat for estrogen production'],
+      supp:['DIM 300-400mg - most evidence-based supplement for estrogen reduction','Calcium D-glucarate 1,000mg - reduces estrogen recirculation','NAC 1,200mg - glutathione support for liver Phase 2 detox','Vitamin D3 5,000 IU - low Vitamin D is significantly associated with larger fibroids','Nattokinase 2,000 FU + Serrapeptase 120,000 SPU on empty stomach: systemic enzymes that break down fibrin-based fibroid tissue - most aggressive enzyme phase of the cycle ⚠️ Do NOT combine with blood thinners (warfarin, heparin, high-dose aspirin, or clopidogrel)','EGCG (Green Tea Extract) 400-600mg: more concentrated anti-proliferative effect than tea alone; directly inhibits fibroid cell growth in peer-reviewed studies','Milk Thistle (Silymarin) 400mg: liver Phase 2 detox support - clears the estrogen metabolites DIM and calcium D-glucarate mobilize'],
+      selfCare:['Continue building iron stores from period blood loss','Avoid heated plastics, BPA, phthalates - xenoestrogens directly stimulate fibroid growth','Castor oil packs over lower abdomen 3x/week in follicular phase','Activated Charcoal 1-2 capsules in evening (minimum 2 hours away from ALL food, supplements, and medications): binds processed estrogen metabolites in the gut for excretion before overnight reabsorption'],
+      note:'Vitamin D deficiency is strongly associated with uterine fibroids. Multiple studies show women with fibroids have significantly lower Vitamin D levels than controls. One study showed Vitamin D reduced fibroid size by 75% in animal models. Target serum Vitamin D: 60-80 ng/mL. Begin DIM and calcium D-glucarate NOW in follicular phase to blunt the estrogen surge coming at ovulation. This is the most strategic phase for estrogen metabolism support.'
+    },
+    ovulatory: {
+      energy:4, energyLabel:'Moderate-High',
+      mood:'Energy relatively good. Pelvic pressure may worsen as fibroids are largest relative to cycle.',
+      moodEmoji:'⚡',
+      what: [
+        'Estrogen peaks - fibroids respond most strongly to this hormonal signal',
+        'Fibroids may feel more prominent as estrogen increases water retention and fibroid size temporarily',
+        'Pelvic pressure or a sensation of fullness is common near ovulation',
+        'Ovulation itself is usually normal - fibroids do not typically prevent ovulation unless very large'
+      ],
+      eat:['Maintain DIM-precursor vegetables: broccoli, arugula, kale','Beet juice or beet root: supports liver Phase 1 detox of estrogens','Berries + pomegranate: polyphenols with anti-proliferative effects on fibroid cells','Reduce animal fat intake this phase - saturated fat elevates estrogen production'],
+      move:['Normal activity level if no pelvic pain','Avoid high-impact activity if pelvic pressure is significant','Swimming and cycling are gentle on the pelvic floor'],
+      supp:['Continue DIM, calcium D-glucarate, NAC, Vitamin D','Progesterone cream (transdermal) starting Day 14 if ovulation confirmed - progesterone OPPOSES fibroid growth','Resveratrol 500mg: anti-proliferative in fibroid cells in vitro','B-Complex Active (methylated B2, B6, B12): liver Phase 1 estrogen detoxification is B-vitamin dependent - deficiency slows the clearance of the estrogen peak happening right now','Curcumin 500-1000mg with black pepper (piperine): directly anti-proliferative in uterine fibroid cells; also reduces the pelvic inflammation that drives pressure symptoms'],
+      selfCare:['This is a good phase to schedule ultrasound monitoring of fibroid size if due','Track any changes in pelvic pressure or urinary frequency','Research UFE and myomectomy if fibroids are significantly impacting quality of life','Continue Activated Charcoal in evenings through ovulation - estrogen is peaking and hepatic clearance is most critical right now'],
+      note:'Bioidentical progesterone beginning at ovulation is one of the most overlooked functional interventions for fibroids. Estrogen grows fibroids; progesterone opposes this when applied correctly. Synthetic progestins (like medroxyprogesterone acetate) may not have the same protective effect and some may worsen fibroid growth. Bioidentical progesterone cream 20-40mg applied Day 15-28 of cycle requires confirmation of ovulation. The gut-liver-estrogen connection is central: fix beta-glucuronidase first, then add DIM.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining',
+      mood:'Pre-menstrual heaviness, pelvic pressure, bloating. Anxiety about upcoming heavy period.',
+      moodEmoji:'⛅',
+      what: [
+        'Progesterone rises - this phase is relatively estrogen-quieter for fibroids',
+        'However, pre-menstrual prostaglandin buildup prepares for what will be a heavy bleed',
+        'Fibroids may cause pre-menstrual spotting as they disrupt the uterine lining architecture',
+        'Anemia symptoms from last period may still be present if iron was not adequately replaced'
+      ],
+      eat:['Maintain iron stores: red meat 2-3x/week, lentils, dark leafy greens','Vitamin K2 (from fermented foods, natto, supplement): supports healthy coagulation','Reduce sodium to minimize pre-menstrual water retention amplified by fibroid pressure','Ginger tea 2 cups daily: anti-inflammatory and anti-prostaglandin'],
+      move:['Moderate walking and yoga','Avoid putting undue pressure on abdomen: certain yoga poses like deep twists','Pelvic floor awareness exercises'],
+      supp:['Vitamin E 400 IU: some evidence for reduced fibroid-associated bleeding','Continue DIM, Calcium D-glucarate','Iron if still rebuilding from last cycle','Progesterone cream through Day 28 if started at ovulation - do not stop prematurely','Evening Primrose Oil 1-2g: GLA fatty acid directly supports progesterone production and reduces pre-menstrual prostaglandin activity that drives fibroid cramping','Vitex (Chasteberry) 500-1000mg in morning: stimulates LH and corpus luteum function to increase natural progesterone output ⚠️ Do NOT use with hormonal birth control, dopamine antagonist medications (antipsychotics, metoclopramide), or in Graves\' disease without provider approval','Zinc 30mg with food: required for progesterone receptor expression - without adequate zinc, progesterone cannot bind effectively to counteract estrogen','Iodine (Lugol\'s 2%, 2-3 drops in water): uterine tissue has iodine receptors; deficiency is associated with estrogen-sensitive tissue proliferation including fibroids and fibrocystic breast tissue ⚠️ AVOID if you have Hashimoto\'s or positive TPO antibodies - iodine can trigger autoimmune thyroid flares in those with thyroid autoimmunity'],
+      selfCare:['Prepare for period: confirm supply of period products, pain management plan','Schedule next fibroid-related appointment in follicular phase when energy is higher','Community: fibroids affect 80% of Black women - peer support groups normalize and validate'],
+      note:'The emotional burden of fibroid management is significant and under-acknowledged. Many women spend years with severe symptoms before receiving proper treatment. The functional protocol (Vitamin D, DIM, calcium D-glucarate, bioidentical progesterone) can slow fibroid growth and reduce bleeding, but larger fibroids typically require procedural intervention. Uterine Fibroid Embolization (UFE) preserves the uterus and has 85-90% success rates. Refer appropriately and validate that this is a real, serious condition requiring real treatment.'
+    }
+  },
+
+  // ---- FEMALE FERTILITY ----
+  fertility_f: {
+    menstrual: {
+      energy:2, energyLabel:'Restoration Phase',
+      mood:'Reflective, renewing. The biological slate is wiped clean - this is cellular housekeeping.',
+      moodEmoji:'🌑',
+      what: [
+        'Uterine lining is shed and renewed - the most recent attempt at implantation has completed',
+        'FSH rises to signal the ovaries to develop the next group of follicles',
+        'The follicle that will release the egg this cycle is being selected right now',
+        'AMH (anti-Mullerian hormone) reflects ovarian reserve - this is a good time to test it'
+      ],
+      eat:['Folate-rich foods: dark leafy greens, lentils, asparagus, avocado - start now for egg quality','Iron from food to rebuild stores: absorbed best with Vitamin C','CoQ10-supporting foods: organ meats, sardines, wild salmon','Anti-inflammatory to create a clean follicular environment'],
+      move:['Gentle restoration: walking, restorative yoga, swimming','This is not the phase to overtrain - cortisol impairs FSH signaling'],
+      supp:['Prenatal vitamin with methylated folate (L-methylfolate, not folic acid if MTHFR variant)','CoQ10 ubiquinol 400-600mg - egg mitochondrial energy production','Vitamin D3 to target 60-80 ng/mL - implantation receptor expression','Omega-3 EPA+DHA 2g - anti-inflammatory for follicular environment'],
+      selfCare:['Fertility tracking apps: start inputting period start date for BBT charting this cycle','Review past cycle data with provider at fertility appointment','Connection time with partner - emotional intimacy is part of fertility optimization'],
+      note:'The follicle destined to ovulate this cycle has already been developing for 90 days (3 months prior). This means CoQ10, antioxidants, and Vitamin D taken TODAY are for the egg that will ovulate 3 months from now. Egg quality improvements are a 3-month project. Methylated folate (not folic acid) is critical - up to 40% of women have MTHFR variants that impair folic acid conversion. Get MTHFR testing and use L-methylfolate form of prenatal vitamin.'
+    },
+    follicular: {
+      energy:4, energyLabel:'Building - Egg Quality Window',
+      mood:'Optimistic, motivated, forward-focused. Best window for action and planning.',
+      moodEmoji:'🌸',
+      what: [
+        'The dominant follicle is maturing - this follicle contains the egg that may be fertilized this cycle',
+        'Estrogen rises as the follicle grows: estrogen is the "readiness signal" for the uterine lining',
+        'FSH levels peak early in follicular phase then drop as estrogen rises (negative feedback)',
+        'Cervical mucus begins transitioning from sticky/dry to creamy as ovulation approaches'
+      ],
+      eat:['Antioxidant-rich produce: colorful berries, pomegranate, bell peppers (Vitamin C)','Full-fat dairy if tolerated: studies show full-fat dairy supports ovulatory function','CoQ10-containing foods: sardines, organ meats, wild salmon','Avoid trans fats entirely - directly impair ovulation (Harvard Nurses\' Health Study)'],
+      move:['Moderate-intensity movement daily: improves ovarian blood flow','Avoid extreme endurance exercise: impairs LH pulse frequency needed for ovulation','Acupuncture once weekly in follicular phase: 8 RCTs support improved conception rates'],
+      supp:['CoQ10 ubiquinol 400-600mg - peak egg quality window','Myo-inositol 4g (especially if any PCOS/PMMOS features) - improves follicle quality','DHEA 25mg if AMH is low or age over 38 - improves egg quantity and quality (discuss with provider)','Melatonin 3mg at bedtime - strong antioxidant specifically in follicular fluid'],
+      selfCare:['BBT charting: temperatures should be consistently lower than post-ovulation','Cervical mucus monitoring: begin checking daily for transition to egg-white CM','OPK testing: begin Days 10-12 to track LH surge approach'],
+      note:'The follicular phase is when egg quality is most directly influenced by nutritional status. CoQ10 (ubiquinol, not ubiquinone for women over 35) is the most evidence-backed supplement for egg quality: mitochondria in the egg require CoQ10 to complete meiosis (cell division). DHEA 25-75mg has the strongest evidence for poor ovarian reserve (AMH below 1.0) - it increases the number of follicles recruited each cycle. Requires medical supervision. Melatonin in follicular fluid protects the egg from oxidative damage during final maturation.'
+    },
+    ovulatory: {
+      energy:5, energyLabel:'PEAK - Fertile Window Open',
+      mood:'Confident, magnetic, highest libido of the cycle. Peak fertility.',
+      moodEmoji:'🌕',
+      what: [
+        'LH SURGE: Triggered by peak estrogen, the LH surge initiates ovulation 24-36 hours after positive OPK',
+        'EGG RELEASED: The egg is viable for only 12-24 hours after release',
+        'SPERM WINDOW: Sperm survive 3-5 days in fertile cervical mucus - intercourse BEFORE ovulation counts',
+        'FERTILE WINDOW: Days of egg-white cervical mucus = fertile (typically 3-5 days ending day after ovulation)'
+      ],
+      eat:['Bromelain (fresh pineapple core, Days 1-5 post-ovulation): traditionally used for implantation support','Zinc-rich: oysters, pumpkin seeds - supports progesterone production in corpus luteum','Brazil nuts: selenium for thyroid function and embryo development','Full hydration: cervical mucus quality depends on hydration'],
+      move:['Normal moderate activity during fertile window','Avoid hot tubs, saunas, extreme heat during intercourse window - affects sperm','Walking or light activity post-ovulation - do not overstrain'],
+      supp:['Vitex (Chaste Tree) 400mg in AM if cycles have been irregular - supports LH surge timing','Zinc 25mg - corpus luteum progesterone production','Continue CoQ10, prenatal vitamin, Vitamin D','Baby aspirin 81mg (Days 14-28 if history of implantation failure or recurrent loss - discuss with provider)'],
+      selfCare:['Positive OPK = ovulation in 24-36 hours - intercourse today and tomorrow','Track BBT: temperature RISE of 0.2-0.4°F above coverline confirms ovulation occurred','Rest and reduce stress in the 2 days around ovulation - cortisol impairs LH surge timing'],
+      note:'Timing intercourse to the fertile window is the single most impactful behavioral change for conception optimization. OPK (ovulation predictor kit) detects the LH surge. A positive OPK means ovulation in 24-36 hours. The egg survives 12-24 hours. Sperm must already be present or introduced immediately. The day before positive OPK through the day of positive OPK are the two most fertile days. For couples with sperm concerns, every other day during the fertile window maintains sperm quality better than daily. BBT rise confirms ovulation occurred (progesterone raises body temperature).'
+    },
+    luteal: {
+      energy:3, energyLabel:'Implantation Phase - Gentle Living',
+      mood:'Inward, nesting instinct increases. Protect this phase energetically and physically.',
+      moodEmoji:'🌿',
+      what: [
+        'Corpus luteum (remains of follicle after ovulation) produces progesterone to support implantation',
+        'Days 6-10 post-ovulation: implantation window - embryo is implanting if conception occurred',
+        'HCG begins rising 7-10 days post-ovulation if implantation is successful (earliest pregnancy test timing)',
+        'Progesterone maintains uterine lining and prevents menstruation until HCG takes over'
+      ],
+      eat:['Pineapple core (Days 1-5 post-ovulation): bromelain thought to support implantation (traditional)','Adequate calories - do not restrict during implantation window','Warm foods: avoid ice cold foods and drinks (traditional Chinese medicine for uterine warmth)','Pomegranate juice: rich in antioxidants, associated with better uterine lining thickness in studies'],
+      move:['Gentle movement only during implantation window (Days 6-12 post-ovulation)','No high-impact activity during implantation window','Walking, restorative yoga, swimming are appropriate'],
+      supp:['Progesterone (bioidentical, prescription): if prior implantation failure or low Day 21 progesterone - begin Day 3 post-ovulation','Vitamin D - critical for implantation receptor expression','B6 (P5P) 50mg: supports corpus luteum progesterone production','Continue prenatal vitamin with methylated folate - folate is critical from conception'],
+      selfCare:['Reduce stress aggressively: cortisol impairs progesterone and HCG','Castor oil pack over lower abdomen Days 1-5 of luteal phase (STOP once in implantation window Day 6+)','Sleep 8+ hours: progesterone promotes deep sleep - use this','Avoid pregnancy test before Day 10 post-ovulation: too early causes false negatives and emotional distress'],
+      note:'Luteal phase defect (LPD): insufficient progesterone or too-short luteal phase (under 10 days) is a common and under-diagnosed cause of early pregnancy loss and subfertility. Test: Day 21 serum progesterone. Target: above 10 ng/mL for natural cycle, above 15 ng/mL for medicated cycles. If below 10, bioidentical progesterone supplementation starting 3 days post-ovulation supports implantation. In IVF: progesterone supplementation is standard of care. In natural cycles: it is often not offered but is evidence-based when Day 21 progesterone is low.'
+    }
+  },
+
+  // ---- HYPERTHYROIDISM / GRAVES' DISEASE ----
+  hyperthyroid: {
+    menstrual: {
+      energy:2, energyLabel:'Low - Restless Fatigue',
+      mood:'Wired exhaustion. Anxiety + depletion. Palpitations may worsen. Period very light or spotting only.',
+      moodEmoji:'⚡',
+      what: [
+        'Hyperthyroidism accelerates estrogen clearance - levels drop too fast causing very light periods',
+        'Elevated thyroid hormone increases SHBG, reducing free estrogen and progesterone availability',
+        'Graves\' disease is an autoimmune condition driven by TSI (Thyroid Stimulating Immunoglobulin) antibodies',
+        'Period may be only 1-2 days of very light flow, or may be completely absent (amenorrhea)'
+      ],
+      eat:['Cruciferous vegetables: broccoli, cauliflower, kale - contain goitrogens that mildly suppress thyroid in excess','Calcium and Vitamin D foods: dairy, fortified plant milk - hyperthyroidism causes bone loss','AVOID iodine supplements and high-iodine foods (kelp, seaweed, iodized salt in large amounts)','Anti-inflammatory: omega-3s, berries, turmeric - Graves\' is autoimmune, inflammation is the driver'],
+      move:['Very gentle movement only - hyperthyroidism already raises heart rate and metabolism','Yoga, stretching, walking at slow pace','Avoid any cardio that raises heart rate further - already elevated at rest'],
+      supp:['Selenium 200mcg (selenomethionine): ONLY supplement with RCT data for Graves\' - reduces TSI antibodies and slows ophthalmopathy (eye disease)','Bugleweed (Lycopus virginicus) 250-500mg: most studied botanical for reducing thyroid hormone synthesis','Lemon balm 600-900mg: inhibits TSH receptor and reduces TSI binding','L-Carnitine 2g: blocks thyroid hormone action at receptor level - reduces symptom severity'],
+      selfCare:['Heart rate monitoring - target resting HR below 90 bpm (uncontrolled hyperthyroid often 100+)','Avoid caffeine completely - worsens palpitations, tremors, anxiety','Cool environment: hyperthyroidism causes heat intolerance'],
+      note:'CRITICAL - Graves\' disease requires medical management. Antithyroid medications (methimazole preferred over PTU for most adults) are first-line. The functional protocol is SUPPORTIVE alongside conventional treatment, not instead of it. NEVER use iodine supplements with hyperthyroidism - iodine provides raw material for excess thyroid hormone production. This is opposite of the hypothyroid protocol. Selenium 200mcg is the most important addition: the 2012 European Group on Graves\' Orbitopathy RCT showed selenium reduced eye disease progression significantly and is now in European guidelines.'
+    },
+    follicular: {
+      energy:3, energyLabel:'Moderate - Wired Energy',
+      mood:'Anxious energy, difficulty sitting still, racing thoughts. Estrogen builds but may be cleared too quickly.',
+      moodEmoji:'🌀',
+      what: [
+        'Follicular phase requires adequate estrogen for follicle development - hyperthyroidism accelerates its clearance',
+        'Multiple follicles may develop but dominant follicle selection can be disrupted',
+        'High thyroid hormone suppresses FSH responsiveness - follicular development is impaired',
+        'Cycle length shortens: follicular phase may compress to only 7-9 days instead of 14+'
+      ],
+      eat:['Raw cruciferous vegetables in larger portions this phase: their goitrogen content helps mildly suppress thyroid','Brazil nuts 2 per day: selenium for ongoing Graves\' antibody management','Calcium-rich foods daily: bone mineral density declines in hyperthyroidism - 1,200mg calcium required','Adequate caloric intake: hyperthyroidism raises basal metabolic rate by 50-80% - clients are often losing weight unintentionally'],
+      move:['Moderate walking is appropriate if symptoms are controlled','Gentle yoga and stretching - better than aerobic exercise until thyroid hormones normalize','Heart rate should guide intensity - stay under 100 bpm during exercise'],
+      supp:['Selenium 200mcg - continue throughout cycle','Bugleweed 250-500mg - best taken consistently for thyroid hormone modulation','Calcium citrate 600mg twice daily: most bioavailable form for bone protection in hyperthyroidism','Magnesium glycinate 400mg: often depleted from GI hypermotility and sweating'],
+      selfCare:['Stress management is critical: cortisol triggers Graves\' flares via neuroimmune pathways','Morning meditation or breathwork: activates vagal tone which calms sympathetic overdrive','If using antithyroid medication: take at consistent times daily - methimazole is once daily, PTU is 3x daily'],
+      note:'The follicular phase is where Graves\' disease most disrupts fertility. High TSH receptor antibodies impair follicular development and LH signaling. Women with uncontrolled Graves\' often cannot ovulate - achieving euthyroid status (normal thyroid levels on medication) is a prerequisite for conception attempts. Bugleweed is the most evidence-supported botanical for reducing thyroid hormone levels. It inhibits iodine incorporation into thyroid hormones and reduces TSH receptor binding. Takes 6-8 weeks to see effect. Do not use with thyroid medications without monitoring - can cause hypothyroidism if combined with methimazole.'
+    },
+    ovulatory: {
+      energy:4, energyLabel:'High - Anxiety Peaks',
+      mood:'Highest anxiety in cycle. Nervousness, irritability, possible sleep disruption as estrogen peaks.',
+      moodEmoji:'⚠️',
+      what: [
+        'Ovulation may or may not occur - LH surge can be disrupted by high thyroid hormone levels',
+        'When ovulation does occur, it may be poorly timed and the corpus luteum inadequate',
+        'Estrogen peak is blunted as hyperthyroidism accelerates its clearance via Phase 1 liver metabolism',
+        'Graves\' disease: immune activity fluctuates with estrogen - ovulatory estrogen peak may trigger antibody flares'
+      ],
+      eat:['Calcium continues: bone protection cannot pause','Magnesium-rich foods: magnesium calms the nervous system and is depleted by excess thyroid stimulation','Berries and polyphenols: antioxidants support immune regulation in autoimmune Graves\'','Adequate protein: hyperthyroidism causes protein catabolism - muscle wasting is a real risk'],
+      move:['This is not a high-intensity exercise window with uncontrolled hyperthyroidism','Gentle yoga: inversions are calming for the nervous system','Aquatic exercise if available: water resistance + cooling effect'],
+      supp:['Continue selenium, bugleweed, lemon balm, L-carnitine protocol','Motherwort tincture: traditional nervine AND mild antithyroid - reduces palpitations','Magnesium glycinate: most critical for anxiety and palpitations at ovulation'],
+      selfCare:['OPK testing: may not show reliable LH surge with Graves\' disease - cervical mucus monitoring may be more reliable','Avoid emotional triggers and conflicts during this phase - anxiety threshold is lowest here','Acupuncture: some evidence for reducing Graves\' antibody levels and symptom severity'],
+      note:'Graves\' disease has a well-documented pattern of flaring during the postpartum period (1-4 months after delivery) when the immune system rebounds from pregnancy\'s relative immunosuppression. Similarly, immunological shifts throughout the menstrual cycle can trigger antibody fluctuations. The ovulatory estrogen peak represents the highest immune-inflammatory activity point in the cycle for autoimmune thyroid conditions. Some women report their heart palpitations and tremors worsen mid-cycle. Tracking this in the hormone tracker helps identify the pattern for provider discussions.'
+    },
+    luteal: {
+      energy:2, energyLabel:'Declining - Best Phase for Graves\'',
+      mood:'Progesterone\'s calming GABA effect is actually protective for Graves\' - luteal phase often the most tolerable.',
+      moodEmoji:'🌙',
+      what: [
+        'Progesterone in luteal phase has mild immunosuppressive effects - Graves\' antibodies may be lower here',
+        'Progesterone activates GABA receptors - calming effect directly opposes the sympathetic overdrive of hyperthyroidism',
+        'Many Graves\' patients report feeling most calm and stable in the luteal phase',
+        'Pre-menstrual period brings anxiety and palpitations back as progesterone drops in final days'
+      ],
+      eat:['Magnesium-rich foods emphasize in this phase: pumpkin seeds, dark leafy greens, dark chocolate 85%','Tryptophan foods + complex carbs: turkey, eggs, sweet potato - serotonin support for progesterone-withdrawal anxiety','Avoid alcohol: even small amounts increase thyroid hormone release and worsen Graves\' symptoms','Cooling foods if heat intolerance is severe: cucumber, watermelon, coconut water'],
+      move:['Moderate walking or yoga throughout luteal phase','This is the best exercise window for Graves\' patients - use it while hormones support lower anxiety','Restorative yoga in late luteal phase'],
+      supp:['Magnesium glycinate 400-500mg: highest priority in late luteal as progesterone drops','Continue selenium, bugleweed, lemon balm throughout cycle','Vitex (Chaste Tree) 400mg AM: raises progesterone via LH - the extended calm of the luteal phase can be prolonged with Vitex (use cautiously, monitor thyroid labs)','Calcium citrate continues daily'],
+      selfCare:['Track palpitation severity and anxiety levels daily 1-10 in each phase - this data reveals the cycle-symptom connection to share with provider','Note the last 2-3 days before period when Graves\' symptoms reliably worsen - prepare ahead','Anti-inflammatory lifestyle: adequate sleep, stress reduction, anti-inflammatory diet all reduce autoimmune flare frequency'],
+      note:'Vitex (Chaste Tree) should be used with caution in Graves\' disease. While it supports progesterone and the calming luteal phase, its mechanism involves pituitary LH stimulation which can have downstream thyroid effects in some individuals. Some integrative providers use it successfully in Graves\' clients on stable medication. Monitor thyroid labs (Free T4, Free T3, TSH) at 6 weeks after starting Vitex. If levels worsen, discontinue. L-Carnitine 2g/day is the most consistently supported supplement for symptom reduction - it blocks thyroid hormone action at the cellular receptor level without affecting hormone production itself. It specifically reduces fatigue, bone loss, and palpitations without the antithyroid effect of bugleweed.'
+    }
+  },
+
+  // ---- ESTROGEN DOMINANCE ----
+  estrogendominance: {
+    menstrual:{energy:2,energyLabel:'Low - Heavy PMS Hangover',mood:'Emotional release after severe PMS. Heavy, clotty flow. Relief that period arrived.',moodEmoji:'🌧',
+      what:['High estrogen throughout cycle creates excessive uterine lining buildup','Period release is heavier, sometimes clotty, sometimes prolonged','First 1-2 days: peak discomfort, bloating releases','Progesterone that was already low drops further - period arrives'],
+      eat:['Liver flush foods: dandelion greens, artichoke, beet root tea','Fiber 35g minimum: binds and removes excreted estrogen','Cruciferous vegetables - DIM precursors: broccoli, cauliflower','Reduce alcohol completely during period - impairs estrogen clearance'],
+      move:['Gentle movement to support lymphatic drainage','Rebounding 10 min: stimulates lymphatic estrogen clearance','Walking in nature'],
+      supp:['DIM 200-300mg','Calcium D-glucarate 500mg','Milk thistle 420mg (silymarin): liver Phase 2 estrogen detox support','Magnesium glycinate 400mg'],
+      selfCare:['Castor oil pack over liver area (right side below ribs) + lower abdomen','Reduce plastic exposure: switch to glass or stainless for food storage','Begin food and symptom diary to identify estrogen-trigger patterns'],
+      note:'IMPORTANT: Estrogen dominance is a downstream symptom, not a root cause. Before committing to this protocol, identify your actual driver: (1) Anovulation or luteal phase defect — no progesterone is made without ovulation; this is the most common root cause — select PCOS/PMMOS or Female Fertility if this fits. (2) Perimenopause — the first hormone to decline is progesterone, creating relative estrogen dominance years before menopause — select Perimenopause if you are 38+. (3) Chronic stress / progesterone steal — cortisol production competes with progesterone for the same precursor — select Adrenal/HPA if stress is the primary driver. (4) Impaired liver clearance or gut dysbiosis — the focus of this protocol. If your root cause is (1), (2), or (3), the guidance in those conditions is more targeted. Use this protocol as a foundation alongside your primary condition. The DUTCH Complete panel distinguishes all four drivers.'
+    },
+    follicular:{energy:3,energyLabel:'Building',mood:'More stable as period ends. Best window to begin estrogen-clearing protocol.',moodEmoji:'🌤',
+      what:['Estrogen rises - in estrogen dominance, it rises HIGHER than normal','Liver clearance of this estrogen is impaired - backup builds','This is the window to aggressively support liver detox before estrogen peaks'],
+      eat:['Cruciferous 2 cups daily: broccoli, cauliflower, Brussels sprouts, arugula','Ground flaxseed 2 tbsp: lignans compete at estrogen receptors','Fermented foods: kefir, kimchi, sauerkraut - restore estrobolome bacteria','Adequate protein: amino acids required for Phase 2 liver conjugation of estrogens'],
+      move:['Vigorous exercise reduces circulating estrogens by 20-40% in studies','Resistance training is most effective for reducing adipose aromatase','Sauna 20 min 3x/week if available: promotes estrogen excretion via sweat'],
+      supp:['DIM 300-400mg','Calcium D-glucarate 1,000mg','NAC 600mg 3x daily: boosts glutathione for Phase 2 liver detox','B complex with methylated B vitamins: required for COMT enzyme that detoxes catechol estrogens','Lactobacillus acidophilus + Lactobacillus reuteri probiotic 50 billion CFU: these strains directly reduce beta-glucuronidase activity in the gut - the enzyme that deconjugates and reactivates excreted estrogen for reabsorption. This is the estrobolome intervention and a root-level driver of estrogen dominance.'],
+      selfCare:['Review personal care products: switch to paraben-free, phthalate-free (EWG Skin Deep)','Switch to organic produce for the Dirty Dozen','Replace non-stick cookware with stainless steel or cast iron - PFAS are estrogenic'],
+      note:'Every 10 lbs of excess body fat measurably increases aromatase enzyme activity, converting testosterone to estrogen in adipose tissue. Body composition is a direct therapeutic target. Even a 10% weight reduction produces measurable estrogen reduction. This is not about aesthetics - it is mechanistically important. The gut-liver axis is the other critical target: fix beta-glucuronidase with probiotics and calcium D-glucarate, then support liver detox phases with DIM, NAC, and B vitamins.'
+    },
+    ovulatory:{energy:4,energyLabel:'Peak',mood:'High energy but potential for breast tenderness and bloating at peak estrogen.',moodEmoji:'⚡',
+      what:['Estrogen peaks - in estrogen dominance this peak is higher and/or more prolonged','Breast tenderness often worst at ovulation when estrogen is highest','Liver must clear this surge - DIM and cruciferous are most important RIGHT NOW','Progesterone begins to rise post-ovulation - partial compensation for estrogen dominance'],
+      eat:['Maximize cruciferous and DIM-foods today','Grapefruit CAUTION: inhibits CYP3A4 estrogen metabolism enzyme - avoid if estrogen dominance is significant','Adequate fiber to carry excreted estrogens out of the body','Turmeric: reduces inflammatory estrogen metabolite activity'],
+      move:['High-intensity intervals: most potent for reducing estrogen and insulin resistance','Yoga: inversions support lymphatic estrogen drainage'],
+      supp:['DIM 300-400mg','Progesterone cream (transdermal) start Day 14 if ovulation confirmed: 20-40mg','Vitex 400mg in AM (if luteal phase defect confirmed)'],
+      selfCare:['Wear natural fiber bra - synthetic materials with tight fit increase breast lymphatic congestion','Cold water on chest and axilla post-shower - reduces congestion and tenderness','No alcohol in ovulatory phase - spikes estrogen markedly'],
+      note:'Grapefruit juice is a significant CYP3A4 inhibitor. This enzyme is responsible for a major part of estrogen Phase 1 metabolism. Women with estrogen dominance who consume grapefruit regularly may have measurably elevated estradiol levels. This is often overlooked clinically. Advise clients with estrogen dominance to eliminate grapefruit. Same concern with some medications: statins, certain anxiety medications, and antibiotics have similar CYP3A4 interactions.'
+    },
+    luteal:{energy:2,energyLabel:'Declining - PMS Phase',mood:'PMS builds progressively: bloating, breast tenderness, mood swings, anxiety, insomnia.',moodEmoji:'🌀',
+      what:['Estrogen drops from ovulatory peak but progesterone does not rise adequately to compensate','Relative estrogen dominance is highest in this phase: E2 high, P4 low','PMS is largely a luteal phase estrogen dominance / progesterone deficiency phenomenon','Pre-menstrual migraines, insomnia, and anxiety are driven by this imbalance'],
+      eat:['Magnesium-rich foods: most critical mineral for PMS','Reduce sugar: spikes insulin which increases estrogen production','Chasteberry tea or Vitex supplement: supports progesterone via LH signaling','B6-rich foods: turkey, chicken, salmon, potatoes - P5P supports progesterone synthesis'],
+      move:['Moderate movement: yoga, walking','Evening walks to reduce cortisol that worsens PMS'],
+      supp:['Magnesium glycinate 400-500mg - most evidence for PMS reduction','Vitex 400mg in AM','P5P (active B6) 50mg','Progesterone cream Days 15-28 if Day 21 testing confirms low progesterone'],
+      selfCare:['Track PMS severity 1-10 daily in luteal phase: bring this data to provider','Reduce stress deliberately - cortisol "steals" pregnenolone from progesterone synthesis','Communication with household: PMS symptoms are physiological, not personality'],
+      note:'Natural progesterone cream (USP-grade, 20mg per pump) applied Days 15-28 to thin-skinned areas (inner wrist, inner arm, neck) is one of the most effective natural interventions for luteal-phase estrogen dominance. This is bioidentical progesterone, not a drug, but quality varies enormously by brand. Emerita and Kokoro are well-regarded brands. Some women need oral micronized progesterone (Prometrium) for meaningful blood levels. Day 21 testing before supplementing ensures appropriate use.'
+    }
+  },
+
+  // ---- ADRENAL / HPA AXIS ----
+  adrenal: {
+    menstrual:{energy:1,energyLabel:'Very Low',mood:'Exhausted, emotionally raw, may crash. Cortisol adds to pain perception.',moodEmoji:'😔',
+      what:['Cortisol dysregulation amplifies prostaglandin sensitivity - cramping feels worse','Blood sugar crashes more frequent during menstruation with HPA dysregulation','The HPA axis must support both the stress response AND the hormone cascade of menstruation'],
+      eat:['Protein every 4-5 hours - no skipping meals: blood sugar stability is non-negotiable','Sea salt in meals: adrenal-HPA dysregulation impairs sodium regulation','Warming foods: bone broth, ginger, turmeric','Vitamin C-rich foods: adrenal glands have highest Vitamin C concentration in the body'],
+      move:['Rest. This is a genuine biological requirement.','Gentle restorative yoga only','Avoid adrenal-stimulating activities: no caffeine, no HIIT'],
+      supp:['Vitamin C 2,000mg: adrenal support','Magnesium glycinate 400mg','B5 (pantothenic acid) 500mg: required for cortisol synthesis pathway','Adaptogens pause: rest from stimulating adaptogens during period'],
+      selfCare:['Sleep 9-10 hours if possible','Morning light exposure within 30 min of waking - anchors cortisol awakening response','Warm salt baths with Epsom salts'],
+      note:'HPA axis dysregulation (not "adrenal fatigue") amplifies all cycle symptoms. Cortisol impairs T4-to-T3 conversion, suppresses LH signaling, and directly worsens pain perception. The vicious cycle: poor sleep -> elevated evening cortisol -> impaired morning cortisol awakening response -> fatigue -> poor sleep. Break the cycle with sleep optimization and blood sugar stability first. 2026 caution: ashwagandha >600mg/day - case report of adrenal insufficiency. Limit to 300-600mg.'
+    },
+    follicular:{energy:3,energyLabel:'Building Window',mood:'If cortisol is normalizing, energy improves. Best window in cycle for stress capacity.',moodEmoji:'🌤',
+      what:['Estrogen rise in follicular phase helps buffer cortisol effects somewhat','This phase has the best stress resilience of the cycle','Cortisol Awakening Response (CAR): morning cortisol spike should be highest of the day here'],
+      eat:['Consistent meal timing every 4-5 hours to prevent blood sugar cortisol spikes','Tyrosine: chicken, turkey, eggs - dopamine and norepinephrine precursors (adrenal catecholamine support)','Colorful produce: antioxidants protect adrenal tissue from oxidative stress'],
+      move:['This is the ONLY phase to consider moderate-intensity exercise with adrenal dysregulation','Yoga, walking, swimming are safest','HIIT only if morning cortisol is confirmed elevated (Stage 1 pattern)'],
+      supp:['Ashwagandha KSM-66 300-600mg - most evidence for reducing cortisol 14-30%','Rhodiola rosea 200-400mg in morning - anti-fatigue, cognitive clarity','Phosphatidylserine 400mg - blunts cortisol response to exercise stress','Adaptogenic herbs: this phase is the best time to use them'],
+      selfCare:['HRV tracking: higher HRV = better HPA resilience. Track morning HRV daily.','Cold water face submersion 30 seconds: activates vagal tone, resets HPA axis','Morning sunlight 10 min directly outdoors: anchors cortisol awakening response and circadian rhythm'],
+      note:'4-point salivary cortisol or DUTCH Complete panel is required to actually know the pattern. HPA dysregulation presents in 3 stages: Stage 1 (all high), Stage 2 (blunted morning, elevated afternoon/evening), Stage 3 (flat low pattern). Treatment differs by stage: Stage 1 needs calming adaptogens and stress reduction. Stage 3 needs adrenal support and very gentle stimulation. Using stimulating adaptogens on a Stage 3 patient can worsen their pattern. Test before treating.'
+    },
+    ovulatory:{energy:4,energyLabel:'Peak of Cycle',mood:'Temporary cortisol surge is normal at ovulation. Energy feels better here.',moodEmoji:'✨',
+      what:['Ovulation itself triggers a brief cortisol surge (normal - supports egg release)','Estrogen peak supports serotonin - mood is typically best here','Testosterone peaks at ovulation - motivation and drive at their highest in cycle'],
+      eat:['Lean protein: supports neurotransmitter production','B vitamins from food: eggs, leafy greens, liver - required for cortisol clearance','Avoid caffeine spikes - already near peak cortisol from ovulation surge'],
+      move:['Best exercise window: moderate intensity is appropriate','Yoga is excellent - inversions support lymphatic clearance','Social movement: group exercise, sports - oxytocin reduces cortisol'],
+      supp:['Continue adaptogen protocol in AM','L-Theanine 200mg if afternoon cortisol spike is the pattern','Magnesium glycinate continues'],
+      selfCare:['Schedule demanding tasks in this window - stress capacity is highest','Connection time: social engagement reduces cortisol','Heart Rate Variability biofeedback: HeartMath device during this phase'],
+      note:'The temporary cortisol spike at ovulation is physiologically normal and necessary for the LH surge mechanism. However, in HPA axis dysregulation, this normal spike can be exaggerated or trigger a cascade. If client reports feeling anxious or wired specifically at ovulation, this is a cortisol over-response pattern. Phosphatidylserine 400mg blunts the cortisol response without suppressing it entirely - appropriate intervention here.'
+    },
+    luteal:{energy:2,energyLabel:'Declining - Cortisol Worsens PMS',mood:'PMS amplified by cortisol dysregulation. Wired-tired at night, exhausted in morning.',moodEmoji:'🌀',
+      what:['Falling progesterone in late luteal reduces GABA-receptor calming effect - anxiety rises','Cortisol dysregulation worsens pre-menstrual mood symptoms significantly','Blood sugar instability + elevated cortisol = the classic PMS vicious cycle','Cortisol competes with progesterone for the same receptor - high cortisol worsens progesterone deficiency'],
+      eat:['Blood sugar stability: protein + fat + complex carb at every meal','Magnesium-rich foods: depleted by stress and required for GABA receptor function','Reduce caffeine progressively through luteal phase','Anti-inflammatory: walnuts, fatty fish, turmeric'],
+      move:['Evening yoga / yin yoga - reduces luteal cortisol spike','Walking in nature: reduces cortisol 20-30 min daily','Avoid HIIT in Stage 2-3 adrenal patterns in luteal phase'],
+      supp:['Magnesium glycinate 500mg - GABA support, sleep, stress response','Phosphatidylserine 400mg - most evidence for cortisol blunting','GABA 250-500mg at bedtime if wired-tired insomnia is present','L-Theanine 200mg - calming without sedation for afternoon use'],
+      selfCare:['8-9 hours sleep is a therapeutic requirement','Evening: no news, no intense conversations, no work after 8pm','Breathing: 4-7-8 breathing technique activates vagal tone and reduces cortisol within minutes'],
+      note:'The "pregnenolone steal" is a real phenomenon: under chronic stress, the body diverts pregnenolone (master hormone precursor) to make more cortisol, leaving less available for progesterone, estrogen, and DHEA. This is why chronically stressed women often have low progesterone (short luteal phase, PMS) AND low DHEA AND low estrogen-related symptoms simultaneously. The treatment is not to supplement all of these hormones individually - it is to reduce the cortisol demand through HPA axis healing. Fix the HPA axis and the downstream hormones often normalize.'
+    }
+  }
+};
+
+// Male conditions - daily protocol (not cycle-based)
+const MALE_DATA = {
+  lowt: {
+    title:'Low Testosterone / Daily Optimization',
+    morningTitle:'Morning Peak Window', morningColor:'#0891b2',
+    morningDesc:'Testosterone peaks between 7-10 AM. Take key supplements during this window.',
+    morningItems:['Take zinc 30-45mg with breakfast','Vitamin D3+K2 with first meal','Ashwagandha KSM-66 with morning meal','20-30 min of morning sunlight outdoors - anchors circadian testosterone rhythm','Cold shower finish (30-60 sec) - activates dopamine and maintains testosterone signaling'],
+    afternoonTitle:'Midday Maintenance', afternoonColor:'#16a34a',
+    afternoonDesc:'Testosterone begins to decline. Support insulin sensitivity and energy.',
+    afternoonItems:['Lunch: high protein 35-40g (eggs, fish, chicken, lean beef)','Resist the afternoon coffee - cortisol from caffeine inhibits testosterone if already elevated','Light walk after lunch: improves insulin sensitivity which protects free testosterone','Training window: compound resistance training 3-4 PM is evidence-backed for testosterone response'],
+    eveningTitle:'Evening Recovery', eveningColor:'#7c3aed',
+    eveningDesc:'Sleep is when 70% of daily testosterone is released. Protect it.',
+    eveningItems:['Stop eating 3 hours before bed (insulin resistance from late eating impairs overnight T release)','No alcohol: direct Leydig cell toxicity and increases aromatization to estrogen','Blue light blocking glasses after 8 PM: disruption of circadian rhythm reduces testosterone','Magnesium glycinate 400mg at bedtime: improves deep sleep quality','Target: 7-9 hours. Each additional hour = 15% increase in next-day testosterone'],
+    clinicalNote:'February 2025: FDA removed the cardiovascular black box warning from TRT based on the TRAVERSE trial. TRT does NOT increase heart attacks or stroke in hypogonadal men. Functional range: 500-900 ng/dL (not the lab range of 300-1,000 which includes symptomatic men). Free testosterone and SHBG are equally important. Obesity, insulin resistance, sleep deprivation, and alcohol are the four most impactful modifiable drivers of functional low testosterone.'
+  },
+  highe: {
+    title:'High Estrogen in Men / Daily Protocol',
+    morningTitle:'Morning - Liver Support Window', morningColor:'#16a34a',
+    morningDesc:'Support liver estrogen clearance before first meal.',
+    morningItems:['NAC 600mg on empty stomach: boosts glutathione for liver Phase 2 estrogen detox','DIM 200-300mg with breakfast: shifts estrogen toward 2-OH protective metabolites','Cruciferous vegetables at breakfast if possible: broccoli, arugula, spinach','Weight management: every 10 lbs of visceral fat increases aromatase enzyme activity'],
+    afternoonTitle:'Midday - Metabolic Support', afternoonColor:'#0891b2',
+    afternoonDesc:'Support testosterone-to-estrogen ratio with zinc and anti-inflammatory foods.',
+    afternoonItems:['Zinc-rich lunch: oysters, pumpkin seeds, beef','Resistance training 3-4 PM: builds testosterone-producing muscle, reduces fat aromatase','Avoid soy protein isolate (not whole soy): concentrated isoflavones in large doses may affect ratio','Green tea 1-2 cups: EGCG mildly inhibits aromatase'],
+    eveningTitle:'Evening - Avoid Estrogen Elevators', eveningColor:'#d97706',
+    eveningDesc:'Lifestyle choices after 5 PM significantly impact overnight estrogen levels.',
+    eveningItems:['No alcohol: alcohol is the single most impactful estrogen elevator - raises E2 10-25% per drink','Review topical products: lavender, tea tree oil in skincare can elevate estrogen','Calcium D-glucarate 1,000mg with dinner: inhibits beta-glucuronidase, prevents estrogen recycling','Check medications: spironolactone, SSRIs, opioids, antipsychotics all elevate estrogen in men'],
+    clinicalNote:'The most important lab: use SENSITIVE estradiol assay (LC-MS/MS method), NOT standard estradiol - standard assays are calibrated for women and are inaccurate at male ranges. Target male E2: 20-30 pg/mL on sensitive assay. Testosterone:Estradiol ratio target: approximately 15:1 or higher. Weight loss is the most evidence-backed treatment for male estrogen excess. True gynecomastia (glandular, >1 year duration) typically requires surgical correction regardless of hormonal normalization.'
+  },
+  dht: {
+    title:'DHT / BPH / Hair Loss / Daily Protocol',
+    morningTitle:'Morning - 5-AR Support', morningColor:'#7c3aed',
+    morningDesc:'Saw palmetto and pumpkin seed oil with morning meal for consistent DHT reduction.',
+    morningItems:['Saw palmetto 320mg with breakfast (fat-soluble - needs food)','Pumpkin seed oil 400mg OR pumpkin seeds 30g as snack','Ketoconazole shampoo 3x/week - use on shower days, leave on 3-5 min','Zinc 30-45mg with meal: highest 5-AR inhibitory mineral - most critical','Lycopene from cooked tomatoes or supplement 15-30mg'],
+    afternoonTitle:'Midday - Anti-Inflammatory', afternoonColor:'#16a34a',
+    afternoonDesc:'Reduce systemic and scalp inflammation that worsens both BPH and hair loss.',
+    afternoonItems:['Omega-3 EPA+DHA 2-3g with lunch: reduces prostate and scalp inflammation','Green tea 1-2 cups: EGCG mildly inhibits 5-AR and is anti-inflammatory','Avoid high saturated fat meals: high-fat diet increases DHT conversion','Stinging nettle root 300mg: 5-AR inhibitor and reduces SHBG'],
+    eveningTitle:'Evening - Scalp & Prostate Protocol', eveningColor:'#0891b2',
+    eveningDesc:'Topical scalp care at night and reduce bladder irritants for BPH.',
+    eveningItems:['Rosemary oil 2% in carrier oil: massage into scalp for 4-5 minutes nightly (2015 RCT = equivalent to 2% minoxidil)','Reduce evening fluids after 7 PM to minimize nocturia (BPH)','Avoid caffeine and alcohol after 5 PM: major bladder irritants','Beta-sitosterol 500mg with dinner: additional 5-AR inhibitory effect','Pelvic floor exercises (Kegel): 3 sets x 10 reps daily for BPH urinary symptoms'],
+    clinicalNote:'PSA MUST be tested before starting any 5-alpha reductase inhibitor (finasteride or dutasteride). These medications reduce PSA by 50-65% - if PSA is not baselined first, a rising PSA that indicates prostate cancer may be masked. If prescribing finasteride or dutasteride, multiply all future PSA readings by 2 for true equivalent. Post-Finasteride Syndrome (PFS): rare (1-2%) but real - full informed consent required. Consider starting with natural protocol (saw palmetto + pumpkin seed oil) for 6 months before pharmaceutical 5-AR inhibitors unless BPH is moderate-severe.'
+  },
+  fertility_m: {
+    title:'Male Fertility / Sperm Health - 90-Day Protocol',
+    morningTitle:'Morning Antioxidant Protocol', morningColor:'#16a34a',
+    morningDesc:'Sperm are extremely vulnerable to oxidative damage. Morning antioxidant loading.',
+    morningItems:['CoQ10 ubiquinol 200-400mg with breakfast: primary energy source for sperm motility','Vitamin C 1,000mg with breakfast: protects sperm DNA from oxidative damage','Selenium 200mcg (selenomethionine): selenium is concentrated in seminal fluid, required for sperm morphology','Zinc 30-45mg: required for testosterone synthesis and sperm maturation - most important fertility mineral','Prenatal vitamin for men (with folate, not just folic acid): sperm DNA methylation requires folate'],
+    afternoonTitle:'Midday - Heat & Lifestyle Management', afternoonColor:'#0891b2',
+    afternoonDesc:'Sperm are produced at 2-4°C below core body temperature. Heat is the enemy.',
+    afternoonItems:['Avoid: tight underwear, laptop on lap, long hot baths, saunas, hot tubs - all raise scrotal temperature','Stand or walk if working at a desk: prolonged sitting raises scrotal temperature','Avoid smoking and cannabis: both significantly reduce sperm count and motility','Testosterone therapy (TRT) SUPPRESSES sperm production - if fertility is the goal, do NOT start TRT','Resistance training supports testosterone without impeding fertility (unlike TRT)'],
+    eveningTitle:'Evening Recovery & Timing', eveningColor:'#7c3aed',
+    eveningDesc:'Sleep, alcohol, and stress directly affect sperm quality.',
+    eveningItems:['No alcohol: reduces sperm count, motility, and morphology - abstain for 3 months minimum for semen analysis prep','Ashwagandha KSM-66 600mg at bedtime: RCT showed 167% increase in sperm count, 53% increase in motility','L-Carnitine 2g: sperm use carnitine as primary fuel for motility - most evidence for improving motility specifically','Sleep 7-9 hours: testosterone release during sleep is essential for spermatogenesis','Reduce stress: cortisol directly suppresses LH, which drives sperm production'],
+    clinicalNote:'Spermatogenesis cycle is 74 days. This means any supplement started today will not show its full effect in the semen analysis for 2.5-3 months. Do a baseline semen analysis (SA), begin the protocol, and retest at 3 months. WHO parameters: Count >16 million/mL, Motility >42% progressive, Morphology >4% normal (Kruger strict criteria). Varicocele (enlarged testicular vein) is found in 35-40% of male fertility cases and is the most common treatable cause of male infertility - refer to urology if identified on ultrasound. Clomiphene citrate (off-label) raises LH/FSH and sperm production - effective alternative to TRT for men wanting to maintain fertility. Do NOT start TRT in a man actively trying to conceive.'
+  }
+};
+
+// ============================================================
+// HORMONE CURVE MATH
+// ============================================================
+function gauss(x, center, width, height) {
+  return height * Math.exp(-Math.pow(x - center, 2) / (2 * Math.pow(width, 2)));
+}
+
+function generateCurves(conditionKey, cycleLength) {
+  const ovDay = cycleLength - 14;
+  const labels = Array.from({length:cycleLength},(_,i)=>i+1);
+  const e2=[], p4=[], lh=[];
+
+  for (let d=1; d<=cycleLength; d++) {
+    switch(conditionKey) {
+      case 'pmmos': {
+        // Blunted peaks, elevated LH baseline, low P4
+        e2.push(Math.round(20 + gauss(d,ovDay-1,5,40) + gauss(d,ovDay+7,3,25)));
+        p4.push(Math.round(10 + gauss(d,ovDay+7,4,25)));
+        lh.push(Math.round(28 + gauss(d,ovDay,1.5,30)));
+        break;
+      }
+      case 'perimenopause': {
+        // Erratic E2, declining P4
+        e2.push(Math.round(18 + gauss(d,ovDay-1,4,55) + gauss(d,ovDay+7,4,38) + gauss(d,4,3,12)));
+        p4.push(Math.round(8 + gauss(d,ovDay+7,4,40)));
+        lh.push(Math.round(14 + gauss(d,ovDay,1,65)));
+        break;
+      }
+      case 'endo':
+      case 'estrogendominance':
+      case 'fibroids': {
+        // Higher E2, lower P4 ratio
+        e2.push(Math.round(22 + gauss(d,ovDay-1,3,80) + gauss(d,ovDay+7,3,50)));
+        p4.push(Math.round(8 + gauss(d,ovDay+7,3.5,55)));
+        lh.push(Math.round(8 + gauss(d,ovDay,0.8,88)));
+        break;
+      }
+      case 'adrenal': {
+        // Normal curve but compressed/blunted
+        e2.push(Math.round(18 + gauss(d,ovDay-1,3,65) + gauss(d,ovDay+7,3,40)));
+        p4.push(Math.round(8 + gauss(d,ovDay+7,3.5,58)));
+        lh.push(Math.round(8 + gauss(d,ovDay,0.8,82)));
+        break;
+      }
+      case 'fertility_f': {
+        // Ideal curve, highlight fertile window
+        e2.push(Math.round(15 + gauss(d,ovDay-1,3,82) + gauss(d,ovDay+7,3,52)));
+        p4.push(Math.round(6 + gauss(d,ovDay+7,3.5,90)));
+        lh.push(Math.round(6 + gauss(d,ovDay,0.7,100)));
+        break;
+      }
+      case 'hyperthyroid': {
+        // Blunted E2 (rapid clearance), very low P4, high/erratic LH
+        e2.push(Math.round(10 + gauss(d,ovDay-1,2,45) + gauss(d,ovDay+6,2,28)));
+        p4.push(Math.round(5 + gauss(d,ovDay+6,2.5,30)));
+        lh.push(Math.round(10 + gauss(d,ovDay,1,70)));
+        break;
+      }
+      default: { // hypothyroid, general
+        e2.push(Math.round(18 + gauss(d,ovDay-1,3,75) + gauss(d,ovDay+7,3,45)));
+        p4.push(Math.round(8 + gauss(d,ovDay+7,3.5,82)));
+        lh.push(Math.round(8 + gauss(d,ovDay,0.8,90)));
+      }
+    }
+  }
+  return {labels, e2:e2.map(v=>Math.min(100,Math.max(0,v))), p4:p4.map(v=>Math.min(100,Math.max(0,v))), lh:lh.map(v=>Math.min(100,Math.max(0,v)))};
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let chartInstance = null;
+let currentSex = 'female';
+let currentCondition = 'healthy';
+let currentCycleDay = 1;
+let currentCycleLength = 28;
+
+// ============================================================
+// UI
+// ============================================================
+function populateConditions(sex) {
+  const sel = document.getElementById('conditionSelect');
+  sel.innerHTML = '';
+  const list = sex === 'female' ? FEMALE_CONDITIONS : MALE_CONDITIONS;
+  list.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.key; o.textContent = c.label;
+    sel.appendChild(o);
+  });
+  currentCondition = list[0].key;
+  sel.value = currentCondition;
+}
+
+function onSexChange() {
+  currentSex = document.getElementById('sexSelect').value;
+  populateConditions(currentSex);
+  document.getElementById('femaleControls').style.display = currentSex === 'female' ? 'flex' : 'none';
+  render();
+}
+
+function onConditionChange() {
+  currentCondition = document.getElementById('conditionSelect').value;
+  render();
+}
+
+function updateCycleDay() {
+  const dateVal = document.getElementById('periodDate').value;
+  currentCycleLength = parseInt(document.getElementById('cycleLength').value);
+  if (!dateVal) return;
+  const start = new Date(dateVal);
+  const today = new Date();
+  const diff = Math.floor((today - start) / 86400000) + 1;
+  currentCycleDay = ((diff - 1) % currentCycleLength) + 1;
+  if (currentCycleDay < 1) currentCycleDay = 1;
+  const disp = document.getElementById('cycleDayDisplay');
+  disp.style.display = 'block';
+  disp.textContent = 'Day ' + currentCycleDay + ' of ' + currentCycleLength;
+  render();
+}
+
+function getPhase(day, cycleLength) {
+  const ovDay = cycleLength - 14;
+  const mEnd = 5, fEnd = ovDay - 2, oEnd = ovDay + 1;
+  if (day <= mEnd) return PHASES[0]; // menstrual
+  if (day <= fEnd) return PHASES[1]; // follicular
+  if (day <= oEnd) return PHASES[2]; // ovulatory
+  return PHASES[3]; // luteal
+}
+
+function render() {
+  if (currentSex === 'male') {
+    renderMale();
+  } else {
+    renderFemale();
+  }
+}
+
+const LAB_DATA = {
+  healthy: {
+    priority:['Progesterone Day 21 — the most important test for any cycling woman; confirms ovulation occurred; target > 10 ng/mL (ideally > 15)','Ferritin — most sensitive iron marker; even a healthy cycle can deplete iron over time; target > 70 ng/mL','TSH + free T3 + free T4 — thyroid is the most commonly missed driver of cycle symptoms; check at least annually','Vitamin D 25-OH — deficiency affects ovulation, mood, and immune function; target 60-80 ng/mL'],
+    timing:['Day 3 of cycle: FSH, LH, estradiol baseline — establishes your normal starting point','Day 21: progesterone — the single most important test; confirms that ovulation actually occurred','Annual fasting labs: fasting insulin, HbA1c, CBC, CMP, ferritin, Vitamin D'],
+    optional:['DUTCH Complete once as a baseline — captures estrogen metabolites, progesterone, and cortisol rhythm in one test','AMH (Anti-Mullerian Hormone) — ovarian reserve baseline for future planning; can be done any cycle day','MTHFR variant — affects methylfolate conversion; important if planning pregnancy or cycle-related mood issues exist']
+  },
+  pmmos: {
+    priority:['Fasting insulin — target < 7 μIU/mL (most women with PCOS test > 10)','LH:FSH ratio on Day 3 — target < 2:1 (PCOS often shows 3:1 or higher)','Free testosterone + SHBG — SHBG is typically low in PCOS, driving free androgen excess','AMH (Anti-Mullerian Hormone) — often elevated, reflects follicle count not reserve'],
+    timing:['Day 3 of cycle: FSH, LH, estradiol, AMH','Day 21: progesterone — confirms ovulation occurred, target > 10 ng/mL','Fasting (morning): insulin, glucose, HbA1c, fasting lipid panel'],
+    optional:['DHEA-S (adrenal androgen source)','Full thyroid panel: TSH, free T3, free T4, reverse T3, TPO antibodies — thyroid dysfunction coexists with PCOS frequently','Vitamin D 25-OH — target 60-80 ng/mL','Prolactin — elevated prolactin mimics PCOS symptoms and must be ruled out']
+  },
+  hypothyroid: {
+    priority:['Free T3 — the active thyroid hormone (most providers only test TSH, which is insufficient)','Free T4','Reverse T3 (rT3) — elevated rT3 blocks T3 at cell receptors, causing symptoms despite normal TSH','TPO antibodies — confirms Hashimoto\'s autoimmune component and changes management'],
+    timing:['Any time: full thyroid panel (TSH alone is not enough)','Day 3 of cycle: FSH, LH — thyroid dysfunction disrupts ovarian signaling','Morning fasting: cortisol AM — adrenal dysregulation is common alongside thyroid'],
+    optional:['Thyroglobulin antibodies (TgAb)','Selenium status (essential for T4 → T3 conversion — deficiency worsens hypothyroid symptoms)','Ferritin — iron deficiency impairs thyroid hormone production; target > 70 ng/mL','Vitamin D — low Vitamin D worsens autoimmune thyroid activity']
+  },
+  perimenopause: {
+    priority:['FSH on Day 3 — rising FSH is a key perimenopause marker; > 10 mIU/mL warrants monitoring','Estradiol (E2) Day 3 — fluctuates dramatically in perimenopause; useful for tracking trajectory','AMH — reflects remaining ovarian reserve; declines years before menopause symptoms begin','Progesterone Day 21 if still cycling — low progesterone is the first hormone to decline in perimenopause'],
+    timing:['Day 3 of cycle: FSH, LH, estradiol, AMH','Day 21 (if still cycling): progesterone','Any time: full thyroid panel, DHEA-S, cortisol AM, SHBG, fasting insulin'],
+    optional:['DUTCH Complete hormone test — captures estrogen metabolites and full cortisol rhythm (most comprehensive option)','Bone density DEXA scan — estrogen decline accelerates bone loss starting in perimenopause; baseline matters','HbA1c + fasting insulin — insulin resistance increases significantly in perimenopause']
+  },
+  endo: {
+    priority:['CA-125 — elevated in endometriosis; not diagnostic alone but useful for tracking response to treatment','Progesterone Day 21 — luteal phase defect is common in endo; target > 10 ng/mL','Inflammatory markers: hsCRP, ferritin — systemic inflammation is a driver in endo','Full thyroid panel — thyroid dysfunction coexists with endo at higher-than-average rates'],
+    timing:['Day 3: estradiol, FSH, LH','Day 21: progesterone','Any time: CA-125, hsCRP, ferritin, thyroid panel, Vitamin D'],
+    optional:['DUTCH Complete (2-OH vs 16-OH estrogen metabolite ratio — 16-OH dominant is associated with worse endo)','Celiac antibody panel (anti-gliadin IgA, tTG IgA) — gluten sensitivity rate is higher in endo','NK cell activity (natural killer cells are dysregulated in endo — specialized test)']
+  },
+  estrogendominance: {
+    priority:['DUTCH Complete or DUTCH Plus — gold standard; measures estrogen metabolites (not just estradiol), progesterone, and cortisol rhythm','Progesterone Day 21 — low progesterone is the most common root cause of apparent estrogen dominance','SHBG — low SHBG means more free estrogen circulating even if total estradiol looks normal','Fasting insulin — insulin drives estrogen production in adipose tissue; the most overlooked driver'],
+    timing:['Day 21: progesterone (the single most important test — is this excess estrogen or insufficient progesterone?)','Day 3: estradiol baseline','Any time: DUTCH, SHBG, fasting insulin, liver enzymes (ALT/AST)'],
+    optional:['Cortisol AM — chronic stress drives the progesterone steal, the most common cause of relative estrogen excess','Full thyroid panel — hypothyroidism impairs liver estrogen clearance','Vitamin D — deficiency worsens estrogen receptor sensitivity']
+  },
+  adrenal: {
+    priority:['4-point salivary cortisol (morning, noon, afternoon, midnight) — reveals the cortisol rhythm across the day, not just one snapshot','DHEA-S — primary adrenal reserve marker; declines with HPA burnout','DUTCH Adrenal panel — urine metabolites of cortisol give the most complete picture of HPA output and clearance','Cortisol AM serum — should be the highest point of the day; low AM cortisol confirms HPA suppression'],
+    timing:['Saliva: 4-point cortisol on a typical non-crisis day','DUTCH: collected over a full day','Any time: DHEA-S, magnesium RBC (intracellular magnesium), fasting glucose'],
+    optional:['Melatonin (AM urine) — cortisol and melatonin are inversely coupled; insomnia is often cortisol-at-night driven','Fasting insulin — chronic cortisol elevation raises blood glucose and downstream insulin','Full thyroid panel — adrenal and thyroid axes are tightly coupled; HPA dysfunction often impairs thyroid conversion']
+  },
+  fibroids: {
+    priority:['CBC with differential — checks for anemia from chronic heavy bleeding','Ferritin — most sensitive iron marker; target > 50 ng/mL (standard lab ranges allow it far too low)','Progesterone Day 21 — fibroids grow in estrogen-dominant states; confirm progesterone is adequate (target > 10 ng/mL)','Pelvic ultrasound — establishes fibroid count, size, and location (MRI for precise mapping before procedures)'],
+    timing:['After period ends: CBC + ferritin (assess iron status post-heavy-bleed each cycle)','Day 21: progesterone','Annual: pelvic ultrasound to monitor growth rate'],
+    optional:['Vitamin D 25-OH — strong association between deficiency and larger fibroid size; target 60-80 ng/mL','DUTCH Complete — estrogen metabolite ratios reveal whether 2-OH or 16-OH pathway is dominant','Thyroid panel — hypothyroidism coexists with fibroids and worsens estrogen dominance; rules out compounding factor']
+  },
+  fertility_f: {
+    priority:['AMH — ovarian reserve marker meaningful at any cycle day; declining AMH narrows the conception window','Day 3 FSH, LH, estradiol — ovarian reserve panel; elevated Day 3 FSH signals diminished reserve','Day 21 progesterone — confirms ovulation occurred; target > 10 ng/mL, ideally > 15 ng/mL','Thyroid: TSH target < 2.5 mIU/mL for fertility (standard range is too wide), free T3, free T4, TPO antibodies'],
+    timing:['Day 3: FSH, LH, E2, AMH','Day 21: progesterone','Pre-conception: full thyroid panel, MTHFR genetic test, Vitamin D, ferritin, HbA1c, rubella immunity'],
+    optional:['MTHFR variant testing — affects methylfolate conversion; critical for neural tube defect prevention; determines folate form in prenatal','Saline sonogram or HSG — checks uterine cavity shape and tubal patency before extended TTC','Semen analysis for partner — 40-50% of infertility involves male factor; test both simultaneously, not sequentially']
+  },
+  hyperthyroid: {
+    priority:['Free T3 — elevated in Graves\'; the active hormone driving all symptoms','Free T4','TSH — suppressed in hyperthyroidism, often < 0.1 mIU/mL','TSI (Thyroid Stimulating Immunoglobulin) — the Graves\' antibody; elevated confirms autoimmune hyperthyroidism'],
+    timing:['Every 6-8 weeks while adjusting antithyroid medication dose','After starting any new supplement: recheck thyroid panel at 6 weeks','Day 3 of cycle: estradiol, FSH — hyperthyroidism disrupts ovulatory function'],
+    optional:['Bone density DEXA scan — hyperthyroidism accelerates bone loss; baseline before extended hyperthyroid state','Selenium — supports immune modulation in Graves\' without stimulating thyroid directly','Calcium + Vitamin D — protect bone mineral density during hyperthyroid-driven accelerated bone turnover']
+  }
+};
+
+const CONSULT_FLAGS = {
+  healthy:['Cycle length shorter than 21 days or longer than 35 days for three or more consecutive cycles','Periods soaking a full pad or tampon in under one hour for two or more hours in a row (flooding is not normal)','Severe premenstrual mood changes — rage, suicidal thoughts, inability to function — affecting daily life or relationships (may indicate PMDD)','Mid-cycle pain lasting more than 24 hours or severe enough to require prescription pain relief (rule out ovarian cyst or endometriosis)','Complete absence of period for three or more months without pregnancy (requires hormonal workup — not just stress)'],
+  pmmos:['Cycles absent for 3 or more consecutive months (amenorrhea requires investigation)','Fasting blood glucose > 100 mg/dL or HbA1c > 5.6% (pre-diabetic range requires intervention)','Rapid unexplained weight gain despite no dietary change','Significant hair loss — more than 100 strands per day or visible scalp thinning','Fertility concerns after 12 months of trying to conceive (6 months if over 35)'],
+  hypothyroid:['Severe fatigue not improving after 3+ months of thyroid medication','Resting heart rate below 55 with cold intolerance and constipation (undertreated hypothyroidism)','Significant swelling of face, hands, or legs (possible myxedema — requires urgent evaluation)','TSH above 10 mIU/mL on recent testing','Pregnancy or planning to conceive — thyroid management changes significantly'],
+  perimenopause:['Bleeding between periods or after sex at any age (must rule out pathology)','Periods soaking more than a pad per hour for two or more consecutive hours (flooding)','Significant memory lapses or cognitive changes beyond normal brain fog','Bone fracture from minimal trauma — possible osteoporosis from estrogen decline','Hot flashes or night sweats that are severely disrupting sleep quality for 3+ months'],
+  endo:['Pelvic pain that is not controlled by OTC medication at standard doses','Painful bowel movements or urination during menstruation (suggests deep infiltrating endo)','Significant bloating not related to food — especially if worsening (possible bowel endometriosis)','Painful intercourse that is affecting quality of life','Unsuccessful conception after 6 months of trying'],
+  estrogendominance:['Breast lumps, dimpling, nipple discharge, or persistent breast pain — rule out pathology first','Unexplained weight gain concentrated in hips and thighs despite consistent diet','Very heavy bleeding soaking more than one pad per hour (rule out fibroids or hyperplasia)','Migraines with aura — especially if starting or worsening on estrogen-containing therapy','Mood changes severe enough to affect daily function or relationships'],
+  adrenal:['Extreme fatigue with dizziness on standing (orthostatic hypotension — possible POTS or Addison\'s)','Salt cravings + low blood pressure + chronic debilitating fatigue together (rule out Addison\'s disease)','Complete inability to function during high-stress periods — not burnout-level, but collapse-level','Significant unexplained weight loss alongside fatigue and GI symptoms','Skin hyperpigmentation, especially in skin folds (possible Addison\'s — requires urgent testing)'],
+  fibroids:['Flooding: soaking a full pad or tampon in under one hour for two or more consecutive hours','Clots larger than a golf ball — indicates significant fibroid-driven bleeding volume','Pelvic pain or pressure that is not manageable with OTC medication','Frequent urination, incomplete bladder emptying, or constipation from fibroid pressure on organs','Anemia symptoms: heart pounding at rest, severe breathlessness, dizziness — do not wait to treat'],
+  fertility_f:['No menstrual period for 3 or more months','Unsuccessful conception after 12 months of trying (6 months if over 35, 3 months if over 40)','Two or more consecutive pregnancy losses — warrants recurrent loss workup','Cycle lengths varying by more than 7 days consistently (indicates irregular ovulation)','Known structural issues: fibroids, polyps, or prior ectopic pregnancy — consult before extended TTC'],
+  hyperthyroid:['Heart palpitations, irregular heartbeat, or episodes of racing heart — cardiac monitoring needed','Significant unintentional weight loss of 5+ lbs without dietary change','Tremors, severe anxiety, or inability to regulate body temperature','Eye protrusion, double vision, or eye dryness/pain (Graves\' ophthalmopathy — ophthalmology referral)','Pregnancy or planning to conceive — hyperthyroid management during pregnancy requires specialist oversight']
+};
+
+const BRAIN_SKIN_DATA = {
+  healthy: {
+    menstrual: {
+      brain:{emoji:'🌑',mode:'Deep Intuition',text:'Left and right brain are most connected this week. Insight, pattern recognition, and honest self-assessment are sharpest. Rest the output, trust the reflection.'},
+      skin:{emoji:'🌊',status:'Monthly Reset',text:'Skin is shedding old cells alongside the lining. Keep routine minimal — gentle cleanser, rich moisturizer, nothing harsh. This is your fresh start.',color:'#7c3aed'}
+    },
+    follicular: {
+      brain:{emoji:'💡',mode:'Creative Peak',text:'Estrogen drives dopamine and serotonin to their highest point. Focus, creativity, word-finding, and learning are at their absolute best. This is your most productive mental window.'},
+      skin:{emoji:'✨',status:'Luminous & Clear',text:'Estrogen builds collagen and boosts skin hydration. Texture evens out, pores minimize, and skin has a natural glow. Best window for introducing new actives or treatments.',color:'#22c55e'}
+    },
+    ovulatory: {
+      brain:{emoji:'⚡',mode:'Peak Performance',text:'Estrogen and testosterone together deliver peak IQ, communication, and charisma. Quick thinking, confident expression, magnetic presence. Your highest output day of the month.'},
+      skin:{emoji:'🌟',status:'Radiant Glow',text:'This is your skin at its absolute best. Natural luminosity from estrogen peak, plumpness from water retention, and collagen at its thickest. You need very little — just protect what is already there.',color:'#16a34a'}
+    },
+    luteal: {
+      brain:{emoji:'🔮',mode:'Deep Discernment',text:'Brain shifts from speed and creativity to depth and detail. Emotional intelligence peaks. You notice things you miss other times. Use this for editing, evaluating, and making clear-eyed decisions.'},
+      skin:{emoji:'🌤',status:'Minor Texture Shift',text:'Progesterone slightly increases oil production in the second half. Minor congestion or clogged pores in the final days is normal. Gentle exfoliation and oil-balancing toner help.',color:'#d97706'}
+    }
+  },
+  pmmos: {
+    menstrual: {
+      brain:{emoji:'🌀',mode:'Fog & Fatigue',text:'Blood sugar crashes and inflammation make sustained focus hard. Rest the brain - short tasks only, no major decisions.'},
+      skin:{emoji:'⚠️',status:'Inflamed & Congested',text:'Androgens and inflammation peak. Gentle cleanser only - avoid new actives or treatments.',color:'#ef4444'}
+    },
+    follicular: {
+      brain:{emoji:'💡',mode:'Sharpening',text:'Insulin sensitivity improves and cognition sharpens - your best focus window in the PCOS cycle. Use it.'},
+      skin:{emoji:'🌤',status:'Slowly Improving',text:'Sebum eases as insulin stabilizes. Safe window for niacinamide or gentle exfoliation.',color:'#eab308'}
+    },
+    ovulatory: {
+      brain:{emoji:'🗣️',mode:'Communication Peak',text:'If ovulation occurs, estrogen and testosterone peak together - confidence, clarity, and social energy at their highest.'},
+      skin:{emoji:'✨',status:'Relative Glow',text:'Best skin day of the PCOS cycle. Estrogen briefly counters androgen-driven congestion.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'🌀',mode:'Fog Risk',text:'Low progesterone and blood sugar instability mean brain fog, mood swings, and poor concentration. Simplify everything.'},
+      skin:{emoji:'🔴',status:'Breakout Peak',text:'Peak androgens plus progesterone shift means peak sebum and breakouts. Salicylic acid spot treatment only.',color:'#ef4444'}
+    }
+  },
+  hypothyroid: {
+    menstrual: {
+      brain:{emoji:'😴',mode:'Deep Fatigue',text:'T3 at its lowest plus menstruation means significant cognitive slowdown. Rest is the only protocol.'},
+      skin:{emoji:'❄️',status:'Dry & Dull',text:'Low T3 slows skin cell turnover. Expect dryness and roughness. Rich moisturizer - no harsh actives.',color:'#94a3b8'}
+    },
+    follicular: {
+      brain:{emoji:'🌤',mode:'Best Focus Window',text:'Rising estrogen partially lifts thyroid fog. Schedule your most demanding cognitive work in this phase.'},
+      skin:{emoji:'🌱',status:'Slowly Brightening',text:'Estrogen rise increases moisture retention. Skin starts to look less dull. Gentle brightening ingredients are safe now.',color:'#eab308'}
+    },
+    ovulatory: {
+      brain:{emoji:'💡',mode:'Moderate Clarity',text:'Estrogen peak supports serotonin and dopamine - your clearest thinking in the cycle despite thyroid drag.'},
+      skin:{emoji:'✨',status:'Best of Cycle',text:'Estrogen peak briefly normalizes texture and moisture. Best day for important events or photos.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'🌧',mode:'PMS Brain Fog',text:'Progesterone decline plus low T3 compounds fatigue. Short-sentence tasks only. Sleep is the treatment.'},
+      skin:{emoji:'⚠️',status:'Dry & Reactive',text:'Progesterone drop plus thyroid slowdown increases sensitivity and dryness. Barrier-focused skincare only.',color:'#f97316'}
+    }
+  },
+  perimenopause: {
+    menstrual: {
+      brain:{emoji:'🌊',mode:'Heavy Processing',text:'Estrogen withdrawal and heavier periods create cognitive heaviness. Emotional processing is the real work here.'},
+      skin:{emoji:'❄️',status:'Collagen Depleting',text:'Estrogen crash at period start triggers collagen breakdown. Peptide serum and rich moisturizer are priority.',color:'#94a3b8'}
+    },
+    follicular: {
+      brain:{emoji:'🎢',mode:'Unpredictable Clarity',text:'Energy and clarity are present but variable day to day. Capture productive moments when they arrive.'},
+      skin:{emoji:'🎢',status:'Day-to-Day Variable',text:'Erratic estrogen means skin fluctuates between dry and oily. Simplify your routine.',color:'#eab308'}
+    },
+    ovulatory: {
+      brain:{emoji:'✨',mode:'Clearest Window',text:'Your highest clarity point in the perimenopausal cycle. Use this window for important decisions and conversations.'},
+      skin:{emoji:'✨',status:'Relative Best',text:'Ovulatory estrogen gives your best skin day of the cycle. Hydration is critical as collagen is thinner.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'🌙',mode:'Anxiety & Fog',text:"Progesterone's GABA effect is declining. Anxiety, poor sleep, and brain fog compound. Protect sleep above all."},
+      skin:{emoji:'⚠️',status:'Thin & Tight',text:'Progesterone drop removes water retention. Skin feels thin and tight. Heavy overnight moisturizer.',color:'#f97316'}
+    }
+  },
+  endo: {
+    menstrual: {
+      brain:{emoji:'😣',mode:'Pain Override',text:'Pain dominates all cognitive bandwidth. The brain is in survival mode. One task at a time - nothing more.'},
+      skin:{emoji:'🔴',status:'Inflamed & Sensitive',text:'Systemic inflammation from endo bleeding affects skin. Redness and sensitivity are common. Fragrance-free only.',color:'#ef4444'}
+    },
+    follicular: {
+      brain:{emoji:'🌱',mode:'Rebound Clarity',text:'Pain lifts and cognition rebounds fully. This is your most productive mental window - capture it.'},
+      skin:{emoji:'🌤',status:'Clearing',text:'Inflammation subsides. Skin clears. Best window for active treatments like AHAs or retinol.',color:'#22c55e'}
+    },
+    ovulatory: {
+      brain:{emoji:'⚡',mode:'Alert but Watchful',text:'Good energy and communication peak, but mid-cycle pain may interrupt focus. Work in shorter windows.'},
+      skin:{emoji:'⚠️',status:'Possible Mid-Cycle Flare',text:'Estrogen peak can trigger inflammation. Some experience mid-cycle redness or breakouts. Keep routine simple.',color:'#eab308'}
+    },
+    luteal: {
+      brain:{emoji:'⛈',mode:'Building Dread',text:'Pre-menstrual inflammation affects concentration. Anxiety as period approaches. Reduce cognitive complexity.'},
+      skin:{emoji:'⚠️',status:'Pre-Period Inflammation',text:'Inflammatory mediators building before period. Skin may appear congested or reactive. No new products.',color:'#f97316'}
+    }
+  },
+  estrogendominance: {
+    menstrual: {
+      brain:{emoji:'🌧',mode:'Heavy Reset',text:'High estrogen dropping rapidly causes mood instability and cognitive heaviness. Emotional processing - not analytical work.'},
+      skin:{emoji:'⚠️',status:'Congested & Puffy',text:'Heavy periods from estrogen dominance bring congested, puffy skin. Lymphatic drainage and gentle cleansing.',color:'#f97316'}
+    },
+    follicular: {
+      brain:{emoji:'💡',mode:'Estrogen Surge',text:'Rising estrogen (often surging too high) can create anxious, racing thoughts alongside creativity. Channel it constructively.'},
+      skin:{emoji:'⚠️',status:'Oily & Prone',text:'Excess estrogen drives oil production early. BHA (salicylic acid) in morning routine.',color:'#eab308'}
+    },
+    ovulatory: {
+      brain:{emoji:'⚡',mode:'Hyper-Alert',text:'Peak estrogen with insufficient progesterone counterbalance creates wired, anxious energy. Great output - difficult to turn off.'},
+      skin:{emoji:'⚠️',status:'Peak Congestion',text:'Estrogen dominance peak means skin congestion. Clay mask this week to balance excess oil.',color:'#eab308'}
+    },
+    luteal: {
+      brain:{emoji:'🌀',mode:'PMS Spiral',text:'Classic estrogen dominance PMS: anxiety, rage, brain fog. Without sufficient progesterone, this phase is the hardest.'},
+      skin:{emoji:'🔴',status:'Hormonal Breakouts',text:'Low progesterone plus high estrogen equals hormonal acne on chin and jaw. Spot treat. Do not pick.',color:'#ef4444'}
+    }
+  },
+  adrenal: {
+    menstrual: {
+      brain:{emoji:'😔',mode:'Cortisol Crash',text:'HPA dysregulation plus menstruation amplifies pain and cognitive shutdown. Blood sugar stability is the only support.'},
+      skin:{emoji:'⚠️',status:'Stressed & Dull',text:'High cortisol breaks down collagen and impairs skin barrier. Dull, stressed skin. Repair-focused products only.',color:'#f97316'}
+    },
+    follicular: {
+      brain:{emoji:'🌤',mode:'Best Stress Window',text:'The follicular phase offers your best HPA resilience. Estrogen buffers cortisol. Schedule demanding tasks here.'},
+      skin:{emoji:'🌱',status:'Stabilizing',text:'Cortisol slightly lower as estrogen rises. Skin barrier begins repairing. Antioxidant Vitamin C serum is well-timed now.',color:'#22c55e'}
+    },
+    ovulatory: {
+      brain:{emoji:'✨',mode:'Cortisol Surge',text:'Normal ovulatory cortisol surge plus HPA dysregulation creates wired, alert energy. Good output with anxiety caveat.'},
+      skin:{emoji:'✨',status:'Temporary Glow',text:'Estrogen peak gives your best skin day. Capture it - cortisol-driven collagen breakdown returns in luteal.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'🌀',mode:'Wired & Depleted',text:'Falling progesterone plus elevated evening cortisol equals classic wired-tired pattern. No cognitive reserves by afternoon.'},
+      skin:{emoji:'🔴',status:'Cortisol Damage',text:'Cortisol peaks in late luteal, breaking down collagen and thinning skin. Redness and stress breakouts common.',color:'#ef4444'}
+    }
+  },
+  fibroids: {
+    menstrual: {
+      brain:{emoji:'🩸',mode:'Anemia Fog',text:'Heavy blood loss depletes iron, which is essential for cognitive function. Brain fog here is physiological - not weakness.'},
+      skin:{emoji:'❄️',status:'Pale & Dull',text:'Iron loss from heavy periods means pallor, dullness, under-eye circles. Iron-rich foods support skin color recovery.',color:'#94a3b8'}
+    },
+    follicular: {
+      brain:{emoji:'🌿',mode:'Iron Rebuilding',text:'Cognition improves as iron stores rebuild. Best mental window of the cycle. Task batching works well here.'},
+      skin:{emoji:'🌱',status:'Color Returning',text:'Iron levels recovering. Skin color and radiance return. Window for brightening actives like niacinamide or Vitamin C.',color:'#22c55e'}
+    },
+    ovulatory: {
+      brain:{emoji:'⚡',mode:'Moderate Peak',text:'Your relative best cognitive window despite fibroid burden. Schedule important conversations and output here.'},
+      skin:{emoji:'✨',status:'Best of Cycle',text:'Estrogen peak improves texture and radiance. Fibroids do not significantly affect ovulatory skin quality.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'⛅',mode:'Anticipatory Stress',text:'Anxiety about the upcoming heavy period affects concentration. Pelvic pressure can distract. Keep tasks simple.'},
+      skin:{emoji:'⚠️',status:'Pre-Menstrual Shift',text:'Pre-menstrual hormone shift causes some congestion. Heavier if estrogen dominance coexists. Simplify routine.',color:'#eab308'}
+    }
+  },
+  fertility_f: {
+    menstrual: {
+      brain:{emoji:'🌑',mode:'Cellular Reset',text:'Reflective and inward. Your brain is processing the last cycle. Journaling and planning - not launching.'},
+      skin:{emoji:'🌱',status:'Renewal Phase',text:'Skin cell turnover is in a renewal cycle alongside the uterus. Gentle exfoliation is well-timed now.',color:'#eab308'}
+    },
+    follicular: {
+      brain:{emoji:'🌸',mode:'Creative Optimism',text:'Rising estrogen supports dopamine and serotonin. Best window for fertility planning, research, and informed decisions.'},
+      skin:{emoji:'🌤',status:'Glowing Up',text:'Estrogen rise boosts collagen and moisture daily. Best window for introducing new active ingredients.',color:'#22c55e'}
+    },
+    ovulatory: {
+      brain:{emoji:'🌕',mode:'Peak Magnetism',text:'Highest confidence, clearest communication, strongest intuition. Biologically and mentally your peak phase.'},
+      skin:{emoji:'✨',status:'Peak Glow',text:'Estrogen at maximum. Collagen production is highest. Skin most radiant and even-toned. Minimal routine needed.',color:'#22c55e'}
+    },
+    luteal: {
+      brain:{emoji:'🌿',mode:'Nesting Mode',text:'Progesterone creates calm, inward focus. Less output, more organizing. The two-week wait is designed for slow living.'},
+      skin:{emoji:'🌤',status:'Stable',text:'Progesterone mildly increases oil production but nothing dramatic in a healthy cycle. Light moisturizer and SPF.',color:'#22c55e'}
+    }
+  },
+  hyperthyroid: {
+    menstrual: {
+      brain:{emoji:'⚡',mode:'Anxious Depletion',text:'Wired exhaustion: thyroid accelerates everything but the body is depleted. Anxiety and fatigue simultaneously.'},
+      skin:{emoji:'🌡️',status:'Warm & Flushed',text:'Hyperthyroidism causes warm, moist, flushed skin. Cooling skincare. No retinol - skin is already thin.',color:'#f97316'}
+    },
+    follicular: {
+      brain:{emoji:'🌀',mode:'Racing Thoughts',text:'High thyroid hormone creates mental racing rather than productive focus. Structured tasks with clear endpoints work best.'},
+      skin:{emoji:'⚠️',status:'Warm & Oily',text:'Thyroid-driven sebum and sweat increase. BHA cleanser and lightweight hydration only.',color:'#eab308'}
+    },
+    ovulatory: {
+      brain:{emoji:'⚠️',mode:'Peak Anxiety',text:'Estrogen surge plus hyperthyroid equals peak anxiety window. Good output if channeled but palpitations may interrupt.'},
+      skin:{emoji:'⚠️',status:'Flushed & Reactive',text:'Estrogen plus thyroid overdrive creates flushed, reactive, sometimes itchy skin. Cooling calming products only.',color:'#f97316'}
+    },
+    luteal: {
+      brain:{emoji:'🌙',mode:'Progesterone Calm',text:"Luteal is the most tolerable phase for Graves' - progesterone's GABA effect provides relative calm. Protect this phase."},
+      skin:{emoji:'🌤',status:'Most Stable',text:'Progesterone mildly cools the thyroid-driven flush. Best skin window in the hyperthyroid cycle.',color:'#22c55e'}
+    }
+  }
+};
+
+function renderFemale() {
+  const phase = getPhase(currentCycleDay, currentCycleLength);
+  const condData = PHASE_DATA[currentCondition];
+  const pd = condData ? condData[phase.key] : null;
+
+  // Phase card
+  const card = document.getElementById('phaseCard');
+  card.style.background = `linear-gradient(135deg, ${phase.color} 0%, ${phase.color}cc 100%)`;
+  document.getElementById('phaseTag').textContent = phase.emoji + '  ' + phase.name.toUpperCase() + ' PHASE';
+  document.getElementById('phaseName').textContent = pd ? phase.name + ' Phase' : phase.name;
+  document.getElementById('phaseSubtitle').textContent = phase.subtitle;
+  document.getElementById('metaDay').textContent = currentCycleDay;
+  const phaseStart = phase.days[0]; const phaseEnd = phase.days[1];
+  document.getElementById('metaPhaseLen').textContent = (phaseEnd - phaseStart + 1) + 'd';
+  const daysLeft = phaseEnd - ((currentCycleDay - phaseStart) % (phaseEnd - phaseStart + 1)) - (currentCycleDay - phaseStart);
+  document.getElementById('metaNext').textContent = Math.max(0, phaseEnd - currentCycleDay + 1);
+
+  if (!pd) {
+    ['eatList','moveList','suppList','selfCareList'].forEach(id => document.getElementById(id).innerHTML = '<li>Enter period start date above to see personalized guidance.</li>');
+    return;
+  }
+
+  // Energy
+  const eb = document.getElementById('energyBar');
+  const pct = (pd.energy / 5) * 100;
+  const colors = ['','#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+  eb.style.width = pct + '%';
+  eb.style.background = colors[pd.energy];
+  document.getElementById('energyText').textContent = pd.energyLabel;
+  document.getElementById('moodEmoji').textContent = pd.moodEmoji;
+  document.getElementById('moodText').textContent = pd.mood;
+
+  // Brain Mode & Skin Forecast
+  document.getElementById('insightRow').style.display = 'grid';
+  const bsData = BRAIN_SKIN_DATA[currentCondition];
+  const bs = bsData ? bsData[phase.key] : null;
+  if (bs) {
+    document.getElementById('brainEmoji').textContent = bs.brain.emoji;
+    document.getElementById('brainMode').textContent = bs.brain.mode;
+    document.getElementById('brainText').textContent = bs.brain.text;
+    document.getElementById('brainCard').style.borderTopColor = phase.color;
+    document.getElementById('skinEmoji').textContent = bs.skin.emoji;
+    document.getElementById('skinMode').textContent = bs.skin.status;
+    document.getElementById('skinText').textContent = bs.skin.text;
+    document.getElementById('skinCard').style.borderTopColor = bs.skin.color;
+  }
+
+  // Lists
+  const setList = (id, items) => {
+    document.getElementById(id).innerHTML = (items||[]).map(i=>`<li>${i}</li>`).join('');
+  };
+  setList('eatList', pd.eat);
+  setList('moveList', pd.move);
+  setList('suppList', pd.supp);
+  setList('selfCareList', pd.selfCare);
+
+  // Condition note
+  const noteEl = document.getElementById('conditionNote');
+  if (pd.note) {
+    noteEl.style.display = 'block';
+    document.getElementById('conditionNoteText').textContent = pd.note;
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  // Anovulatory banner (PCOS with long cycle)
+  const anovBanner = document.getElementById('anovBanner');
+  anovBanner.style.display = (currentCondition === 'pmmos' && currentCycleLength >= 35) ? 'block' : 'none';
+
+  // When to See a Provider
+  const consultCard = document.getElementById('consultCard');
+  const flags = CONSULT_FLAGS[currentCondition];
+  if (flags) {
+    consultCard.style.display = 'block';
+    document.getElementById('consultList').innerHTML = flags.map(f => `<li>${f}</li>`).join('');
+  } else {
+    consultCard.style.display = 'none';
+  }
+
+  // What to Test
+  const labCard = document.getElementById('labCard');
+  const labs = LAB_DATA[currentCondition];
+  if (labs) {
+    labCard.style.display = 'block';
+    document.getElementById('labPriority').innerHTML = labs.priority.map(l => `<li>${l}</li>`).join('');
+    document.getElementById('labTiming').innerHTML = labs.timing.map(l => `<li>${l}</li>`).join('');
+    document.getElementById('labOptional').innerHTML = labs.optional.map(l => `<li>${l}</li>`).join('');
+  } else {
+    labCard.style.display = 'none';
+  }
+
+  // What's happening
+  renderWhatGrid(pd.what, phase.color);
+
+  // Chart
+  renderHormoneChart();
+
+  // Timeline
+  renderTimeline(phase);
+}
+
+function renderWhatGrid(items, color) {
+  const grid = document.getElementById('whatGrid');
+  const icons = ['🔬','🧬','💫','🌡'];
+  grid.innerHTML = (items||[]).map((item,i) => `
+    <div class="what-item" style="border-color:${color}33; background:${color}08">
+      <div class="what-item-icon">${icons[i]||'💡'}</div>
+      <div class="what-item-content">${item}</div>
+    </div>
+  `).join('');
+}
+
+function renderHormoneChart() {
+  const {labels, e2, p4, lh} = generateCurves(currentCondition, currentCycleLength);
+  const ctx = document.getElementById('hormoneChart');
+  if (!ctx) return;
+
+  // Today annotation
+  const todayIdx = currentCycleDay - 1;
+  const pointRadii = labels.map((_,i) => i === todayIdx ? 7 : 0);
+  const pointBg = labels.map((_,i) => i === todayIdx ? '#1a2a3a' : 'transparent');
+
+  if (chartInstance) chartInstance.destroy();
+
+  const condName = [...FEMALE_CONDITIONS,...MALE_CONDITIONS].find(c=>c.key===currentCondition)?.label || currentCondition;
+
+  chartInstance = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Estrogen (E2)',data:e2,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.08)',borderWidth:2.5,fill:true,tension:.4,pointRadius:pointRadii,pointBackgroundColor:pointBg,pointBorderColor:'#8b5cf6',pointBorderWidth:2},
+        {label:'Progesterone',data:p4,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',borderWidth:2.5,fill:true,tension:.4,pointRadius:pointRadii.map(r=>r>0?7:0),pointBackgroundColor:pointBg,pointBorderColor:'#f59e0b',pointBorderWidth:2},
+        {label:'LH',data:lh,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.04)',borderWidth:1.5,fill:false,tension:.3,pointRadius:pointRadii.map(r=>r>0?7:0),pointBackgroundColor:pointBg,pointBorderColor:'#06b6d4',pointBorderWidth:2},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label: ctx => ctx.dataset.label + ': ' + ctx.raw + '%',
+          title: ctx => 'Day ' + ctx[0].label
+        }}
+      },
+      scales:{
+        y:{min:0,max:105,grid:{color:'#f1f5f9'},ticks:{font:{size:10},callback:v=>v+'%'},title:{display:true,text:'Relative Hormone Level',font:{size:10},color:'#94a3b8'}},
+        x:{grid:{display:false},ticks:{font:{size:10},callback:(_,i)=>i%4===0||i===currentCycleLength-1?i+1:''},title:{display:true,text:'Cycle Day',font:{size:10},color:'#94a3b8'}}
+      }
+    }
+  });
+
+  // Legend
+  document.getElementById('chartLegend').innerHTML = [
+    {color:'#8b5cf6',label:'Estrogen'},
+    {color:'#f59e0b',label:'Progesterone'},
+    {color:'#06b6d4',label:'LH'},
+  ].map(i=>`<div class="legend-item"><div class="legend-dot" style="background:${i.color}"></div>${i.label}</div>`).join('');
+
+  document.getElementById('chartTitle').textContent = 'Ovarian Hormone Curve - Day ' + currentCycleDay;
+}
+
+function renderTimeline(currentPhase) {
+  const bar = document.getElementById('timelineBar');
+  const cl = currentCycleLength;
+  const ovDay = cl - 14;
+  const segments = [
+    {key:'menstrual',label:'Menstrual',color:'#7c3aed',start:1,end:5},
+    {key:'follicular',label:'Follicular',color:'#0891b2',start:6,end:ovDay-2},
+    {key:'ovulatory',label:'Ovulatory',color:'#16a34a',start:ovDay-1,end:ovDay+1},
+    {key:'luteal',label:'Luteal',color:'#d97706',start:ovDay+2,end:cl},
+  ];
+
+  bar.innerHTML = segments.map(seg => {
+    const len = seg.end - seg.start + 1;
+    const pct = (len/cl)*100;
+    const isActive = seg.key === currentPhase.key;
+    const todayInSeg = currentCycleDay >= seg.start && currentCycleDay <= seg.end;
+    const markerPct = todayInSeg ? ((currentCycleDay - seg.start) / len) * 100 : -1;
+    return `<div class="tl-segment" style="background:${seg.color};width:${pct}%;opacity:${isActive?1:.55}" title="${seg.label}: Days ${seg.start}-${seg.end}">
+      ${isActive ? seg.label : seg.label.substring(0,3)}
+      ${markerPct >= 0 ? `<div class="tl-today-marker" style="left:${markerPct}%"></div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('timelineDays').innerHTML = `<span>Day 1</span><span>Day ${Math.round(cl/4)}</span><span>Day ${Math.round(cl/2)}</span><span>Day ${Math.round(cl*3/4)}</span><span>Day ${cl}</span>`;
+}
+
+function renderMale() {
+  const data = MALE_DATA[currentCondition];
+  if (!data) return;
+
+  document.getElementById('insightRow').style.display = 'none';
+  document.getElementById('anovBanner').style.display = 'none';
+  document.getElementById('consultCard').style.display = 'none';
+  document.getElementById('labCard').style.display = 'none';
+
+  // Phase card
+  const card = document.getElementById('phaseCard');
+  card.style.background = 'linear-gradient(135deg, #1e3a5f 0%, #1a7a7a 100%)';
+  document.getElementById('phaseTag').textContent = '♂  MALE HORMONE PROTOCOL';
+  document.getElementById('phaseName').textContent = data.title;
+  document.getElementById('phaseSubtitle').textContent = 'Optimize testosterone, fertility, and hormonal health daily';
+  document.getElementById('metaDay').textContent = '74';
+  document.getElementById('metaPhaseLen').textContent = 'day sperm cycle';
+  document.getElementById('metaNext').textContent = 'daily';
+
+  document.getElementById('moodEmoji').textContent = '💪';
+  document.getElementById('moodText').textContent = 'Testosterone peaks 7-10 AM. Training window: 3-5 PM. Recovery: sleep 7-9 hours.';
+
+  const eb = document.getElementById('energyBar');
+  eb.style.width = '75%'; eb.style.background = '#3b82f6';
+  document.getElementById('energyText').textContent = 'Consistent Daily Optimization';
+
+  // Repurpose lists for morning/afternoon/evening
+  const eatEl = document.getElementById('eatList');
+  eatEl.parentElement.querySelector('.rec-title').innerHTML = `<span class="rec-icon">🌅</span><span style="color:${data.morningColor}">${data.morningTitle}</span>`;
+  eatEl.innerHTML = data.morningItems.map(i=>`<li>${i}</li>`).join('');
+
+  const moveEl = document.getElementById('moveList');
+  moveEl.parentElement.querySelector('.rec-title').innerHTML = `<span class="rec-icon">☀</span><span style="color:${data.afternoonColor}">${data.afternoonTitle}</span>`;
+  moveEl.innerHTML = data.afternoonItems.map(i=>`<li>${i}</li>`).join('');
+
+  const suppEl = document.getElementById('suppList');
+  suppEl.parentElement.querySelector('.rec-title').innerHTML = `<span class="rec-icon">🌙</span><span style="color:${data.eveningColor}">${data.eveningTitle}</span>`;
+  suppEl.innerHTML = data.eveningItems.map(i=>`<li>${i}</li>`).join('');
+
+  const scEl = document.getElementById('selfCareList');
+  scEl.parentElement.querySelector('.rec-title').innerHTML = `<span class="rec-icon">📋</span><span style="color:var(--gold)">Clinical Notes</span>`;
+  scEl.innerHTML = `<li>${data.clinicalNote}</li>`;
+  document.getElementById('conditionNote').style.display='none';
+
+  // Right column - male chart placeholder + what grid
+  renderMaleChartArea(data);
+}
+
+function renderMaleChartArea(data) {
+  const ctx = document.getElementById('hormoneChart');
+  if (chartInstance) chartInstance.destroy();
+  // Diurnal testosterone curve
+  const hours = Array.from({length:24},(_,i)=>i+':00');
+  const tValues = [85,90,100,95,85,75,65,58,52,48,45,43,42,41,40,42,45,48,50,48,45,42,50,72];
+  chartInstance = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels:hours,
+      datasets:[{label:'Testosterone (relative)',data:tValues,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.1)',borderWidth:2.5,fill:true,tension:.4,pointRadius:0}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},
+      scales:{
+        y:{min:30,max:110,grid:{color:'#f1f5f9'},ticks:{font:{size:10},callback:v=>v+'%'}},
+        x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:8}}
+      }
+    }
+  });
+  document.getElementById('chartTitle').textContent = 'Daily Testosterone Rhythm (Relative)';
+  document.getElementById('chartLegend').innerHTML = '<div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Testosterone</div>';
+
+  renderWhatGrid([
+    'Testosterone peaks between 7-10 AM - schedule demanding tasks and key decisions in the morning',
+    'Spermatogenesis takes 74 days - supplements started today improve sperm quality in 3 months',
+    'Sleep deprivation reduces testosterone 10-15% after just one week of 5-6 hour nights',
+    'Resistance training compound movements (squat, deadlift) produce the strongest testosterone response'
+  ], '#3b82f6');
+
+  document.getElementById('phaseTimelineCard').innerHTML = `
+    <div class="timeline-label">Sperm Development Cycle (74 Days)</div>
+    <div style="display:flex;gap:4px;margin-top:8px;">
+      ${[{label:'Spermatogonia',color:'#0891b2',pct:20},{label:'Meiosis',color:'#7c3aed',pct:30},{label:'Spermatid Development',color:'#16a34a',pct:30},{label:'Maturation',color:'#d97706',pct:20}].map(s=>`
+        <div style="background:${s.color};flex:${s.pct};height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;">${s.label}</div>
+      `).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">Supplements started today will show full effect in semen analysis at Day 74-90.</div>
+  `;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => {
+  populateConditions('female');
+  // Default date to today for demo
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0];
+  document.getElementById('periodDate').value = dateStr;
+  updateCycleDay();
+  render();
+});
+</script>
+</body>
+</html>

@@ -73,7 +73,7 @@ You can disable non-essential cookies in your browser settings. Doing so may aff
   },
   {
     title: '9. Health Data Special Protections',
-    content: `The health metrics you enter (blood pressure, supplement logs, energy levels, meal entries) are treated as sensitive personal information. We will not share this data with advertisers, data brokers, employers, or insurers. We will not use it to train AI models without your explicit consent. We will not disclose it to government agencies unless required by law.`,
+    content: `The health metrics you enter (blood pressure, supplement logs, energy levels, meal entries) are treated as sensitive personal information. We will not share this data with advertisers, data brokers, employers, or insurers. We will not use it to train AI models. Period. We will not disclose it to government agencies unless required by law.`,
   },
   {
     title: '10. Your State Privacy Rights',

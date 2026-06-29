@@ -68,8 +68,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Sessions',
     items: [
-      { to: '/app/sessions',  icon: '◷', label: 'My Sessions' },
-      { to: '/app/feedback',  icon: '◎', label: 'Give Feedback' },
+      { to: '/app/health-hub', icon: '🫀', label: 'My Health Hub' },
+      { to: '/app/sessions',   icon: '◷', label: 'My Sessions' },
+      { to: '/app/feedback',   icon: '◎', label: 'Give Feedback' },
     ],
   },
 ]

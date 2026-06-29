@@ -58,6 +58,7 @@ import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
 import FoodSearchPage from '@/pages/client/FoodSearchPage'
 import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
 import BPSimulatorPage from '@/pages/BPSimulatorPage'
+import HealthHubPage from '@/pages/client/HealthHubPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -155,6 +156,7 @@ export default function App() {
           <Route path="classroom/:courseId" element={<CoursePage />} />
           <Route path="metabolic-tools" element={<MetabolicToolsPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="health-hub" element={<HealthHubPage />} />
         </Route>
 
         {/* Educator routes */}

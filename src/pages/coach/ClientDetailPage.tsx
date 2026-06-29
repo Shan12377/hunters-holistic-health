@@ -34,6 +34,11 @@ export default function ClientDetailPage() {
     total_sessions: number
     program_end_date: string
     educator_notes: string
+    goal_1: string
+    goal_2: string
+    active_phase: string
+    protocol_start_date: string
+    supplement_link: string
     updated_at?: string
   }
   const defaultProtocol: ProtocolRow = {
@@ -45,6 +50,11 @@ export default function ClientDetailPage() {
     total_sessions: 24,
     program_end_date: '',
     educator_notes: '',
+    goal_1: '',
+    goal_2: '',
+    active_phase: 'phase_0',
+    protocol_start_date: '',
+    supplement_link: '',
   }
   const [protocol, setProtocol] = useState<ProtocolRow | null>(null)
   const [protocolForm, setProtocolForm] = useState<ProtocolRow>(defaultProtocol)
@@ -79,6 +89,11 @@ export default function ClientDetailPage() {
         total_sessions: pd.total_sessions ?? 24,
         program_end_date: pd.program_end_date ?? '',
         educator_notes: pd.educator_notes ?? '',
+        goal_1: pd.goal_1 ?? '',
+        goal_2: pd.goal_2 ?? '',
+        active_phase: pd.active_phase ?? 'phase_0',
+        protocol_start_date: pd.protocol_start_date ?? '',
+        supplement_link: pd.supplement_link ?? '',
         updated_at: pd.updated_at,
       }
       setProtocol(loaded)
@@ -101,6 +116,11 @@ export default function ClientDetailPage() {
       total_sessions: protocolForm.total_sessions,
       program_end_date: protocolForm.program_end_date || null,
       educator_notes: protocolForm.educator_notes || null,
+      goal_1: protocolForm.goal_1 || null,
+      goal_2: protocolForm.goal_2 || null,
+      active_phase: protocolForm.active_phase || 'phase_0',
+      protocol_start_date: protocolForm.protocol_start_date || null,
+      supplement_link: protocolForm.supplement_link || null,
       updated_at: now,
     }
     const { error } = await supabase
@@ -381,6 +401,28 @@ new Chart(document.getElementById('stepsChart'), {
           <BookOpen size={16} color="var(--teal)" /> Protocol Builder
         </h3>
 
+        {/* Client Goals */}
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Goal 1 — Primary Protocol Goal</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={2}
+            placeholder="e.g., Gut Prep and Parasite Cleanse — Open drainage pathways, eradicate parasites using a targeted herbal stack, and restore microbiome and gut barrier integrity."
+            value={protocolForm.goal_1}
+            onChange={e => setProtocolForm(f => ({ ...f, goal_1: e.target.value }))}
+          />
+        </div>
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Goal 2 — Secondary Protocol Goal</label>
+          <textarea
+            className={styles.protocolTextarea}
+            rows={2}
+            placeholder="e.g., Anti-Mucus Cleanse — Reduce systemic mucus burden alongside the parasite protocol."
+            value={protocolForm.goal_2}
+            onChange={e => setProtocolForm(f => ({ ...f, goal_2: e.target.value }))}
+          />
+        </div>
+
         <div className={styles.protocolProgressWrap}>
           <div className={styles.protocolProgressRow}>
             <span className={styles.protocolProgressLabel}>
@@ -432,6 +474,39 @@ new Chart(document.getElementById('stepsChart'), {
           </div>
         </div>
 
+        {/* Protocol Start Date */}
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Protocol Start Date</label>
+          <input
+            type="date"
+            className={styles.cohortsInput}
+            value={protocolForm.protocol_start_date}
+            onChange={e => setProtocolForm(f => ({ ...f, protocol_start_date: e.target.value }))}
+          />
+        </div>
+
+        {/* Active Phase */}
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Active Phase</label>
+          <div className={styles.protocolLeverGrid}>
+            {[
+              { value: 'phase_0', label: 'Phase 0: Open Drainage' },
+              { value: 'phase_1', label: 'Phase 1: Kill Phase' },
+              { value: 'phase_2', label: 'Phase 2: Gut Healing' },
+              { value: 'phase_3', label: 'Phase 3: Restore' },
+            ].map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                className={protocolForm.active_phase === value ? styles.protocolLeverActive : styles.protocolLever}
+                onClick={() => setProtocolForm(f => ({ ...f, active_phase: value }))}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className={styles.protocolFieldGroup}>
           <label className={styles.cohortsFormLabel}>Active Lever Focus</label>
           <div className={styles.protocolLeverGrid}>
@@ -461,6 +536,17 @@ new Chart(document.getElementById('stepsChart'), {
             placeholder="e.g., Magnesium glycinate 400mg nightly, Beets + Garlic stack daily..."
             value={protocolForm.supplement_stack}
             onChange={e => setProtocolForm(f => ({ ...f, supplement_stack: e.target.value }))}
+          />
+        </div>
+
+        <div className={styles.protocolFieldGroup}>
+          <label className={styles.cohortsFormLabel}>Supplement Purchase Link</label>
+          <input
+            type="url"
+            className={styles.cohortsInput}
+            placeholder="https://huntersholistichealth.com/protocol/parasite-cleanse"
+            value={protocolForm.supplement_link}
+            onChange={e => setProtocolForm(f => ({ ...f, supplement_link: e.target.value }))}
           />
         </div>
 
@@ -569,6 +655,195 @@ new Chart(document.getElementById('stepsChart'), {
           </div>
         )
       })()}
+
+      <LabZoneEditor clientId={clientId!} />
+    </div>
+  )
+}
+
+// ─── Lab Zone Editor ──────────────────────────────────────────────────────────
+
+const MARKER_OPTIONS = [
+  { key: 'progesterone_d21', label: 'Progesterone (Day 21)', group: 'hormones' },
+  { key: 'estradiol_e2',     label: 'Estradiol E2 (Day 3)', group: 'hormones' },
+  { key: 'free_t3',          label: 'Free T3',               group: 'hormones' },
+  { key: 'free_t4',          label: 'Free T4',               group: 'hormones' },
+  { key: 'tsh',              label: 'TSH',                   group: 'hormones' },
+  { key: 'lh',               label: 'LH',                    group: 'hormones' },
+  { key: 'fsh',              label: 'FSH',                   group: 'hormones' },
+  { key: 'testosterone_free',label: 'Free Testosterone',     group: 'hormones' },
+  { key: 'dhea_s',           label: 'DHEA-S',                group: 'hormones' },
+  { key: 'cortisol_am',      label: 'Cortisol (AM)',          group: 'hormones' },
+  { key: 'ferritin',         label: 'Ferritin',              group: 'nutrients' },
+  { key: 'vitamin_d',        label: 'Vitamin D 25-OH',       group: 'nutrients' },
+  { key: 'b12',              label: 'Vitamin B12',           group: 'nutrients' },
+  { key: 'magnesium',        label: 'Magnesium (RBC)',        group: 'nutrients' },
+  { key: 'zinc',             label: 'Zinc',                  group: 'nutrients' },
+  { key: 'omega3_index',     label: 'Omega-3 Index',         group: 'nutrients' },
+  { key: 'fasting_glucose',  label: 'Fasting Glucose',       group: 'metabolic' },
+  { key: 'hba1c',            label: 'HbA1c',                 group: 'metabolic' },
+  { key: 'hsCRP',            label: 'hsCRP (Inflammation)',  group: 'metabolic' },
+  { key: 'insulin_fasting',  label: 'Fasting Insulin',       group: 'metabolic' },
+]
+
+const ZONE_OPTIONS = ['optimal', 'suboptimal', 'low', 'high', 'pending'] as const
+
+type ZoneValue = typeof ZONE_OPTIONS[number]
+
+interface ZoneRow {
+  id: string
+  marker_key: string
+  marker_label: string
+  marker_group: string
+  zone: ZoneValue
+  functional_target: string | null
+  educator_note: string | null
+  priority: number
+  reviewed_at: string | null
+}
+
+const blankForm = { marker_key: '', zone: 'pending' as ZoneValue, functional_target: '', educator_note: '', priority: 0 }
+
+function LabZoneEditor({ clientId }: { clientId: string }) {
+  const [zones, setZones]       = useState<ZoneRow[]>([])
+  const [form, setForm]         = useState(blankForm)
+  const [saving, setSaving]     = useState(false)
+  const [editId, setEditId]     = useState<string | null>(null)
+
+  useEffect(() => { loadZones() }, [clientId])
+
+  async function loadZones() {
+    const { data } = await supabase.from('lab_zone_assessments').select('*').eq('user_id', clientId).order('priority').order('marker_group')
+    setZones((data ?? []) as ZoneRow[])
+  }
+
+  function startEdit(z: ZoneRow) {
+    setEditId(z.id)
+    setForm({ marker_key: z.marker_key, zone: z.zone, functional_target: z.functional_target ?? '', educator_note: z.educator_note ?? '', priority: z.priority })
+  }
+
+  function reset() { setEditId(null); setForm(blankForm) }
+
+  async function save() {
+    if (!form.marker_key || !form.zone) { toast.error('Select a marker and zone.'); return }
+    setSaving(true)
+    const marker = MARKER_OPTIONS.find(m => m.key === form.marker_key)
+    const payload = {
+      user_id: clientId,
+      marker_key: form.marker_key,
+      marker_label: marker?.label ?? form.marker_key,
+      marker_group: marker?.group ?? 'other',
+      zone: form.zone,
+      functional_target: form.functional_target || null,
+      educator_note: form.educator_note || null,
+      priority: form.priority,
+      reviewed_by: 'Dr. Shallanda Hunter, PharmD, MBA, CFNMP',
+      reviewed_at: form.zone !== 'pending' ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    }
+    if (editId) {
+      const { error } = await supabase.from('lab_zone_assessments').update(payload).eq('id', editId)
+      if (error) { toast.error('Save failed.'); setSaving(false); return }
+    } else {
+      const { error } = await supabase.from('lab_zone_assessments').upsert({ ...payload }, { onConflict: 'user_id,marker_key' })
+      if (error) { toast.error('Save failed.'); setSaving(false); return }
+    }
+    toast.success('Zone assessment saved.')
+    reset()
+    loadZones()
+    setSaving(false)
+  }
+
+  async function remove(id: string) {
+    await supabase.from('lab_zone_assessments').delete().eq('id', id)
+    setZones(z => z.filter(r => r.id !== id))
+  }
+
+  const zoneCol: Record<ZoneValue, string> = { optimal: '#4caf7d', suboptimal: '#f59e0b', low: '#e05c5c', high: '#e05c5c', pending: '#4a7c7e' }
+
+  return (
+    <div className={styles.card}>
+      <h3 className={styles.cardSubTitle} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        🔬 Lab Zone Assessments
+      </h3>
+      <p style={{ fontSize: 13, color: '#91a0ac', lineHeight: 1.5, marginBottom: 16 }}>
+        Enter your interpretation here after reviewing the client's labs in the secure clinical workspace. No raw values are stored. The client sees the zone, functional target, and your note in their Health Hub.
+      </p>
+
+      {/* Existing zones */}
+      {zones.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          {zones.map(z => (
+            <div key={z.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid #1f3331' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: zoneCol[z.zone], flexShrink: 0, marginTop: 3 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 2 }}>{z.marker_label} <span style={{ color: zoneCol[z.zone], fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>{z.zone}</span></div>
+                {z.functional_target && <div style={{ fontSize: 11, color: '#91a0ac' }}>Target: {z.functional_target}</div>}
+                {z.educator_note && <div style={{ fontSize: 12, color: '#b0c0c0', lineHeight: 1.4, marginTop: 2 }}>{z.educator_note}</div>}
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button onClick={() => startEdit(z)} style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, border: '1px solid #2a6d6f', background: 'transparent', color: '#91a0ac', cursor: 'pointer' }}>Edit</button>
+                <button onClick={() => remove(z.id)} style={{ fontSize: 11, padding: '3px 8px', borderRadius: 6, border: '1px solid rgba(224,92,92,.4)', background: 'transparent', color: '#e05c5c', cursor: 'pointer' }}>Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Form */}
+      <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid #1f3331', borderRadius: 12, padding: 14 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#91a0ac', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 12 }}>
+          {editId ? 'Edit Zone Assessment' : 'Add Zone Assessment'}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+          <div>
+            <label className={styles.cohortsFormLabel}>Marker</label>
+            <select className={styles.cohortsInput} value={form.marker_key} onChange={e => setForm(f => ({ ...f, marker_key: e.target.value }))} style={{ width: '100%' }}>
+              <option value="">Select marker...</option>
+              {['hormones', 'nutrients', 'metabolic'].map(group => (
+                <optgroup key={group} label={group.charAt(0).toUpperCase() + group.slice(1)}>
+                  {MARKER_OPTIONS.filter(m => m.group === group).map(m => (
+                    <option key={m.key} value={m.key}>{m.label}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={styles.cohortsFormLabel}>Zone</label>
+            <select className={styles.cohortsInput} value={form.zone} onChange={e => setForm(f => ({ ...f, zone: e.target.value as ZoneValue }))} style={{ width: '100%' }}>
+              {ZONE_OPTIONS.map(z => <option key={z} value={z}>{z.charAt(0).toUpperCase() + z.slice(1)}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 10 }}>
+          <label className={styles.cohortsFormLabel}>Functional Target (e.g. &gt;70 ng/mL)</label>
+          <input className={styles.cohortsInput} style={{ width: '100%' }} placeholder="Optional — shows under the zone bar" value={form.functional_target} onChange={e => setForm(f => ({ ...f, functional_target: e.target.value }))} />
+        </div>
+
+        <div style={{ marginBottom: 10 }}>
+          <label className={styles.cohortsFormLabel}>Your Note (plain language, no raw values)</label>
+          <textarea className={styles.protocolTextarea} rows={3} placeholder="What this zone means for the client's wellness goals. What to focus on. What to ask their provider." value={form.educator_note} onChange={e => setForm(f => ({ ...f, educator_note: e.target.value }))} />
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <label className={styles.cohortsFormLabel}>Priority for next session (0 = not prioritized, 1 = highest)</label>
+          <input type="number" min={0} max={10} className={styles.cohortsInput} style={{ width: 80 }} value={form.priority} onChange={e => setForm(f => ({ ...f, priority: parseInt(e.target.value) || 0 }))} />
+        </div>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className={shared.btnPrimary} onClick={save} disabled={saving}>
+            <Save size={14} /> {saving ? 'Saving...' : editId ? 'Update Zone' : 'Add Zone'}
+          </button>
+          {editId && (
+            <button onClick={reset} style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid #2a6d6f', background: 'transparent', color: '#91a0ac', cursor: 'pointer', fontSize: 13 }}>
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

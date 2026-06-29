@@ -3,6 +3,7 @@ import { ClipboardList, Save } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { enqueueLog } from '@/lib/offlineQueue'
+import { getPushPermissionState, requestPushPermission, subscribeToPush } from '@/lib/pushNotifications'
 import { format, subDays } from 'date-fns'
 import type { DailyLog } from '@/types'
 import { awardPoints } from '@/lib/points'
@@ -78,8 +79,20 @@ export default function DailyLogPage() {
       toast.success('Daily log saved!')
       await awardPoints(user.id, 'daily_log', 10, today)
       await checkStreak(user.id)
+      maybePromptPush(user.id)
     }
     setSaving(false)
+  }
+
+  const maybePromptPush = async (userId: string) => {
+    if (getPushPermissionState() !== 'default') return
+    if (localStorage.getItem('push_prompted')) return
+    localStorage.setItem('push_prompted', '1')
+    // Small delay so the success toast shows first
+    setTimeout(async () => {
+      const granted = await requestPushPermission()
+      if (granted === 'granted') await subscribeToPush(userId)
+    }, 800)
   }
 
   const checkStreak = async (userId: string) => {

@@ -60,6 +60,7 @@ export interface Profile {
   display_handle: string | null
   wellness_goals?: WellnessGoals
   privacy_settings?: PrivacySettings
+  reminder_settings?: Record<string, { enabled: boolean; time: string }>
 }
 
 export type BPZone = 'normal' | 'elevated' | 'high1' | 'high2' | 'crisis'

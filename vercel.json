@@ -1,5 +1,8 @@
 {
   "buildCommand": "npm run build",
+  "crons": [
+    { "path": "/api/cron-reminders", "schedule": "*/30 * * * *" }
+  ],
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [

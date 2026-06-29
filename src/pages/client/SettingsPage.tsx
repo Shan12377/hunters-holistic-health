@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download } from 'lucide-react'
+import ReminderSettings from '@/components/ui/ReminderSettings'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
@@ -150,6 +151,9 @@ export default function SettingsPage() {
           {savingGoals ? 'Saving...' : 'Save Goals'}
         </button>
       </div>
+
+      {/* Reminders */}
+      <ReminderSettings />
 
       {/* Privacy settings */}
       <div className={styles.settingsSection}>
