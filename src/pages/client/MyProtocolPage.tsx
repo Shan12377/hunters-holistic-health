@@ -111,6 +111,9 @@ export default function MyProtocolPage() {
             </div>
             <div className={styles.card}>
               <h3 className={styles.cardTitle}>{section.title}</h3>
+              {section.clientNote && (
+                <div className={styles.itemNote}>{section.clientNote}</div>
+              )}
               <div className={styles.items}>
                 {sharedItems.map(item => (
                   <div key={item.id} className={styles.item}>

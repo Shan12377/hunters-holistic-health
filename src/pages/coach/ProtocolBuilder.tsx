@@ -195,7 +195,15 @@ function SectionCard({
 
       <textarea
         className={styles.sectionNote}
-        placeholder="Educator note (private)..."
+        placeholder="Note to client (they will see this)..."
+        value={section.clientNote ?? ''}
+        onChange={e => onUpdateSection({ clientNote: e.target.value })}
+        rows={2}
+        style={{ borderColor: 'rgba(34,197,94,0.4)' }}
+      />
+      <textarea
+        className={styles.sectionNote}
+        placeholder="Educator note (private, client cannot see)..."
         value={section.educatorNote ?? ''}
         onChange={e => onUpdateSection({ educatorNote: e.target.value })}
         rows={2}

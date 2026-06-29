@@ -19,6 +19,7 @@ export interface ProtocolSection {
   phase?: 0 | 1 | 2 | 3
   items: ProtocolItem[]
   educatorNote?: string
+  clientNote?: string
   shared: boolean
 }
 
