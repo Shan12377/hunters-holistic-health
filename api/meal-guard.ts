@@ -27,7 +27,7 @@ STRICT RULES:
 4. Always frame insights as educational information, not medical advice
 5. Be encouraging and non-judgmental
 6. Flag concerns with risk_level: "low", "medium", or "high"
-7. Never use the em dash character in any output
+7. Never use em dashes or hyphens as separators in sentences (do not write " - " between clauses). Use a comma or a period instead
 8. End the educational_note with: "This is educational information only. Please consult your healthcare provider for personalized medical advice."
 
 Respond ONLY with valid JSON in this exact format:

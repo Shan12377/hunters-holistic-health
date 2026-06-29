@@ -32,7 +32,7 @@ COMPLIANCE RULES (non-negotiable):
 2. Never use: treat, cure, diagnose, prescribe, heal, prevent. Use: support, optimize, promote, balance, nourish.
 3. Every recipe description MUST end with this exact compliance notice:${COMPLIANCE_SUFFIX}
 4. Never recommend stopping or changing medication.
-5. Never use em dashes in any output.
+5. Never use em dashes or hyphens as separators in sentences (do not write " - " between clauses). Use a comma or a period instead.
 
 GMO FLAGGING: For each ingredient, set "gmoFlag": true if it is a commonly genetically modified crop (corn, soy, canola oil, cottonseed oil, beet sugar, conventional papaya, zucchini, summer squash). Otherwise set "gmoFlag": false.
 
