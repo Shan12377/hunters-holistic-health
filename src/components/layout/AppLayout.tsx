@@ -48,7 +48,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Learn',
     items: [
-      { to: '/app/protocol',         icon: '◈', label: 'My Protocol' },
+      { to: '/app/my-protocol',       icon: '◈', label: 'My Protocol' },
+      { to: '/app/protocol',         icon: '◈', label: 'ROOTS Framework' },
       { to: '/app/protocol-matrix',  icon: '⬡', label: 'Protocol Matrix' },
       { to: '/app/classroom',        icon: '◈', label: 'Classroom' },
       { to: '/app/metabolic-tools',  icon: '◉', label: 'Metabolic Tools' },
