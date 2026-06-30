@@ -35,8 +35,9 @@ async function handleWebhook(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Stripe init failed', detail: String(err) })
   }
 
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL
   const supabase = createClient(
-    process.env.SUPABASE_URL!,
+    supabaseUrl!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
