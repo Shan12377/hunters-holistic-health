@@ -14,17 +14,25 @@ async function getRawBody(req: VercelRequest): Promise<Buffer> {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  try {
+    return await handleWebhook(req, res)
+  } catch (err: unknown) {
+    console.error('stripe-webhook: unhandled error:', err)
+    return res.status(500).json({ error: 'Unhandled error', detail: String(err) })
+  }
+}
+
+async function handleWebhook(req: VercelRequest, res: VercelResponse) {
   console.log('stripe-webhook: handler started')
 
   if (req.method !== 'POST') return res.status(405).end()
 
-  // Initialize clients inside handler so any missing env var shows up in logs
   let stripe: Stripe
   try {
     stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   } catch (err) {
     console.error('stripe-webhook: failed to init Stripe client:', err)
-    return res.status(500).json({ error: 'Stripe init failed' })
+    return res.status(500).json({ error: 'Stripe init failed', detail: String(err) })
   }
 
   const supabase = createClient(
@@ -42,7 +50,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const sig = req.headers['stripe-signature'] as string
-  const rawBody = await getRawBody(req)
+
+  let rawBody: Buffer
+  try {
+    rawBody = await getRawBody(req)
+  } catch (err) {
+    console.error('stripe-webhook: getRawBody failed:', err)
+    return res.status(500).json({ error: 'Body read failed', detail: String(err) })
+  }
 
   let event: Stripe.Event
   try {
