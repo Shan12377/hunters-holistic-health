@@ -530,7 +530,7 @@ interface ZoneRow {
   reviewed_at: string | null
 }
 
-const blankForm = { marker_key: '', zone: 'pending' as ZoneValue, functional_target: '', educator_note: '', priority: 0 }
+const blankForm = { marker_key: '', custom_label: '', zone: 'pending' as ZoneValue, functional_target: '', educator_note: '', priority: 0 }
 
 function LabZoneEditor({ clientId }: { clientId: string }) {
   const [zones, setZones]       = useState<ZoneRow[]>([])
@@ -547,19 +547,23 @@ function LabZoneEditor({ clientId }: { clientId: string }) {
 
   function startEdit(z: ZoneRow) {
     setEditId(z.id)
-    setForm({ marker_key: z.marker_key, zone: z.zone, functional_target: z.functional_target ?? '', educator_note: z.educator_note ?? '', priority: z.priority })
+    setForm({ marker_key: z.marker_key, custom_label: '', zone: z.zone, functional_target: z.functional_target ?? '', educator_note: z.educator_note ?? '', priority: z.priority })
   }
 
   function reset() { setEditId(null); setForm(blankForm) }
 
   async function save() {
+    const isCustom = form.marker_key === '__custom__'
+    if (isCustom && !form.custom_label.trim()) { toast.error('Enter a marker name.'); return }
     if (!form.marker_key || !form.zone) { toast.error('Select a marker and zone.'); return }
     setSaving(true)
     const marker = MARKER_OPTIONS.find(m => m.key === form.marker_key)
+    const resolvedKey = isCustom ? `custom_${form.custom_label.trim().toLowerCase().replace(/\s+/g, '_')}` : form.marker_key
+    const resolvedLabel = isCustom ? form.custom_label.trim() : (marker?.label ?? form.marker_key)
     const payload = {
       user_id: clientId,
-      marker_key: form.marker_key,
-      marker_label: marker?.label ?? form.marker_key,
+      marker_key: resolvedKey,
+      marker_label: resolvedLabel,
       marker_group: marker?.group ?? 'other',
       zone: form.zone,
       functional_target: form.functional_target || null,
@@ -627,7 +631,7 @@ function LabZoneEditor({ clientId }: { clientId: string }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
           <div>
             <label className={styles.cohortsFormLabel}>Marker</label>
-            <select className={styles.cohortsInput} value={form.marker_key} onChange={e => setForm(f => ({ ...f, marker_key: e.target.value }))} style={{ width: '100%' }}>
+            <select className={styles.cohortsInput} value={form.marker_key} onChange={e => setForm(f => ({ ...f, marker_key: e.target.value, custom_label: '' }))} style={{ width: '100%' }}>
               <option value="">Select marker...</option>
               {['hormones', 'nutrients', 'metabolic'].map(group => (
                 <optgroup key={group} label={group.charAt(0).toUpperCase() + group.slice(1)}>
@@ -636,7 +640,19 @@ function LabZoneEditor({ clientId }: { clientId: string }) {
                   ))}
                 </optgroup>
               ))}
+              <optgroup label="Other">
+                <option value="__custom__">Custom marker...</option>
+              </optgroup>
             </select>
+            {form.marker_key === '__custom__' && (
+              <input
+                className={styles.cohortsInput}
+                style={{ width: '100%', marginTop: 6 }}
+                placeholder="Type marker name (e.g. GI-MAP sIgA, Eosinophils %)"
+                value={form.custom_label}
+                onChange={e => setForm(f => ({ ...f, custom_label: e.target.value }))}
+              />
+            )}
           </div>
           <div>
             <label className={styles.cohortsFormLabel}>Zone</label>
