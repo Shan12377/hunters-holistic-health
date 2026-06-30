@@ -2,23 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
-// Map Stripe price IDs to plan names.
-// Fill STRIPE_PRICE_* env vars from Stripe Dashboard > Products > each price.
-const PRICE_TO_PLAN: Record<string, string> = {
-  [process.env.STRIPE_PRICE_FOUNDATION_MONTHLY ?? '']: 'foundation',
-  [process.env.STRIPE_PRICE_FOUNDATION_ANNUAL  ?? '']: 'foundation',
-  [process.env.STRIPE_PRICE_PROGRAM_MONTHLY    ?? '']: 'program',
-  [process.env.STRIPE_PRICE_PROGRAM_ANNUAL     ?? '']: 'program',
-  [process.env.STRIPE_PRICE_VIP_MONTHLY        ?? '']: 'vip',
-  [process.env.STRIPE_PRICE_VIP_ANNUAL         ?? '']: 'vip',
-}
-
 export const config = { api: { bodyParser: false } }
 
 async function getRawBody(req: VercelRequest): Promise<Buffer> {
@@ -31,7 +14,32 @@ async function getRawBody(req: VercelRequest): Promise<Buffer> {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log('stripe-webhook: handler started')
+
   if (req.method !== 'POST') return res.status(405).end()
+
+  // Initialize clients inside handler so any missing env var shows up in logs
+  let stripe: Stripe
+  try {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+  } catch (err) {
+    console.error('stripe-webhook: failed to init Stripe client:', err)
+    return res.status(500).json({ error: 'Stripe init failed' })
+  }
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  const PRICE_TO_PLAN: Record<string, string> = {
+    [process.env.STRIPE_PRICE_FOUNDATION_MONTHLY ?? '']: 'foundation',
+    [process.env.STRIPE_PRICE_FOUNDATION_ANNUAL  ?? '']: 'foundation',
+    [process.env.STRIPE_PRICE_PROGRAM_MONTHLY    ?? '']: 'program',
+    [process.env.STRIPE_PRICE_PROGRAM_ANNUAL     ?? '']: 'program',
+    [process.env.STRIPE_PRICE_VIP_MONTHLY        ?? '']: 'vip',
+    [process.env.STRIPE_PRICE_VIP_ANNUAL         ?? '']: 'vip',
+  }
 
   const sig = req.headers['stripe-signature'] as string
   const rawBody = await getRawBody(req)
