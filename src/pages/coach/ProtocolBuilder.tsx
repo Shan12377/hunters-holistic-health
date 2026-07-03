@@ -2,10 +2,12 @@ import { useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { ProtocolData, ProtocolPillar, ProtocolSection, ProtocolItem } from '@/data/protocols/types'
 import { PARASITE_CLEANSE_TEMPLATE } from '@/data/protocols/parasiteCleanse'
+import { BLOOD_PRESSURE_TEMPLATE } from '@/data/protocols/bloodPressure'
 import styles from './ProtocolBuilder.module.css'
 
 const TEMPLATES: Record<string, ProtocolData> = {
   parasite_cleanse: PARASITE_CLEANSE_TEMPLATE,
+  blood_pressure: BLOOD_PRESSURE_TEMPLATE,
 }
 
 const PROTOCOL_TYPE_OPTIONS = [
@@ -66,7 +68,7 @@ export default function ProtocolBuilder({ clientId, protocolType: initialType, s
     setSaveStatus('')
     const { error } = await supabase
       .from('client_protocols')
-      .upsert({ client_id: clientId, protocol_data: data, protocol_type: selectedType }, { onConflict: 'client_id' })
+      .upsert({ user_id: clientId, protocol_data: data, protocol_type: selectedType }, { onConflict: 'user_id' })
     setSaving(false)
     if (error) {
       setSaveStatus('Error saving. Try again.')

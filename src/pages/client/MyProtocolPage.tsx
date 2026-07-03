@@ -50,7 +50,7 @@ export default function MyProtocolPage() {
       const { data: row } = await supabase
         .from('client_protocols')
         .select('protocol_data')
-        .eq('client_id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle()
       setData(row?.protocol_data ?? null)
       setLoading(false)

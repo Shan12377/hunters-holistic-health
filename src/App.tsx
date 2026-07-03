@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore'
 import LandingPage from '@/pages/LandingPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
 import ClientDashboard from '@/pages/client/ClientDashboard'
 import BPTrackerPage from '@/pages/client/BPTrackerPage'
 import BloodSugarPage from '@/pages/client/BloodSugarPage'
@@ -108,6 +109,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/join" element={<JoinPage />} />

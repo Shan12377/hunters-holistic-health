@@ -48,6 +48,10 @@ export default function LoginPage() {
         </form>
 
         <p className={styles.footer}>
+          <Link to="/reset-password" className={styles.footerLink}>Forgot password?</Link>
+        </p>
+
+        <p className={styles.footer}>
           New participant?{' '}
           <Link to="/signup" className={styles.footerLink}>Create Account</Link>
         </p>
