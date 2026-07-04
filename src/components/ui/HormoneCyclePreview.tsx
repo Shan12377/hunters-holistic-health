@@ -325,7 +325,7 @@ export default function HormoneCyclePreview() {
       {/* Controls */}
       <div style={s.controls}>
         <div style={s.cg}>
-          <span style={s.clabel}>Condition</span>
+          <span style={s.clabel}>Start Here: Select Your Condition</span>
           <select style={s.csel} value={condition} onChange={e => setCondition(e.target.value as ConditionKey)}>
             {FEMALE_CONDITIONS.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
           </select>
