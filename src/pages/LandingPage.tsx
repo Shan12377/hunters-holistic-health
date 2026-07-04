@@ -225,6 +225,7 @@ export default function LandingPage() {
   const [emailCapture, setEmailCapture] = useState('')
   const [emailSubmitting, setEmailSubmitting] = useState(false)
   const [emailSubmitted, setEmailSubmitted] = useState(false)
+  const [showAllFeatures, setShowAllFeatures] = useState(false)
 
   const setPatternAnswer = (qid: string, val: number) => {
     setPatternAnswers(prev => ({ ...prev, [qid]: val }))
@@ -702,6 +703,30 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className={`${styles.section} ${styles.reveal}`} data-reveal>
+        <div className={styles.sectionKicker}>How It Works</div>
+        <h2 className={styles.sectionTitle}>Three steps. One clear path.</h2>
+        <p className={styles.sectionSubtitle}>No guesswork. No overwhelming overhaul. A structured system you can start today.</p>
+        <div className={styles.howGrid}>
+          <div className={styles.howStep}>
+            <div className={styles.howNum}>1</div>
+            <h3 className={styles.howTitle}>Join and complete the Pattern Check</h3>
+            <p className={styles.howDesc}>Answer a few questions about your current habits and numbers. This is your starting point. The platform maps where you are so you know exactly where to begin.</p>
+          </div>
+          <div className={styles.howStep}>
+            <div className={styles.howNum}>2</div>
+            <h3 className={styles.howTitle}>Follow your curriculum and daily tracking</h3>
+            <p className={styles.howDesc}>The Daily Command Center takes 10 minutes. The ROOTS curriculum modules take 20. Both are built around your schedule, not the other way around.</p>
+          </div>
+          <div className={styles.howStep}>
+            <div className={styles.howNum}>3</div>
+            <h3 className={styles.howTitle}>Watch your Weekly Report Card</h3>
+            <p className={styles.howDesc}>Every week you get a grade showing exactly what is improving and where to focus next. Progress becomes visible. That visibility is what keeps people consistent.</p>
+          </div>
+        </div>
+      </section>
+
       {/* ROOTS Framework */}
       <section className={`${styles.section} ${styles.reveal}`} data-reveal>
         <div className={styles.sectionKicker}>The Method</div>
@@ -724,7 +749,7 @@ export default function LandingPage() {
         <h2 className={styles.sectionTitle}>Every tool you need to track, learn, and understand.</h2>
         <p className={styles.sectionSubtitle}>Built for functional and nutritional medicine education participants. Not generic wellness. Specific and purposeful.</p>
         <div className={styles.featuresGrid}>
-          {FEATURES.map(({ img, title, desc }, i) => (
+          {(showAllFeatures ? FEATURES : FEATURES.slice(0, 4)).map(({ img, title, desc }, i) => (
             <div key={title} className={`${styles.featureCard} ${styles.reveal}`} data-reveal data-delay={String(i * 60)}>
               <img src={img} alt={title} className={styles.featureImg} />
               <h3 className={styles.featureTitle}>{title}</h3>
@@ -732,6 +757,11 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+        {!showAllFeatures && (
+          <button className={styles.featuresExpandBtn} onClick={() => setShowAllFeatures(true)}>
+            See everything included ({FEATURES.length - 4} more tools) <ChevronDown size={16} />
+          </button>
+        )}
       </section>
 
       {/* Origin Story */}
@@ -891,6 +921,11 @@ export default function LandingPage() {
                   {tier.cta}
                 </Link>
               )}
+              {!tier.oneTime && (
+                <p className={styles.cancelNote}>
+                  {billing === 'monthly' ? 'Cancel anytime. Two clicks from Settings.' : 'Annual plan. Pause up to 3 months if you need a break.'}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -904,6 +939,38 @@ export default function LandingPage() {
           <p className={styles.qualityText}>
             Monthly memberships: cancel anytime from Settings. Annual memberships: non-refundable after 14 days from purchase. Pause your annual membership for up to 3 months if you need a break.
           </p>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className={`${styles.section} ${styles.reveal}`} data-reveal>
+        <div className={styles.sectionKicker}>Questions</div>
+        <h2 className={styles.sectionTitle}>Common questions, straight answers.</h2>
+        <div className={styles.faqGrid}>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>Is this medical care?</h3>
+            <p className={styles.faqA}>No. This is functional and nutritional medicine education. The platform helps you understand your numbers, build consistent habits, and follow a structured curriculum. It does not diagnose, treat, or replace your doctor.</p>
+          </div>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>Do I need lab results to join?</h3>
+            <p className={styles.faqA}>No. You can start with the free tools today, no account needed. Many members use the platform alongside their existing lab work to finally understand what the numbers mean.</p>
+          </div>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>What if I am on medication?</h3>
+            <p className={styles.faqA}>The platform is educational and does not advise changing any medication. Everything you learn here is meant to complement, not replace, your licensed provider's care. Some members share their progress reports directly with their physicians.</p>
+          </div>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>Can I cancel?</h3>
+            <p className={styles.faqA}>Monthly plans: yes, anytime, two clicks from your Settings page. No calls, no forms. Annual plans are non-refundable after 14 days, and you can pause for up to 3 months if life gets in the way.</p>
+          </div>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>How much time does this take daily?</h3>
+            <p className={styles.faqA}>Most members spend 10 to 15 minutes in the Daily Command Center. The ROOTS curriculum modules are designed for 20 to 30 minute sessions, once or twice a week. You do not need to clear your schedule.</p>
+          </div>
+          <div className={styles.faqItem}>
+            <h3 className={styles.faqQ}>Is my health data private?</h3>
+            <p className={styles.faqA}>Yes. The platform is HIPAA-aware by design: no ads, no data sales, no third-party sharing. Your information stays on the platform and is never sold or shared with advertisers.</p>
+          </div>
         </div>
       </section>
 

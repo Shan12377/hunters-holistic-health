@@ -2077,3 +2077,126 @@
   transform: translateX(4px);
   background: rgba(11, 158, 142, 0.06);
 }
+
+/* --- How It Works --- */
+.howGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.howStep {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-7) var(--space-6);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.howStep:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -8px rgba(11, 158, 142, 0.25);
+}
+
+.howNum {
+  font-family: var(--font-headline);
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1;
+  background: var(--gradient-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: var(--space-4);
+}
+
+.howTitle {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.howDesc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .howGrid { grid-template-columns: 1fr; gap: var(--space-4); }
+}
+
+/* --- Features expander button --- */
+.featuresExpandBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-6) auto 0;
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid rgba(var(--gold-rgb), 0.35);
+  border-radius: var(--radius-full);
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.featuresExpandBtn:hover {
+  background: rgba(var(--gold-rgb), 0.08);
+  border-color: rgba(var(--gold-rgb), 0.6);
+}
+
+/* --- Pricing cancel note --- */
+.cancelNote {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: var(--space-3) 0 0;
+}
+
+/* --- FAQ --- */
+.faqGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+  text-align: left;
+}
+
+.faqItem {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition: border-color 0.2s ease;
+}
+
+.faqItem:hover {
+  border-color: rgba(11, 158, 142, 0.3);
+}
+
+.faqQ {
+  font-family: var(--font-headline);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.faqA {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .faqGrid { grid-template-columns: 1fr; }
+}
