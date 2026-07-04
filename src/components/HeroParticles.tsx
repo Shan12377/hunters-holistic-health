@@ -31,17 +31,17 @@ export default function HeroParticles() {
     ro.observe(canvas)
 
     const isMobile = window.matchMedia('(max-width: 768px)').matches
-    const count = isMobile ? 30 : 68
-    const maxDist = 130
-    const mouseRadius = 120
-    const mouseForce = 3.5
+    const count = isMobile ? 35 : 75
+    const maxDist = 140
+    const mouseRadius = 160
+    const mouseForce = 7
 
     const particles: Particle[] = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      radius: Math.random() * 1.5 + 0.8,
+      vx: (Math.random() - 0.5) * 1.4,
+      vy: (Math.random() - 0.5) * 1.4,
+      radius: Math.random() * 2 + 0.8,
     }))
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -70,21 +70,21 @@ export default function HeroParticles() {
 
         if (dist < mouseRadius && dist > 0) {
           const force = ((mouseRadius - dist) / mouseRadius) * mouseForce
-          p.vx += (dx / dist) * force * 0.06
-          p.vy += (dy / dist) * force * 0.06
+          p.vx += (dx / dist) * force * 0.1
+          p.vy += (dy / dist) * force * 0.1
         }
 
-        p.vx *= 0.985
-        p.vy *= 0.985
+        p.vx *= 0.993
+        p.vy *= 0.993
 
         const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
-        if (speed > 2) {
-          p.vx = (p.vx / speed) * 2
-          p.vy = (p.vy / speed) * 2
+        if (speed > 4) {
+          p.vx = (p.vx / speed) * 4
+          p.vy = (p.vy / speed) * 4
         }
-        if (speed < 0.06) {
-          p.vx += (Math.random() - 0.5) * 0.12
-          p.vy += (Math.random() - 0.5) * 0.12
+        if (speed < 0.3) {
+          p.vx += (Math.random() - 0.5) * 0.5
+          p.vy += (Math.random() - 0.5) * 0.5
         }
 
         p.x += p.vx
@@ -102,10 +102,10 @@ export default function HeroParticles() {
           const dy = particles[i].y - particles[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * 0.3
+            const alpha = (1 - dist / maxDist) * 0.45
             ctx.beginPath()
             ctx.strokeStyle = `rgba(11, 158, 142, ${alpha})`
-            ctx.lineWidth = 0.7
+            ctx.lineWidth = 0.9
             ctx.moveTo(particles[i].x, particles[i].y)
             ctx.lineTo(particles[j].x, particles[j].y)
             ctx.stroke()
