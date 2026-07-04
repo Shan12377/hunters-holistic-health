@@ -412,7 +412,7 @@ export default function LandingPage() {
         {/* Metabolic Pattern Check */}
         {toolTab === 'symptom' && (
           <div className={styles.toolPanel}>
-            <p className={styles.toolDesc}>Answer all seven questions. Your responses identify educational patterns about metabolic health, not clinical findings.</p>
+            <p className={styles.toolDesc}>Answer all seven questions to see which metabolic patterns are present in your responses.</p>
             <div className={styles.quizList}>
               {PATTERN_QUESTIONS.map((q, i) => (
                 <div key={q.id} className={styles.quizQuestion}>
