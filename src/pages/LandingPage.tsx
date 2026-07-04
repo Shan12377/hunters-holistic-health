@@ -356,7 +356,7 @@ export default function LandingPage() {
         </div>
 
         {/* BP Tool — full simulator embedded */}
-        {toolTab === 'bp' && <BPSimulatorWidget showFooter={false} />}
+        {toolTab === 'bp' && <BPSimulatorWidget showFooter={true} />}
 
         {/* Blood Sugar Zone Checker */}
         {toolTab === 'glucose' && (
