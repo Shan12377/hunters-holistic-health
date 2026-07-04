@@ -94,6 +94,9 @@ export interface BSReading {
   user_id: string
   glucose_mg_dl: number
   reading_context: 'fasting' | 'before_meal' | 'post_meal_2hr' | 'bedtime'
+  meal_tag: string | null
+  stress_tag: string | null
+  walk_tag: string | null
   notes: string | null
   logged_at: string
 }
@@ -128,4 +131,17 @@ export const BS_ZONE_COLORS: Record<BSZone, string> = {
   normal: '#4be08a',
   above_typical: '#e0b84b',
   elevated: '#e05c5c',
+}
+
+export interface WeightLog {
+  id: string
+  user_id: string
+  weight_lbs: number
+  waist_in: number | null
+  hip_in: number | null
+  hunger_level: number | null
+  protein_hit: boolean | null
+  water_cups: number | null
+  notes: string | null
+  logged_at: string
 }

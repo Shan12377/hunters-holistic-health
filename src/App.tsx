@@ -61,6 +61,7 @@ import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
 import BPSimulatorPage from '@/pages/BPSimulatorPage'
 import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
+import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -161,6 +162,7 @@ export default function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="my-protocol" element={<MyProtocolPage />} />
           <Route path="health-hub" element={<HealthHubPage />} />
+          <Route path="weight" element={<WeightTrackerPage />} />
         </Route>
 
         {/* Educator routes */}

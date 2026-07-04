@@ -27,6 +27,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/daily-log',      icon: '✓', label: 'Daily Log' },
       { to: '/app/blood-pressure', icon: '♥', label: 'BP Tracker' },
       { to: '/app/blood-sugar',    icon: '◉', label: 'Blood Sugar' },
+      { to: '/app/weight',         icon: '⚖', label: 'Weight' },
       { to: '/app/supplements',    icon: '⬡', label: 'Supplements' },
       { to: '/app/exercise',       icon: '◎', label: 'Movement Log' },
       { to: '/app/weekly-grade',   icon: '★', label: 'Weekly Grade' },

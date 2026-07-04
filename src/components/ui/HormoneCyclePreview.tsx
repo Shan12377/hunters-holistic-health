@@ -488,7 +488,7 @@ export default function HormoneCyclePreview() {
           </div>
 
           <div style={s.disclaimer}>
-            This tool provides general educational and wellness information only. It does not constitute medical advice, diagnosis, or a clinical treatment plan. Always consult a licensed healthcare provider before making health decisions. Dr. Shallanda Hunter, PharmD, MBA, CFNMP: Functional Medicine Educator.
+            This tool provides general educational and wellness information only. It does not constitute medical advice, diagnosis, or a clinical treatment plan. Always consult a licensed healthcare provider before making health decisions. Supplement suggestions have not been evaluated by the Food and Drug Administration and are not intended to diagnose, treat, cure, or prevent any disease. Dr. Shallanda Hunter, PharmD, MBA, CFNMP: Functional Medicine Educator.
           </div>
         </div>
       </div>

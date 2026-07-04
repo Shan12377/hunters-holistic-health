@@ -103,6 +103,21 @@ The app and n8n operate in the non-PHI layer only. Sensitive records, labs, and 
 3. Data Minimization: Do not add fields for Date of Birth, SSN, or full addresses to the database schema.
 4. No health outcome guarantees in any UI copy.
 
+### Compliance Check Rule (Hard Stop Before Building)
+
+Before adding ANY of the following to the app, stop and verify all required disclaimers and regulatory language are present. If you are unsure what is required, do NOT guess — consult Dr. Hunter first:
+
+- Supplement recommendations or dosages (requires DSHEA disclaimer: "These statements have not been evaluated by the Food and Drug Administration. This is not intended to diagnose, treat, cure, or prevent any disease.")
+- Hormone, lab, or clinical content visible to users (requires educational framing + physician consult language)
+- Condition-specific health guidance (endometriosis, PCOS, thyroid, etc.) shown to clients
+- Food or nutrition advice displayed as recommendations
+- AI-generated health content of any kind
+- Any new public-facing health feature (visible before login or to non-subscribed users)
+
+This rule exists because a 2026 build included personalized supplement and hormone recommendations in the HormoneCyclePreview component without any DSHEA or educational disclaimers. That must never slip through again.
+
+When in doubt: flag it, describe what is missing, and wait for Dr. Hunter to confirm the correct language before writing any code.
+
 ---
 
 ## Pre-Deploy Checklist (Run Before Every Deploy)
