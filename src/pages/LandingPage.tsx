@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { BPSimulatorWidget } from './BPSimulatorPage'
 import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
@@ -282,6 +282,23 @@ export default function LandingPage() {
   const scrollToTools   = () => document.getElementById('free-tools')?.scrollIntoView({ behavior: 'smooth' })
   const scrollToPricing = () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const delay = (entry.target as HTMLElement).dataset.delay || '0'
+            setTimeout(() => entry.target.classList.add(styles.visible), parseInt(delay))
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -32px 0px' }
+    )
+    document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
   const submitEmailCapture = async () => {
     const email = emailCapture.trim()
     if (!email || !email.includes('@')) return
@@ -325,11 +342,16 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className={styles.hero}>
-        <img
-          src="/S.HProfessionalBusinessPic.jpg"
-          alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
-          className={styles.heroDrPhoto}
-        />
+        <div className={styles.heroDrPhotoWrap}>
+          <span className={styles.heroRing} aria-hidden="true" />
+          <span className={styles.heroRing2} aria-hidden="true" />
+          <span className={styles.heroRing3} aria-hidden="true" />
+          <img
+            src="/S.HProfessionalBusinessPic.jpg"
+            alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
+            className={styles.heroDrPhoto}
+          />
+        </div>
         <div className={styles.heroBadge}>Functional and Nutritional Medicine Education</div>
         <h1 className={styles.heroTitle}>
           You have had the numbers for years.<br />
@@ -357,11 +379,18 @@ export default function LandingPage() {
       {/* Trust strip */}
       <section className={styles.trustStrip}>
         <div className={styles.trustLabel}>Created and led by Dr. Shallanda Hunter</div>
-        <span className={styles.trustChip}>CFNMP, Certified Functional and Nutritional Medicine Practitioner</span>
-        <span className={styles.trustChip}>PharmD, Doctor of Pharmacy</span>
-        <span className={styles.trustChip}>MBA</span>
-        <span className={styles.trustChip}>Privacy-first design</span>
-        <span className={styles.trustChip}>No ads. No data sales.</span>
+        <div className={styles.trustMarquee}>
+          <div className={styles.trustTrack}>
+            {[
+              'CFNMP', 'PharmD', 'MBA', 'Privacy-first design', 'No ads. No data sales.',
+              'HIPAA-aware platform', 'Evidence-informed curriculum', 'ROOTS Framework',
+              'CFNMP', 'PharmD', 'MBA', 'Privacy-first design', 'No ads. No data sales.',
+              'HIPAA-aware platform', 'Evidence-informed curriculum', 'ROOTS Framework',
+            ].map((chip, i) => (
+              <span key={i} className={styles.trustChip}>{chip}</span>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Free Tools */}
@@ -654,7 +683,7 @@ export default function LandingPage() {
       </section>
 
       {/* Who This Is For */}
-      <section className={styles.sectionDark}>
+      <section className={`${styles.sectionDark} ${styles.reveal}`} data-reveal>
         <div className={styles.sectionKicker}>Is This For You?</div>
         <h2 className={styles.sectionTitle}>This platform was built for a specific person.</h2>
         <p className={styles.sectionSubtitle}>If any of these sound like you, you are in the right place.</p>
@@ -669,13 +698,13 @@ export default function LandingPage() {
       </section>
 
       {/* ROOTS Framework */}
-      <section className={styles.section}>
+      <section className={`${styles.section} ${styles.reveal}`} data-reveal>
         <div className={styles.sectionKicker}>The Method</div>
         <h2 className={styles.sectionTitle}>The ROOTS™ Framework</h2>
         <p className={styles.sectionSubtitle}>Five phases. A structured path through functional and nutritional medicine education. Evidence-informed at every step.</p>
         <div className={styles.rootsBand}>
           {ROOTS_STEPS.map(({ letter, name, hint, color }, i) => (
-            <div key={name + i} className={styles.rootsTile} style={{ '--roots-color': color } as React.CSSProperties}>
+            <div key={name + i} className={`${styles.rootsTile} ${styles.reveal}`} data-reveal data-delay={String(i * 80)} style={{ '--roots-color': color } as React.CSSProperties}>
               <div className={styles.rootsLetter}>{letter}</div>
               <div className={styles.rootsName}>{name}</div>
               <div className={styles.rootsHint}>{hint}</div>
@@ -690,8 +719,8 @@ export default function LandingPage() {
         <h2 className={styles.sectionTitle}>Every tool you need to track, learn, and understand.</h2>
         <p className={styles.sectionSubtitle}>Built for functional and nutritional medicine education participants. Not generic wellness. Specific and purposeful.</p>
         <div className={styles.featuresGrid}>
-          {FEATURES.map(({ img, title, desc }) => (
-            <div key={title} className={styles.featureCard}>
+          {FEATURES.map(({ img, title, desc }, i) => (
+            <div key={title} className={`${styles.featureCard} ${styles.reveal}`} data-reveal data-delay={String(i * 60)}>
               <img src={img} alt={title} className={styles.featureImg} />
               <h3 className={styles.featureTitle}>{title}</h3>
               <p className={styles.featureDesc}>{desc}</p>
@@ -701,7 +730,7 @@ export default function LandingPage() {
       </section>
 
       {/* Origin Story */}
-      <section className={styles.sectionDark}>
+      <section className={`${styles.sectionDark} ${styles.reveal}`} data-reveal>
         <div className={styles.originBlock}>
           <div className={styles.sectionKicker}>Why This Exists</div>
           <h2 className={styles.sectionTitle}>Dr. Hunter reversed her own metabolic condition using functional medicine when conventional answers were not coming.</h2>
@@ -718,7 +747,7 @@ export default function LandingPage() {
       </section>
 
       {/* Privacy */}
-      <section className={styles.section}>
+      <section className={`${styles.section} ${styles.reveal}`} data-reveal>
         <div className={styles.privacyBand}>
           <div className={styles.privacyBandInner}>
             <h2 className={styles.privacyTitle}>Privacy Is the Architecture, Not a Setting</h2>
@@ -745,7 +774,7 @@ export default function LandingPage() {
         <div className={styles.testimonialsGrid}>
 
           {/* Outcome 1: Supplement optimization */}
-          <div className={styles.testimonialCard}>
+          <div className={`${styles.testimonialCard} ${styles.reveal}`} data-reveal data-delay="0">
             <div className={styles.outcomeTag}>ROOTS Framework, Clinical Optimization</div>
             <div className={styles.outcomeHeadline}>42 supplements. 5 medications. Still in pain.</div>
             <div className={styles.outcomeStats}>
@@ -766,7 +795,7 @@ export default function LandingPage() {
           </div>
 
           {/* Outcome 2: Kidney markers */}
-          <div className={styles.testimonialCard}>
+          <div className={`${styles.testimonialCard} ${styles.reveal}`} data-reveal data-delay="100">
             <div className={styles.outcomeTag}>ROOTS Stability Framework</div>
             <div className={styles.outcomeHeadline}>Six months. Kidney markers improving.</div>
             <ul className={styles.outcomeList}>
@@ -777,7 +806,7 @@ export default function LandingPage() {
           </div>
 
           {/* Review: Michael D. */}
-          <div className={`${styles.testimonialCard} ${styles.reviewCard}`}>
+          <div className={`${styles.testimonialCard} ${styles.reviewCard} ${styles.reveal}`} data-reveal data-delay="200">
             <div className={styles.reviewStars}>★★★★★</div>
             <blockquote className={styles.reviewQuote}>
               "Kind. Professional. Extremely knowledgeable about my health issues. The Zoom format was easy and convenient. Looking forward to working together."
@@ -794,7 +823,7 @@ export default function LandingPage() {
         </div>
 
         <p className={styles.testimonialDisclaimer}>
-          Shared with permission. Individual results may vary and are not guaranteed. Not intended as medical advice.
+          Individual results may vary and are not guaranteed. Not intended as medical advice.
         </p>
       </section>
 
