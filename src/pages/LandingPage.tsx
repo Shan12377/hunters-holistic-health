@@ -221,6 +221,10 @@ export default function LandingPage() {
   const [waistUnit, setWaistUnit] = useState<'in' | 'cm'>('in')
   const [waistResult, setWaistResult] = useState<{ ratio: number; zone: string; color: string; msg: string } | null>(null)
 
+  const [emailCapture, setEmailCapture] = useState('')
+  const [emailSubmitting, setEmailSubmitting] = useState(false)
+  const [emailSubmitted, setEmailSubmitted] = useState(false)
+
   const setPatternAnswer = (qid: string, val: number) => {
     setPatternAnswers(prev => ({ ...prev, [qid]: val }))
     setPatternResult(null)
@@ -278,6 +282,31 @@ export default function LandingPage() {
   const scrollToTools   = () => document.getElementById('free-tools')?.scrollIntoView({ behavior: 'smooth' })
   const scrollToPricing = () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
 
+  const submitEmailCapture = async () => {
+    const email = emailCapture.trim()
+    if (!email || !email.includes('@')) return
+    setEmailSubmitting(true)
+    try {
+      const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL
+      if (webhookUrl) {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Webhook-Secret': import.meta.env.VITE_N8N_WEBHOOK_SECRET || '',
+          },
+          body: JSON.stringify({ submissionType: 'newsletter', email }),
+        })
+      }
+      setEmailSubmitted(true)
+      setEmailCapture('')
+    } catch {
+      setEmailSubmitted(true)
+    } finally {
+      setEmailSubmitting(false)
+    }
+  }
+
   return (
     <div className={styles.page}>
 
@@ -296,14 +325,18 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className={styles.hero}>
-        <img src="/logo-mark.png" alt="" aria-hidden="true" className={styles.heroLogo} />
+        <img
+          src="/S.HProfessionalBusinessPic.jpg"
+          alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
+          className={styles.heroDrPhoto}
+        />
         <div className={styles.heroBadge}>Functional and Nutritional Medicine Education</div>
         <h1 className={styles.heroTitle}>
           You have had the numbers for years.<br />
           <span className={styles.heroGold}>Nobody explained them. That changes now.</span>
         </h1>
         <p className={styles.heroSerif}>
-          Root cause education. Evidence-informed. Built and taught by a Certified Functional and Nutritional Medicine Practitioner and PharmD.
+          Root cause education through the 5-phase ROOTS™ Framework. Built and taught by a PharmD and CFNMP who reversed her own metabolic condition.
         </p>
         <p className={styles.heroSubtitle}>
           Lasting health starts at the roots. Join the platform to stop guessing and finally understand what your body is telling you.
@@ -400,6 +433,32 @@ export default function LandingPage() {
                   <span className={styles.toolTipLabel}>One thing to try:</span> {glucoseResult.tip}
                 </div>
                 <p className={styles.toolDisclaimer}>This is educational context, not a diagnosis. Glucose ranges are based on ADA guidelines. Discuss any reading of concern with your healthcare provider.</p>
+                {!emailSubmitted ? (
+                  <div className={styles.emailCapture}>
+                    <p className={styles.emailCaptureText}>Want to track this number and learn what moves it? One insight, one tool, one practical step. Every week. Free.</p>
+                    <div className={styles.emailCaptureRow}>
+                      <input
+                        className={styles.emailInput}
+                        type="email"
+                        placeholder="Your email address"
+                        value={emailCapture}
+                        onChange={e => setEmailCapture(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && submitEmailCapture()}
+                        aria-label="Email address for weekly health insights"
+                      />
+                      <button
+                        className={styles.emailBtn}
+                        onClick={submitEmailCapture}
+                        disabled={emailSubmitting || !emailCapture.includes('@')}
+                      >
+                        {emailSubmitting ? 'Sending...' : 'Send Me Weekly Insights'}
+                      </button>
+                    </div>
+                    <p className={styles.emailCompliance}>Subscribe for weekly functional health education. By subscribing, you agree to receive educational content. Not medical advice.</p>
+                  </div>
+                ) : (
+                  <div className={styles.emailSuccess}>You are on the list. One insight, one tool, one practical step. In your inbox weekly.</div>
+                )}
                 <div className={styles.toolCTA}>
                   <p className={styles.toolCTAText}>Track your readings over time and learn what drives them in the ROOTS curriculum.</p>
                   <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
@@ -458,6 +517,32 @@ export default function LandingPage() {
                 </div>
                 <p className={styles.toolResultMsg}>{patternResult.msg}</p>
                 <p className={styles.toolDisclaimer}>These patterns are for educational awareness only. This is not a clinical assessment and does not diagnose any condition. Discuss any health concerns with your licensed healthcare provider.</p>
+                {!emailSubmitted ? (
+                  <div className={styles.emailCapture}>
+                    <p className={styles.emailCaptureText}>Want to understand what drives these patterns? One insight, one tool, one practical step. Every week. Free.</p>
+                    <div className={styles.emailCaptureRow}>
+                      <input
+                        className={styles.emailInput}
+                        type="email"
+                        placeholder="Your email address"
+                        value={emailCapture}
+                        onChange={e => setEmailCapture(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && submitEmailCapture()}
+                        aria-label="Email address for weekly health insights"
+                      />
+                      <button
+                        className={styles.emailBtn}
+                        onClick={submitEmailCapture}
+                        disabled={emailSubmitting || !emailCapture.includes('@')}
+                      >
+                        {emailSubmitting ? 'Sending...' : 'Send Me Weekly Insights'}
+                      </button>
+                    </div>
+                    <p className={styles.emailCompliance}>Subscribe for weekly functional health education. By subscribing, you agree to receive educational content. Not medical advice.</p>
+                  </div>
+                ) : (
+                  <div className={styles.emailSuccess}>You are on the list. One insight, one tool, one practical step. In your inbox weekly.</div>
+                )}
                 <div className={styles.toolCTA}>
                   <p className={styles.toolCTAText}>The ROOTS Framework addresses each of these patterns through structured education, beginning with the metabolic systems that drive them.</p>
                   <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
@@ -529,6 +614,32 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <p className={styles.toolDisclaimer}>Waist-to-height ratio is a research-validated screening measure for cardiometabolic risk. It is not a clinical assessment. Individual context matters. Discuss any measurement of concern with your healthcare provider.</p>
+                {!emailSubmitted ? (
+                  <div className={styles.emailCapture}>
+                    <p className={styles.emailCaptureText}>Want to learn what drives central adiposity and how to move it? One insight, one tool, one practical step. Every week. Free.</p>
+                    <div className={styles.emailCaptureRow}>
+                      <input
+                        className={styles.emailInput}
+                        type="email"
+                        placeholder="Your email address"
+                        value={emailCapture}
+                        onChange={e => setEmailCapture(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && submitEmailCapture()}
+                        aria-label="Email address for weekly health insights"
+                      />
+                      <button
+                        className={styles.emailBtn}
+                        onClick={submitEmailCapture}
+                        disabled={emailSubmitting || !emailCapture.includes('@')}
+                      >
+                        {emailSubmitting ? 'Sending...' : 'Send Me Weekly Insights'}
+                      </button>
+                    </div>
+                    <p className={styles.emailCompliance}>Subscribe for weekly functional health education. By subscribing, you agree to receive educational content. Not medical advice.</p>
+                  </div>
+                ) : (
+                  <div className={styles.emailSuccess}>You are on the list. One insight, one tool, one practical step. In your inbox weekly.</div>
+                )}
                 <div className={styles.toolCTA}>
                   <p className={styles.toolCTAText}>Learn what drives central adiposity and how to address it through the nutrition, supplement, and lifestyle education inside the ROOTS Framework.</p>
                   <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
@@ -560,7 +671,7 @@ export default function LandingPage() {
       {/* ROOTS Framework */}
       <section className={styles.section}>
         <div className={styles.sectionKicker}>The Method</div>
-        <h2 className={styles.sectionTitle}>The ROOTS Framework</h2>
+        <h2 className={styles.sectionTitle}>The ROOTS™ Framework</h2>
         <p className={styles.sectionSubtitle}>Five phases. A structured path through functional and nutritional medicine education. Evidence-informed at every step.</p>
         <div className={styles.rootsBand}>
           {ROOTS_STEPS.map(({ letter, name, hint, color }, i) => (
@@ -598,7 +709,7 @@ export default function LandingPage() {
             She is a licensed pharmacist with a PharmD and an MBA. She is a Certified Functional and Nutritional Medicine Practitioner. She built this platform because the education she needed did not exist in one place.
           </p>
           <p className={styles.originText}>
-            The ROOTS framework is the system she built for herself, formalized and delivered to you. Every module, every tool, every recommendation has been reviewed through both lenses: the functional and nutritional medicine framework and the PharmD training that ensures the science behind it is read correctly.
+            The ROOTS Framework is the system she built for herself, formalized and delivered to you. Every module, every tool, every recommendation has been reviewed through both lenses: the functional and nutritional medicine framework and the PharmD training that ensures the science behind it is read correctly.
           </p>
           <p className={styles.originText}>
             Where the research is strong, you will see the citation. Where evidence is emerging or traditional, that is stated honestly. That transparency is not a weakness. It is the standard.
@@ -623,6 +734,68 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
+      </section>
+
+      {/* Member Outcomes */}
+      <section className={styles.section}>
+        <div className={styles.sectionKicker}>Member Outcomes</div>
+        <h2 className={styles.sectionTitle}>Real people. Real progress.</h2>
+        <p className={styles.sectionSubtitle}>These outcomes reflect individual client experience through the ROOTS Framework education program.</p>
+
+        <div className={styles.testimonialsGrid}>
+
+          {/* Outcome 1: Supplement optimization */}
+          <div className={styles.testimonialCard}>
+            <div className={styles.outcomeTag}>ROOTS Framework, Clinical Optimization</div>
+            <div className={styles.outcomeHeadline}>42 supplements. 5 medications. Still in pain.</div>
+            <div className={styles.outcomeStats}>
+              <div className={styles.outcomeStat}>
+                <span className={styles.outcomeStatVal}>42 → 16</span>
+                <span className={styles.outcomeStatLabel}>Supplements</span>
+              </div>
+              <div className={styles.outcomeStat}>
+                <span className={styles.outcomeStatVal}>5 → 3</span>
+                <span className={styles.outcomeStatLabel}>Medications</span>
+              </div>
+            </div>
+            <ul className={styles.outcomeList}>
+              <li>Streamlined in coordination with her physician</li>
+              <li>April 2026: joint and shoulder pain resolved</li>
+              <li>May 2026: severe bloating resolved, waistline reduced</li>
+            </ul>
+          </div>
+
+          {/* Outcome 2: Kidney markers */}
+          <div className={styles.testimonialCard}>
+            <div className={styles.outcomeTag}>ROOTS Stability Framework</div>
+            <div className={styles.outcomeHeadline}>Six months. Kidney markers improving.</div>
+            <ul className={styles.outcomeList}>
+              <li>Measurable improvement in kidney function markers</li>
+              <li>Protocol data shared directly with her specialist team</li>
+              <li>From symptom management to root-cause education</li>
+            </ul>
+          </div>
+
+          {/* Review: Michael D. */}
+          <div className={`${styles.testimonialCard} ${styles.reviewCard}`}>
+            <div className={styles.reviewStars}>★★★★★</div>
+            <blockquote className={styles.reviewQuote}>
+              "Kind. Professional. Extremely knowledgeable about my health issues. The Zoom format was easy and convenient. Looking forward to working together."
+            </blockquote>
+            <div className={styles.reviewAuthor}>
+              Michael <span className={styles.blurredName}>Duffy</span> &nbsp;&middot;&nbsp; Mar 31, 2026
+            </div>
+            <div className={styles.reviewResponse}>
+              <span className={styles.reviewResponseLabel}>Dr. Hunter's response to Mike:</span>
+              "You are asking all the right questions about your health. That level of dedication is exactly why you are going to see great results. Incredibly excited to continue working together."
+            </div>
+          </div>
+
+        </div>
+
+        <p className={styles.testimonialDisclaimer}>
+          Shared with permission. Individual results may vary and are not guaranteed. Not intended as medical advice.
+        </p>
       </section>
 
       {/* Pricing */}
