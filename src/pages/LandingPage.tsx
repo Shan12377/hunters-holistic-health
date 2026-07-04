@@ -344,38 +344,41 @@ export default function LandingPage() {
       {/* Hero */}
       <section className={styles.hero}>
         <HeroParticles />
-        <div className={styles.heroDrPhotoWrap}>
-          <span className={styles.heroRing} aria-hidden="true" />
-          <span className={styles.heroRing2} aria-hidden="true" />
-          <span className={styles.heroRing3} aria-hidden="true" />
-          <img
-            src="/S.HProfessionalBusinessPic.jpg"
-            alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
-            className={styles.heroDrPhoto}
-          />
+        <img src="/S.HProfessionalBusinessPic.jpg" className={styles.heroBgPhoto} aria-hidden="true" alt="" />
+        <div className={styles.heroContent}>
+          <div className={styles.heroDrPhotoWrap}>
+            <span className={styles.heroRing} aria-hidden="true" />
+            <span className={styles.heroRing2} aria-hidden="true" />
+            <span className={styles.heroRing3} aria-hidden="true" />
+            <img
+              src="/S.HProfessionalBusinessPic.jpg"
+              alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
+              className={styles.heroDrPhoto}
+            />
+          </div>
+          <div className={styles.heroBadge}>Functional and Nutritional Medicine Education</div>
+          <h1 className={styles.heroTitle}>
+            You have had the numbers for years.<br />
+            <span className={styles.heroGold}>Nobody explained them. That changes now.</span>
+          </h1>
+          <p className={styles.heroSerif}>
+            Root cause education through the 5-phase ROOTS™ Framework. Built and taught by a PharmD and CFNMP who reversed her own metabolic condition.
+          </p>
+          <p className={styles.heroSubtitle}>
+            Lasting health starts at the roots. Join the platform to stop guessing and finally understand what your body is telling you.
+          </p>
+          <div className={styles.heroActions}>
+            <button onClick={scrollToPricing} className={shared.btnPrimary}>
+              See Membership Options <ChevronRight size={18} />
+            </button>
+            <button onClick={scrollToTools} className={shared.btnGhost}>
+              Try Free Tools <ChevronDown size={16} />
+            </button>
+          </div>
+          <p className={styles.heroNote}>
+            Educational platform only. Not medical advice. Individual results vary.
+          </p>
         </div>
-        <div className={styles.heroBadge}>Functional and Nutritional Medicine Education</div>
-        <h1 className={styles.heroTitle}>
-          You have had the numbers for years.<br />
-          <span className={styles.heroGold}>Nobody explained them. That changes now.</span>
-        </h1>
-        <p className={styles.heroSerif}>
-          Root cause education through the 5-phase ROOTS™ Framework. Built and taught by a PharmD and CFNMP who reversed her own metabolic condition.
-        </p>
-        <p className={styles.heroSubtitle}>
-          Lasting health starts at the roots. Join the platform to stop guessing and finally understand what your body is telling you.
-        </p>
-        <div className={styles.heroActions}>
-          <button onClick={scrollToPricing} className={shared.btnPrimary}>
-            See Membership Options <ChevronRight size={18} />
-          </button>
-          <button onClick={scrollToTools} className={shared.btnGhost}>
-            Try Free Tools <ChevronDown size={16} />
-          </button>
-        </div>
-        <p className={styles.heroNote}>
-          Educational platform only. Not medical advice. Individual results vary.
-        </p>
       </section>
 
       {/* Trust strip */}
