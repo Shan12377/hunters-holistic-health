@@ -704,16 +704,30 @@
   .pricingCardFeatured:hover { transform: translateY(-4px); }
 }
 
+@media (max-width: 768px) {
+  /* On mobile: hide right-side bg photo, use full-bleed centered version instead */
+  .heroBgPhoto {
+    right: auto !important;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100% !important;
+    opacity: 0.10 !important;
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, black 60%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, black 60%, transparent 100%) !important;
+  }
+}
+
 @media (max-width: 640px) {
   .nav { padding: 0 var(--space-4); }
   .navLogo { display: none; }
-  .hero { padding: var(--space-12) var(--space-4) var(--space-10); }
+  .hero { padding: var(--space-12) var(--space-4) var(--space-10); min-height: auto; }
   .section { padding: var(--space-10) var(--space-4); }
   .featuresGrid { grid-template-columns: 1fr; }
   .rootsBand { grid-template-columns: 1fr 1fr; }
   .rootsBand > :last-child { grid-column: 1 / -1; }
   .heroActions { flex-direction: column; align-items: stretch; }
   .ctaBand { padding: 0 var(--space-4) var(--space-12); }
+  .heroBgPhoto { display: none !important; }
 }
 
 /* ============================================================
