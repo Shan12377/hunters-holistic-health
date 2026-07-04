@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { BPSimulatorWidget } from './BPSimulatorPage'
 import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
+import HeroParticles from '../components/HeroParticles'
 import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink, ChevronDown, CheckCircle, Dumbbell, Zap } from 'lucide-react'
 import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
@@ -342,6 +343,7 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className={styles.hero}>
+        <HeroParticles />
         <div className={styles.heroDrPhotoWrap}>
           <span className={styles.heroRing} aria-hidden="true" />
           <span className={styles.heroRing2} aria-hidden="true" />
