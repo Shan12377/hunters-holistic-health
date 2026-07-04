@@ -7,7 +7,7 @@ import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
 
 // --- Types ---
-type ToolTab = 'bp' | 'symptom' | 'homa' | 'hormone'
+type ToolTab = 'bp' | 'glucose' | 'symptom' | 'waist' | 'hormone'
 type BillingCycle = 'monthly' | 'annual'
 
 interface BPResult {
@@ -16,13 +16,6 @@ interface BPResult {
   message: string
   elevating: string[]
   supporting: string[]
-}
-
-interface HomaResult {
-  score: number
-  zone: string
-  color: string
-  context: string
 }
 
 // --- Stripe Payment Links (add these in Vercel env vars when Stripe is live) ---
@@ -168,17 +161,14 @@ const ROOTS_STEPS = [
   { letter: 'S', name: 'Sustain and Adapt',    hint: 'Habits that hold for life',                  color: '#4be08a' },
 ]
 
-const SYMPTOM_LIST = [
-  { id: 'tired_meals',         label: 'Fatigue after meals or mid-afternoon crashes' },
-  { id: 'sugar_cravings',      label: 'Strong cravings for sugar, bread, or starchy foods' },
-  { id: 'hangry',              label: 'Irritability or shakiness when skipping a meal' },
-  { id: 'belly_weight',        label: 'Difficulty losing weight, especially around the midsection' },
-  { id: 'skin_changes',        label: 'Skin changes: tags, dark patches, or breakouts' },
-  { id: 'poor_sleep',          label: 'Poor sleep or waking frequently during the night' },
-  { id: 'mood_swings',         label: 'Mood swings or irritability throughout the day' },
-  { id: 'elevated_bp',         label: 'Known elevated blood pressure readings' },
-  { id: 'bloating',            label: 'Bloating or digestive discomfort after meals' },
-  { id: 'energy_inconsistent', label: 'Inconsistent energy with no clear cause' },
+const PATTERN_QUESTIONS = [
+  { id: 'q1', text: 'Do you feel sleepy or sluggish 1-2 hours after a carb-heavy meal?' },
+  { id: 'q2', text: 'Do you get strong cravings for sweets or starchy foods, especially in the afternoon?' },
+  { id: 'q3', text: 'Do you carry most of your extra weight around your belly rather than hips or thighs?' },
+  { id: 'q4', text: 'Do you feel shaky, irritable, or hungry if you go more than 3-4 hours without eating?' },
+  { id: 'q5', text: 'Do you experience brain fog or difficulty concentrating that was not always there?' },
+  { id: 'q6', text: 'Do you have skin tags or dark, velvety patches on your neck, underarms, or skin folds?' },
+  { id: 'q7', text: 'Do you feel persistently tired even when you get enough sleep?' },
 ]
 
 // --- BP zone logic (AHA/ACC 2017) ---
@@ -219,51 +209,69 @@ export default function LandingPage() {
   const [toolTab, setToolTab] = useState<ToolTab>('bp')
   const [billing, setBilling] = useState<BillingCycle>('monthly')
 
-  const [symptoms, setSymptoms] = useState<Set<string>>(new Set())
-  const [symptomPatterns, setSymptomPatterns] = useState<string[] | null>(null)
+  const [patternAnswers, setPatternAnswers] = useState<Record<string, number>>({})
+  const [patternResult, setPatternResult] = useState<{ score: number; level: 'low' | 'moderate' | 'high'; msg: string } | null>(null)
 
-  const [homaGlucose, setHomaGlucose] = useState('')
-  const [homaInsulin, setHomaInsulin] = useState('')
-  const [homaResult, setHomaResult] = useState<HomaResult | null>(null)
+  const [glucoseVal, setGlucoseVal] = useState('')
+  const [glucoseCtx, setGlucoseCtx] = useState<'fasting' | 'pre_meal' | 'post_meal' | 'bedtime'>('fasting')
+  const [glucoseResult, setGlucoseResult] = useState<{ zone: string; color: string; msg: string; tip: string } | null>(null)
 
-  const toggleSymptom = (id: string) => {
-    setSymptoms(prev => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
+  const [waistVal, setWaistVal] = useState('')
+  const [heightVal, setHeightVal] = useState('')
+  const [waistUnit, setWaistUnit] = useState<'in' | 'cm'>('in')
+  const [waistResult, setWaistResult] = useState<{ ratio: number; zone: string; color: string; msg: string } | null>(null)
+
+  const setPatternAnswer = (qid: string, val: number) => {
+    setPatternAnswers(prev => ({ ...prev, [qid]: val }))
+    setPatternResult(null)
   }
 
-  const analyzeSymptoms = () => {
-    if (symptoms.size === 0) {
-      setSymptomPatterns(['Your self-reported symptom load appears low. The ROOTS Framework helps you build on what is already working and stay ahead of patterns before they develop.'])
-      return
-    }
-    const energy    = ['tired_meals','sugar_cravings','hangry','energy_inconsistent'].filter(s => symptoms.has(s)).length
-    const metabolic = ['belly_weight','elevated_bp'].filter(s => symptoms.has(s)).length
-    const hormonal  = ['poor_sleep','mood_swings','skin_changes'].filter(s => symptoms.has(s)).length
-    const digestive = symptoms.has('bloating') ? 1 : 0
-    const patterns: string[] = []
-    if (energy >= 2)            patterns.push('Blood sugar variability: Energy crashes, cravings, and irritability between meals are classic signals. Blood sugar regulation is one of the first areas the ROOTS curriculum addresses through nutrition education.')
-    if (metabolic >= 1 && energy >= 1) patterns.push('Metabolic overlap: Weight retention and energy patterns often share a common root in how the body processes and stores fuel. The ROOTS curriculum addresses this overlap systematically.')
-    if (hormonal >= 2)          patterns.push('Hormonal rhythm: Sleep quality, mood patterns, and skin changes are all influenced by the same hormonal signaling systems. When two or more appear together, they point toward a shared area worth exploring through education.')
-    if (digestive >= 1)         patterns.push('Gut-energy connection: Digestive discomfort after meals can reflect how the gut microbiome, nutrient absorption, and overall energy production interact, a core topic in the ROOTS nutritional phase.')
-    if (symptoms.has('elevated_bp')) patterns.push('Cardiovascular awareness: Elevated blood pressure is one of the most information-rich numbers in metabolic health. Understanding the lifestyle factors that influence it is a dedicated section of the ROOTS curriculum.')
-    if (patterns.length === 0)  patterns.push('Your responses do not fit one dominant pattern. This could reflect a mixed picture or early-stage changes. The ROOTS Framework approaches metabolic health comprehensively, addressing each system in sequence.')
-    setSymptomPatterns(patterns)
-  }
-
-  const calcHOMA = () => {
-    const g = parseFloat(homaGlucose)
-    const i = parseFloat(homaInsulin)
-    if (isNaN(g) || isNaN(i) || g <= 0 || i <= 0) return
-    const score = parseFloat(((g * i) / 405).toFixed(2))
-    if (score < 1.0) {
-      setHomaResult({ score, zone: 'Optimal Sensitivity', color: '#4be08a', context: 'Your cells are responding well to insulin signals. This is the range associated with efficient metabolic function. Tracking this over time helps you see how lifestyle changes affect your baseline.' })
-    } else if (score < 2.0) {
-      setHomaResult({ score, zone: 'Borderline', color: '#c8a74b', context: 'This score suggests early changes in insulin sensitivity. Lifestyle factors carry the most influence in this range, which is precisely what the ROOTS curriculum is built to address through education.' })
+  const analyzePattern = () => {
+    if (Object.keys(patternAnswers).length < 7) return
+    const score = Object.values(patternAnswers).reduce((a, b) => a + b, 0)
+    if (score <= 4) {
+      setPatternResult({ score, level: 'low', msg: 'Few recognizable patterns are present. Your metabolic signaling appears relatively stable based on these responses. The ROOTS Framework helps you maintain and protect what is working.' })
+    } else if (score <= 9) {
+      setPatternResult({ score, level: 'moderate', msg: 'Several patterns associated with metabolic dysfunction are present. This combination often reflects blood sugar variability and early insulin signaling changes. These patterns are the starting point of the ROOTS curriculum.' })
     } else {
-      setHomaResult({ score, zone: 'Elevated Resistance', color: '#e05c5c', context: 'A score in this range is commonly seen alongside metabolic symptoms like fatigue, weight retention, and energy crashes. The ROOTS Framework directly addresses the lifestyle and nutrition factors that influence this marker.' })
+      setPatternResult({ score, level: 'high', msg: 'Multiple patterns strongly associated with insulin resistance are present together. This combination, including energy crashes, cravings, and persistent fatigue, is one of the most common presentations addressed through the ROOTS Framework.' })
+    }
+  }
+
+  const checkGlucose = () => {
+    const g = parseFloat(glucoseVal)
+    if (isNaN(g) || g <= 0) return
+    if (glucoseCtx === 'fasting') {
+      if (g < 100)  setGlucoseResult({ zone: 'Optimal (Fasting)', color: '#4be08a', msg: 'A fasting glucose below 100 mg/dL reflects healthy insulin signaling. Cells are responding well to insulin, allowing efficient glucose uptake overnight.', tip: 'Protect this range by maintaining a consistent overnight fast of 10-12 hours and avoiding late-night eating.' })
+      else if (g < 126) setGlucoseResult({ zone: 'Borderline (Fasting)', color: '#c8a74b', msg: 'A fasting glucose in this range places you in the prediabetes category per ADA guidelines. It signals that insulin sensitivity is under strain. Lifestyle factors carry the most influence here.', tip: 'A 10-minute walk after dinner each night lowers fasting glucose the next morning by improving insulin sensitivity overnight.' })
+      else          setGlucoseResult({ zone: 'Elevated (Fasting)', color: '#e05c5c', msg: 'A fasting glucose at or above 126 mg/dL meets the ADA threshold for diabetes. This is important information to bring to your healthcare provider for proper evaluation.', tip: 'Bring this reading to your healthcare provider. Lifestyle changes have significant impact even at this range.' })
+    } else if (glucoseCtx === 'pre_meal') {
+      if (g < 100)  setGlucoseResult({ zone: 'Optimal (Pre-Meal)', color: '#4be08a', msg: 'A pre-meal glucose below 100 mg/dL shows your body is clearing glucose effectively between meals.', tip: 'Eating meals with protein and fiber first helps maintain this pattern by slowing glucose absorption.' })
+      else if (g <= 130) setGlucoseResult({ zone: 'Borderline (Pre-Meal)', color: '#c8a74b', msg: 'A pre-meal reading above 100 suggests glucose is not clearing fully between meals. This is often an early sign of insulin resistance.', tip: 'Low-carbohydrate meals and consistent meal timing support better glucose clearance between eating windows.' })
+      else          setGlucoseResult({ zone: 'Elevated (Pre-Meal)', color: '#e05c5c', msg: 'A pre-meal reading this high suggests significant carryover glucose or impaired fasting glucose. Share this with your healthcare provider.', tip: 'Discuss this reading with your healthcare provider. This level warrants further evaluation.' })
+    } else if (glucoseCtx === 'post_meal') {
+      if (g < 140)  setGlucoseResult({ zone: 'Optimal (2hr Post-Meal)', color: '#4be08a', msg: 'Below 140 mg/dL two hours after eating is the standard of optimal post-meal glucose clearance per ADA guidelines. Your body is processing the meal efficiently.', tip: 'A 10-minute walk after meals reduces post-meal glucose spikes by 20-30% on average.' })
+      else if (g < 200) setGlucoseResult({ zone: 'Borderline (2hr Post-Meal)', color: '#c8a74b', msg: 'A post-meal reading between 140-199 mg/dL at two hours is classified as impaired glucose tolerance. Meal composition and post-meal movement have the most direct impact here.', tip: 'Try eating in this order at your next carb-heavy meal: vegetables first, protein second, carbohydrates last. This sequence can reduce the post-meal spike by up to 30%.' })
+      else          setGlucoseResult({ zone: 'Elevated (2hr Post-Meal)', color: '#e05c5c', msg: 'A two-hour post-meal reading above 200 mg/dL meets the ADA threshold for diabetes diagnosis. This pattern is important to discuss with your healthcare provider.', tip: 'Share this reading with your healthcare provider. Post-meal glucose this high reflects significant impairment in glucose disposal.' })
+    } else {
+      if (g >= 90 && g <= 150) setGlucoseResult({ zone: 'Optimal (Bedtime)', color: '#4be08a', msg: 'A bedtime glucose in the 90-150 mg/dL range is generally considered a safe and metabolically stable range going into sleep.', tip: 'Avoid eating within 2-3 hours of bedtime. This supports overnight metabolic repair and healthy fasting glucose the next morning.' })
+      else if (g < 90) setGlucoseResult({ zone: 'Low (Bedtime)', color: '#c8a74b', msg: 'A bedtime glucose below 90 mg/dL may be worth noting, especially if you experience nighttime waking. Some individuals experience overnight lows that disrupt sleep quality.', tip: 'If you regularly feel unrefreshed after sleep, discuss nighttime glucose patterns with your healthcare provider.' })
+      else             setGlucoseResult({ zone: 'Elevated (Bedtime)', color: '#e05c5c', msg: 'A bedtime glucose above 150 mg/dL suggests the previous meal or day\'s eating pattern is still affecting glucose levels going into sleep. This can impair overnight metabolic recovery.', tip: 'Avoid carbohydrate-heavy meals within 3 hours of bed. A short walk after your last meal supports better overnight clearance.' })
+    }
+  }
+
+  const checkWaist = () => {
+    const w = parseFloat(waistVal)
+    const h = parseFloat(heightVal)
+    if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0) return
+    const ratio = w / h
+    const ratioStr = ratio.toFixed(2)
+    if (ratio < 0.5) {
+      setWaistResult({ ratio, zone: 'Optimal', color: '#4be08a', msg: `A waist-to-height ratio of ${ratioStr} falls in the optimal range. Research published in Nature Reviews Endocrinology identifies WHtR below 0.5 as the zone associated with the lowest cardiometabolic risk. Your central fat distribution is not elevating your metabolic risk profile at this reading.` })
+    } else if (ratio < 0.6) {
+      setWaistResult({ ratio, zone: 'Elevated', color: '#c8a74b', msg: `A waist-to-height ratio of ${ratioStr} is in the elevated range. This zone is associated with increased visceral fat, which sits around the organs and is metabolically active in a way that subcutaneous fat is not. Visceral fat signals inflammation and insulin resistance earlier than BMI shows it.` })
+    } else {
+      setWaistResult({ ratio, zone: 'High', color: '#e05c5c', msg: `A waist-to-height ratio of ${ratioStr} is in the high-risk range for cardiometabolic disease. The research is consistent: central adiposity at this level is a stronger predictor of insulin resistance and metabolic syndrome than BMI. This is meaningful information to bring to a functional medicine conversation.` })
     }
   }
 
@@ -326,14 +334,15 @@ export default function LandingPage() {
       {/* Free Tools */}
       <section className={styles.section} id="free-tools">
         <div className={styles.sectionKicker}>No Account Needed</div>
-        <h2 className={styles.sectionTitle}>Four Free Education Tools</h2>
+        <h2 className={styles.sectionTitle}>Five Free Education Tools</h2>
         <p className={styles.sectionSubtitle}>These tools give you educational context about your numbers. They are not a clinical assessment and do not replace your healthcare provider.</p>
 
         <div className={styles.toolTabs}>
           {([
             { id: 'bp',      label: 'Blood Pressure Check' },
+            { id: 'glucose', label: 'Blood Sugar Zone' },
             { id: 'symptom', label: 'Metabolic Pattern Check' },
-            { id: 'homa',    label: 'Insulin Resistance Check' },
+            { id: 'waist',   label: 'Waist-to-Height Check' },
             { id: 'hormone', label: 'Hormone Cycle Snapshot' },
           ] as { id: ToolTab; label: string }[]).map(t => (
             <button
@@ -349,83 +358,180 @@ export default function LandingPage() {
         {/* BP Tool — full simulator embedded */}
         {toolTab === 'bp' && <BPSimulatorWidget showFooter={false} />}
 
-        {/* Symptom Tool */}
-        {toolTab === 'symptom' && (
+        {/* Blood Sugar Zone Checker */}
+        {toolTab === 'glucose' && (
           <div className={styles.toolPanel}>
-            <p className={styles.toolDesc}>Check all that currently apply to you. Your selections identify educational patterns, not clinical findings.</p>
-            <div className={styles.symptomGrid}>
-              {SYMPTOM_LIST.map(s => (
-                <label key={s.id} className={`${styles.symptomCheck} ${symptoms.has(s.id) ? styles.symptomCheckActive : ''}`}>
-                  <input type="checkbox" checked={symptoms.has(s.id)} onChange={() => toggleSymptom(s.id)} className={styles.symptomCheckInput} />
-                  {s.label}
-                </label>
-              ))}
+            <p className={styles.toolDesc}>Enter a glucose reading and the context when it was taken. You will get an educational zone and one actionable insight. No lab values required beyond a basic glucose meter reading.</p>
+            <div className={styles.glucoseRow}>
+              <div className={styles.homaField}>
+                <label className={styles.toolLabel}>Reading Context</label>
+                <select
+                  className={styles.toolInput}
+                  value={glucoseCtx}
+                  onChange={e => { setGlucoseCtx(e.target.value as typeof glucoseCtx); setGlucoseResult(null) }}
+                >
+                  <option value="fasting">Fasting (no food for 8+ hours)</option>
+                  <option value="pre_meal">Before a Meal</option>
+                  <option value="post_meal">2 Hours After a Meal</option>
+                  <option value="bedtime">Bedtime</option>
+                </select>
+              </div>
+              <div className={styles.homaField}>
+                <label className={styles.toolLabel}>Glucose Reading (mg/dL)</label>
+                <input
+                  className={styles.toolInput}
+                  type="number"
+                  placeholder="e.g. 105"
+                  value={glucoseVal}
+                  onChange={e => { setGlucoseVal(e.target.value); setGlucoseResult(null) }}
+                  min={40}
+                  max={600}
+                />
+              </div>
+              <button className={styles.toolBtn} onClick={checkGlucose}>Check Zone</button>
             </div>
-            <button className={styles.toolBtn} onClick={analyzeSymptoms}>Analyze My Patterns</button>
-            {symptomPatterns && (
+            {glucoseResult && (
               <div className={styles.toolResult}>
-                <div className={styles.symptomResultLabel}>Patterns identified in your responses:</div>
-                {symptomPatterns.map((p, i) => (
-                  <div key={i} className={styles.symptomPattern}>
-                    <div className={styles.symptomPatternDot} />
-                    <p>{p}</p>
-                  </div>
-                ))}
-                <p className={styles.toolDisclaimer}>These patterns are for educational awareness only. This is not a clinical assessment. Discuss any health concerns with your licensed healthcare provider.</p>
+                <div className={styles.toolZoneBadge} style={{ background: `${glucoseResult.color}18`, border: `1px solid ${glucoseResult.color}40`, color: glucoseResult.color }}>
+                  {glucoseResult.zone}
+                </div>
+                <p className={styles.toolResultMsg}>{glucoseResult.msg}</p>
+                <div className={styles.toolTip}>
+                  <span className={styles.toolTipLabel}>One thing to try:</span> {glucoseResult.tip}
+                </div>
+                <p className={styles.toolDisclaimer}>This is educational context, not a diagnosis. Glucose ranges are based on ADA guidelines. Discuss any reading of concern with your healthcare provider.</p>
                 <div className={styles.toolCTA}>
-                  <p className={styles.toolCTAText}>The ROOTS Framework addresses each of these patterns through structured education.</p>
-                  <button onClick={scrollToPricing} className={shared.btnPrimary}>
-                    See Membership Options <ChevronRight size={16} />
-                  </button>
+                  <p className={styles.toolCTAText}>Track your readings over time and learn what drives them in the ROOTS curriculum.</p>
+                  <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
                 </div>
               </div>
             )}
           </div>
         )}
 
-        {/* HOMA-IR Tool */}
-        {toolTab === 'homa' && (
+        {/* Metabolic Pattern Check */}
+        {toolTab === 'symptom' && (
           <div className={styles.toolPanel}>
-            <p className={styles.toolDesc}>The HOMA-IR score estimates insulin sensitivity using two fasting lab values. You will need a recent blood panel that includes fasting glucose and fasting insulin.</p>
+            <p className={styles.toolDesc}>Answer all seven questions. Your responses identify educational patterns about metabolic health, not clinical findings.</p>
+            <div className={styles.quizList}>
+              {PATTERN_QUESTIONS.map((q, i) => (
+                <div key={q.id} className={styles.quizQuestion}>
+                  <p className={styles.quizText}><span className={styles.quizNum}>{i + 1}.</span> {q.text}</p>
+                  <div className={styles.quizAnswers}>
+                    {(['Yes', 'Sometimes', 'No'] as const).map((label, vi) => {
+                      const val = vi === 0 ? 2 : vi === 1 ? 1 : 0
+                      return (
+                        <button
+                          key={label}
+                          className={patternAnswers[q.id] === val ? styles.quizBtnActive : styles.quizBtn}
+                          onClick={() => setPatternAnswer(q.id, val)}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              className={styles.toolBtn}
+              onClick={analyzePattern}
+              disabled={Object.keys(patternAnswers).length < 7}
+              style={{ opacity: Object.keys(patternAnswers).length < 7 ? 0.5 : 1 }}
+            >
+              Analyze My Pattern
+            </button>
+            {Object.keys(patternAnswers).length > 0 && Object.keys(patternAnswers).length < 7 && (
+              <p className={styles.toolDesc} style={{ marginTop: '0.5rem', fontSize: '12px' }}>
+                {7 - Object.keys(patternAnswers).length} question{7 - Object.keys(patternAnswers).length !== 1 ? 's' : ''} remaining
+              </p>
+            )}
+            {patternResult && (
+              <div className={styles.toolResult}>
+                <div className={styles.toolZoneBadge} style={{
+                  background: patternResult.level === 'low' ? '#4be08a18' : patternResult.level === 'moderate' ? '#c8a74b18' : '#e05c5c18',
+                  border: `1px solid ${patternResult.level === 'low' ? '#4be08a' : patternResult.level === 'moderate' ? '#c8a74b' : '#e05c5c'}40`,
+                  color: patternResult.level === 'low' ? '#4be08a' : patternResult.level === 'moderate' ? '#c8a74b' : '#e05c5c',
+                }}>
+                  {patternResult.level === 'low' ? 'Low Pattern' : patternResult.level === 'moderate' ? 'Moderate Pattern' : 'High Pattern'} ({patternResult.score} / 14)
+                </div>
+                <p className={styles.toolResultMsg}>{patternResult.msg}</p>
+                <p className={styles.toolDisclaimer}>These patterns are for educational awareness only. This is not a clinical assessment and does not diagnose any condition. Discuss any health concerns with your licensed healthcare provider.</p>
+                <div className={styles.toolCTA}>
+                  <p className={styles.toolCTAText}>The ROOTS Framework addresses each of these patterns through structured education, beginning with the metabolic systems that drive them.</p>
+                  <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Waist-to-Height Check */}
+        {toolTab === 'waist' && (
+          <div className={styles.toolPanel}>
+            <p className={styles.toolDesc}>Waist-to-height ratio is one of the most accurate body measurements for predicting metabolic risk. You only need a measuring tape and your height.</p>
             <div className={styles.homaInputRow}>
               <div className={styles.homaField}>
-                <label className={styles.toolLabel}>Fasting Glucose (mg/dL)</label>
-                <input className={styles.toolInput} type="number" placeholder="e.g. 95"
-                  value={homaGlucose} onChange={e => { setHomaGlucose(e.target.value); setHomaResult(null) }} min={40} max={600} />
+                <label className={styles.toolLabel}>Waist Circumference</label>
+                <input
+                  className={styles.toolInput}
+                  type="number"
+                  placeholder={waistUnit === 'in' ? 'e.g. 34' : 'e.g. 86'}
+                  value={waistVal}
+                  onChange={e => { setWaistVal(e.target.value); setWaistResult(null) }}
+                  min={20}
+                  max={300}
+                />
               </div>
               <div className={styles.homaField}>
-                <label className={styles.toolLabel}>Fasting Insulin (uIU/mL)</label>
-                <input className={styles.toolInput} type="number" placeholder="e.g. 8"
-                  value={homaInsulin} onChange={e => { setHomaInsulin(e.target.value); setHomaResult(null) }} min={1} max={300} />
+                <label className={styles.toolLabel}>Height (total {waistUnit === 'in' ? 'inches' : 'cm'})</label>
+                <input
+                  className={styles.toolInput}
+                  type="number"
+                  placeholder={waistUnit === 'in' ? 'e.g. 65' : 'e.g. 165'}
+                  value={heightVal}
+                  onChange={e => { setHeightVal(e.target.value); setWaistResult(null) }}
+                  min={40}
+                  max={300}
+                />
               </div>
-              <button className={styles.toolBtn} onClick={calcHOMA}>Calculate Score</button>
+              <div>
+                <label className={styles.toolLabel}>Unit</label>
+                <div className={styles.unitToggle}>
+                  <button type="button" className={waistUnit === 'in' ? styles.unitBtnActive : styles.unitBtn} onClick={() => { setWaistUnit('in'); setWaistResult(null) }}>in</button>
+                  <button type="button" className={waistUnit === 'cm' ? styles.unitBtnActive : styles.unitBtn} onClick={() => { setWaistUnit('cm'); setWaistResult(null) }}>cm</button>
+                </div>
+              </div>
+              <button className={styles.toolBtn} onClick={checkWaist}>Check Ratio</button>
             </div>
-            {homaResult && (
+            <p className={styles.toolDesc} style={{ marginTop: '-0.5rem', fontSize: '12px' }}>
+              Measure your waist at the narrowest point (just above the navel). Enter height in total {waistUnit === 'in' ? 'inches (example: 5\'5" = 65 in)' : 'centimeters'}.
+            </p>
+            {waistResult && (
               <div className={styles.toolResult}>
                 <div className={styles.homaScore}>
-                  <span className={styles.homaScoreVal} style={{ color: homaResult.color }}>{homaResult.score}</span>
-                  <span className={styles.homaScoreLabel}>HOMA-IR</span>
+                  <span className={styles.homaScoreVal} style={{ color: waistResult.color }}>{waistResult.ratio.toFixed(2)}</span>
+                  <span className={styles.homaScoreLabel}>WHtR</span>
                 </div>
-                <div className={styles.toolZoneBadge} style={{ background: `${homaResult.color}18`, border: `1px solid ${homaResult.color}40`, color: homaResult.color }}>
-                  {homaResult.zone}
+                <div className={styles.toolZoneBadge} style={{ background: `${waistResult.color}18`, border: `1px solid ${waistResult.color}40`, color: waistResult.color }}>
+                  {waistResult.zone}
                 </div>
-                <p className={styles.toolResultMsg}>{homaResult.context}</p>
+                <p className={styles.toolResultMsg}>{waistResult.msg}</p>
                 <div className={styles.homaScale}>
                   <div className={styles.homaScaleBar}>
-                    <div className={styles.homaScaleSeg} style={{ background: '#4be08a' }}>Under 1.0</div>
-                    <div className={styles.homaScaleSeg} style={{ background: '#c8a74b' }}>1.0 to 1.9</div>
-                    <div className={styles.homaScaleSeg} style={{ background: '#e05c5c' }}>2.0 and above</div>
+                    <div className={styles.homaScaleSeg} style={{ background: '#4be08a' }} />
+                    <div className={styles.homaScaleSeg} style={{ background: '#c8a74b' }} />
+                    <div className={styles.homaScaleSeg} style={{ background: '#e05c5c' }} />
                   </div>
                   <div className={styles.homaScaleLabels}>
-                    <span>Optimal</span><span>Borderline</span><span>Elevated</span>
+                    <span>Optimal (under 0.5)</span><span>Elevated (0.5-0.6)</span><span>High (above 0.6)</span>
                   </div>
                 </div>
-                <p className={styles.toolDisclaimer}>HOMA-IR is an estimation tool based on published formulas. It is not a clinical assessment. Discuss your lab values with your healthcare provider before drawing conclusions.</p>
+                <p className={styles.toolDisclaimer}>Waist-to-height ratio is a research-validated screening measure for cardiometabolic risk. It is not a clinical assessment. Individual context matters. Discuss any measurement of concern with your healthcare provider.</p>
                 <div className={styles.toolCTA}>
-                  <p className={styles.toolCTAText}>Track your metabolic markers over time and learn the lifestyle factors that influence insulin sensitivity in the ROOTS curriculum.</p>
-                  <button onClick={scrollToPricing} className={shared.btnPrimary}>
-                    See Membership Options <ChevronRight size={16} />
-                  </button>
+                  <p className={styles.toolCTAText}>Learn what drives central adiposity and how to address it through the nutrition, supplement, and lifestyle education inside the ROOTS Framework.</p>
+                  <button onClick={scrollToPricing} className={shared.btnPrimary}>See Membership Options <ChevronRight size={16} /></button>
                 </div>
               </div>
             )}

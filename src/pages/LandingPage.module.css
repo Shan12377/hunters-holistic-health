@@ -849,6 +849,129 @@
   flex-shrink: 0;
 }
 
+/* --- Unit toggle (waist tool) --- */
+.unitToggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.unitBtn {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: color 0.15s;
+}
+
+.unitBtnActive {
+  padding: 8px 14px;
+  background: var(--gold);
+  border: none;
+  color: #0e1c1b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+/* --- Glucose row --- */
+.glucoseRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+/* --- Tip card --- */
+.toolTip {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(75, 224, 138, 0.06);
+  border: 1px solid rgba(75, 224, 138, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.toolTipLabel {
+  font-weight: 700;
+  color: #4be08a;
+}
+
+/* --- Quiz (pattern check) --- */
+.quizList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.quizQuestion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.quizText {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.quizNum {
+  color: var(--gold);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.quizAnswers {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.quizBtn {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.quizBtn:hover {
+  border-color: var(--gold);
+  color: var(--text-primary);
+}
+
+.quizBtnActive {
+  padding: 6px 16px;
+  background: rgba(200, 167, 75, 0.15);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
 /* --- HOMA tool --- */
 .homaInputRow {
   display: flex;
