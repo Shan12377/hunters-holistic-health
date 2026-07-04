@@ -3,11 +3,19 @@ import { supabase } from '@/lib/supabase'
 import type { ProtocolData, ProtocolPillar, ProtocolSection, ProtocolItem } from '@/data/protocols/types'
 import { PARASITE_CLEANSE_TEMPLATE } from '@/data/protocols/parasiteCleanse'
 import { BLOOD_PRESSURE_TEMPLATE } from '@/data/protocols/bloodPressure'
+import { GUT_HEALING_TEMPLATE } from '@/data/protocols/gutHealing'
+import { METABOLIC_RESET_TEMPLATE } from '@/data/protocols/metabolicReset'
+import { HORMONE_BALANCE_TEMPLATE } from '@/data/protocols/hormoneBalance'
+import { CUSTOM_PROTOCOL_TEMPLATE } from '@/data/protocols/customProtocol'
 import styles from './ProtocolBuilder.module.css'
 
 const TEMPLATES: Record<string, ProtocolData> = {
   parasite_cleanse: PARASITE_CLEANSE_TEMPLATE,
   blood_pressure: BLOOD_PRESSURE_TEMPLATE,
+  gut_healing: GUT_HEALING_TEMPLATE,
+  metabolic_reset: METABOLIC_RESET_TEMPLATE,
+  hormone_balance: HORMONE_BALANCE_TEMPLATE,
+  custom: CUSTOM_PROTOCOL_TEMPLATE,
 }
 
 const PROTOCOL_TYPE_OPTIONS = [
@@ -106,11 +114,6 @@ export default function ProtocolBuilder({ clientId, protocolType: initialType, s
             </button>
           ))}
         </div>
-        {!TEMPLATES[selectedType] && (
-          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.75rem' }}>
-            Template for this protocol type is coming soon. Select Parasite Cleanse to get started.
-          </p>
-        )}
       </div>
 
       {TEMPLATES[selectedType] && (
