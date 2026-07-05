@@ -45,15 +45,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const admin = createClient(supabaseUrl, serviceKey)
 
-    // For feed posts, verify the post exists and belongs to this user
+    // Verify the underlying record actually exists and belongs to this user.
+    // This prevents calling the endpoint with fake refIds to farm points.
     if (eventType === 'feed_post') {
-      const { data: post } = await admin
-        .from('feed_posts')
-        .select('id')
-        .eq('id', refId)
-        .eq('user_id', user.id)
-        .single()
-      if (!post) return res.status(403).json({ error: 'Invalid ref' })
+      const { data } = await admin.from('feed_posts').select('id')
+        .eq('id', refId).eq('user_id', user.id).single()
+      if (!data) return res.status(403).json({ error: 'Invalid ref' })
+    } else if (eventType === 'daily_log') {
+      // refId is the log_date string e.g. "2026-07-05"
+      const { data } = await admin.from('daily_logs').select('id')
+        .eq('user_id', user.id).eq('log_date', refId).limit(1).maybeSingle()
+      if (!data) return res.status(403).json({ error: 'Invalid ref' })
+    } else if (eventType === 'streak_bonus') {
+      // refId is "streak_YYYY-MM-DD" — extract the date
+      const date = refId.replace(/^streak_/, '')
+      const { data } = await admin.from('daily_logs').select('id')
+        .eq('user_id', user.id).eq('log_date', date).limit(1).maybeSingle()
+      if (!data) return res.status(403).json({ error: 'Invalid ref' })
+    } else if (eventType === 'challenge_checkin') {
+      // refId is "${challengeId}_${date}"
+      const parts = refId.split('_')
+      const challengeId = parts[0]
+      const date = parts[1]
+      const { data } = await admin.from('challenge_logs').select('id')
+        .eq('user_id', user.id).eq('challenge_id', challengeId).eq('log_date', date).limit(1).maybeSingle()
+      if (!data) return res.status(403).json({ error: 'Invalid ref' })
+    } else if (eventType === 'exercise_log') {
+      // refId is "${date}_${exerciseType}"
+      const idx = refId.indexOf('_')
+      const date = refId.slice(0, idx)
+      const exerciseType = refId.slice(idx + 1)
+      const { data } = await admin.from('exercise_logs').select('id')
+        .eq('user_id', user.id).eq('log_date', date).eq('exercise_type', exerciseType).limit(1).maybeSingle()
+      if (!data) return res.status(403).json({ error: 'Invalid ref' })
     }
 
     const { error } = await admin.from('points_log').insert({

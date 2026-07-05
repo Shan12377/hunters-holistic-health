@@ -169,6 +169,16 @@ export default function FeedPage() {
       .select('*')
       .in('post_id', postIds)
       .order('display_order')
+    // populate user_liked from feed_likes table
+    if (userId && posts.length > 0) {
+      const { data: likedRows } = await supabase
+        .from('feed_likes')
+        .select('post_id')
+        .eq('user_id', userId)
+        .in('post_id', posts.map(p => p.id))
+      const likedSet = new Set((likedRows ?? []).map((r: { post_id: string }) => r.post_id))
+      setPosts(posts.map(p => ({ ...p, user_liked: likedSet.has(p.id) })))
+    }
     if (opts && opts.length > 0) {
       const optIds = opts.map((o: { id: string }) => o.id)
       const { data: votes } = await supabase
@@ -253,9 +263,25 @@ export default function FeedPage() {
   }
 
   const handleLike = async (post: FeedPost) => {
-    const newLikes = post.likes + (post.user_liked ? -1 : 1)
-    await supabase.from('feed_posts').update({ likes: newLikes }).eq('id', post.id)
-    setPosts(p => p.map(x => x.id === post.id ? { ...x, likes: newLikes, user_liked: !x.user_liked } : x))
+    if (!userId) return
+    const isLiked = !!post.user_liked
+    // Optimistic update
+    setPosts(p => p.map(x => x.id === post.id
+      ? { ...x, likes: x.likes + (isLiked ? -1 : 1), user_liked: !isLiked }
+      : x
+    ))
+    if (isLiked) {
+      await supabase.from('feed_likes').delete().eq('post_id', post.id).eq('user_id', userId)
+      await supabase.from('feed_posts').update({ likes: Math.max(0, post.likes - 1) }).eq('id', post.id)
+    } else {
+      const { error } = await supabase.from('feed_likes').insert({ post_id: post.id, user_id: userId })
+      if (error) {
+        // Unique violation — already liked; revert optimistic update
+        setPosts(p => p.map(x => x.id === post.id ? { ...x, likes: post.likes, user_liked: true } : x))
+      } else {
+        await supabase.from('feed_posts').update({ likes: post.likes + 1 }).eq('id', post.id)
+      }
+    }
   }
 
   const handlePin = async (post: FeedPost) => {
