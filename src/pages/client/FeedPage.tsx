@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag, BarChart2, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
@@ -131,6 +131,8 @@ export default function FeedPage() {
   const [comments, setComments]                 = useState<FeedComment[]>([])
   const [commentText, setCommentText]           = useState('')
   const [commentSending, setCommentSending]     = useState(false)
+  const [fetchError, setFetchError]             = useState(false)
+  const expandedPostIdRef = useRef<string | null>(null)
 
   const userId = user?.id ?? null
   const initials = profile
@@ -140,14 +142,46 @@ export default function FeedPage() {
   useEffect(() => {
     fetchPosts()
     fetchNextEvent()
+
+    // Realtime: new posts and new comments
+    const channel = supabase
+      .channel('community-feed')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feed_posts' }, async payload => {
+        const { data: newPost } = await supabase
+          .from('feed_posts')
+          .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
+          .eq('id', payload.new.id)
+          .single()
+        if (newPost) {
+          setPosts(prev => prev.find(p => p.id === newPost.id) ? prev : [newPost as FeedPost, ...prev])
+        }
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'feed_comments' }, async payload => {
+        if (payload.new.post_id !== expandedPostIdRef.current) return
+        const { data: newComment } = await supabase
+          .from('feed_comments')
+          .select('*, profiles(first_name, last_name, display_handle)')
+          .eq('id', payload.new.id)
+          .single()
+        if (newComment) {
+          setComments(prev => prev.find(c => c.id === newComment.id) ? prev : [...prev, newComment as FeedComment])
+        }
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
   }, [])
 
+  useEffect(() => { expandedPostIdRef.current = expandedPostId }, [expandedPostId])
+
   const fetchPosts = async () => {
-    const { data } = await supabase
+    setFetchError(false)
+    const { data, error: fetchErr } = await supabase
       .from('feed_posts')
       .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
       .order('created_at', { ascending: false })
       .limit(100)
+    if (fetchErr) { setFetchError(true); setLoading(false); return }
     const posts = (data as FeedPost[]) ?? []
     setPosts(posts)
     setLoading(false)
@@ -685,17 +719,25 @@ export default function FeedPage() {
 
       {/* Feed */}
       {loading ? (
-        <div className={styles.loadingText}>Loading...</div>
+        <div className={styles.feedList}>
+          {[1, 2, 3].map(i => <div key={i} className={styles.feedPostSkeleton} />)}
+        </div>
+      ) : fetchError ? (
+        <div className={styles.feedErrorState}>
+          <p>Could not load posts. Check your connection.</p>
+          <button className={styles.feedRetryBtn} onClick={fetchPosts}>Try again</button>
+        </div>
       ) : filtered.length === 0 ? (
-        <div className={styles.card}>
-          <div className={styles.chartEmpty}>
-            <Users size={40} color="var(--border)" />
-            <p>
-              {activeRoom === 'general' && activeFilter
-                ? 'No posts in this category yet.'
-                : `No posts in ${activeRoomConfig.label} yet. Be the first!`}
-            </p>
-          </div>
+        <div className={styles.feedEmptyState}>
+          <Users size={36} color="var(--border)" />
+          <p>
+            {activeFilter
+              ? 'No posts in this category yet.'
+              : `No posts in ${activeRoomConfig.label} yet.`}
+          </p>
+          <button className={styles.feedEmptyCta} onClick={() => setComposerOpen(true)}>
+            Be the first to post
+          </button>
         </div>
       ) : (
         <div className={styles.feedList}>

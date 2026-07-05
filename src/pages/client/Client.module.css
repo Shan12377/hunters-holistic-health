@@ -1329,6 +1329,74 @@
   color: var(--text-secondary);
 }
 
+/* Feed skeleton shimmer */
+.feedPostSkeleton {
+  height: 100px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  margin-bottom: var(--space-3);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Feed error state */
+.feedErrorState {
+  text-align: center;
+  padding: var(--space-10) var(--space-4);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.feedRetryBtn {
+  background: transparent;
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.feedRetryBtn:hover { background: rgba(11, 158, 142, 0.1); }
+
+/* Feed empty state */
+.feedEmptyState {
+  text-align: center;
+  padding: var(--space-10) var(--space-4);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.feedEmptyCta {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-6);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.feedEmptyCta:hover { opacity: 0.85; }
+
 /* --- Supplement card --- */
 .suppCard {
   display: flex;
