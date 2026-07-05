@@ -567,6 +567,132 @@
   line-height: 1.7;
 }
 
+/* Grand Slam stack additions */
+.pricingTagline {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 var(--space-4);
+}
+
+.pricingAnchor {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.55;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  background: rgba(255,255,255,0.02);
+  border-radius: var(--radius-md);
+  border-left: 2px solid var(--border-subtle);
+}
+
+.pricingStackLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.pricingCore {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pricingCore li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  line-height: 1.45;
+}
+
+.pricingBonusDivider {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: var(--space-3) 0 var(--space-2);
+  border-top: 1px solid rgba(var(--gold-rgb), 0.2);
+  margin-top: var(--space-1);
+}
+
+.pricingBonusList {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pricingBonusItem {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.pricingBonusGift {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pricingBonusBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pricingBonusName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pricingBonusKills {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--teal);
+  opacity: 0.85;
+}
+
+.pricingBonusDesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.pricingBonusDisclaimer {
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.pricingTimeWin {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  margin: var(--space-2) 0 var(--space-5);
+  line-height: 1.4;
+}
+
+.pricingTimeWin strong {
+  color: var(--text-primary);
+}
+
 /* --- CTA band --- */
 .ctaBand {
   max-width: 880px;
@@ -1346,13 +1472,6 @@
 }
 
 /* Pricing additions */
-.pricingTagline {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.55;
-  margin: 0 0 var(--space-3);
-}
-
 .pricingAnnualSave {
   font-size: 12px;
   font-weight: 700;

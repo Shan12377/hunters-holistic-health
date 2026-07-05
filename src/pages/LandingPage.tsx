@@ -84,6 +84,13 @@ const WHO_FOR_PERSONAS = [
   },
 ]
 
+interface Bonus {
+  name: string
+  kills: string
+  description: string
+  disclaimer?: string
+}
+
 interface Tier {
   name: string
   tagline: string
@@ -93,93 +100,151 @@ interface Tier {
   annualSavings: string
   stripeMonthly: keyof typeof STRIPE
   stripeAnnual: keyof typeof STRIPE
-  features: string[]
+  core: string[]
+  bonuses: Bonus[]
+  timeToWin: string
+  valueAnchor?: string
   cta: string
-  ctaStyle: 'primary' | 'gold' | 'secondary'
   popular?: boolean
   scarcity?: string
   oneTime?: boolean
+  riskReversal: string
 }
 
 const TIERS: Tier[] = [
   {
-    name: 'The 6-Month VIP Functional Overhaul',
-    tagline: 'For complex wellness goals. A highly tailored 6-month educational engagement.',
+    name: 'The 6-Month Functional Overhaul',
+    tagline: '"Everything mapped, together."',
     color: '#c8a74b',
     monthly: '$4,997',
     annual: '$4,997',
     annualSavings: '',
     stripeMonthly: 'overhaul',
     stripeAnnual: 'overhaul',
-    features: [
+    core: [
       '6 months of direct 1-on-1 educational engagement with Dr. Hunter',
-      'You learn to build a fully individualized functional wellness roadmap tailored to your specific context',
-      'You receive supplement and nutrition education specific to your history and goals',
-      'Structured accountability and follow-through built into every session',
+      'A fully individualized functional wellness roadmap built for your goals',
+      'Supplement and nutrition education specific to your history',
+      'Structured accountability and follow-through in every session',
       'Full platform membership included for the entire 6 months',
     ],
-    cta: 'Apply for the VIP Overhaul',
-    ctaStyle: 'gold',
-    scarcity: 'Limited to 3 active clients at any time.',
+    bonuses: [
+      {
+        name: 'Alumni Status',
+        kills: 'What happens when it ends',
+        description: 'Keep full Program access for 6 months after your Overhaul completes.',
+      },
+    ],
+    timeToWin: 'Week 1 — you leave your first session with the plan in hand',
+    cta: 'Apply for the Overhaul',
+    scarcity: 'Limited to 3 active clients. A real waitlist forms when full.',
     oneTime: true,
+    riskReversal: 'Application required. Scope and timeline are defined before you commit.',
   },
   {
     name: 'VIP: The Intensive',
-    tagline: 'For members who want to move fast. Direct 1-on-1 attention and custom educational mapping.',
+    tagline: '"Her eyes on my situation, not a group\'s."',
     color: '#0b9e8e',
     monthly: '$997',
     annual: '$9,970',
     annualSavings: 'Save $1,994',
     stripeMonthly: 'vip_monthly',
-    stripeAnnual:  'vip_annual',
-    features: [
+    stripeAnnual: 'vip_annual',
+    core: [
       'Everything in The Program',
       '2x monthly private 1-on-1 educational sessions with Dr. Hunter',
-      'A personalized ROOTS educational wellness roadmap built around your patterns and goals',
-      'Direct 1-on-1 educator messaging with a 24-hour response guarantee',
+      'A personalized ROOTS educational roadmap built around your patterns and goals',
+      'Direct educator messaging with a 24-hour response guarantee',
     ],
+    bonuses: [
+      {
+        name: 'The Roadmap Session',
+        kills: 'Not knowing where to start',
+        description: 'Your first session builds your complete educational roadmap. You leave session one with the plan.',
+      },
+    ],
+    timeToWin: 'Session 1 — your roadmap is complete before you leave',
+    valueAnchor: 'A single 1-on-1 functional medicine session elsewhere runs $250. You get two per month here, plus everything in The Program.',
     cta: 'Apply for VIP',
-    ctaStyle: 'secondary',
-    scarcity: 'Limited to 10 active seats.',
+    scarcity: 'By application only.',
+    riskReversal: 'Application required. Accepted only when it is a genuine fit.',
   },
   {
     name: 'The Program',
-    tagline: 'For accountability-driven learners. Get group support, live access, and unlimited tools.',
+    tagline: '"I stayed consistent. For the first time."',
     color: '#c8a74b',
     monthly: '$97',
     annual: '$797',
     annualSavings: 'Save $367',
     stripeMonthly: 'program_monthly',
-    stripeAnnual:  'program_annual',
-    features: [
+    stripeAnnual: 'program_annual',
+    core: [
       'Everything in Foundation, plus Unlimited AI Meal Guard',
       'Live monthly group education sessions with Dr. Hunter',
-      'Weekly Pulse AI: your personalized weekly health education summary',
-      'Private cohort room and monthly group challenges with recognition',
+      'Weekly Pulse AI: your personalized health education summary',
+      'Private cohort room and monthly challenges with recognition',
       'Priority access to all new classroom content',
     ],
-    cta: 'Start The Program',
-    ctaStyle: 'primary',
+    bonuses: [
+      {
+        name: 'The Session Vault',
+        kills: 'Missing the live session',
+        description: 'Every past recording, searchable anytime.',
+      },
+      {
+        name: 'First-Week Momentum Call',
+        kills: 'Getting lost on day one',
+        description: 'One group onboarding session for new Program members each month.',
+      },
+      {
+        name: 'The Ask-It Box',
+        kills: 'Your question never getting picked',
+        description: 'Submit one question per month, guaranteed to be answered in the live session.',
+      },
+    ],
+    timeToWin: 'Your first live session',
+    valueAnchor: 'A single 1-on-1 educational session runs $250. The Program gives you live group access every month for $97.',
+    cta: 'Start My Program',
     popular: true,
+    riskReversal: 'Cancel in two clicks from Settings. No emails, no phone calls, no guilt.',
   },
   {
     name: 'Foundation',
-    tagline: 'The complete self-paced educational system. Learn the framework and track exactly what moves the needle.',
+    tagline: '"Now I understand what my body has been telling me."',
     color: '#91a0ac',
     monthly: '$37',
     annual: '$297',
     annualSavings: 'Save $147',
     stripeMonthly: 'foundation_monthly',
-    stripeAnnual:  'foundation_annual',
-    features: [
-      'Full ROOTS curriculum with self-paced access to every lesson',
-      'The VitaPlate AI Meal System (Smart recipe builder and 5 daily Meal Guard queries)',
-      'The Metabolic Tracking Suite (BP, Blood Sugar, HOMA-IR, and Daily Command Center)',
+    stripeAnnual: 'foundation_annual',
+    core: [
+      'The full ROOTS curriculum, self-paced',
+      'VitaPlate AI Meal System (smart recipe builder + 5 daily Meal Guard queries)',
+      'Metabolic Tracking Suite: BP, Blood Sugar, HOMA-IR, Daily Command Center',
       'Weekly Report Card to track your educational consistency',
-      'Full access to the Community Feed, Leaderboard, and Challenges',
+      'Full Community Feed, Leaderboard, and Challenges',
     ],
-    cta: 'Start Foundation',
-    ctaStyle: 'secondary',
+    bonuses: [
+      {
+        name: 'Supplement Safety Starter',
+        kills: 'Not knowing if your current stack is safe',
+        description: 'PharmD educator-designed guide to common supplement and medication interactions.',
+        disclaimer: 'These statements have not been evaluated by the Food and Drug Administration. This is not intended to diagnose, treat, cure, or prevent any disease.',
+      },
+      {
+        name: 'The 30-Day Consistency Challenge',
+        kills: 'Never sticking with anything long enough',
+        description: 'Structured first-month challenge with points and leaderboard recognition.',
+      },
+      {
+        name: 'The Pattern-to-Lesson Map',
+        kills: 'Not knowing where to start in the curriculum',
+        description: 'Your tool results map to the exact ROOTS lessons to begin with.',
+      },
+    ],
+    timeToWin: 'Day 1 — the Pattern Map tells you exactly where to start',
+    cta: 'Start My Foundation',
+    riskReversal: 'Cancel in two clicks from Settings. No emails, no phone calls, no guilt.',
   },
 ]
 
@@ -939,8 +1004,10 @@ export default function LandingPage() {
             <div key={tier.name} className={tier.popular ? styles.pricingCardFeatured : styles.pricingCard}>
               {tier.popular && <div className={styles.pricingBadge}>Most Popular</div>}
               {tier.scarcity && <div className={styles.pricingScarcity}>{tier.scarcity}</div>}
+
               <div className={styles.pricingName} style={{ color: tier.color }}>{tier.name}</div>
               <p className={styles.pricingTagline}>{tier.tagline}</p>
+
               <div className={styles.pricingPrice}>
                 {tier.oneTime ? tier.monthly : (billing === 'monthly' ? tier.monthly : tier.annual)}
                 {!tier.oneTime && <span className={styles.pricingPeriod}>{billing === 'monthly' ? '/mo' : '/yr'}</span>}
@@ -948,13 +1015,40 @@ export default function LandingPage() {
               {!tier.oneTime && billing === 'annual' && tier.annualSavings && (
                 <div className={styles.pricingAnnualSave}>{tier.annualSavings}</div>
               )}
-              <ul className={styles.pricingFeatures}>
-                {tier.features.map(f => (
-                  <li key={f}>
-                    <span className={styles.pricingCheck} style={{ color: tier.color }}>✓</span> {f}
+              {tier.valueAnchor && <p className={styles.pricingAnchor}>{tier.valueAnchor}</p>}
+
+              <div className={styles.pricingStackLabel}>What's included:</div>
+              <ul className={styles.pricingCore}>
+                {tier.core.map(c => (
+                  <li key={c}>
+                    <span className={styles.pricingCheck} style={{ color: tier.color }}>✓</span> {c}
                   </li>
                 ))}
               </ul>
+
+              {tier.bonuses.length > 0 && (
+                <>
+                  <div className={styles.pricingBonusDivider}>Bonuses included:</div>
+                  <ul className={styles.pricingBonusList}>
+                    {tier.bonuses.map(b => (
+                      <li key={b.name} className={styles.pricingBonusItem}>
+                        <span className={styles.pricingBonusGift}>🎁</span>
+                        <div className={styles.pricingBonusBody}>
+                          <div className={styles.pricingBonusName}>{b.name}</div>
+                          <div className={styles.pricingBonusKills}>Removes: "{b.kills}"</div>
+                          <div className={styles.pricingBonusDesc}>{b.description}</div>
+                          {b.disclaimer && <div className={styles.pricingBonusDisclaimer}>{b.disclaimer}</div>}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              <div className={styles.pricingTimeWin}>
+                First win: <strong>{tier.timeToWin}</strong>
+              </div>
+
               {tier.oneTime ? (
                 <Link to="/clinical-inquiry" className={`${shared.btnTeal} ${shared.btnFull}`}>
                   {tier.cta} <ChevronRight size={16} />
@@ -971,11 +1065,8 @@ export default function LandingPage() {
                   {tier.cta}
                 </Link>
               )}
-              {!tier.oneTime && (
-                <p className={styles.cancelNote}>
-                  {billing === 'monthly' ? 'Cancel anytime. Two clicks from Settings.' : 'Annual plan. Pause up to 3 months if you need a break.'}
-                </p>
-              )}
+
+              <p className={styles.cancelNote}>{tier.riskReversal}</p>
             </div>
           ))}
         </div>
