@@ -2,10 +2,11 @@ import { useAuthStore } from '@/store/authStore'
 import type { Plan } from '@/types'
 
 const PLAN_RANK: Record<Plan, number> = {
+  free:       -1,
   foundation: 0,
-  program: 1,
-  vip: 2,
-  overhaul: 3,
+  program:    1,
+  vip:        2,
+  overhaul:   3,
 }
 
 export function usePlan() {

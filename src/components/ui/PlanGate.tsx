@@ -3,6 +3,7 @@ import { usePlan } from '@/hooks/usePlan'
 import type { Plan } from '@/types'
 
 const PLAN_LABELS: Record<Plan, string> = {
+  free:       'Foundation',
   foundation: 'Foundation',
   program:    'The Program',
   vip:        'VIP: The Intensive',

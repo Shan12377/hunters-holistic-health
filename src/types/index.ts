@@ -48,7 +48,7 @@ export interface PrivacySettings {
   share_meals: boolean
 }
 
-export type Plan = 'foundation' | 'program' | 'vip' | 'overhaul'
+export type Plan = 'free' | 'foundation' | 'program' | 'vip' | 'overhaul'
 
 export interface Profile {
   id: string
