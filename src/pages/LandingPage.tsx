@@ -45,14 +45,43 @@ const FEATURES = [
   { img: '/features/progress-reports.jpeg',        title: 'Progress Reports',          desc: 'A clean, printable summary of your progress to bring to your own healthcare appointments.' },
 ]
 
-const WHO_FOR = [
-  'You have been told your numbers are "borderline" and sent home with no real next steps',
-  'You are managing blood pressure or blood sugar and want to understand what actually drives them',
-  'You take supplements and want to know if they are doing anything or how they interact with your medications',
-  'You are tired of generic wellness advice with no mechanism explained',
-  'You want to be an educated participant in your own care, not just a patient following orders',
-  'You are working through a metabolic condition using lifestyle and want a structured framework',
-  'You want functional and nutritional medicine education with the science cited behind it',
+const WHO_FOR_PERSONAS = [
+  {
+    emoji: '👩🏾',
+    name: 'Denise, 47',
+    location: 'Atlanta, GA',
+    scenario: 'Her doctor said "borderline hypertensive" and handed her a pamphlet. She left with no idea what to actually do next.',
+  },
+  {
+    emoji: '👩🏽',
+    name: 'Carmen, 53',
+    location: 'Miami, FL',
+    scenario: 'Managing blood sugar with two medications. She wants to understand what is driving her numbers, not just chase them.',
+  },
+  {
+    emoji: '👨🏾',
+    name: 'Marcus, 44',
+    location: 'Houston, TX',
+    scenario: 'Takes 11 supplements and has no idea which ones actually work or how they interact with his prescriptions.',
+  },
+  {
+    emoji: '👩🏻',
+    name: 'Sarah, 41',
+    location: 'Chicago, IL',
+    scenario: '"Borderline everything." Every appointment ends the same way. She is done waiting for a diagnosis to get serious.',
+  },
+  {
+    emoji: '👨🏽',
+    name: 'Raj, 50',
+    location: 'Dallas, TX',
+    scenario: 'Family history of metabolic disease. He wants a structured, evidence-informed framework before a diagnosis finds him.',
+  },
+  {
+    emoji: '👩🏿',
+    name: 'Nia, 36',
+    location: 'Brooklyn, NY',
+    scenario: 'Tired of generic wellness advice with no science behind it. Ready for education that actually explains the mechanism.',
+  },
 ]
 
 interface Tier {
@@ -345,7 +374,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className={styles.hero}>
         <HeroParticles />
-        <img src="/S.HProfessionalBusinessPic.jpg" className={styles.heroBgPhoto} aria-hidden="true" alt="" />
+        <img src="/dr-hunter-closer.jpg" className={styles.heroBgPhoto} aria-hidden="true" alt="" />
         <div className={styles.heroContent}>
           <div className={styles.heroDrPhotoWrap}>
             <span className={styles.heroRing} aria-hidden="true" />
@@ -689,19 +718,23 @@ export default function LandingPage() {
       </section>
 
       {/* Who This Is For */}
+      <div className={styles.bgWhoFor}>
       <section className={`${styles.sectionDark} ${styles.reveal}`} data-reveal>
         <div className={styles.sectionKicker}>Is This For You?</div>
-        <h2 className={styles.sectionTitle}>This platform was built for a specific person.</h2>
-        <p className={styles.sectionSubtitle}>If any of these sound like you, you are in the right place.</p>
-        <div className={styles.whoGrid}>
-          {WHO_FOR.map((item, i) => (
-            <div key={i} className={styles.whoItem}>
-              <CheckCircle size={16} className={styles.whoCheck} />
-              <span>{item}</span>
+        <h2 className={styles.sectionTitle}>Does this sound like you?</h2>
+        <p className={styles.sectionSubtitle}>Different backgrounds. Different starting points. One common thread: they wanted real answers.</p>
+        <div className={styles.personaGrid}>
+          {WHO_FOR_PERSONAS.map((p, i) => (
+            <div key={i} className={`${styles.personaCard} ${styles.reveal}`} data-reveal data-delay={String(i * 70)}>
+              <div className={styles.personaAvatar}>{p.emoji}</div>
+              <div className={styles.personaName}>{p.name}</div>
+              <div className={styles.personaLocation}>{p.location}</div>
+              <p className={styles.personaScenario}>{p.scenario}</p>
             </div>
           ))}
         </div>
       </section>
+      </div>
 
       {/* How It Works */}
       <section className={`${styles.section} ${styles.reveal}`} data-reveal>
@@ -714,10 +747,24 @@ export default function LandingPage() {
             <h3 className={styles.howTitle}>Join and complete the Pattern Check</h3>
             <p className={styles.howDesc}>Answer a few questions about your current habits and numbers. This is your starting point. The platform maps where you are so you know exactly where to begin.</p>
           </div>
+          <div className={styles.howArrow} aria-hidden="true">
+            <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="4,8 14,16 4,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="18,8 28,16 18,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="32,8 42,16 32,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <div className={styles.howStep}>
             <div className={styles.howNum}>2</div>
             <h3 className={styles.howTitle}>Follow your curriculum and daily tracking</h3>
             <p className={styles.howDesc}>The Daily Command Center takes 10 minutes. The ROOTS curriculum modules take 20. Both are built around your schedule, not the other way around.</p>
+          </div>
+          <div className={styles.howArrow} aria-hidden="true">
+            <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polyline points="4,8 14,16 4,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="18,8 28,16 18,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <polyline points="32,8 42,16 32,24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
           <div className={styles.howStep}>
             <div className={styles.howNum}>3</div>
@@ -728,6 +775,7 @@ export default function LandingPage() {
       </section>
 
       {/* ROOTS Framework */}
+      <div className={styles.bgRoots}>
       <section className={`${styles.section} ${styles.reveal}`} data-reveal>
         <div className={styles.sectionKicker}>The Method</div>
         <h2 className={styles.sectionTitle}>The ROOTS™ Framework</h2>
@@ -742,6 +790,7 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+      </div>
 
       {/* Features */}
       <section className={styles.section}>
@@ -765,6 +814,7 @@ export default function LandingPage() {
       </section>
 
       {/* Origin Story */}
+      <div className={styles.bgOrigin}>
       <section className={`${styles.sectionDark} ${styles.reveal}`} data-reveal>
         <div className={styles.originBlock}>
           <div className={styles.sectionKicker}>Why This Exists</div>
@@ -780,6 +830,7 @@ export default function LandingPage() {
           </p>
         </div>
       </section>
+      </div>
 
       {/* Privacy */}
       <section className={`${styles.section} ${styles.reveal}`} data-reveal>
@@ -835,7 +886,6 @@ export default function LandingPage() {
             <div className={styles.outcomeHeadline}>Six months. Kidney markers improving.</div>
             <ul className={styles.outcomeList}>
               <li>Measurable improvement in kidney function markers</li>
-              <li>Protocol data shared directly with her specialist team</li>
               <li>From symptom management to root-cause education</li>
             </ul>
           </div>
