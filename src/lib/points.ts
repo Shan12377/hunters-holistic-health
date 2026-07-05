@@ -44,20 +44,31 @@ export function getLevelInfo(totalPoints: number): LevelInfo {
   }
 }
 
-// Returns true if points were newly awarded, false if already awarded or on error
+// Returns true if points were newly awarded, false if already awarded or on error.
+// Points are awarded server-side via /api/award-points — the server verifies the
+// event is real and derives the user id from the JWT, ignoring the passed userId.
 export async function awardPoints(
-  userId: string,
+  _userId: string,
   eventType: PointEvent,
   points: number,
   refId: string
 ): Promise<boolean> {
-  const { error } = await supabase
-    .from('points_log')
-    .insert({ user_id: userId, event_type: eventType, points, ref_id: refId })
-  if (!error) return true
-  // 23505 = unique violation: already awarded for this ref, expected and safe to ignore
-  if (error.code !== '23505') console.warn('Points award failed:', error.message)
-  return false
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.access_token) return false
+  try {
+    const res = await fetch('/api/award-points', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ eventType, points, refId }),
+    })
+    const json = await res.json()
+    return json.awarded === true
+  } catch {
+    return false
+  }
 }
 
 export async function getTotalPoints(userId: string): Promise<number> {

@@ -273,7 +273,10 @@ export default function FeedPage() {
       await supabase.from('poll_votes').delete().eq('poll_option_id', prev.id).eq('user_id', userId)
     }
     if (prev?.id !== optionId) {
-      await supabase.from('poll_votes').insert({ poll_option_id: optionId, user_id: userId })
+      await supabase.from('poll_votes').upsert(
+        { poll_option_id: optionId, user_id: userId },
+        { onConflict: 'poll_option_id,user_id' }
+      )
     }
     setPostPolls(p => ({
       ...p,
