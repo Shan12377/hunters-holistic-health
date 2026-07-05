@@ -82,12 +82,10 @@ const FILTER_PILLS: { label: string; value: PostType | null; emoji: string }[] =
 ]
 
 const ROOMS: { id: Room; label: string; emoji: string; defaultPostType: PostType; placeholder: string }[] = [
-  { id: 'all',        label: 'All',        emoji: '🏠', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
-  { id: 'general',    label: 'General',    emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
-  { id: 'wins',       label: 'Wins',       emoji: '🔥', defaultPostType: 'win',      placeholder: 'Share a win or milestone...' },
-  { id: 'questions',  label: 'Questions',  emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...' },
-  { id: 'challenges', label: 'Challenges', emoji: '⚡', defaultPostType: 'check_in', placeholder: 'Share your challenge progress...' },
-  { id: 'resources',  label: 'Resources',  emoji: '📚', defaultPostType: 'general',  placeholder: 'Share a tip, recipe, or tool...' },
+  { id: 'all',       label: 'All',       emoji: '🏠', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
+  { id: 'general',   label: 'General',   emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
+  { id: 'wins',      label: 'Wins',      emoji: '🔥', defaultPostType: 'win',      placeholder: 'Share a win or milestone...' },
+  { id: 'questions', label: 'Questions', emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...' },
 ]
 
 function applyPrivacy(post: FeedPost): string {
@@ -297,7 +295,7 @@ export default function FeedPage() {
   }
 
   const handleLike = async (post: FeedPost) => {
-    if (!userId) return
+    if (!userId || post.user_id === userId) return
     const isLiked = !!post.user_liked
     // Optimistic update
     setPosts(p => p.map(x => x.id === post.id

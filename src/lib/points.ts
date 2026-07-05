@@ -3,16 +3,16 @@ import { supabase } from './supabase'
 export type PointEvent = 'daily_log' | 'streak_bonus' | 'challenge_checkin' | 'feed_post' | 'exercise_log'
 
 export const LEVELS = [
-  { level: 1,  min: 0,    label: 'Just Starting'   },
-  { level: 2,  min: 100,  label: 'Building Habits'  },
-  { level: 3,  min: 300,  label: 'Consistent'       },
-  { level: 4,  min: 600,  label: 'Committed'        },
-  { level: 5,  min: 1000, label: 'Dedicated'        },
-  { level: 6,  min: 1500, label: 'Thriving'         },
-  { level: 7,  min: 2200, label: 'Advanced'         },
-  { level: 8,  min: 3000, label: 'Expert'           },
-  { level: 9,  min: 4000, label: 'Champion'         },
-  { level: 10, min: 5500, label: 'Legend'           },
+  { level: 1,  min: 0,     label: 'Just Starting'   },
+  { level: 2,  min: 5,     label: 'Building Habits' },
+  { level: 3,  min: 30,    label: 'Consistent'      },
+  { level: 4,  min: 100,   label: 'Committed'       },
+  { level: 5,  min: 250,   label: 'Dedicated'       },
+  { level: 6,  min: 600,   label: 'Thriving'        },
+  { level: 7,  min: 1200,  label: 'Advanced'        },
+  { level: 8,  min: 2500,  label: 'Expert'          },
+  { level: 9,  min: 5000,  label: 'Champion'        },
+  { level: 10, min: 10000, label: 'Legend'          },
 ]
 
 export interface LevelInfo {
