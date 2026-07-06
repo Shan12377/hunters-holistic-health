@@ -31,6 +31,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/supplements',    icon: '⬡', label: 'Supplements' },
       { to: '/app/exercise',       icon: '◎', label: 'Movement Log' },
       { to: '/app/weekly-grade',   icon: '★', label: 'Weekly Grade' },
+      { to: '/app/snapshot',       icon: '◈', label: 'My Snapshot' },
     ],
   },
   {
