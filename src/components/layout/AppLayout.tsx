@@ -50,6 +50,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Learn',
     items: [
+      { to: '/app/vault',             icon: '🔓', label: 'The Vault' },
       { to: '/app/my-protocol',       icon: '◈', label: 'My Protocol' },
       { to: '/app/protocol',         icon: '◈', label: 'ROOTS Framework' },
       { to: '/app/protocol-matrix',  icon: '⬡', label: 'Protocol Matrix' },

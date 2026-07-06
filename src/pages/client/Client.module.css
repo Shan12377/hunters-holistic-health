@@ -10090,3 +10090,174 @@
   align-self: center;
   flex-shrink: 0;
 }
+
+/* ── Vault / Level Gates ──────────────────────────────────────────────────── */
+.vaultProgressBar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+.vaultProgressFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+.vaultLockBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-bottom: 4px;
+}
+.vaultLevelCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px 0 20px;
+}
+.vaultLevelLeft { display: flex; flex-direction: column; gap: 2px; }
+.vaultLevelNum { font-size: 1.5rem; font-weight: 800; color: var(--teal); line-height: 1; }
+.vaultLevelLabel { font-size: 0.78rem; color: var(--text-secondary); }
+.vaultLevelRight { flex: 1; max-width: 200px; text-align: right; }
+.vaultLevelPoints { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+.vaultLevelNext { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+
+.vaultEarnedCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: color-mix(in srgb, var(--gold) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.vaultEarnedEmoji { font-size: 1.4rem; flex-shrink: 0; }
+.vaultEarnedBody { flex: 1; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
+
+.vaultGateSection {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.vaultGateHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.vaultGateBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0e1c1b;
+  background: var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+.vaultGateTitle { font-size: 1rem; font-weight: 700; color: var(--text); }
+.vaultGateSub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+.vaultGateNudge {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* Gate 1: item list */
+.vaultItemGrid { display: flex; flex-direction: column; gap: 8px; }
+.vaultItemCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: color-mix(in srgb, var(--teal) 5%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--teal) 20%, transparent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.vaultItemCard:hover { border-color: var(--teal); }
+.vaultItemEmoji { font-size: 1.2rem; flex-shrink: 0; }
+.vaultItemTitle { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.vaultItemDesc { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+.vaultItemArrow { color: var(--teal); margin-left: auto; flex-shrink: 0; }
+
+.vaultLockedGrid { display: flex; flex-direction: column; gap: 8px; }
+.vaultLockedCard {
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  opacity: 0.75;
+}
+.vaultLockedTitle { font-size: 0.88rem; font-weight: 600; color: var(--text-secondary); margin: 4px 0 2px; }
+.vaultLockedDesc { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Gate 2: module grid */
+.vaultModuleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.vaultModuleCard {
+  background: color-mix(in srgb, var(--gold) 6%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+  border-radius: 10px;
+  padding: 14px;
+}
+.vaultModuleCardLocked {
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  opacity: 0.7;
+}
+.vaultModuleMonth { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.vaultModuleTitle { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 4px 0 3px; line-height: 1.3; }
+.vaultModuleHook { font-size: 0.75rem; color: var(--text-secondary); font-style: italic; line-height: 1.4; }
+.vaultModuleComingSoon { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 6px; }
+
+/* Gate 3: session grid */
+.vaultSessionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.vaultSessionCard {
+  background: color-mix(in srgb, #b44be0 6%, var(--surface));
+  border: 1px solid color-mix(in srgb, #b44be0 20%, transparent);
+  border-radius: 10px;
+  padding: 14px;
+}
+.vaultSessionCardLocked {
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  opacity: 0.7;
+}
+.vaultSessionNum { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.vaultSessionTitle { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 4px 0 2px; line-height: 1.3; }
+.vaultSessionTag { font-size: 0.72rem; color: var(--text-secondary); }

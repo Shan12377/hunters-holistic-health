@@ -63,6 +63,7 @@ import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
 import SnapshotPage from '@/pages/client/SnapshotPage'
+import VaultPage from '@/pages/client/VaultPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -165,6 +166,7 @@ export default function App() {
           <Route path="health-hub" element={<HealthHubPage />} />
           <Route path="weight" element={<WeightTrackerPage />} />
           <Route path="snapshot" element={<SnapshotPage />} />
+          <Route path="vault" element={<VaultPage />} />
         </Route>
 
         {/* Educator routes */}
