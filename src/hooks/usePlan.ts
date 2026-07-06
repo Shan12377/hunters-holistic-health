@@ -11,7 +11,10 @@ const PLAN_RANK: Record<Plan, number> = {
 
 export function usePlan() {
   const profile = useAuthStore(s => s.profile)
-  const plan: Plan = profile?.plan ?? 'foundation'
+  const loading = useAuthStore(s => s.loading)
+  // During auth loading, optimistically show foundation to avoid flash.
+  // After loading completes, if profile is still null (auth failure), fail closed to free.
+  const plan: Plan = profile?.plan ?? (loading ? 'foundation' : 'free')
   const rank = PLAN_RANK[plan]
 
   return {

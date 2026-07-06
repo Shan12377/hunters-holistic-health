@@ -140,12 +140,17 @@ export default function FeedPage() {
     ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase()
     : '?'
 
+  // Free-tier setup: runs after profile resolves so isFree is accurate
   useEffect(() => {
-    if (isFree) setActiveRoom('wins')
-    if (isFree && userId) {
+    if (!isFree) return
+    setActiveRoom('wins')
+    if (userId) {
       supabase.from('feed_posts').select('id').eq('user_id', userId).eq('post_type', 'intro').limit(1).maybeSingle()
         .then(({ data }) => setHasPostedIntro(!!data))
     }
+  }, [isFree, userId])
+
+  useEffect(() => {
     fetchPosts()
     fetchNextEvent()
 
