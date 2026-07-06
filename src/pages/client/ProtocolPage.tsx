@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react'
+import PlanGate from '@/components/ui/PlanGate'
 import styles from './Client.module.css'
 
 const PILLARS = [
@@ -107,19 +108,23 @@ export default function ProtocolPage() {
         {/* R */}
         <PillarCard pillar={PILLARS[0]} />
 
-        {/* Double-O group */}
-        <div className={styles.rootsDoubleOWrap}>
-          <div className={styles.rootsDoubleOLabel}>Core Protocol Pillars</div>
-          {doubleOPillars.map((p, i) => (
-            <PillarCard key={p.title} pillar={p} isLast={i === doubleOPillars.length - 1} />
-          ))}
-        </div>
+        <PlanGate requiredPlan="foundation" label="The full ROOTS Framework is included in Foundation membership and above.">
+          <>
+            {/* Double-O group */}
+            <div className={styles.rootsDoubleOWrap}>
+              <div className={styles.rootsDoubleOLabel}>Core Protocol Pillars</div>
+              {doubleOPillars.map((p, i) => (
+                <PillarCard key={p.title} pillar={p} isLast={i === doubleOPillars.length - 1} />
+              ))}
+            </div>
 
-        {/* T */}
-        <PillarCard pillar={PILLARS[3]} />
+            {/* T */}
+            <PillarCard pillar={PILLARS[3]} />
 
-        {/* S */}
-        <PillarCard pillar={PILLARS[4]} />
+            {/* S */}
+            <PillarCard pillar={PILLARS[4]} />
+          </>
+        </PlanGate>
 
       </div>
 
