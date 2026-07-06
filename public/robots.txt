@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /coach/
+
+Sitemap: https://www.huntersholistichealth.com/sitemap.xml

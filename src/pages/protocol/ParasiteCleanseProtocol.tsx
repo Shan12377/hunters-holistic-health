@@ -1,5 +1,28 @@
 import styles from './Protocol.module.css'
 
+const PC_META_TITLE = 'Parasite Cleanse Protocol | Hunter\'s Holistic Health'
+const PC_META_DESC = 'The ROOTS-based Parasite Cleanse protocol from Dr. Shallanda Hunter, CFNMP. Evidence-informed supplement and lifestyle education for gut health and immune support.'
+
+function ParasiteMetaTags() {
+  if (typeof document === 'undefined') return null
+  document.title = PC_META_TITLE
+  function setMeta(name: string, content: string, prop?: boolean) {
+    const attr = prop ? 'property' : 'name'
+    let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el) }
+    el.content = content
+  }
+  setMeta('description', PC_META_DESC)
+  setMeta('og:title', PC_META_TITLE, true)
+  setMeta('og:description', PC_META_DESC, true)
+  setMeta('og:type', 'website', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/protocol/parasite-cleanse', true)
+  setMeta('twitter:card', 'summary')
+  setMeta('twitter:title', PC_META_TITLE)
+  setMeta('twitter:description', PC_META_DESC)
+  return null
+}
+
 const products = [
   {
     name: 'Biocidin Liquid',
@@ -31,6 +54,7 @@ const products = [
 export default function GutHealthProtocol() {
   return (
     <div className={styles.page}>
+      <ParasiteMetaTags />
       <div className={styles.wrap}>
 
         <p className={styles.logo}>Hunter's Holistic Health</p>

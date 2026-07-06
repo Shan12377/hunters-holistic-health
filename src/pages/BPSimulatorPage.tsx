@@ -365,10 +365,34 @@ export function BPSimulatorWidget({ initialSys = 128, initialDia = 82, showFoote
   )
 }
 
+const BP_META_TITLE = 'Blood Pressure Zone Simulator | Hunter\'s Holistic Health'
+const BP_META_DESC = 'Enter your systolic and diastolic readings to understand your AHA/ACC blood pressure zone. Free educational tool from Dr. Shallanda Hunter, CFNMP.'
+
+function BPMetaTags() {
+  if (typeof document === 'undefined') return null
+  document.title = BP_META_TITLE
+  function setMeta(name: string, content: string, prop?: boolean) {
+    const attr = prop ? 'property' : 'name'
+    let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el) }
+    el.content = content
+  }
+  setMeta('description', BP_META_DESC)
+  setMeta('og:title', BP_META_TITLE, true)
+  setMeta('og:description', BP_META_DESC, true)
+  setMeta('og:type', 'website', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/bp-simulator', true)
+  setMeta('twitter:card', 'summary')
+  setMeta('twitter:title', BP_META_TITLE)
+  setMeta('twitter:description', BP_META_DESC)
+  return null
+}
+
 export default function BPSimulatorPage() {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   return (
     <div className={styles.page}>
+      <BPMetaTags />
       <div className={styles.hero}>
         <h1 className={styles.heroTitle}>Blood Pressure Simulator</h1>
         <p className={styles.heroSub}>

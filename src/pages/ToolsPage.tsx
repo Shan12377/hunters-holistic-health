@@ -118,6 +118,29 @@ function homaLabel(score: number) {
 type Tab = 'protocol' | 'homa'
 type PGStep = 'goal' | 'symptoms' | 'gate' | 'results'
 
+const TOOLS_META_TITLE = 'Free Metabolic Health Tools | Hunter\'s Holistic Health'
+const TOOLS_META_DESC = 'Free health education tools: blood pressure simulator, metabolic blueprint quiz, meal guard, and more. Evidence-informed guidance from Dr. Shallanda Hunter, CFNMP.'
+
+function ToolsMetaTags() {
+  if (typeof document === 'undefined') return null
+  document.title = TOOLS_META_TITLE
+  function setMeta(name: string, content: string, prop?: boolean) {
+    const attr = prop ? 'property' : 'name'
+    let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el) }
+    el.content = content
+  }
+  setMeta('description', TOOLS_META_DESC)
+  setMeta('og:title', TOOLS_META_TITLE, true)
+  setMeta('og:description', TOOLS_META_DESC, true)
+  setMeta('og:type', 'website', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/tools', true)
+  setMeta('twitter:card', 'summary')
+  setMeta('twitter:title', TOOLS_META_TITLE)
+  setMeta('twitter:description', TOOLS_META_DESC)
+  return null
+}
+
 export default function ToolsPage() {
   const [tab, setTab] = useState<Tab>('protocol')
 
@@ -183,6 +206,7 @@ export default function ToolsPage() {
 
   return (
     <div className={styles.page}>
+      <ToolsMetaTags />
       <header className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
         <div className={styles.navRight}>

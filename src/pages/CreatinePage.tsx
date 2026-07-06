@@ -3,6 +3,29 @@ import { Link } from 'react-router-dom'
 import { CheckCircle, Download, ChevronDown } from 'lucide-react'
 
 const STORE_URL = 'https://tidycal.com/drshallandahunter/store'
+
+const META_TITLE = 'Creatine Stack Bundle | Hunter\'s Holistic Health'
+const META_DESC = 'The complete creatine resource: 20+ page science guide, 90-day trackers, brain health bonus, and supplement cheat sheet. Every claim cited. From Dr. Shallanda Hunter, CFNMP.'
+
+function MetaTags() {
+  if (typeof document === 'undefined') return null
+  document.title = META_TITLE
+  function setMeta(name: string, content: string, prop?: boolean) {
+    const attr = prop ? 'property' : 'name'
+    let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el) }
+    el.content = content
+  }
+  setMeta('description', META_DESC)
+  setMeta('og:title', META_TITLE, true)
+  setMeta('og:description', META_DESC, true)
+  setMeta('og:type', 'website', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/creatine', true)
+  setMeta('twitter:card', 'summary')
+  setMeta('twitter:title', META_TITLE)
+  setMeta('twitter:description', META_DESC)
+  return null
+}
 import styles from './CreatinePage.module.css'
 
 const BUNDLE_ITEMS = [
@@ -73,6 +96,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function CreatinePage() {
   return (
     <div className={styles.page}>
+      <MetaTags />
       {/* Nav */}
       <nav className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>

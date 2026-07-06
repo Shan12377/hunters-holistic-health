@@ -300,6 +300,29 @@ function getBPZone(sys: number, dia: number): BPResult {
   }
 }
 
+const LANDING_META_TITLE = "Hunter's Holistic Health | Functional Medicine Education"
+const LANDING_META_DESC = 'Evidence-informed functional medicine education. Track your metabolic health, implement the ROOTS Framework, and understand your numbers with Dr. Shallanda Hunter, CFNMP.'
+
+function LandingMetaTags() {
+  if (typeof document === 'undefined') return null
+  document.title = LANDING_META_TITLE
+  function setMeta(name: string, content: string, prop?: boolean) {
+    const attr = prop ? 'property' : 'name'
+    let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el) }
+    el.content = content
+  }
+  setMeta('description', LANDING_META_DESC)
+  setMeta('og:title', LANDING_META_TITLE, true)
+  setMeta('og:description', LANDING_META_DESC, true)
+  setMeta('og:type', 'website', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/', true)
+  setMeta('twitter:card', 'summary_large_image')
+  setMeta('twitter:title', LANDING_META_TITLE)
+  setMeta('twitter:description', LANDING_META_DESC)
+  return null
+}
+
 export default function LandingPage() {
   const [toolTab, setToolTab] = useState<ToolTab>('bp')
   const [billing, setBilling] = useState<BillingCycle>('monthly')
@@ -422,6 +445,7 @@ export default function LandingPage() {
 
   return (
     <div className={styles.page}>
+      <LandingMetaTags />
 
       {/* Nav */}
       <nav className={styles.nav}>
