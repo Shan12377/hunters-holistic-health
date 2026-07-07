@@ -20,6 +20,9 @@ function ParasiteMetaTags() {
   setMeta('twitter:card', 'summary')
   setMeta('twitter:title', PC_META_TITLE)
   setMeta('twitter:description', PC_META_DESC)
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical) }
+  canonical.href = 'https://www.huntersholistichealth.com/protocol/parasite-cleanse'
   return null
 }
 

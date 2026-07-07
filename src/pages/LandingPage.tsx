@@ -320,6 +320,9 @@ function LandingMetaTags() {
   setMeta('twitter:card', 'summary_large_image')
   setMeta('twitter:title', LANDING_META_TITLE)
   setMeta('twitter:description', LANDING_META_DESC)
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical) }
+  canonical.href = 'https://www.huntersholistichealth.com/'
   return null
 }
 
@@ -423,7 +426,7 @@ export default function LandingPage() {
     if (!email || !email.includes('@')) return
     setEmailSubmitting(true)
     try {
-      const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL
+      const webhookUrl = import.meta.env.VITE_NEWSLETTER_WEBHOOK_URL || import.meta.env.VITE_N8N_WEBHOOK_URL
       if (webhookUrl) {
         await fetch(webhookUrl, {
           method: 'POST',

@@ -24,6 +24,9 @@ function MetaTags() {
   setMeta('twitter:card', 'summary')
   setMeta('twitter:title', META_TITLE)
   setMeta('twitter:description', META_DESC)
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical) }
+  canonical.href = 'https://www.huntersholistichealth.com/creatine'
   return null
 }
 import styles from './CreatinePage.module.css'

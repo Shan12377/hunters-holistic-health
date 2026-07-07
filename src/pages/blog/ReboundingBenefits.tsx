@@ -25,10 +25,13 @@ function MetaTags() {
   setMeta('og:title', META_TITLE, true)
   setMeta('og:description', META_DESC, true)
   setMeta('og:type', 'article', true)
-  setMeta('og:url', 'https://huntersholistichealth.com/blog/rebounding-benefits', true)
+  setMeta('og:url', 'https://www.huntersholistichealth.com/blog/rebounding-benefits', true)
   setMeta('twitter:card', 'summary_large_image')
   setMeta('twitter:title', META_TITLE)
   setMeta('twitter:description', META_DESC)
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical) }
+  canonical.href = 'https://www.huntersholistichealth.com/blog/rebounding-benefits'
   return null
 }
 

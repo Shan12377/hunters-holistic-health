@@ -89,8 +89,8 @@ async function handleWebhook(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({ received: true })
     }
 
-    // Look up user by email via Supabase Auth admin API
-    const { data: { users } } = await supabase.auth.admin.listUsers()
+    // Look up user by email — fetch up to 1000 users to avoid missing paginated results
+    const { data: { users } } = await supabase.auth.admin.listUsers({ perPage: 1000 })
     const user = users.find(u => u.email === email)
 
     if (!user) {
@@ -112,10 +112,10 @@ async function handleWebhook(req: VercelRequest, res: VercelResponse) {
 
     await supabase
       .from('profiles')
-      .update({ plan: 'foundation' })
+      .update({ plan: 'free' })
       .eq('stripe_customer_id', customerId)
 
-    console.log(`Subscription cancelled, reverted to foundation: ${customerId}`)
+    console.log(`Subscription cancelled, reverted to free: ${customerId}`)
   }
 
   return res.status(200).json({ received: true })

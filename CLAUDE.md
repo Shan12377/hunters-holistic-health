@@ -63,6 +63,25 @@ After every code change:
 3. Confirm existing features were not broken.
 4. Never say "done" if the build is failing or the feature is untested.
 
+### Rule 5: ROOTS Framework Content Must Match the Source of Truth
+
+Before writing, placing, or publishing ANY content that describes the ROOTS Framework (website copy, emails, marketing materials, onboarding flows, UI text, social content, n8n workflows, or anything else):
+
+**HARD STOP. Read `src/pages/client/ProtocolPage.tsx` first.**
+
+The authoritative ROOTS Framework definitions live in the `PILLARS` array in that file. Do not use memory, prior outputs, or guessed definitions. Read the file, then write the content.
+
+The correct ROOTS Framework is:
+- **R - Review**: You cannot build on what you do not understand. (Health history, labs, medications, habits as one connected picture.)
+- **O - Optimize Nutrition**: Not a generic handout. An education in how to eat for your body. (Metabolism-specific fueling, culturally relevant food education, meal timing.)
+- **O - Optimize Biochemical Balance**: Supplement education. Interaction awareness. Quality standards. (Evidence-informed supplement education, reading lab trends, USP-verified quality standards. Requires FDA/DSHEA disclaimer.)
+- **T - Transform Lifestyle Factors**: Most people never connect these dots. When you do, everything shifts. (Sleep, circadian rhythm, cortisol, movement for metabolic health, environmental toxins, habit architecture.)
+- **S - Sustain and Adapt**: Not a one-time fix. A way of thinking that stays with you. (Long-term monitoring, course-correction when life shifts, habit maintenance.)
+
+**Why this rule exists:** In 2026, a complete 7-day email automation was built using a fabricated ROOTS Framework (Repair, Oxygenate, Toxin Removal, Sleep and Stress) that did not match the actual platform. All 7 emails had to be rewritten. This rule prevents that from happening again.
+
+**If the definitions in `ProtocolPage.tsx` and any other source conflict, `ProtocolPage.tsx` wins.**
+
 ---
 
 ## Security Rules (Hard Limits — Never Override)

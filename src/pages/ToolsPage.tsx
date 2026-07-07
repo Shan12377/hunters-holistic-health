@@ -138,6 +138,9 @@ function ToolsMetaTags() {
   setMeta('twitter:card', 'summary')
   setMeta('twitter:title', TOOLS_META_TITLE)
   setMeta('twitter:description', TOOLS_META_DESC)
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!canonical) { canonical = document.createElement('link'); canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical) }
+  canonical.href = 'https://www.huntersholistichealth.com/tools'
   return null
 }
 
