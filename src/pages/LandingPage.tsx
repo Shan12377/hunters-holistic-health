@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { BPSimulatorWidget } from './BPSimulatorPage'
 import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
 import HeroParticles from '../components/HeroParticles'
 import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink, ChevronDown, CheckCircle, Dumbbell, Zap } from 'lucide-react'
@@ -337,6 +336,10 @@ export default function LandingPage() {
   const [glucoseCtx, setGlucoseCtx] = useState<'fasting' | 'pre_meal' | 'post_meal' | 'bedtime'>('fasting')
   const [glucoseResult, setGlucoseResult] = useState<{ zone: string; color: string; msg: string; tip: string } | null>(null)
 
+  const [bpSys, setBpSys] = useState('')
+  const [bpDia, setBpDia] = useState('')
+  const [bpResult, setBpResult] = useState<BPResult | null>(null)
+
   const [waistVal, setWaistVal] = useState('')
   const [heightVal, setHeightVal] = useState('')
   const [waistUnit, setWaistUnit] = useState<'in' | 'cm'>('in')
@@ -384,6 +387,13 @@ export default function LandingPage() {
       else if (g < 90) setGlucoseResult({ zone: 'Low (Bedtime)', color: '#c8a74b', msg: 'A bedtime glucose below 90 mg/dL may be worth noting, especially if you experience nighttime waking. Some individuals experience overnight lows that disrupt sleep quality.', tip: 'If you regularly feel unrefreshed after sleep, discuss nighttime glucose patterns with your healthcare provider.' })
       else             setGlucoseResult({ zone: 'Elevated (Bedtime)', color: '#e05c5c', msg: 'A bedtime glucose above 150 mg/dL suggests the previous meal or day\'s eating pattern is still affecting glucose levels going into sleep. This can impair overnight metabolic recovery.', tip: 'Avoid carbohydrate-heavy meals within 3 hours of bed. A short walk after your last meal supports better overnight clearance.' })
     }
+  }
+
+  const checkBP = () => {
+    const s = parseInt(bpSys, 10)
+    const d = parseInt(bpDia, 10)
+    if (isNaN(s) || isNaN(d) || s <= 0 || d <= 0) return
+    setBpResult(getBPZone(s, d))
   }
 
   const checkWaist = () => {
@@ -544,8 +554,81 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* BP Tool — full simulator embedded */}
-        {toolTab === 'bp' && <BPSimulatorWidget showFooter={true} />}
+        {/* BP Zone Check — simple landing version; full simulator at /bp-simulator */}
+        {toolTab === 'bp' && (
+          <div className={styles.toolPanel}>
+            <p className={styles.toolDesc}>Enter your resting blood pressure numbers for an educational zone reading based on AHA/ACC 2017 guidelines. Not a diagnosis.</p>
+            <div className={styles.glucoseRow}>
+              <div className={styles.homaField}>
+                <label className={styles.toolLabel}>Systolic (top number)</label>
+                <input
+                  className={styles.toolInput}
+                  type="number"
+                  placeholder="e.g. 128"
+                  value={bpSys}
+                  onChange={e => { setBpSys(e.target.value); setBpResult(null) }}
+                  min={60}
+                  max={240}
+                />
+              </div>
+              <div className={styles.homaField}>
+                <label className={styles.toolLabel}>Diastolic (bottom number)</label>
+                <input
+                  className={styles.toolInput}
+                  type="number"
+                  placeholder="e.g. 82"
+                  value={bpDia}
+                  onChange={e => { setBpDia(e.target.value); setBpResult(null) }}
+                  min={40}
+                  max={140}
+                />
+              </div>
+              <button className={styles.toolBtn} onClick={checkBP}>Check Zone</button>
+            </div>
+            {bpResult && (
+              <div className={styles.toolResult}>
+                <div className={styles.toolZoneBadge} style={{ background: `${bpResult.color}18`, border: `1px solid ${bpResult.color}40`, color: bpResult.color }}>
+                  {bpResult.zone}
+                </div>
+                <p className={styles.toolResultMsg}>{bpResult.message}</p>
+                <div className={styles.toolTip}>
+                  <span className={styles.toolTipLabel}>One thing that helps:</span> {bpResult.supporting[0]}
+                </div>
+                <p className={styles.toolDisclaimer}>This is educational context, not a diagnosis. Based on AHA/ACC 2017 guidelines. Discuss any reading of concern with your healthcare provider.</p>
+                {!emailSubmitted ? (
+                  <div className={styles.emailCapture}>
+                    <p className={styles.emailCaptureText}>Want to learn what moves your blood pressure? One insight, one tool, one practical step. Every week. Free.</p>
+                    <div className={styles.emailCaptureRow}>
+                      <input
+                        className={styles.emailInput}
+                        type="email"
+                        placeholder="Your email address"
+                        value={emailCapture}
+                        onChange={e => setEmailCapture(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && submitEmailCapture()}
+                        aria-label="Email address for weekly health insights"
+                      />
+                      <button
+                        className={styles.emailBtn}
+                        onClick={submitEmailCapture}
+                        disabled={emailSubmitting || !emailCapture.includes('@')}
+                      >
+                        {emailSubmitting ? 'Sending...' : 'Send Me Weekly Insights'}
+                      </button>
+                    </div>
+                    <p className={styles.emailCompliance}>Subscribe for weekly functional health education. By subscribing, you agree to receive educational content. Not medical advice.</p>
+                  </div>
+                ) : (
+                  <div className={styles.emailSuccess}>You are on the list. One insight, one tool, one practical step. In your inbox weekly.</div>
+                )}
+                <div className={styles.toolCTA}>
+                  <p className={styles.toolCTAText}>See a full lifestyle simulation of what moves your numbers with the interactive Blood Pressure Simulator.</p>
+                  <Link to="/bp-simulator" className={shared.btnPrimary}>Open Full BP Simulator <ChevronRight size={16} /></Link>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Blood Sugar Zone Checker */}
         {toolTab === 'glucose' && (

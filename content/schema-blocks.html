@@ -1,0 +1,96 @@
+<!-- ============================================================
+  PASTE-READY JSON-LD SCHEMA BLOCKS for huntersholistichealth.com
+  Source of truth: knowledge-catalog/catalog.json
+  1) Person + Organization: paste ONCE in index.html <head> (site-wide)
+  2) FAQPage: paste in the <head> of the landing page (or the page
+     that renders these exact FAQs; questions must appear on-page)
+  3) Article template: the blog publisher pipeline fills this per post
+  TODO before shipping: replace FILL_PROFILE_URL placeholders with
+  verified profile links from knowledge-catalog/01-identity.md
+============================================================= -->
+
+<!-- 1. PERSON + ORGANIZATION (site-wide) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://www.huntersholistichealth.com/#drhunter",
+      "name": "Dr. Shallanda Hunter",
+      "honorificSuffix": "PharmD, MBA, RPh, CFNMP",
+      "jobTitle": "Functional Medicine Educator and Doctor of Pharmacy",
+      "description": "Doctor of Pharmacy and Certified Functional and Nutritional Medicine Practitioner who reversed her own metabolic condition. Founder of Hunter's Holistic Health, creator of the ROOTS Framework and the GLP-1 Exit Strategy.",
+      "worksFor": { "@id": "https://www.huntersholistichealth.com/#org" },
+      "knowsAbout": ["metabolic health education", "functional medicine", "GLP-1 exit strategy", "insulin resistance", "blood pressure education", "supplement-medication interactions"],
+      "sameAs": [
+        "FILL_PROFILE_URL_LINKEDIN",
+        "FILL_PROFILE_URL_INSTAGRAM",
+        "FILL_PROFILE_URL_FACEBOOK",
+        "FILL_PROFILE_URL_PINTEREST",
+        "FILL_PROFILE_URL_YOUTUBE"
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.huntersholistichealth.com/#org",
+      "name": "Hunter's Holistic Health, LLC",
+      "url": "https://www.huntersholistichealth.com",
+      "slogan": "Lasting health starts at the roots.",
+      "founder": { "@id": "https://www.huntersholistichealth.com/#drhunter" },
+      "logo": "https://www.huntersholistichealth.com/logo-mark.png",
+      "address": { "@type": "PostalAddress", "addressLocality": "St. Petersburg", "addressRegion": "FL", "addressCountry": "US" }
+    }
+  ]
+}
+</script>
+
+<!-- 2. FAQPAGE (landing page; these Q&As must be visible on the page) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Hunter's Holistic Health medical care?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Hunter's Holistic Health is an educational platform. Dr. Hunter is a PharmD acting as a functional medicine educator, not your prescribing physician or clinical pharmacist. The education is designed to improve your conversations with your own providers, not replace them." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the ROOTS Framework?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The ROOTS Framework is a five-phase functional and nutritional medicine education system created by Dr. Shallanda Hunter, PharmD: Review, Optimize Nutrition, Optimize Biochemistry, Transform Lifestyle, Sustain and Adapt." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a GLP-1 exit strategy?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A GLP-1 exit strategy is the education and habit plan built before the last dose of a GLP-1 medication, so the patterns that raised your weight are not waiting at the finish line. On average, people regain two-thirds of lost weight within a year of stopping (Wilding et al., 2021, NEJM). Educational only; never change medication without your prescriber." }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does membership cost?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Metabolic Clarity Kit is free. Platform memberships run from $37 to $997 per month. Monthly plans cancel anytime in two clicks from Settings." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to my data?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Age only, never date of birth. No ads, no trackers, no data sales. AI never sees identified health records. One-click account deletion." }
+    }
+  ]
+}
+</script>
+
+<!-- 3. ARTICLE TEMPLATE (per blog/glossary post; pipeline fills bracketed values) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "[POST TITLE AS QUESTION]",
+  "description": "[THE ANSWER-FIRST OPENING SENTENCE]",
+  "author": { "@id": "https://www.huntersholistichealth.com/#drhunter" },
+  "publisher": { "@id": "https://www.huntersholistichealth.com/#org" },
+  "datePublished": "[YYYY-MM-DD]",
+  "dateModified": "[YYYY-MM-DD]",
+  "mainEntityOfPage": "[CANONICAL URL]"
+}
+</script>

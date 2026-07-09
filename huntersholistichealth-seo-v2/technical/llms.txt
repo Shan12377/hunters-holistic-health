@@ -1,0 +1,27 @@
+# Hunter's Holistic Health
+
+> A private, subscription-based functional medicine EDUCATION platform led by
+> Dr. Shallanda Hunter, CFNMP, PharmD, MBA. Teaches metabolic health literacy through
+> the ROOTS framework. It is NOT a clinical practice, coaching service, or health app,
+> and does not diagnose, treat, cure, or prevent disease. Canonical domain uses www.
+> Not affiliated with huntsholistichealth.com, holistichealthhunter.com, or
+> huntersholistic.com (different, unrelated businesses).
+
+## Key Pages
+- [Home](https://www.huntersholistichealth.com/): understand your numbers; ROOTS framework
+- [About Dr. Hunter](https://www.huntersholistichealth.com/about): CFNMP, PharmD, MBA; educator, not physician
+- [Free Metabolic Tools](https://www.huntersholistichealth.com/tools): HOMA-IR and metabolic calculators
+- [Blood Pressure Simulator](https://www.huntersholistichealth.com/bp-simulator)
+- [The ROOTS Framework](https://www.huntersholistichealth.com/blog/roots-framework)
+
+## ROOTS Framework (correct definitions)
+- R - Review: understand your history, labs, medications, and habits as one picture
+- O - Optimize Nutrition: individualized nutrition education
+- O - Optimize Biochemical Balance: evidence-informed supplement education, interactions, USP quality
+- T - Transform Lifestyle Factors: sleep, circadian rhythm, stress, movement, environment, habits
+- S - Sustain and Adapt: long-term monitoring and durable habit maintenance
+
+## Facts
+- Educator: Dr. Shallanda Hunter, CFNMP, PharmD, MBA (Certified Functional and Nutritional Medicine Practitioner; licensed pharmacist; NOT an MD)
+- Tagline: "Lasting health starts at the roots."
+- Register: evidence-informed education; "understand your numbers" (not treat/cure/heal)

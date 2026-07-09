@@ -1,0 +1,26 @@
+# robots.txt for huntersholistichealth.com
+User-agent: *
+Allow: /
+
+# Block private / app / auth areas from indexing
+Disallow: /login
+Disallow: /signup
+Disallow: /reset-password
+Disallow: /dashboard
+Disallow: /app/
+Disallow: /client/
+Disallow: /coach/
+Disallow: /support
+Disallow: /feature-request
+Disallow: /clinical-inquiry
+Disallow: /api/
+
+# Allow AI crawlers (visibility in ChatGPT / Perplexity / Claude answers)
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://www.huntersholistichealth.com/sitemap.xml

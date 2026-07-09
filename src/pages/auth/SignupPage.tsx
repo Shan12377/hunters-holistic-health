@@ -62,6 +62,13 @@ export default function SignupPage() {
     }
 
     if (data.user) {
+      // Fire-and-forget: enroll in Beehiiv 7-day email course (silent fail — never block signup)
+      fetch('/api/beehiiv-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, firstName: form.firstName }),
+      }).catch(() => {})
+
       toast.success("Account created! Welcome to Hunter's Holistic Health.")
       navigate('/app/dashboard')
     }

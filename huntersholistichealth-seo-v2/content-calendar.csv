@@ -1,0 +1,13 @@
+Status,Type,Topic,Primary Keyword,Cluster,SEO Title,URL Slug,Target Date,Notes
+OPTIMIZE,Existing page,Homepage,functional medicine education,brand,Hunter's Holistic Health | Functional Medicine Education,/,Week 1,Deploy correct meta + canonical + request re-index
+OPTIMIZE,Existing page,Tools hub,free metabolic health tools,tools,Free Metabolic Health Tools | Hunter's Holistic Health,/tools,Week 1,Meta already correct per brief; needs indexing only
+OPTIMIZE,Existing page,BP simulator,blood pressure zones explained,tools,Blood Pressure Zone Simulator | Hunter's Holistic Health,/bp-simulator,Week 1,Meta already correct; needs indexing + canonical
+OPTIMIZE,Existing page,Shop,creatine bundle,shop,Creatine Bundle | Hunter's Holistic Health,/shop,Week 2,Google pulled H1; give real title/meta
+OPTIMIZE,Existing post,Creatine explainer,creatine benefits besides muscle,creatine,Creatine Does More Than Build Muscle | Hunter's Holistic Health,/blog/creatine-not-what-you-think,Week 2,Add FAQ + schema + canonical + internal links
+OPTIMIZE,Existing post,Rebounding,rebounding benefits,rebounding,Rebounding Benefits: What the Evidence Actually Shows,/blog/rebounding-benefits,Week 2,IMPORTANT - strip overstated lymph/68% claims; PharmD-honest version
+OPTIMIZE,Existing protocol,Parasites,do parasite cleanses work,parasites,Parasites in Humans: Diagnosis and What the Evidence Says,/protocol/parasite-cleanse,Week 3,REFRAME as education; do not promise cleanse efficacy; strong 'see a clinician' framing
+BUILD,New post,Creatine for women,creatine for women over 40,creatine,Creatine for Women Over 40: An Evidence-Informed Guide,/blog/creatine-for-women,Week 3,DELIVERED
+BUILD,New post,Rebounding honest,does rebounding help lymphatic system,rebounding,Does Rebounding Help the Lymphatic System? An Honest Look,/blog/does-rebounding-help-lymphatic-system,Week 4,DELIVERED
+BUILD,New post,Understand lab numbers,how to read your lab results,numbers,How to Read Your Lab Results: Understand Your Numbers,/blog/understand-your-lab-numbers,Week 4,DELIVERED - core 'understand your numbers' positioning
+BUILD,New post,ROOTS explainer,roots framework functional medicine,brand,The ROOTS Framework: How Hunter's Holistic Health Teaches Metabolic Health,/blog/roots-framework,Week 5,DELIVERED - entity/brand page for E-E-A-T and AI search
+CADENCE:,,,,,,,,Week 1: optimize 3 existing (no new publishes). Week 2-5: 1-2 items/week. Never batch-dump.

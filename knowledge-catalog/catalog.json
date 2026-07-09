@@ -1,0 +1,73 @@
+{
+  "$schema_note": "Machine-readable rollup of the knowledge catalog. Sections map to the numbered .md files, which are the human source of truth. Regenerate via the knowledge-catalog-manager skill whenever an .md changes.",
+  "version": "1.1",
+  "last_verified": "2026-07-04",
+  "catalog_focus": "Hunter's Holistic Health, LLC. Other ventures listed under organization.brands are founder context at identity level only.",
+  "entity": {
+    "@type": "Person",
+    "name": "Dr. Shallanda Hunter",
+    "honorificSuffix": "PharmD, MBA, RPh, CFNMP",
+    "jobTitle": "Functional Medicine Educator and PharmD",
+    "description": "Doctor of Pharmacy and Certified Functional and Nutritional Medicine Practitioner who reversed her own metabolic condition. Founder of Hunter's Holistic Health, creator of the ROOTS Framework and the GLP-1 Exit Strategy.",
+    "slogan": "The education your prescription didn't come with.",
+    "areaServed": "United States (remote, Florida-based)",
+    "sameAs": ["FILL_VERIFIED_PROFILE_URLS"]
+  },
+  "organization": {
+    "@type": "Organization",
+    "name": "Hunter's Holistic Health, LLC",
+    "url": "https://www.huntersholistichealth.com",
+    "founder": "Dr. Shallanda Hunter",
+    "location": "St. Petersburg, Florida",
+    "brands": [
+      { "name": "ROOTS Framework", "trademark": "TM", "type": "education framework" },
+      { "name": "GLP-1 Exit Strategy", "type": "coined category term", "canonical_url": "https://www.huntersholistichealth.com/glp-1-exit-strategy" },
+      { "name": "DeIDGuard", "url": "https://deidguard.com", "type": "free Chrome extension, clinical data privacy" },
+      { "name": "Pharmacy Decoder", "url": "https://pharmacydecoder.com", "type": "pharmacy board prep" },
+      { "name": "I Can Teach You AI", "url": "https://icanteachyouai.com", "type": "AI education for healthcare professionals" }
+    ]
+  },
+  "offers": {
+    "platform_memberships": [
+      { "name": "Metabolic Clarity Kit", "price": 0, "currency": "USD", "billing": "free", "includes": "5 educational tools, pattern snapshot, 7-day email course, ROOTS Lesson One, community Lobby" },
+      { "name": "Foundation", "price": 37, "currency": "USD", "billing": "monthly", "annual_price": 297 },
+      { "name": "The Program", "price": 97, "currency": "USD", "billing": "monthly", "annual_price": 797, "most_popular": true },
+      { "name": "VIP: The Intensive", "price": 997, "currency": "USD", "billing": "monthly", "annual_price": 9970, "application_only": true },
+      { "name": "6-Month VIP Functional Overhaul", "price": 4997, "currency": "USD", "billing": "one-time", "application_only": true, "capacity_note": "verify limit enforcement before publishing scarcity" }
+    ],
+    "private_practice": [
+      { "name": "Supplement Stack Audit", "price": 349, "currency": "USD", "billing": "one-time", "credit": "applies toward tier enrollment within 60 days" },
+      { "name": "The Foundation Protocol", "price": 1500, "currency": "USD", "billing": "one-time", "duration": "30 days" },
+      { "name": "Metabolic Transformation Program", "price": 3500, "currency": "USD", "billing": "1500 deposit + 2000 at day 30", "duration": "3 months" },
+      { "name": "Clinical Concierge", "price": 5500, "currency": "USD", "billing": "quarterly", "monthly_option": 1750 },
+      { "name": "Clinical Concierge 6-Month", "price": 9997, "currency": "USD", "billing": "paid in full", "duration": "6 months" }
+    ],
+    "digital_products": [
+      { "name": "Creatine Bundle", "price": 47, "currency": "USD", "billing": "one-time", "includes": "Creatine Science Guide (20+ pages, cited) + Hydration and Nutrition Tracker", "url": "https://www.huntersholistichealth.com/shop", "compliance": "affiliate disclosure + DSHEA disclaimer required on page" }
+    ],
+    "policies": {
+      "monthly_cancellation": "anytime, two clicks, from Settings",
+      "annual_refund": "within 14 days; pausable up to 3 months",
+      "payment_plans": "available on private engagements"
+    }
+  },
+  "faq": [
+    { "q": "Is this medical care?", "a": "No. Hunter's Holistic Health is an educational platform. Dr. Hunter is a PharmD acting as a functional medicine educator, not your prescribing physician or clinical pharmacist. The education is designed to improve your conversations with your own providers, not replace them." },
+    { "q": "What is the ROOTS Framework?", "a": "A five-phase functional and nutritional medicine education system: Review, Optimize Nutrition, Optimize Biochemistry, Transform Lifestyle, Sustain and Adapt. Created by Dr. Shallanda Hunter, PharmD." },
+    { "q": "What is a GLP-1 exit strategy?", "a": "The education and habit plan built before the last dose of a GLP-1 medication, so the patterns that raised your weight are not waiting at the finish line. On average, people regain two-thirds of lost weight within a year of stopping (Wilding et al., 2021, NEJM). Educational only; never change medication without your prescriber." },
+    { "q": "How much does it cost?", "a": "The Metabolic Clarity Kit is free. Platform memberships run $37 to $997 per month. Private 1-on-1 educational engagements start with a $349 Supplement Stack Audit." },
+    { "q": "Can I cancel?", "a": "Monthly memberships cancel anytime in two clicks from Settings. Annual plans are refundable within 14 days and pausable up to 3 months." },
+    { "q": "Will you tell me to stop my medication?", "a": "Never. No content or session on this platform advises starting, stopping, or changing any medication. Those decisions belong with you and your prescriber." },
+    { "q": "What happens to my data?", "a": "Age only, never date of birth. No ads, no trackers, no data sales. AI never sees identified health records. One-click account deletion." }
+  ],
+  "guardrails": {
+    "scope": "educate only; never diagnose, treat, cure, prescribe, or manage disease",
+    "language": { "use": ["clients", "sessions", "clarity calls", "educational wellness roadmap", "educator"], "never": ["patients", "appointments", "consultations", "treatment plan", "coach"] },
+    "medication_questions": "redirect to prescriber, always",
+    "crisis_language": "advise contacting provider or emergency services immediately",
+    "statistics": "only with citation; regain stat cites Wilding et al. 2021 NEJM",
+    "disclosures": { "GLPulse": "founder disclosure every mention", "myglp1cost.com": "founder disclosure", "glp1checker.com": "founder disclosure", "affiliate_links": "adjacent #Affiliate disclosure" },
+    "supplement_content": "DSHEA disclaimer required",
+    "style": "no em dashes"
+  }
+}
