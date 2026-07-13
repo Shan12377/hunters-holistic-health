@@ -48,6 +48,15 @@ import ShopPage from '@/pages/ShopPage'
 import CreatinePage from '@/pages/CreatinePage'
 import CreatineNotWhatYouThink from '@/pages/blog/CreatineNotWhatYouThink'
 import ReboundingBenefits from '@/pages/blog/ReboundingBenefits'
+import Glp1MuscleLoss from '@/pages/blog/Glp1MuscleLoss'
+import Glp1WeightRegain from '@/pages/blog/Glp1WeightRegain'
+import Glp1Supplements from '@/pages/blog/Glp1Supplements'
+import Glp1FunctionalLabs from '@/pages/blog/Glp1FunctionalLabs'
+import Glp1Cost from '@/pages/blog/Glp1Cost'
+import Glp1SideEffects from '@/pages/blog/Glp1SideEffects'
+import MetabolicHealth from '@/pages/blog/MetabolicHealth'
+import Glp1FoodCulture from '@/pages/blog/Glp1FoodCulture'
+import Glp1Comparison from '@/pages/blog/Glp1Comparison'
 import ParasiteCleanseProtocol from '@/pages/protocol/ParasiteCleanseProtocol'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
@@ -126,6 +135,15 @@ export default function App() {
         <Route path="/creatine" element={<CreatinePage />} />
         <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
         <Route path="/blog/rebounding-benefits" element={<ReboundingBenefits />} />
+        <Route path="/blog/glp1-muscle-loss-what-nobody-tells-you" element={<Glp1MuscleLoss />} />
+        <Route path="/blog/68-percent-glp1-weight-regain-how-to-beat-it" element={<Glp1WeightRegain />} />
+        <Route path="/blog/glp1-supplements-what-actually-works" element={<Glp1Supplements />} />
+        <Route path="/blog/functional-labs-glp1-what-to-test" element={<Glp1FunctionalLabs />} />
+        <Route path="/blog/glp1-cost-how-to-pay-less" element={<Glp1Cost />} />
+        <Route path="/blog/glp1-side-effects-pharmacist-guide" element={<Glp1SideEffects />} />
+        <Route path="/blog/metabolic-health-beyond-weight-loss" element={<MetabolicHealth />} />
+        <Route path="/blog/glp1-and-food-culture-navigating-your-heritage" element={<Glp1FoodCulture />} />
+        <Route path="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound" element={<Glp1Comparison />} />
         <Route path="/protocol/parasite-cleanse" element={<ParasiteCleanseProtocol />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />

@@ -233,3 +233,19 @@
   color: #e05c5c;
   margin: 0.5rem 0 0;
 }
+
+.meta {
+  font-size: 0.85rem;
+  color: var(--muted, #888);
+  margin: 0.25rem 0 1.5rem;
+}
+
+.blockquote {
+  border-left: 3px solid var(--teal, #2aa9a9);
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface, rgba(0,0,0,0.03));
+  border-radius: 0 6px 6px 0;
+  font-size: 0.97rem;
+  color: var(--text-secondary, inherit);
+}

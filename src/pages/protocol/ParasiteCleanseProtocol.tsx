@@ -26,31 +26,82 @@ function ParasiteMetaTags() {
   return null
 }
 
-const products = [
+const phases = [
   {
-    name: 'Biocidin Liquid',
-    dose: 'Start with 1 drop twice daily. Increase by 1 drop every 2 days as tolerated, working toward the full dose recommended on the label. Take 30 minutes before meals.',
-    link: 'https://amzn.to/4f09k3C',
+    phase: 'Phase 0: Open Drainage',
+    weeks: 'Weeks 1–2',
+    note: 'Start these two weeks before any antiparasitic herbs begin. The liver and glutathione system must be primed before die-off toxins start moving.',
+    products: [
+      {
+        name: 'Thorne Milk Thistle Phytosome',
+        dose: '1 capsule daily with food. The phytosome form delivers silymarin at 4–10x better absorption than standard milk thistle. Protects and pre-loads the liver before parasite die-off begins.',
+        link: 'https://amzn.to/4vrgov0',
+      },
+      {
+        name: 'Jarrow NAC Sustain 600mg',
+        dose: '1 capsule in the morning. Replenishes glutathione — your primary detox molecule — before die-off starts flooding the system. Also breaks down the biofilm parasites use to hide from the immune system.',
+        link: 'https://amzn.to/3QOQqDO',
+      },
+    ],
   },
   {
-    name: 'G.I. Detox+',
-    dose: 'Take 2 capsules once daily, away from food and supplements by at least 2 hours. Best taken at bedtime. Drink a full glass of water.',
-    link: 'https://amzn.to/4eCJstg',
+    phase: 'Phase 1: Kill Phase',
+    weeks: 'Weeks 3–10',
+    note: 'Two 3-week kill cycles with rest weeks at Week 6 and Week 10. During rest weeks, stop Biocidin, Wormwood, Cloves, and Mimosa Pudica. Continue G.I. Detox+, S. boulardii, Milk Thistle, and NAC.',
+    products: [
+      {
+        name: 'Biocidin Liquid',
+        dose: 'Start with 1 drop twice daily. Increase by 1 drop every 2 days as tolerated, working toward the full dose recommended on the label. Take 30 minutes before meals.',
+        link: 'https://amzn.to/4f09k3C',
+      },
+      {
+        name: "Oregon's Wild Harvest Wormwood",
+        dose: '3 capsules daily (780mg total), taken with meals. Artemisia absinthium disrupts parasite mitochondria. Do not exceed 4 consecutive weeks — rest weeks are built into the protocol for this reason.',
+        link: 'https://amzn.to/4eKOvbd',
+      },
+      {
+        name: "Oregon's Wild Harvest Cloves",
+        dose: '3 capsules daily (1,500mg total), taken with meals. Eugenol in cloves destroys parasite eggs and larvae — the stage wormwood does not reach as effectively. These two work as a team.',
+        link: 'https://amzn.to/3QmOGkW',
+      },
+      {
+        name: 'Double Wood Mimosa Pudica',
+        dose: 'Start with 2 capsules daily on an empty stomach. Build to 4 capsules daily by Week 2. Take 30 minutes before breakfast. Forms a sticky gel that physically traps parasites and tears through biofilm.',
+        link: 'https://amzn.to/4oJK05b',
+      },
+      {
+        name: 'G.I. Detox+',
+        dose: '1 capsule 3 times daily, taken between meals — at least 2 hours away from all other supplements and food. Binds the toxins released by dying parasites so they exit in stool rather than recirculating into the bloodstream.',
+        link: 'https://amzn.to/4eCJstg',
+      },
+      {
+        name: 'Jarrow S. boulardii',
+        dose: '1 capsule daily with food throughout the kill phase. Saccharomyces boulardii is a probiotic yeast — antiparasitic herbs cannot kill it. Bridges gut protection while the kill herbs clear everything else out.',
+        link: 'https://amzn.to/44nNZLx',
+      },
+    ],
   },
   {
-    name: "Oregon's Wild Harvest Wormwood",
-    dose: 'Take as directed on the label, typically 1 capsule up to 3 times daily with meals. Do not use for more than 4 consecutive weeks without a break.',
-    link: 'https://amzn.to/4eKOvbd',
-  },
-  {
-    name: "Oregon's Wild Harvest Cloves",
-    dose: 'Take as directed on the label, typically 1 capsule up to 3 times daily with meals. Part of the traditional parasite cleanse triad alongside wormwood and black walnut.',
-    link: 'https://amzn.to/3QmOGkW',
-  },
-  {
-    name: 'Double Wood Mimosa Pudica',
-    dose: 'Take 2 capsules twice daily on an empty stomach, ideally 30 minutes before breakfast and 30 minutes before dinner. Start with 1 capsule twice daily for the first week.',
-    link: 'https://amzn.to/4oJK05b',
+    phase: 'Phase 2: Gut Healing (Optional Additions)',
+    weeks: 'Weeks 11–14',
+    note: 'Stop all antiparasitics. The kill phase is done. These three products repair the intestinal damage parasites left behind and recolonize the terrain.',
+    products: [
+      {
+        name: 'Thorne L-Glutamine Powder',
+        dose: '5–10g powder on an empty stomach each morning. Mix in water or a smoothie. L-Glutamine is the primary fuel for enterocytes — the cells that line and rebuild the intestinal wall. Parasites punch holes in tight junctions as they die; this is what closes them.',
+        link: 'https://amzn.to/450hwLr',
+      },
+      {
+        name: "Oregon's Wild Harvest Slippery Elm Organic",
+        dose: '2 capsules 30 minutes before meals. Slippery elm\'s mucilage coating physically soothes and covers inflamed intestinal mucosa while the structural repair happens underneath. Also acts as a prebiotic to feed the beneficial bacteria coming in during Phase 2.',
+        link: 'https://amzn.to/4bFZ9z3',
+      },
+      {
+        name: 'Microbiome Labs MegaSporeBiotic',
+        dose: 'Start with 1 capsule daily with food for the first week, then increase to 2 capsules daily. Begin only after the kill phase is completely finished. Bacillus spore strains are armor-plated — they survive stomach acid where most probiotics do not. Recolonizes the cleared terrain before opportunistic bacteria move back in.',
+        link: 'https://amzn.to/4phRvAL',
+      },
+    ],
   },
 ]
 
@@ -76,22 +127,31 @@ export default function GutHealthProtocol() {
           would recommend are listed here.
         </div>
 
-        <div className={styles.productList}>
-          {products.map(p => (
-            <div key={p.name} className={styles.productCard}>
-              <p className={styles.productName}>{p.name}</p>
-              <p className={styles.productDose}>{p.dose}</p>
-              <a
-                href={p.link}
-                target="_blank"
-                rel="noopener sponsored"
-                className={styles.productLink}
-              >
-                View on Amazon
-              </a>
+        {phases.map(ph => (
+          <div key={ph.phase} className={styles.phaseBlock}>
+            <div className={styles.phaseHeader}>
+              <h2 className={styles.phaseTitle}>{ph.phase}</h2>
+              <span className={styles.phaseWeeks}>{ph.weeks}</span>
             </div>
-          ))}
-        </div>
+            <p className={styles.phaseNote}>{ph.note}</p>
+            <div className={styles.productList}>
+              {ph.products.map(p => (
+                <div key={p.name} className={styles.productCard}>
+                  <p className={styles.productName}>{p.name}</p>
+                  <p className={styles.productDose}>{p.dose}</p>
+                  <a
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener sponsored"
+                    className={styles.productLink}
+                  >
+                    View on Amazon
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
 
         <div className={styles.footer}>
           <p><strong>Medical Disclaimer:</strong> The information on this page is for educational purposes only and does not constitute medical advice. Dr. Shallanda Hunter, PharmD, CFNMP, operates as a Functional Medicine Educator, not as your prescribing physician or pharmacist. Always consult your doctor before starting any new supplement, especially if you are pregnant, nursing, managing a chronic condition, or taking prescription medications.</p>
