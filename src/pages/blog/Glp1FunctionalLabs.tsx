@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'Functional Lab Testing for GLP-1 Users: Beyond A1C | Hunter\'s Holistic Health'
-const META_DESC = 'Standard labs miss the markers that predict GLP-1 outcomes. A pharmacist explains fasting insulin, HOMA-IR, adiponectin, and the tests that matter.'
+const META_DESC = 'Standard labs miss the markers that predict GLP-1 outcomes. Dr. Hunter, PharmD, CFNMP, explains fasting insulin, HOMA-IR, adiponectin, and the tests that matter.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

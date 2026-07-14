@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'Why Your Meal Planning App Has Never Actually Worked | Hunter\'s Holistic Health'
-const META_DESC = 'A functional medicine pharmacist explains why AI food tracking apps fail, why the strategies that worked in your 20s stop working after 40, and what a metabolic-first approach to meal planning looks like.'
+const META_DESC = 'Dr. Hunter, PharmD, CFNMP, explains why AI food tracking apps fail, why the strategies that worked in your 20s stop working after 40, and what a metabolic-first approach to meal planning looks like.'
 const CANONICAL = 'https://www.huntersholistichealth.com/blog/why-meal-planning-apps-fail'
 
 function MetaTags() {

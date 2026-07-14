@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'GLP-1 and Muscle Loss: How to Protect Muscle on Semaglutide | Hunter\'s Holistic Health'
-const META_DESC = 'GLP-1 medications like semaglutide and tirzepatide can drive significant muscle loss. A pharmacist explains the research and how to protect your lean mass.'
+const META_DESC = 'GLP-1 medications like semaglutide and tirzepatide can drive significant muscle loss. Dr. Hunter, PharmD, CFNMP, explains the research and how to protect your lean mass.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

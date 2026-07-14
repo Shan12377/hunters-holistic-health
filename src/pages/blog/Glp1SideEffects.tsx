@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
-const META_TITLE = 'GLP-1 Side Effects: A Pharmacist\'s Guide to Managing Them | Hunter\'s Holistic Health'
-const META_DESC = 'Nausea, vomiting, and constipation are common on GLP-1s. A pharmacist explains what is normal, what needs medical attention, and how to manage symptoms.'
+const META_TITLE = 'GLP-1 Side Effects: Dr. Hunter\'s Complete Guide | Hunter\'s Holistic Health'
+const META_DESC = 'Nausea, vomiting, and constipation are common on GLP-1s. Dr. Hunter, PharmD, CFNMP, explains what is normal, what needs medical attention, and how to manage symptoms.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'GLP-1 and Cultural Foods: Eat Your Heritage, Stay on Track | Hunter\'s Holistic Health'
-const META_DESC = 'A GLP-1 protocol does not require abandoning your food culture. A pharmacist explains how to integrate cultural foods into a metabolically sound plan.'
+const META_DESC = 'A GLP-1 protocol does not require abandoning your food culture. Dr. Hunter, CFNMP, explains how to integrate cultural foods into a metabolically sound plan.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

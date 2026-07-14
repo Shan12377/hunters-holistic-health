@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'GLP-1 Weight Regain: Why It Happens and How to Prevent It | Hunter\'s Holistic Health'
-const META_DESC = 'Two-thirds of people who stop semaglutide regain the weight within a year. A pharmacist explains the metabolic science and how to make results last.'
+const META_DESC = 'Two-thirds of people who stop semaglutide regain the weight within a year. Dr. Hunter, PharmD, CFNMP, explains the metabolic science and how to make results last.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

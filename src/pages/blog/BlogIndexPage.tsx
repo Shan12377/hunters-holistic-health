@@ -29,19 +29,19 @@ const GLP1_POSTS = [
     slug: '/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound',
     tag: 'GLP-1 Education',
     title: 'Ozempic vs. Wegovy vs. Mounjaro vs. Zepbound: What the Data Says',
-    desc: 'A pharmacist breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.',
+    desc: 'Dr. Hunter, PharmD, CFNMP, breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.',
   },
   {
     slug: '/blog/glp1-side-effects-pharmacist-guide',
     tag: 'GLP-1 Education',
-    title: 'GLP-1 Side Effects: A Pharmacist\'s Honest Guide',
+    title: 'GLP-1 Side Effects: Dr. Hunter\'s Complete Guide',
     desc: 'Nausea, muscle loss, rebound weight. What the prescribing data actually shows and how to reduce each risk with a root-cause protocol alongside.',
   },
   {
     slug: '/blog/glp1-muscle-loss-what-nobody-tells-you',
     tag: 'GLP-1 Education',
     title: 'GLP-1 and Muscle Loss: What Nobody Tells You',
-    desc: 'On average, 25 to 39% of weight lost on GLP-1s is lean mass. A pharmacist explains why this matters and what the evidence says to do about it.',
+    desc: 'On average, 25 to 39% of weight lost on GLP-1s is lean mass. Dr. Hunter, PharmD, CFNMP, explains why this matters and what the evidence says to do about it.',
   },
   {
     slug: '/blog/68-percent-glp1-weight-regain-how-to-beat-it',
@@ -65,7 +65,7 @@ const GLP1_POSTS = [
     slug: '/blog/glp1-cost-how-to-pay-less',
     tag: 'GLP-1 Education',
     title: 'GLP-1 Cost: How to Pay Less',
-    desc: 'Manufacturer coupons, compounding pharmacies, international pricing, and how to talk to your prescriber about cost. A pharmacist\'s guide.',
+    desc: 'Manufacturer coupons, compounding pharmacies, international pricing, and how to talk to your prescriber about cost. Dr. Hunter\'s 2026 guide.',
   },
   {
     slug: '/blog/glp1-and-food-culture-navigating-your-heritage',
@@ -80,7 +80,7 @@ const METABOLIC_POSTS = [
     slug: '/blog/metabolic-health-beyond-weight-loss',
     tag: 'Metabolic Health',
     title: 'Metabolic Health Is Not a Number on a Scale',
-    desc: 'Only 12% of American adults are metabolically healthy. A pharmacist explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.',
+    desc: 'Only 12% of American adults are metabolically healthy. Dr. Hunter, CFNMP, Functional Medicine Educator, explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.',
   },
   {
     slug: '/blog/why-meal-planning-apps-fail',
@@ -95,7 +95,7 @@ const WELLNESS_POSTS = [
     slug: '/blog/creatine-not-what-you-think',
     tag: 'Supplements',
     title: 'Creatine Is Not What You Think',
-    desc: 'Most people associate creatine with bodybuilders. A pharmacist explains what the evidence actually shows for women, aging adults, and metabolic health.',
+    desc: 'Most people associate creatine with bodybuilders. Dr. Hunter, PharmD, CFNMP, explains what the evidence actually shows for women, aging adults, and metabolic health.',
   },
   {
     slug: '/blog/rebounding-benefits',
@@ -130,7 +130,7 @@ export default function BlogIndexPage() {
           <div className={styles.featuredBadge}>Platform Feature</div>
           <div className={styles.featuredTitle}>The Real Reason Your Meal Planning App Has Never Actually Worked</div>
           <p className={styles.featuredDesc}>
-            You have photographed every meal you eat. The app tells you how many calories. Your blood pressure has not moved. A pharmacist explains why calorie counting strips food of its biological information, what metabolic-first nutrition actually looks like, and how to build a plate that teaches you something.
+            You have photographed every meal you eat. The app tells you how many calories. Your blood pressure has not moved. Dr. Hunter, PharmD, CFNMP, explains why calorie counting strips food of its biological information, what metabolic-first nutrition actually looks like, and how to build a plate that teaches you something.
           </p>
           <span className={styles.featuredCta}>Read →</span>
         </Link>

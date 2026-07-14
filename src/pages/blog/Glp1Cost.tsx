@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
-const META_TITLE = 'How to Lower GLP-1 Costs: A Pharmacist\'s 2026 Guide | Hunter\'s Holistic Health'
-const META_DESC = 'GLP-1 medications can list above $1,300 a month. A pharmacist explains every legitimate way to pay less in 2026: manufacturer programs, insurance, and more.'
+const META_TITLE = 'How to Lower GLP-1 Costs: Dr. Hunter\'s 2026 Guide | Hunter\'s Holistic Health'
+const META_DESC = 'GLP-1 medications can list above $1,300 a month. Dr. Hunter, PharmD, CFNMP, explains every legitimate way to pay less in 2026: manufacturer programs, insurance, and more.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

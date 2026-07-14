@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'Ozempic vs Wegovy vs Mounjaro vs Zepbound: The Differences | Hunter\'s Holistic Health'
-const META_DESC = 'A pharmacist explains how Ozempic, Wegovy, Mounjaro, Zepbound, and the new oral GLP-1s differ in approval, dosing, and results, updated for 2026.'
+const META_DESC = 'Dr. Hunter, PharmD, CFNMP, explains how Ozempic, Wegovy, Mounjaro, Zepbound, and the new oral GLP-1s differ in approval, dosing, and results, updated for 2026.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null
@@ -52,7 +52,7 @@ export default function Glp1Comparison() {
         </header>
 
         <div className={styles.body}>
-          <p>These medications are not interchangeable, and as a pharmacist that distinction matters more than most people realize. Which one you are on affects your results, your side effects, your insurance coverage, and how you manage the adjustment period. Most people do not know which molecule they are taking or why it matters. Here is what you need to know.</p>
+          <p>These medications are not interchangeable, and as a functional medicine educator that distinction matters more than most people realize. Which one you are on affects your results, your side effects, your insurance coverage, and how you manage the adjustment period. Most people do not know which molecule they are taking or why it matters. Here is what you need to know.</p>
 
           <h2>The semaglutide family</h2>
           <p><strong>Ozempic (semaglutide)</strong> is FDA-approved for type 2 diabetes, not for weight loss. It initiates at 0.25 mg for four weeks, then moves to therapeutic doses of 0.5 mg, 1 mg, or 2 mg weekly.</p>

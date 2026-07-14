@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'GLP-1 Supplements: What Works and What to Avoid | Hunter\'s Holistic Health'
-const META_DESC = 'A pharmacist reviews the evidence on supplements for GLP-1 users: what supports your results, what is marketing hype, and which interactions to watch.'
+const META_DESC = 'Dr. Hunter, CFNMP, Functional Medicine Educator, reviews the evidence on supplements for GLP-1 users: what supports your results, what is marketing hype, and which interactions to watch.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null
@@ -54,7 +54,7 @@ export default function Glp1Supplements() {
         <div className={styles.body}>
           <h2>The supplement industry discovered GLP-1</h2>
           <p>Since semaglutide became a cultural phenomenon, the supplement industry has flooded the market with products marketed as "GLP-1 support," "natural GLP-1 boosters," and "Ozempic alternatives." Some contain ingredients with legitimate evidence. Many do not. A few contain ingredients that can interact with medications commonly taken by this population.</p>
-          <p>As a pharmacist, I review supplements the same way I review medications: through the lens of mechanism, evidence quality, dose, bioavailability, and interaction potential. One structural caveat applies to everything below: dietary supplements are not reviewed by the FDA for safety, potency, or purity before they reach shelves. Where you use one, choose products carrying third-party certification (USP Verified, NSF, or Informed Sport), which confirms the product contains what the label claims without harmful contaminants.</p>
+          <p>As a Functional Medicine Educator, I review supplements through the lens of mechanism, evidence quality, dose, bioavailability, and interaction potential. One structural caveat applies to everything below: dietary supplements are not reviewed by the FDA for safety, potency, or purity before they reach shelves. Where you use one, choose products carrying third-party certification (USP Verified, NSF, or Informed Sport), which confirms the product contains what the label claims without harmful contaminants.</p>
 
           <h2>The non-negotiables: nutrients that reduced food intake can leave short</h2>
           <p>Before performance supplements, address the nutrients that lower food intake can leave in deficit. The evidence grade differs by nutrient, so I have flagged it.</p>

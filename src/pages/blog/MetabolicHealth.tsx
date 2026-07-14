@@ -3,7 +3,7 @@ import styles from './BlogPost.module.css'
 import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 
 const META_TITLE = 'What Is Metabolic Health? Beyond Weight Loss, Explained | Hunter\'s Holistic Health'
-const META_DESC = 'Metabolic health is not about weight. A pharmacist explains the five markers of metabolic health and why most Americans, even at normal weight, fall short.'
+const META_DESC = 'Metabolic health is not about weight. Dr. Hunter, CFNMP, Functional Medicine Educator, explains the five markers of metabolic health and why most Americans, even at normal weight, fall short.'
 
 function MetaTags() {
   if (typeof document === 'undefined') return null

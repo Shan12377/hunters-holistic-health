@@ -557,19 +557,19 @@ export default function ToolsPage() {
           <Link to="/blog/metabolic-health-beyond-weight-loss" className={styles.moreCard}>
             <div className={styles.moreCardEyebrow}>Metabolic Health</div>
             <div className={styles.moreCardName}>Metabolic Health Is Not a Number on a Scale</div>
-            <div className={styles.moreCardDesc}>Only 12% of American adults are metabolically healthy. A pharmacist explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.</div>
+            <div className={styles.moreCardDesc}>Only 12% of American adults are metabolically healthy. Dr. Hunter, CFNMP, Functional Medicine Educator, explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.</div>
             <span className={styles.moreCardCta}>Read →</span>
           </Link>
           <Link to="/blog/glp1-side-effects-pharmacist-guide" className={styles.moreCard}>
             <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
-            <div className={styles.moreCardName}>GLP-1 Side Effects: A Pharmacist's Honest Guide</div>
+            <div className={styles.moreCardName}>GLP-1 Side Effects: Dr. Hunter's Complete Guide</div>
             <div className={styles.moreCardDesc}>Nausea, muscle loss, rebound weight — what the prescribing data actually shows and how to reduce each risk with a root-cause protocol running alongside.</div>
             <span className={styles.moreCardCta}>Read →</span>
           </Link>
           <Link to="/blog/glp1-muscle-loss-what-nobody-tells-you" className={styles.moreCard}>
             <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
             <div className={styles.moreCardName}>GLP-1 and Muscle Loss: What Nobody Tells You</div>
-            <div className={styles.moreCardDesc}>On average, 25 to 39% of weight lost on GLP-1s is lean mass. A pharmacist explains why this matters, and what the evidence says to do about it.</div>
+            <div className={styles.moreCardDesc}>On average, 25 to 39% of weight lost on GLP-1s is lean mass. Dr. Hunter, PharmD, CFNMP, explains why this matters, and what the evidence says to do about it.</div>
             <span className={styles.moreCardCta}>Read →</span>
           </Link>
           <Link to="/blog/68-percent-glp1-weight-regain-how-to-beat-it" className={styles.moreCard}>
@@ -593,7 +593,7 @@ export default function ToolsPage() {
           <Link to="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound" className={styles.moreCard}>
             <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
             <div className={styles.moreCardName}>Ozempic vs. Wegovy vs. Mounjaro vs. Zepbound: What the Data Says</div>
-            <div className={styles.moreCardDesc}>A pharmacist breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.</div>
+            <div className={styles.moreCardDesc}>Dr. Hunter, PharmD, CFNMP, breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.</div>
             <span className={styles.moreCardCta}>Read →</span>
           </Link>
         </div>
