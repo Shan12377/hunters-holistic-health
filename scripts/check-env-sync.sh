@@ -11,9 +11,9 @@ if ! command -v vercel &> /dev/null; then
 fi
 
 # Vars to skip — placeholders, Vercel-managed tokens, or manually set secrets
-SKIP_KEYS="VERCEL_OIDC_TOKEN|VITE_STRIPE_PUBLISHABLE_KEY|STRIPE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|ANTHROPIC_API_KEY|VITE_N8N_SESSION_PREP_WEBHOOK_URL|VITE_N8N_CLINICAL_REVIEW_WEBHOOK_URL"
+SKIP_KEYS="VERCEL_OIDC_TOKEN|VITE_STRIPE_PUBLISHABLE_KEY|STRIPE_SECRET_KEY|SUPABASE_SERVICE_ROLE_KEY|ANTHROPIC_API_KEY|VITE_N8N_SESSION_PREP_WEBHOOK_URL|VITE_N8N_CLINICAL_REVIEW_WEBHOOK_URL|EDUCATOR_PASSWORD|ELEVENLABS_API_KEY|ELEVENLABS_VOICE_ID"
 
-LOCAL_KEYS=$(grep -E "^[A-Z_]+=." .env.local | grep -v "^#" | cut -d '=' -f1 | grep -Ev "^($SKIP_KEYS)$" | sort -u)
+LOCAL_KEYS=$(grep -E "^[A-Za-z_][A-Za-z0-9_]*=." .env.local | grep -v "^#" | cut -d '=' -f1 | tr '[:lower:]' '[:upper:]' | grep -Ev "^($SKIP_KEYS)$" | sort -u)
 
 # Parse plain text output — match lines starting with spaces then uppercase (variable rows only)
 VERCEL_RAW=$(vercel env ls production 2>/dev/null)
@@ -25,7 +25,7 @@ if [ -z "$VERCEL_RAW" ]; then
   exit 1
 fi
 
-VERCEL_KEYS=$(echo "$VERCEL_RAW" | awk '/^[[:space:]]+[A-Z_]/{print $1}' | grep -v "^name$" | sort -u)
+VERCEL_KEYS=$(echo "$VERCEL_RAW" | grep -oE '^[[:space:]]*[A-Z_][A-Z0-9_]+' | tr -d ' ' | grep -vE '^(Name|Environment|Value)$' | sort -u)
 
 if [ -z "$VERCEL_KEYS" ]; then
   echo "WARNING: Vercel returned env data but no keys could be parsed."
