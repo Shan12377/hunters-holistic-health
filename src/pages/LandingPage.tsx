@@ -18,14 +18,14 @@ interface BPResult {
   supporting: string[]
 }
 
-// --- Stripe Payment Links (add these in Vercel env vars when Stripe is live) ---
+// --- Stripe Payment Links ---
 const STRIPE = {
-  foundation_monthly: import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '',
-  foundation_annual:  import.meta.env.VITE_STRIPE_FOUNDATION_ANNUAL  || '',
-  program_monthly:    import.meta.env.VITE_STRIPE_PROGRAM_MONTHLY    || '',
-  program_annual:     import.meta.env.VITE_STRIPE_PROGRAM_ANNUAL     || '',
-  vip_monthly:        import.meta.env.VITE_STRIPE_VIP_MONTHLY        || '',
-  vip_annual:         import.meta.env.VITE_STRIPE_VIP_ANNUAL         || '',
+  foundation_monthly: 'https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003',
+  foundation_annual:  'https://buy.stripe.com/dRm14meKs2ES6TCd5m00004',
+  program_monthly:    'https://buy.stripe.com/4gM8wOeKs1AOem4ghy00005',
+  program_annual:     'https://buy.stripe.com/cNi9AS59SfrEb9S9Ta00006',
+  vip_monthly:        'https://buy.stripe.com/7sY14m6dWbbo5Py9Ta00007',
+  vip_annual:         'https://buy.stripe.com/dRm28q9q8bboguc5CU00008',
   overhaul:           '',
 }
 const checkoutUrl = (key: keyof typeof STRIPE) => STRIPE[key] || '/join'

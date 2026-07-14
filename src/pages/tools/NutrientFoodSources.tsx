@@ -466,7 +466,7 @@ export default function NutrientFoodSources() {
             A functional medicine educator maps your specific medication list to your actual food intake and lab values, then builds a targeted educational food and supplement protocol, not a generic list.
           </p>
           <a
-            href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+            href={'https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003'}
             className={s.ctaBtn}
           >
             Start Foundation Plan, $37/mo →

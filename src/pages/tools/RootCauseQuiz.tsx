@@ -863,7 +863,7 @@ export default function RootCauseQuiz() {
                 The assessment tells you what the pattern is. A functional-medicine educator maps the sequence: which interventions to layer in, in which order, at the right doses for your specific situation.
               </div>
               <a
-                href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+                href="https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003"
                 className={s.ctaBtn}
               >
                 Start Foundation Plan — $37/mo →

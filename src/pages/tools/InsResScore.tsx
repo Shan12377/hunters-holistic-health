@@ -445,7 +445,7 @@ export default function InsResScore() {
                 <p className={s.homaCtaBody}>
                   HOMA-IR = (fasting insulin in µIU/mL x fasting glucose in mg/dL) divided by 405. A value under 1.0 suggests optimal sensitivity; around 2.0 or above suggests insulin resistance. The HOMA-IR calculator is available on the Foundation platform.
                 </p>
-                <a href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'} className={s.homaCtaLink}>
+                <a href={'https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003'} className={s.homaCtaLink}>
                   Access HOMA-IR Calculator →
                 </a>
               </div>
@@ -602,7 +602,7 @@ export default function InsResScore() {
               <p className={s.ctaBody}>
                 The assessment tells you where you likely fall on the spectrum. A functional medicine educator maps the sequence: which interventions to prioritize, in which order, at the right approach for your specific situation.
               </p>
-              <a href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'} className={s.ctaBtn}>
+              <a href={'https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003'} className={s.ctaBtn}>
                 Start Foundation Plan, $37/mo →
               </a>
               <div className={s.ctaSub}>

@@ -311,7 +311,7 @@ function ResultA({
           The assessment confirmed you are a strong candidate. The next step is a protocol that uses GLP-1 as a window to address your specific root causes, not a standalone drug you stop at goal weight.
         </div>
         <a
-          href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+          href="https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003"
           className={s.ctaBtn}
         >
           Start Foundation Plan — $37/mo →
@@ -362,7 +362,7 @@ function ResultB({ expectationMismatch }: { expectationMismatch: boolean }) {
         </div>
         <Link to="/why-cant-i-lose-weight" className={s.ctaBtn}>Take the Root-Cause Assessment →</Link>
         <a
-          href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+          href="https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003"
           className={s.ctaBtnSecondary}
         >
           Start Foundation Plan →
