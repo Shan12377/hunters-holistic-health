@@ -330,10 +330,10 @@ export default function NutrientFoodSources() {
 
       {/* Hero */}
       <div className={s.hero}>
-        <div className={s.eyebrow}>PharmD Food Reference · Companion to the Depletion Checker</div>
+        <div className={s.eyebrow}>Educational PharmD Food Reference · Companion to the Depletion Checker</div>
         <h1 className={s.heroTitle}>Food Sources for Every Depleted Nutrient</h1>
         <p className={s.heroSubhead}>
-          If your medications are lowering a nutrient, the first move is often the plate, not the pill. This guide ranks the densest real food sources for each nutrient, including the ones people overlook, plus the absorption rules that decide how much you actually keep.
+          If your medications are lowering a nutrient, the first move is often the plate, not the pill. This educational guide ranks the densest real food sources for each nutrient, including the ones people overlook, plus the absorption rules that decide how much you actually keep.
         </p>
         <p className={s.heroBody}>
           It pairs with the <Link to="/tools/medication-nutrient-checker">Medication Nutrient Depletion Checker</Link>: run your medication list there to see which nutrients to prioritize, then come here to rebuild them through food.
@@ -463,7 +463,7 @@ export default function NutrientFoodSources() {
         <div className={s.ctaBlock}>
           <div className={s.ctaTitle}>Want a personalized nutrient protocol for your medications?</div>
           <p className={s.ctaBody}>
-            A functional medicine educator maps your specific medication list to your actual food intake and lab values, then builds a targeted food and supplement protocol, not a generic list.
+            A functional medicine educator maps your specific medication list to your actual food intake and lab values, then builds a targeted educational food and supplement protocol, not a generic list.
           </p>
           <a
             href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
