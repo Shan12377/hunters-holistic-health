@@ -137,7 +137,7 @@ export default function SupplementTiming() {
               <div className={s.mWrong}>
                 <div className={s.mLabel}>What most people do</div>
                 <div className={s.mText}>Take magnesium in the morning with their coffee</div>
-                <div className={s.mWhy}>Caffeine is a magnesium antagonist. It actively flushes magnesium out of cells. You are paying to deplete yourself faster.</div>
+                <div className={s.mWhy}>Caffeine modestly increases urinary magnesium excretion and works against magnesium's calming effect. Morning magnesium with coffee is not harmful, but it is working against what you took it for.</div>
               </div>
               <div className={s.mRight}>
                 <div className={s.mLabel}>The fix</div>
@@ -149,7 +149,7 @@ export default function SupplementTiming() {
               <div className={s.mWrong}>
                 <div className={s.mLabel}>What most people do</div>
                 <div className={s.mText}>Take Vitamin D on an empty stomach, first thing in the morning</div>
-                <div className={s.mWhy}>Vitamin D is fat-soluble. Without dietary fat present, you absorb a fraction of what you paid for.</div>
+                <div className={s.mWhy}>Vitamin D is fat-soluble. Without dietary fat present, absorption drops meaningfully. Studies show D3 absorbs about 32% better with a fatty meal than a fat-free one.</div>
               </div>
               <div className={s.mRight}>
                 <div className={s.mLabel}>The fix</div>
@@ -161,7 +161,7 @@ export default function SupplementTiming() {
               <div className={s.mWrong}>
                 <div className={s.mLabel}>What most people do</div>
                 <div className={s.mText}>Take zinc on an empty stomach</div>
-                <div className={s.mWhy}>Zinc on an empty stomach causes nausea in the majority of people. Most people blame the supplement, not the timing.</div>
+                <div className={s.mWhy}>Zinc on an empty stomach commonly causes nausea. Most people blame the supplement, not the timing.</div>
               </div>
               <div className={s.mRight}>
                 <div className={s.mLabel}>The fix</div>
@@ -185,7 +185,7 @@ export default function SupplementTiming() {
               <div className={s.mWrong}>
                 <div className={s.mLabel}>What most people do</div>
                 <div className={s.mText}>Take fish oil at random, or in the morning before anything</div>
-                <div className={s.mWhy}>Omega-3 oils absorb poorly without food enzymes to stabilize them. Morning fish oil also causes the fishy aftertaste that makes people stop using it.</div>
+                <div className={s.mWhy}>Fish oil without a meal absorbs poorly and causes the fishy reflux that makes people stop taking it.</div>
               </div>
               <div className={s.mRight}>
                 <div className={s.mLabel}>The fix</div>
@@ -218,7 +218,7 @@ export default function SupplementTiming() {
                 <div>
                   <div className={s.tbName}>Thyroid Medication (Levothyroxine / Synthroid / Armour)</div>
                   <div className={s.tbNote}>Empty stomach, 30–60 min before food or coffee. Calcium, iron, magnesium, zinc, fiber, and antacids all block absorption. Separate by 4 hours.</div>
-                  <div className={s.tbWhy}>Absorption drops 20–40% when taken with food or competing minerals.</div>
+                  <div className={s.tbWhy}>Absorption drops roughly 10–20% with food; specific interactions like calcium, iron, and PPIs can reduce it 20–40%.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pCritical}`}>Critical</div>
               </div>
@@ -339,7 +339,7 @@ export default function SupplementTiming() {
               <div className={s.tbRow}>
                 <div>
                   <div className={s.tbName}>Vitamin E (Full Spectrum — all tocopherols + tocotrienols)</div>
-                  <div className={s.tbNote}>With fat-containing meal. Must be full-spectrum. Isolated alpha-tocopherol blocks absorption of the other 7 Vitamin E forms and has been associated with increased cancer risk in studies on the synthetic version.</div>
+                  <div className={s.tbNote}>With fat-containing meal. Must be full-spectrum. Isolated alpha-tocopherol blocks absorption of the other 7 Vitamin E forms. The SELECT trial found synthetic alpha-tocopherol supplementation associated with increased prostate cancer risk in men.</div>
                   <div className={s.tbWhy}>Alpha-tocopherol competes with and displaces gamma-tocopherol. Gamma and delta-tocopherol have important independent anti-inflammatory roles.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pImportant}`}>Important</div>
@@ -347,8 +347,8 @@ export default function SupplementTiming() {
               <div className={s.tbRow}>
                 <div>
                   <div className={s.tbName}>Curcumin / Turmeric</div>
-                  <div className={s.tbNote}>With fatty meal + black pepper (piperine). Turmeric without fat and piperine has nearly 0% bioavailability. Phospholipid-complexed formulations (Meriva, Theracurmin) absorb better without needing added pepper.</div>
-                  <div className={s.tbWhy}>Piperine inhibits hepatic glucuronidation of curcumin, increasing bioavailability by 2,000%. Plain curcumin powder is largely inert without these cofactors.</div>
+                  <div className={s.tbNote}>With fatty meal + black pepper (piperine). Curcumin absorbs poorly on its own. Phospholipid-complexed formulations (Meriva, Theracurmin) achieve better absorption without requiring added pepper.</div>
+                  <div className={s.tbWhy}>Piperine inhibits hepatic glucuronidation, reducing curcumin clearance and meaningfully increasing its bioavailability. Fat improves absorption of curcumin's fat-soluble structure. Plain powder without either cofactor absorbs poorly.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pImportant}`}>Important</div>
               </div>
@@ -385,7 +385,7 @@ export default function SupplementTiming() {
                 <div>
                   <div className={s.tbName}>Calcium (if supplementing — use food first)</div>
                   <div className={s.tbNote}>With dinner, if taking. Split total calcium dose across 2 meals. Absorption maxes out at ~500mg per sitting. Separate from iron by 2+ hours, from levothyroxine by 4+ hours. K2 must be present (with D3).</div>
-                  <div className={s.tbWhy}>Some evidence supports calcium absorption being higher in the evening. Splitting doses also reduces the arterial calcification risk associated with large single bolus doses.</div>
+                  <div className={s.tbWhy}>Some evidence supports calcium absorption being higher in the evening. Splitting doses also reduces the cardiovascular concerns raised in meta-analyses of large single calcium doses.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pStandard}`}>Standard</div>
               </div>
@@ -493,13 +493,13 @@ export default function SupplementTiming() {
               </tr>
               <tr>
                 <td className={s.pair}>Magnesium + Caffeine</td>
-                <td>Caffeine increases urinary magnesium excretion and antagonizes magnesium at cellular receptors, effectively canceling the calming effects</td>
+                <td>Caffeine increases urinary magnesium loss and stimulates the sympathetic nervous system that magnesium is meant to calm, effectively working against its effects</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>Take magnesium in the evening, well after your last caffeine.</td>
               </tr>
               <tr>
                 <td className={s.pair}>Fat-Soluble Vitamins + Empty Stomach</td>
-                <td>Vitamins D, E, K, A and CoQ10 require bile-salt emulsification for lymphatic absorption. No fat means no bile release means no absorption.</td>
+                <td>Vitamins D, E, K, A and CoQ10 require bile-salt emulsification for lymphatic absorption. Without dietary fat to trigger bile release, absorption is much lower.</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>Always take D, E, K, A, CoQ10, and fish oil with a fat-containing meal.</td>
               </tr>
@@ -535,7 +535,7 @@ export default function SupplementTiming() {
               </tr>
               <tr>
                 <td className={s.pair}>Probiotics + Antibiotics (together)</td>
-                <td>Antibiotics kill the probiotic organisms before they can colonize. The probiotic goes from potentially therapeutic to definitively inert.</td>
+                <td>Antibiotics kill most probiotic strains before they can colonize. Most strains taken simultaneously with an antibiotic won't survive the exposure. Spore-based strains (Saccharomyces boulardii) have better antibiotic resistance.</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>Separate probiotics and antibiotics by at least 2–3 hours. Take probiotics at midday if antibiotic is morning and evening.</td>
               </tr>
@@ -547,9 +547,9 @@ export default function SupplementTiming() {
               </tr>
               <tr>
                 <td className={s.pair}>Curcumin / Turmeric without Fat + Piperine</td>
-                <td>Curcumin bioavailability from plain turmeric powder without fat and piperine is approximately 1%. Nearly all of it passes through unabsorbed.</td>
+                <td>Curcumin absorbs poorly without fat or piperine. A small study found piperine dramatically increased bioavailability; plain powder without these cofactors is largely wasted.</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
-                <td className={s.solution}>Pair with black pepper (piperine increases absorption 2,000%) and a fatty meal. Or use phospholipid-complexed curcumin (Meriva, Theracurmin).</td>
+                <td className={s.solution}>Pair with black pepper (piperine) and a fatty meal. Phospholipid-complexed formulations (Meriva, Theracurmin) achieve better absorption without requiring added pepper.</td>
               </tr>
               <tr>
                 <td className={s.pair}>Berberine + GLP-1 / Insulin / Metformin</td>
@@ -670,9 +670,9 @@ export default function SupplementTiming() {
           <div className={s.doseGrid}>
             <div className={s.doseCard}>
               <div className={s.doseName}>Vitamin D3</div>
-              <div className={s.doseAmount}>5,000–10,000</div>
-              <div className={s.doseUnit}>IU/day for deficient adults</div>
-              <div className={s.doseCardNote}>Test first. Target 25-OH D: 50–80 ng/mL. Always with K2 MK-7 (100–200mcg).</div>
+              <div className={s.doseAmount}>1,000–4,000</div>
+              <div className={s.doseUnit}>IU/day for maintenance</div>
+              <div className={s.doseCardNote}>Test first. Higher doses only for confirmed deficiency under clinical guidance. Endocrine Society considers &gt;30 ng/mL sufficient; target varies by clinician. Always with K2 MK-7 (100–200mcg).</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Magnesium Glycinate</div>
@@ -714,7 +714,7 @@ export default function SupplementTiming() {
               <div className={s.doseName}>Methylfolate</div>
               <div className={s.doseAmount}>400–1,000</div>
               <div className={s.doseUnit}>mcg/day</div>
-              <div className={s.doseCardNote}>400mcg standard. Up to 1mg for those with confirmed MTHFR variants or on OCP/metformin.</div>
+              <div className={s.doseCardNote}>400mcg standard. Higher doses (up to 1mg) sometimes used with confirmed homozygous MTHFR variants under clinical guidance. Routine MTHFR screening is not recommended as standard of care.</div>
             </div>
           </div>
         </div>
