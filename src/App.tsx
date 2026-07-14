@@ -58,6 +58,7 @@ import MetabolicHealth from '@/pages/blog/MetabolicHealth'
 import Glp1FoodCulture from '@/pages/blog/Glp1FoodCulture'
 import Glp1Comparison from '@/pages/blog/Glp1Comparison'
 import WhyMealAppsFailAdvertorial from '@/pages/blog/WhyMealAppsFailAdvertorial'
+import BlogIndexPage from '@/pages/blog/BlogIndexPage'
 import ParasiteCleanseProtocol from '@/pages/protocol/ParasiteCleanseProtocol'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
@@ -142,6 +143,7 @@ export default function App() {
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
         <Route path="/shop" element={<Navigate to="/creatine" replace />} />
         <Route path="/creatine" element={<CreatinePage />} />
+        <Route path="/blog" element={<BlogIndexPage />} />
         <Route path="/blog/creatine-not-what-you-think" element={<CreatineNotWhatYouThink />} />
         <Route path="/blog/rebounding-benefits" element={<ReboundingBenefits />} />
         <Route path="/blog/glp1-muscle-loss-what-nobody-tells-you" element={<Glp1MuscleLoss />} />
