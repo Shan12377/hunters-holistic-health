@@ -104,10 +104,21 @@ export default function Glp1SideEffects() {
           <p>Related reading: <Link to="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound">Not All GLP-1s Are the Same</Link> | <Link to="/blog/glp1-supplements-what-actually-works">GLP-1 Supplements: What Actually Works</Link> | <Link to="/blog/glp1-and-food-culture-navigating-your-heritage">GLP-1 and Food Culture</Link></p>
 
           <div className={styles.quizCtaBox}>
-            <p>Free Clinical Tool</p>
+            <p>Free Educational Tool</p>
             <p>Am I Actually a GLP-1 Candidate?</p>
             <p>A PharmD-designed assessment that weighs your metabolic profile, safety screen, and root-cause picture before pointing you toward the right next step.</p>
             <Link to="/glp1-candidate-assessment" className={styles.quizCtaBoxBtn}>Take the Free Assessment</Link>
+          </div>
+
+          <div className={styles.freeResource}>
+            <strong>Free resource:</strong>{' '}
+            <a href="https://go.fliplink.me/view/HHHProviderAppointmentScripts" target="_blank" rel="noopener noreferrer">Provider Appointment Scripts</a>
+            {' '}— word-for-word prompts for talking to your provider about side effects, dose adjustments, and what to monitor.
+          </div>
+          <div className={styles.freeResource}>
+            <strong>Free resource:</strong>{' '}
+            <a href="https://go.fliplink.me/view/HHHlabrequestsheet" target="_blank" rel="noopener noreferrer">Lab Request Reference Sheet</a>
+            {' '}— the functional markers to track while on a GLP-1 medication, beyond the standard panel.
           </div>
 
           <hr className={styles.rule} />

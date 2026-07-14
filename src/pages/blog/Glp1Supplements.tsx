@@ -90,6 +90,12 @@ export default function Glp1Supplements() {
 
           <p>Related reading: <Link to="/blog/glp1-muscle-loss-what-nobody-tells-you">GLP-1 and Muscle Loss</Link> | <Link to="/blog/functional-labs-glp1-what-to-test">The Labs Your Doctor Did Not Order</Link> | <Link to="/blog/glp1-side-effects-pharmacist-guide">GLP-1 Side Effects: A Pharmacist's Guide</Link></p>
 
+          <div className={styles.freeResource}>
+            <strong>Free resource:</strong>{' '}
+            <a href="https://go.fliplink.me/view/HHHsupplementtrackingtemplate" target="_blank" rel="noopener noreferrer">Supplement Tracking Template</a>
+            {' '}— a simple log to track what you take, when you take it, and how you feel. Works for any supplement protocol.
+          </div>
+
           <hr className={styles.rule} />
 
           <NewsletterEmbed />

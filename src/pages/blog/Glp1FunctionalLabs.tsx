@@ -104,6 +104,17 @@ export default function Glp1FunctionalLabs() {
 
           <p>Related reading: <Link to="/blog/metabolic-health-beyond-weight-loss">Metabolic Health Is Not a Number on a Scale</Link> | <Link to="/blog/68-percent-glp1-weight-regain-how-to-beat-it">Why Most GLP-1 Users Regain Weight</Link> | <Link to="/blog/glp1-muscle-loss-what-nobody-tells-you">GLP-1 and Muscle Loss</Link></p>
 
+          <div className={styles.freeResource}>
+            <strong>Free resource:</strong>{' '}
+            <a href="https://go.fliplink.me/view/HHHlabrequestsheet" target="_blank" rel="noopener noreferrer">Lab Request Reference Sheet</a>
+            {' '}— a printable guide to the functional labs discussed above. Bring it to your next appointment.
+          </div>
+          <div className={styles.freeResource}>
+            <strong>Free resource:</strong>{' '}
+            <a href="https://go.fliplink.me/view/HHHProviderAppointmentScripts" target="_blank" rel="noopener noreferrer">Provider Appointment Scripts</a>
+            {' '}— word-for-word prompts for asking your provider about these labs and getting the conversation started.
+          </div>
+
           <hr className={styles.rule} />
 
           <NewsletterEmbed />

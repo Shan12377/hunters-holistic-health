@@ -75,10 +75,10 @@ export default function ClinicalInquiryPage() {
           <div className={styles.successIcon}>✓</div>
           <h1 className={styles.successTitle}>Inquiry received</h1>
           <p className={styles.successText}>
-            Your inquiry has been received and will be reviewed manually. If it is a good fit for advanced support, you will receive secure next steps via your preferred contact method.
+            Your inquiry has been received and will be reviewed. If it is a good fit for working together, you will receive next steps via your preferred contact method.
           </p>
           <p className={styles.successNote}>
-            Any sensitive records, lab documents, or detailed health information will be handled through a separate secure process. You will receive instructions for that after your inquiry is reviewed.
+            Any documents or detailed information will be handled through a separate secure process. You will receive instructions for that after your inquiry is reviewed.
           </p>
           <Link to="/" className={shared.btnPrimary}>
             Back to Home
@@ -110,11 +110,11 @@ export default function ClinicalInquiryPage() {
 
         <div className={styles.header}>
           <div className={styles.kicker}>
-            Clinical Interest
+            Educator Inquiry
           </div>
-          <h1 className={styles.title}>Advanced Support Inquiry</h1>
+          <h1 className={styles.title}>Work With Dr. Hunter</h1>
           <p className={styles.subtitle}>
-            Interested in lab review discussions, personalized protocols, or advanced wellness support? Submit this high-level inquiry and you will receive secure next steps after review.
+            Interested in lab review discussions, personalized educational protocols, or advanced functional medicine education? Submit this inquiry and you will receive next steps after review.
           </p>
         </div>
 

@@ -113,6 +113,22 @@
   margin: 2.5rem 0;
 }
 
+.freeResource {
+  background: rgba(11,158,142,.08);
+  border: 1px solid rgba(11,158,142,.25);
+  border-radius: 10px;
+  padding: 0.875rem 1.125rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.freeResource a {
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration: none;
+}
+.freeResource a:hover { text-decoration: underline; }
+
 .sig {
   font-size: 0.9rem;
   line-height: 1.6;

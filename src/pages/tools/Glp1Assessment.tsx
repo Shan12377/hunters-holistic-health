@@ -600,16 +600,16 @@ export default function Glp1Assessment() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
-            <div className={s.introEyebrow}>PharmD, CFNMP Clinical Assessment</div>
+            <div className={s.introEyebrow}>PharmD, CFNMP Educational Assessment</div>
             <h1 className={s.introTitle}>Am I a GLP-1 Candidate?</h1>
             <p className={s.introSubhead}>
-              Before you get on Ozempic, Wegovy, Zepbound, or the new oral options: get an honest clinical read on whether GLP-1 therapy fits your body, your history, and your goals.
+              Before starting Ozempic, Wegovy, Zepbound, or the new oral options: understand what the research says and whether your health profile, history, and goals align with the evidence.
             </p>
             <div className={s.introBody}>
-              <p>Every week, someone asks me some version of: "Should I just get on Ozempic?"</p>
-              <p>The honest answer depends on things a 3-minute intake form never asks. What does your metabolic picture actually look like? Have the underlying drivers of your weight resistance been identified? Is there anything in your history that changes the risk-benefit math? And do your expectations match what the research actually shows?</p>
-              <p>This assessment is built around those questions. Depending on your profile, the honest recommendation might be GLP-1 therapy now, root-cause work first, or a specific evaluation before you start.</p>
-              <div className={s.trustLine}>15 questions · PharmD, CFNMP clinical framework · Screens for the contraindications rushed intakes miss</div>
+              <p>The research on GLP-1 medications is clear on some questions and genuinely unsettled on others. Efficacy for weight reduction is well-documented. What the large trials do not always capture is how an individual's metabolic profile, medication history, and personal context interact with these medications over time.</p>
+              <p>This assessment is built around the questions the research raises: what your metabolic picture looks like before you start, whether underlying drivers of weight resistance have been identified, what in your history shifts the risk-benefit picture, and whether your expectations align with what the evidence actually shows.</p>
+              <p>Depending on your profile, the evidence-based educational direction might be GLP-1 therapy now, root-cause work first, or a specific evaluation before starting.</p>
+              <div className={s.trustLine}>15 questions · PharmD, CFNMP educational framework · Based on published efficacy and safety research</div>
             </div>
             <button className={s.startBtn} onClick={() => setPhase('quiz')}>
               Take the 4-Minute Assessment →
@@ -667,7 +667,7 @@ export default function Glp1Assessment() {
             <div className={s.introEyebrow}>Your results are ready</div>
             <h2 className={s.emailTitle}>Your assessment: {head.badge}</h2>
             <p className={s.emailBody}>
-              Your full assessment is on the next screen. Add your email to save it and receive Dr. Hunter's weekly clinical insights from a PharmD, CFNMP perspective.
+              Your full assessment is on the next screen. Add your email to save it and receive Dr. Hunter's weekly educational insights from a PharmD, CFNMP perspective.
             </p>
             <form className={s.emailForm} onSubmit={handleEmailSubmit}>
               <div className={s.emailRow}>

@@ -133,8 +133,8 @@ export default function SupportPage() {
             <label className={styles.label}>Brief description *</label>
             {/* PHI disclaimer directly above the text box */}
             <div className={shared.alertGold}>
-              Please do not include medical or private health information in this form. For clinical or health-related inquiries, use the{' '}
-              <Link to="/clinical-inquiry" className={styles.consentLink}>Clinical Inquiry form</Link>.
+              Please do not include medical or private health information in this form. For educator support inquiries, use the{' '}
+              <Link to="/clinical-inquiry" className={styles.consentLink}>Educator Inquiry form</Link>.
             </div>
             <textarea className={styles.textarea} required value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}

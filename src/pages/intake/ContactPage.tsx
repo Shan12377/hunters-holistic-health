@@ -63,8 +63,8 @@ export default function ContactPage() {
         </div>
 
         <div className={shared.alertGold}>
-          Do not include health information, medication names, or lab results in this form. For clinical inquiries use the{' '}
-          <Link to="/clinical-inquiry" className={styles.consentLink}>Clinical Inquiry form</Link> instead.
+          Do not include health information, medication names, or lab results in this form. For educator support inquiries use the{' '}
+          <Link to="/clinical-inquiry" className={styles.consentLink}>Educator Inquiry form</Link> instead.
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

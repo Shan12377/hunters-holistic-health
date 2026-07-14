@@ -1262,7 +1262,7 @@ export default function LandingPage() {
           <Link to="/join" className={styles.footerLink}>Join</Link>
           <Link to="/support" className={styles.footerLink}>Support</Link>
           <Link to="/feature-request" className={styles.footerLink}>Request a Feature</Link>
-          <Link to="/clinical-inquiry" className={styles.footerLink}>Clinical Inquiry</Link>
+          <Link to="/clinical-inquiry" className={styles.footerLink}>Educator Inquiry</Link>
           <Link to="/terms" className={styles.footerLink}>Terms of Service</Link>
           <Link to="/privacy" className={styles.footerLink}>Privacy Policy</Link>
           <Link to="/privacy-scorecard" className={styles.footerLink}>Privacy Scorecard</Link>

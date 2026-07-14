@@ -99,9 +99,9 @@ export default function MessagesPage() {
 
       {/* Standing scope notice */}
       <div className={shared.alertGold}>
-        This channel is for scheduling, program logistics, and encouragement. Please do not share symptoms, medications, lab results, or other health details here. For clinical topics, use the{' '}
-        <Link to="/clinical-inquiry" className={styles.consentLinkInline}>Clinical Inquiry form</Link>{' '}
-        so your information is handled through the secure clinical process.
+        This channel is for scheduling, program logistics, and encouragement. Please do not share symptoms, medications, lab results, or other health details here. For educator support inquiries, use the{' '}
+        <Link to="/clinical-inquiry" className={styles.consentLinkInline}>Educator Inquiry form</Link>{' '}
+        so your inquiry is handled through the appropriate process.
       </div>
 
       <div className={styles.msgCard}>
@@ -129,8 +129,8 @@ export default function MessagesPage() {
 
             {clinicalNudge && (
               <div className={styles.nudgeBanner}>
-                This looks like it might be a health question. Your educator cannot respond to clinical details in this channel. Consider the{' '}
-                <Link to="/clinical-inquiry" className={styles.consentLinkInline}>Clinical Inquiry form</Link> instead.
+                This looks like it might be a health question. For educator support on that topic, consider the{' '}
+                <Link to="/clinical-inquiry" className={styles.consentLinkInline}>Educator Inquiry form</Link> instead.
               </div>
             )}
 
