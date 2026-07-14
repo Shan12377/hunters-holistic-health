@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
 import HeroParticles from '../components/HeroParticles'
@@ -247,6 +247,18 @@ const TIERS: Tier[] = [
   },
 ]
 
+const START_HERE: Array<
+  | { icon: string; tag: string; label: string; action: 'tool'; tab: ToolTab }
+  | { icon: string; tag: string; label: string; action: 'link'; href: string }
+> = [
+  { icon: '🩺', tag: 'Blood Pressure', label: 'I want to understand and lower my blood pressure', action: 'tool', tab: 'bp' },
+  { icon: '🩸', tag: 'Blood Sugar', label: 'I have pre-diabetes or blood sugar I cannot explain', action: 'tool', tab: 'glucose' },
+  { icon: '💊', tag: 'GLP-1 Medication', label: 'I am on Ozempic, Wegovy, Mounjaro, or Zepbound', action: 'link', href: '/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound' },
+  { icon: '🧬', tag: 'Supplements', label: 'I take multiple supplements and need to know if they interact', action: 'link', href: '/tools/medication-nutrient-checker' },
+  { icon: '⚡', tag: 'Energy and Brain Fog', label: 'I have fatigue and brain fog that is not explained', action: 'tool', tab: 'symptom' },
+  { icon: '❓', tag: 'Not Sure Where to Start', label: 'I do not know where to start. Help me figure it out.', action: 'link', href: '/tools/root-cause-quiz' },
+]
+
 const ROOTS_STEPS = [
   { letter: 'R', name: 'Review',               hint: 'Start with your full picture',              color: '#e05c5c' },
   { letter: 'O', name: 'Optimize Nutrition',   hint: 'Food as education, personalized',            color: '#c8a74b' },
@@ -411,8 +423,16 @@ export default function LandingPage() {
     }
   }
 
+  const statsRef = useRef<HTMLDivElement>(null)
+  const [statsVisible, setStatsVisible] = useState(false)
+
   const scrollToTools   = () => document.getElementById('free-tools')?.scrollIntoView({ behavior: 'smooth' })
   const scrollToPricing = () => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+
+  const goToTool = (tab: ToolTab) => {
+    setToolTab(tab)
+    setTimeout(() => document.getElementById('free-tools')?.scrollIntoView({ behavior: 'smooth' }), 50)
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -428,7 +448,14 @@ export default function LandingPage() {
       { threshold: 0.08, rootMargin: '0px 0px -32px 0px' }
     )
     document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el))
-    return () => observer.disconnect()
+
+    const statsObs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStatsVisible(true); statsObs.disconnect() } },
+      { threshold: 0.3 }
+    )
+    if (statsRef.current) statsObs.observe(statsRef.current)
+
+    return () => { observer.disconnect(); statsObs.disconnect() }
   }, [])
 
   const submitEmailCapture = async () => {
@@ -530,6 +557,55 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Start Here — condition navigator */}
+      <section className={styles.startHereSection}>
+        <div className={styles.sectionKicker}>Start Here</div>
+        <h2 className={styles.startHereTitle}>What brought you here today?</h2>
+        <p className={styles.startHereSub}>Pick what fits. We will send you straight to the right tool or resource.</p>
+        <div className={styles.startGrid}>
+          {START_HERE.map((item) =>
+            item.action === 'tool' ? (
+              <button key={item.label} className={styles.startCard} onClick={() => goToTool(item.tab)}>
+                <span className={styles.startCardIcon}>{item.icon}</span>
+                <span className={styles.startCardTag}>{item.tag}</span>
+                <span className={styles.startCardLabel}>{item.label}</span>
+                <span className={styles.startCardArrow}>→</span>
+              </button>
+            ) : (
+              <Link key={item.label} to={item.href} className={styles.startCard}>
+                <span className={styles.startCardIcon}>{item.icon}</span>
+                <span className={styles.startCardTag}>{item.tag}</span>
+                <span className={styles.startCardLabel}>{item.label}</span>
+                <span className={styles.startCardArrow}>→</span>
+              </Link>
+            )
+          )}
+        </div>
+      </section>
+
+      {/* Stats credibility band */}
+      <div className={styles.statsBand} ref={statsRef}>
+        <div className={styles.statsGrid}>
+          <div className={styles.statItem}>
+            <div className={`${styles.statNum} ${statsVisible ? styles.statVisible : ''}`}>12<span className={styles.statSuffix}>%</span></div>
+            <div className={styles.statLabel}>of American adults are metabolically healthy</div>
+            <div className={styles.statSource}>Metabolic Syndrome and Related Disorders, 2022</div>
+          </div>
+          <div className={styles.statDivider} aria-hidden="true" />
+          <div className={styles.statItem}>
+            <div className={`${styles.statNum} ${statsVisible ? styles.statVisible : ''}`} style={{ animationDelay: '0.2s' }}>5</div>
+            <div className={styles.statLabel}>phases of root-cause education in the ROOTS Framework</div>
+            <div className={styles.statSource}>Review, Optimize, Transform, Sustain</div>
+          </div>
+          <div className={styles.statDivider} aria-hidden="true" />
+          <div className={styles.statItem}>
+            <div className={`${styles.statNum} ${statsVisible ? styles.statVisible : ''}`} style={{ animationDelay: '0.4s' }}>10<span className={styles.statSuffix}>min</span></div>
+            <div className={styles.statLabel}>daily check-in to stay consistent with your protocol</div>
+            <div className={styles.statSource}>Nutrition, fasting, supplements, steps, water, energy</div>
+          </div>
+        </div>
+      </div>
 
       {/* Free Tools */}
       <section className={styles.section} id="free-tools">
@@ -893,6 +969,36 @@ export default function LandingPage() {
         {toolTab === 'hormone' && <HormoneCyclePreview />}
       </section>
 
+      {/* More free tools bridge */}
+      <div className={styles.toolsBridge}>
+        <p className={styles.toolsBridgeLabel}>More free tools, no account required</p>
+        <div className={styles.toolsBridgeGrid}>
+          <Link to="/tools/glp1-assessment" className={styles.toolsBridgeCard}>
+            <span className={styles.toolsBridgeIcon}>💉</span>
+            <span>GLP-1 Candidate Assessment</span>
+          </Link>
+          <Link to="/tools/medication-nutrient-checker" className={styles.toolsBridgeCard}>
+            <span className={styles.toolsBridgeIcon}>💊</span>
+            <span>Medication Nutrient Checker</span>
+          </Link>
+          <Link to="/tools/root-cause-quiz" className={styles.toolsBridgeCard}>
+            <span className={styles.toolsBridgeIcon}>🧬</span>
+            <span>Root Cause Quiz</span>
+          </Link>
+          <Link to="/bp-simulator" className={styles.toolsBridgeCard}>
+            <span className={styles.toolsBridgeIcon}>📊</span>
+            <span>Full BP Simulator</span>
+          </Link>
+          <Link to="/tools/insulin-resistance-score" className={styles.toolsBridgeCard}>
+            <span className={styles.toolsBridgeIcon}>📉</span>
+            <span>Insulin Resistance Score</span>
+          </Link>
+          <Link to="/tools" className={`${styles.toolsBridgeCard} ${styles.toolsBridgeAllLink}`}>
+            <span>See all free tools →</span>
+          </Link>
+        </div>
+      </div>
+
       {/* Who This Is For */}
       <div className={styles.bgWhoFor}>
       <section className={`${styles.sectionDark} ${styles.reveal}`} data-reveal>
@@ -910,6 +1016,16 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+      </div>
+
+      {/* Problem to solution bridge */}
+      <div className={styles.bridgeBlock}>
+        <p className={styles.bridgeQuote}>
+          "The doctor says borderline. The pamphlet says eat better. Neither one explains what is actually happening in your body."
+        </p>
+        <p className={styles.bridgeAnswer}>
+          That is what this platform exists to do. Not manage the number. Understand it.
+        </p>
       </div>
 
       {/* How It Works */}
@@ -946,6 +1062,24 @@ export default function LandingPage() {
             <div className={styles.howNum}>3</div>
             <h3 className={styles.howTitle}>Watch your Weekly Report Card</h3>
             <p className={styles.howDesc}>Every week you get a grade showing exactly what is improving and where to focus next. Progress becomes visible. That visibility is what keeps people consistent.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo video */}
+      <section className={`${styles.section} ${styles.videoSection}`}>
+        <div className={styles.sectionKicker}>See It in Action</div>
+        <h2 className={styles.sectionTitle}>60 seconds. The whole platform.</h2>
+        <p className={styles.sectionSubtitle}>The Daily Command Center, AI Meal Guard, BP Tracker, and ROOTS curriculum, all in one walkthrough.</p>
+        <div className={styles.videoSlot}>
+          {/* Drop your Loom or YouTube URL here once recorded */}
+          {/* <iframe src="YOUR_VIDEO_URL" className={styles.videoFrame} allowFullScreen title="Platform demo" /> */}
+          <div className={styles.videoPlaceholder}>
+            <div className={styles.videoPlayRing}>
+              <span className={styles.videoPlayIcon}>▶</span>
+            </div>
+            <p className={styles.videoPlaceholderTitle}>Platform walkthrough video</p>
+            <p className={styles.videoPlaceholderSub}>Coming soon. Record a 60-second Loom and drop the URL here.</p>
           </div>
         </div>
       </section>
@@ -1045,7 +1179,7 @@ export default function LandingPage() {
                 <span className={styles.outcomeStatLabel}>Supplements</span>
               </div>
               <div className={styles.outcomeStat}>
-                <span className={styles.outcomeStatVal}>5 → 3</span>
+                <span className={styles.outcomeStatVal}>5 → 4</span>
                 <span className={styles.outcomeStatLabel}>Medications</span>
               </div>
             </div>
@@ -1073,7 +1207,7 @@ export default function LandingPage() {
               "Kind. Professional. Extremely knowledgeable about my health issues. The Zoom format was easy and convenient. Looking forward to working together."
             </blockquote>
             <div className={styles.reviewAuthor}>
-              Michael <span className={styles.blurredName}>Duffy</span> &nbsp;&middot;&nbsp; Mar 31, 2026
+              Mike D. &nbsp;&middot;&nbsp; New Jersey &nbsp;&middot;&nbsp; Mar 31, 2026
             </div>
             <div className={styles.reviewResponse}>
               <span className={styles.reviewResponseLabel}>Dr. Hunter's response to Mike:</span>
