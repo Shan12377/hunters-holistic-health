@@ -48,7 +48,7 @@ export default function Glp1Comparison() {
         <header className={styles.articleHeader}>
           <p className={styles.byline}>Dr. Shallanda Hunter, PharmD, CFNMP | Functional Medicine Educator</p>
           <h1 className={styles.h1}>Not All GLP-1s Are the Same: Ozempic vs Wegovy vs Mounjaro vs Zepbound (and the Oral Options)</h1>
-          <p className={styles.meta}>June 2026 · 8 min read</p>
+          <p className={styles.meta}>July 14, 2026 · 8 min read</p>
         </header>
 
         <div className={styles.body}>

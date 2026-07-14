@@ -48,7 +48,7 @@ export default function Glp1SideEffects() {
         <header className={styles.articleHeader}>
           <p className={styles.byline}>Dr. Shallanda Hunter, PharmD, CFNMP | Functional Medicine Educator</p>
           <h1 className={styles.h1}>GLP-1 Side Effects: What Is Normal, What Is Not, and What to Do</h1>
-          <p className={styles.meta}>January 2026 · Reviewed June 2026 · 9 min read</p>
+          <p className={styles.meta}>July 14, 2026 · 9 min read</p>
         </header>
 
         <div className={styles.body}>
