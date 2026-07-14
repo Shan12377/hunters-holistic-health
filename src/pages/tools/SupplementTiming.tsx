@@ -13,7 +13,7 @@ const SCHEMA = {
       description: 'When to take common supplements for best absorption, which combinations to avoid, and absorption-boosting pairings, from a PharmD.',
       inLanguage: 'en-US',
       lastReviewed: '2026-07-14',
-      reviewedBy: { '@type': 'Person', name: 'Dr. Shallanda Hunter, PharmD', jobTitle: 'Doctor of Pharmacy' },
+      reviewedBy: { '@type': 'Person', name: 'Dr. Shallanda Hunter, PharmD, CFNMP', jobTitle: 'Doctor of Pharmacy, Certified Functional Nutrition & Metabolism Practitioner' },
     },
     {
       '@type': 'FAQPage',
@@ -109,7 +109,7 @@ export default function SupplementTiming() {
           <div className={s.headerEye}>PharmD Timing Reference</div>
           <h2 className={s.headerH2}>Stop Wasting Your Supplements. Timing Changes Everything.</h2>
           <p className={s.headerSub}>Most people take the right supplements wrong. A supplement taken at the wrong time, without the right cofactor, or alongside a mineral that blocks it can go from effective to irrelevant. Here is what actually matters and why.</p>
-          <div className={s.headerBadge}>Dr. Shallanda Hunter, PharmD, Hunter's Holistic Health</div>
+          <div className={s.headerBadge}>Dr. Shallanda Hunter, PharmD, CFNMP, Hunter's Holistic Health</div>
         </div>
       </div>
 
