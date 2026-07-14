@@ -39,7 +39,7 @@ const phases = [
       },
       {
         name: 'Jarrow NAC Sustain 600mg',
-        dose: '1 capsule in the morning. Replenishes glutathione — your primary detox molecule — before die-off starts flooding the system. Also breaks down the biofilm parasites use to hide from the immune system.',
+        dose: '1 capsule in the morning. Replenishes glutathione, your primary detox molecule, before die-off starts flooding the system. Also breaks down the biofilm parasites use to hide from the immune system.',
         link: 'https://amzn.to/3QOQqDO',
       },
     ],
@@ -56,12 +56,12 @@ const phases = [
       },
       {
         name: "Oregon's Wild Harvest Wormwood",
-        dose: '3 capsules daily (780mg total), taken with meals. Artemisia absinthium disrupts parasite mitochondria. Do not exceed 4 consecutive weeks — rest weeks are built into the protocol for this reason.',
+        dose: '3 capsules daily (780mg total), taken with meals. Artemisia absinthium disrupts parasite mitochondria. Do not exceed 4 consecutive weeks; rest weeks are built into the protocol for this reason.',
         link: 'https://amzn.to/4eKOvbd',
       },
       {
         name: "Oregon's Wild Harvest Cloves",
-        dose: '3 capsules daily (1,500mg total), taken with meals. Eugenol in cloves destroys parasite eggs and larvae — the stage wormwood does not reach as effectively. These two work as a team.',
+        dose: '3 capsules daily (1,500mg total), taken with meals. Eugenol in cloves destroys parasite eggs and larvae, the stage wormwood does not reach as effectively. These two work as a team.',
         link: 'https://amzn.to/3QmOGkW',
       },
       {
@@ -71,12 +71,12 @@ const phases = [
       },
       {
         name: 'G.I. Detox+',
-        dose: '1 capsule 3 times daily, taken between meals — at least 2 hours away from all other supplements and food. Binds the toxins released by dying parasites so they exit in stool rather than recirculating into the bloodstream.',
+        dose: '1 capsule 3 times daily, taken between meals, at least 2 hours away from all other supplements and food. Binds the toxins released by dying parasites so they exit in stool rather than recirculating into the bloodstream.',
         link: 'https://amzn.to/4eCJstg',
       },
       {
         name: 'Jarrow S. boulardii',
-        dose: '1 capsule daily with food throughout the kill phase. Saccharomyces boulardii is a probiotic yeast — antiparasitic herbs cannot kill it. Bridges gut protection while the kill herbs clear everything else out.',
+        dose: '1 capsule daily with food throughout the kill phase. Saccharomyces boulardii is a probiotic yeast. Antiparasitic herbs cannot kill it. Bridges gut protection while the kill herbs clear everything else out.',
         link: 'https://amzn.to/44nNZLx',
       },
     ],
@@ -88,7 +88,7 @@ const phases = [
     products: [
       {
         name: 'Thorne L-Glutamine Powder',
-        dose: '5–10g powder on an empty stomach each morning. Mix in water or a smoothie. L-Glutamine is the primary fuel for enterocytes — the cells that line and rebuild the intestinal wall. Parasites punch holes in tight junctions as they die; this is what closes them.',
+        dose: '5–10g powder on an empty stomach each morning. Mix in water or a smoothie. L-Glutamine is the primary fuel for enterocytes, the cells that line and rebuild the intestinal wall. Parasites punch holes in tight junctions as they die; this is what closes them.',
         link: 'https://amzn.to/450hwLr',
       },
       {
@@ -98,7 +98,7 @@ const phases = [
       },
       {
         name: 'Microbiome Labs MegaSporeBiotic',
-        dose: 'Start with 1 capsule daily with food for the first week, then increase to 2 capsules daily. Begin only after the kill phase is completely finished. Bacillus spore strains are armor-plated — they survive stomach acid where most probiotics do not. Recolonizes the cleared terrain before opportunistic bacteria move back in.',
+        dose: 'Start with 1 capsule daily with food for the first week, then increase to 2 capsules daily. Begin only after the kill phase is completely finished. Bacillus spore strains are armor-plated; they survive stomach acid where most probiotics do not. Recolonizes the cleared terrain before opportunistic bacteria move back in.',
         link: 'https://amzn.to/4phRvAL',
       },
     ],
