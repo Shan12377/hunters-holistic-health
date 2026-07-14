@@ -68,6 +68,7 @@ import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
 import FoodSearchPage from '@/pages/client/FoodSearchPage'
 import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
 import BPSimulatorPage from '@/pages/BPSimulatorPage'
+import MedicationNutrientChecker from '@/pages/tools/MedicationNutrientChecker'
 import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
@@ -147,6 +148,7 @@ export default function App() {
         <Route path="/protocol/parasite-cleanse" element={<ParasiteCleanseProtocol />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />
+        <Route path="/tools/medication-nutrient-checker" element={<MedicationNutrientChecker />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
