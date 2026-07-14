@@ -204,6 +204,18 @@
   transition: border-color 0.2s;
 }
 .gateInput:focus { border-color: var(--teal); }
+.gateSent {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--teal);
+  font-weight: 600;
+  padding: 1rem;
+  background: rgba(11,158,142,.08);
+  border: 1px solid rgba(11,158,142,.25);
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
 .gateBack {
   background: none;
   border: none;

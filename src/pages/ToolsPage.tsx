@@ -219,7 +219,7 @@ export default function ToolsPage() {
       </header>
 
       <section className={styles.hero}>
-        <p className={styles.heroEyebrow}>Free Clinical Tools</p>
+        <p className={styles.heroEyebrow}>Free Educational Tools</p>
         <h1 className={styles.heroTitle}>Know Your Metabolic Pattern</h1>
         <p className={styles.heroSub}>
           Free clinical tools built on functional-medicine research. No login required.
@@ -297,7 +297,7 @@ export default function ToolsPage() {
                 ))}
                 <div className={styles.stepNav}>
                   <button className={shared.btnGhost} onClick={() => setPgStep('goal')}>Back</button>
-                  <button className={shared.btnPrimary} onClick={() => setPgStep('gate')}>
+                  <button className={shared.btnPrimary} onClick={() => setPgStep('results')}>
                     Generate My Protocol
                   </button>
                 </div>
@@ -374,6 +374,37 @@ export default function ToolsPage() {
                 <div className={styles.disclaimer}>
                   This is educational content, not medical advice. Coordinate any new protocol with your healthcare provider.
                 </div>
+
+                {!pgDone && (
+                  <div className={styles.gateCard}>
+                    <p className={styles.gateEyebrow}>Save your roadmap</p>
+                    <h2 className={styles.gateTitle}>Get this roadmap in your inbox.</h2>
+                    <p className={styles.gateSub}>We will send your personalized protocol plus weekly functional medicine education from Dr. Hunter. Unsubscribe anytime.</p>
+                    <form onSubmit={submitGate} className={styles.gateForm}>
+                      <input
+                        type="text"
+                        placeholder="First name (optional)"
+                        value={pgName}
+                        onChange={e => setPgName(e.target.value)}
+                        className={styles.gateInput}
+                      />
+                      <input
+                        type="email"
+                        placeholder="Your email address"
+                        value={pgEmail}
+                        onChange={e => setPgEmail(e.target.value)}
+                        required
+                        className={styles.gateInput}
+                      />
+                      <button type="submit" className={shared.btnPrimary} disabled={pgSending || !pgEmail}>
+                        {pgSending ? 'Sending...' : 'Send My Roadmap'}
+                      </button>
+                    </form>
+                  </div>
+                )}
+                {pgDone && (
+                  <p className={styles.gateSent}>Roadmap sent to {pgEmail}. Check your inbox.</p>
+                )}
 
                 <div className={styles.ctaCard}>
                   <h3 className={styles.ctaTitle}>Want the full version with labs and medication insights?</h3>
@@ -500,7 +531,7 @@ export default function ToolsPage() {
             <span className={styles.moreCardCta}>Check My Medications →</span>
           </Link>
           <Link to="/glp1-candidate-assessment" className={styles.moreCard}>
-            <div className={styles.moreCardEyebrow}>15-Question Clinical Assessment</div>
+            <div className={styles.moreCardEyebrow}>15-Question Educational Assessment</div>
             <div className={styles.moreCardName}>Am I a GLP-1 Candidate?</div>
             <div className={styles.moreCardDesc}>Honest clinical read on whether Ozempic, Wegovy, Zepbound, or Foundayo fits your profile, or whether root-cause work should come first.</div>
             <span className={styles.moreCardCta}>Take the Assessment →</span>
@@ -510,6 +541,60 @@ export default function ToolsPage() {
             <div className={styles.moreCardName}>Supplement Timing Guide</div>
             <div className={styles.moreCardDesc}>When to take magnesium, iron, vitamin D, B vitamins, and more. Which nutrients cancel each other out. The pairings that actually boost absorption.</div>
             <span className={styles.moreCardCta}>View the Guide →</span>
+          </Link>
+        </div>
+      </section>
+
+      <section className={styles.moreTools}>
+        <h2 className={styles.moreTitle}>Free Reading: From the Blog</h2>
+        <div className={styles.moreGrid}>
+          <Link to="/blog/why-meal-planning-apps-fail" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>Platform Feature</div>
+            <div className={styles.moreCardName}>Why Your Meal Planning App Has Never Actually Worked</div>
+            <div className={styles.moreCardDesc}>The real reason AI food trackers fail, why the strategies from your 20s don't work anymore, and what a metabolic-first approach actually looks like.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/metabolic-health-beyond-weight-loss" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>Metabolic Health</div>
+            <div className={styles.moreCardName}>Metabolic Health Is Not a Number on a Scale</div>
+            <div className={styles.moreCardDesc}>Only 12% of American adults are metabolically healthy. A pharmacist explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/glp1-side-effects-pharmacist-guide" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>GLP-1 Side Effects: A Pharmacist's Honest Guide</div>
+            <div className={styles.moreCardDesc}>Nausea, muscle loss, rebound weight — what the prescribing data actually shows and how to reduce each risk with a root-cause protocol running alongside.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/glp1-muscle-loss-what-nobody-tells-you" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>GLP-1 and Muscle Loss: What Nobody Tells You</div>
+            <div className={styles.moreCardDesc}>On average, 25 to 39% of weight lost on GLP-1s is lean mass. A pharmacist explains why this matters, and what the evidence says to do about it.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/68-percent-glp1-weight-regain-how-to-beat-it" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>68% of GLP-1 Users Regain the Weight. Here Is How to Beat It.</div>
+            <div className={styles.moreCardDesc}>The SURMOUNT-4 trial data is clear: most weight returns within a year of stopping. The research on what actually prevents rebound.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/glp1-supplements-what-actually-works" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>GLP-1 Supplements: What Actually Works</div>
+            <div className={styles.moreCardDesc}>Berberine, magnesium, B12, creatine, omega-3s. Which supplements have evidence behind them on GLP-1 therapy and which are noise.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/functional-labs-glp1-what-to-test" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>Functional Labs for GLP-1 Users: What to Test Before You Start</div>
+            <div className={styles.moreCardDesc}>HOMA-IR, fasting insulin, CRP, ferritin, B12. The labs that tell the full story before and during GLP-1 therapy.</div>
+            <span className={styles.moreCardCta}>Read →</span>
+          </Link>
+          <Link to="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
+            <div className={styles.moreCardName}>Ozempic vs. Wegovy vs. Mounjaro vs. Zepbound: What the Data Says</div>
+            <div className={styles.moreCardDesc}>A pharmacist breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.</div>
+            <span className={styles.moreCardCta}>Read →</span>
           </Link>
         </div>
       </section>

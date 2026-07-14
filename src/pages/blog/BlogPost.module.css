@@ -313,3 +313,159 @@
   opacity: 0.88;
   color: #0e1c1b;
 }
+
+/* Advertorial-specific */
+.advertLabel {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold, #c8a74b);
+  border: 1px solid var(--gold, #c8a74b);
+  padding: 0.2rem 0.65rem;
+  border-radius: 4px;
+  margin-bottom: 0.875rem;
+}
+
+.statBox {
+  background: rgba(200,167,75,.07);
+  border-left: 3px solid var(--gold, #c8a74b);
+  border-radius: 0 10px 10px 0;
+  padding: 1.1rem 1.4rem;
+  margin: 1.75rem 0;
+}
+
+.statNum {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--gold, #c8a74b);
+  line-height: 1;
+  margin: 0 0 0.2rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0 0 0.6rem;
+}
+
+.statContext {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.featureBlock {
+  background: var(--card-bg, #152423);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 2.25rem 0;
+}
+
+.featureBlockImg {
+  width: 100%;
+  display: block;
+  border-bottom: 1px solid var(--border);
+}
+
+.featureBlockBody {
+  padding: 1.1rem 1.4rem 1.3rem;
+}
+
+.featureBlockLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--teal, #0B9E8E);
+  margin: 0 0 0.35rem;
+}
+
+.featureBlockTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+}
+
+.featureBlockDesc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.groceryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  margin: 1.5rem 0 2rem;
+}
+
+@media (max-width: 580px) {
+  .groceryGrid { grid-template-columns: 1fr; }
+}
+
+.groceryCard {
+  background: var(--card-bg, #152423);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+}
+
+.groceryCat {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--teal, #0B9E8E);
+  margin: 0 0 0.3rem;
+}
+
+.groceryItems {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 0.2rem;
+}
+
+.groceryWhy {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.sceneLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.75rem 0 0.5rem;
+}
+
+.sceneNum {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--teal, #0B9E8E);
+  color: #0e1c1b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sceneTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
