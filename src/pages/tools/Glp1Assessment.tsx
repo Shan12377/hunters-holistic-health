@@ -701,6 +701,9 @@ export default function Glp1Assessment() {
         {/* RESULT */}
         {phase === 'result' && (
           <div className={s.result}>
+            <button className={s.pdfBtn} onClick={() => window.print()}>
+              ↓ Download as PDF
+            </button>
             <div className={`${s.resultBadge} ${head.badgeClass}`}>{head.badge}</div>
             <h2 className={s.resultHeading}>{head.heading}</h2>
             <p className={s.resultSubhead}>{head.subhead}</p>

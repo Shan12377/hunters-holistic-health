@@ -635,6 +635,75 @@
   margin-top: 0.625rem;
 }
 
+.pdfBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.45rem 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-bottom: 1.5rem;
+}
+.pdfBtn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+@media print {
+  .progressWrap,
+  .intro,
+  .qWrap,
+  .emailGate,
+  .ctaBlock,
+  .pdfBtn {
+    display: none !important;
+  }
+  .page {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .inner {
+    padding: 0 !important;
+  }
+  .resultBadge,
+  .resultHeading,
+  .resultSubhead,
+  .scoresTitle,
+  .scoreLabel,
+  .secondaryLabel,
+  .secondaryName,
+  .sectionTitle,
+  .sectionBody,
+  .li,
+  .flagTitle,
+  .flagText,
+  .dshea,
+  .interactionNote,
+  .labsBox,
+  .scriptBox,
+  .disclaimer {
+    color: #111111 !important;
+  }
+  .scoresCard,
+  .secondaryCard,
+  .flagCard,
+  .labsBox,
+  .scriptBox,
+  .dshea,
+  .interactionNote {
+    background: #f5f5f5 !important;
+    border-color: #cccccc !important;
+  }
+  .scoreBar { background: #dddddd !important; }
+  .divider  { border-color: #cccccc !important; }
+}
+
 @media (max-width: 600px) {
   .scoreRow {
     grid-template-columns: 100px 1fr 36px;
