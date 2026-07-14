@@ -310,8 +310,18 @@ function ResultA({
         <div className={s.ctaBody}>
           The assessment confirmed you are a strong candidate. The next step is a protocol that uses GLP-1 as a window to address your specific root causes, not a standalone drug you stop at goal weight.
         </div>
-        <Link to="/join" className={s.ctaBtn}>Join Hunter's Holistic Health →</Link>
-        <div className={s.ctaSub}>Foundation, Program, and VIP plans available. Cancel anytime.</div>
+        <a
+          href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+          className={s.ctaBtn}
+        >
+          Start Foundation Plan — $37/mo →
+        </a>
+        <div className={s.ctaSub}>
+          Cancel anytime. &nbsp;·&nbsp; <Link to="/join" style={{ color: 'inherit', textDecoration: 'underline' }}>Have questions first?</Link>
+        </div>
+        <div className={s.ctaSub} style={{ marginTop: '0.5rem' }}>
+          Bookmark this page to save your results (Cmd+D / Ctrl+D).
+        </div>
       </div>
     </>
   )
@@ -351,7 +361,12 @@ function ResultB({ expectationMismatch }: { expectationMismatch: boolean }) {
           A PharmD-designed assessment maps the specific metabolic driver keeping you stuck, with the labs to request and the interventions with the strongest evidence for your pattern.
         </div>
         <Link to="/why-cant-i-lose-weight" className={s.ctaBtn}>Take the Root-Cause Assessment →</Link>
-        <Link to="/join" className={s.ctaBtnSecondary}>Join for Full Protocol →</Link>
+        <a
+          href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+          className={s.ctaBtnSecondary}
+        >
+          Start Foundation Plan →
+        </a>
         <div className={s.ctaSub}>GLP-1 can still be part of your plan. The root cause shapes when and how.</div>
       </div>
     </>

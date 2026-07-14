@@ -859,8 +859,18 @@ export default function RootCauseQuiz() {
               <div className={s.ctaBody}>
                 The assessment tells you what the pattern is. A functional-medicine educator maps the sequence: which interventions to layer in, in which order, at the right doses for your specific situation.
               </div>
-              <Link to="/join" className={s.ctaBtn}>Join Hunter's Holistic Health →</Link>
-              <div className={s.ctaSub}>Start with the Foundation plan. Cancel anytime.</div>
+              <a
+                href={import.meta.env.VITE_STRIPE_FOUNDATION_MONTHLY || '/join'}
+                className={s.ctaBtn}
+              >
+                Start Foundation Plan — $37/mo →
+              </a>
+              <div className={s.ctaSub}>
+                Cancel anytime. &nbsp;·&nbsp; <Link to="/join" style={{ color: 'inherit', textDecoration: 'underline' }}>Have questions first?</Link>
+              </div>
+              <div className={s.ctaSub} style={{ marginTop: '0.5rem' }}>
+                Bookmark this page to save your results (Cmd+D / Ctrl+D).
+              </div>
             </div>
 
             {/* Disclaimer */}
