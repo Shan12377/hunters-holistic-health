@@ -172,8 +172,19 @@ export default function AppLayout() {
   }, [])
 
   const initials = profile
-    ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase()
+    ? (profile.display_name
+        ? profile.display_name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()
+        : `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase())
     : '?'
+
+  const avatarStyle = profile?.avatar_color
+    ? {
+        background: `${profile.avatar_color}26`,
+        borderColor: `${profile.avatar_color}80`,
+        color: profile.avatar_color,
+        boxShadow: `0 0 8px ${profile.avatar_color}40`,
+      }
+    : undefined
 
   async function handleSignOut() {
     await signOut()
@@ -290,9 +301,9 @@ export default function AppLayout() {
 
         <div className={styles.sidebarFooter}>
           <div className={styles.userCard}>
-            <div className={styles.userAvatar}>{initials}</div>
+            <div className={styles.userAvatar} style={avatarStyle}>{initials}</div>
             <div>
-              <div className={styles.userName}>{profile?.first_name} {profile?.last_name}</div>
+              <div className={styles.userName}>{profile?.display_name || `${profile?.first_name} ${profile?.last_name}`}</div>
               <div className={styles.userRole}>{profile?.role ?? 'member'}</div>
             </div>
           </div>
@@ -316,7 +327,7 @@ export default function AppLayout() {
                 Offline
               </span>
             )}
-            <span className={styles.topbarUser}>{profile?.first_name}</span>
+            <span className={styles.topbarUser}>{profile?.display_name || profile?.first_name}</span>
           </div>
         </div>
 

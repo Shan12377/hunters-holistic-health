@@ -10261,3 +10261,69 @@
 .vaultSessionNum { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
 .vaultSessionTitle { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 4px 0 2px; line-height: 1.3; }
 .vaultSessionTag { font-size: 0.72rem; color: var(--text-secondary); }
+
+/* --- Display name + avatar color picker --- */
+.settingsInput {
+  width: 100%;
+  padding: 10px var(--space-4);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-body);
+}
+.settingsInput:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.colorPicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+.colorSwatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.colorSwatch:hover {
+  transform: scale(1.15);
+}
+.colorSwatchSelected {
+  border-color: var(--text-primary);
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px var(--bg-card);
+}
+.colorSwatchClear {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+.colorSwatchClear:hover {
+  color: var(--text-primary);
+}
+.avatarPreview {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: var(--space-2);
+}

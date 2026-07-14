@@ -58,6 +58,8 @@ export interface Profile {
   role: 'client' | 'educator'
   plan: Plan
   display_handle: string | null
+  display_name: string | null
+  avatar_color: string | null
   wellness_goals?: WellnessGoals
   privacy_settings?: PrivacySettings
   reminder_settings?: Record<string, { enabled: boolean; time: string }>

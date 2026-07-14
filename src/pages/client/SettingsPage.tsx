@@ -48,11 +48,41 @@ export default function SettingsPage() {
     profile?.privacy_settings ?? { share_weight: true, share_steps: true, share_meals: true }
   )
   const [savingGoals, setSavingGoals] = useState(false)
+  const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
+  const [avatarColor, setAvatarColor] = useState(profile?.avatar_color ?? '')
+  const [savingProfile, setSavingProfile] = useState(false)
+
+  const AVATAR_COLORS = [
+    { value: '#0B9E8E', label: 'Teal' },
+    { value: '#c8a74b', label: 'Gold' },
+    { value: '#7c6fcd', label: 'Indigo' },
+    { value: '#e07a5f', label: 'Coral' },
+    { value: '#4a9e6f', label: 'Sage' },
+    { value: '#d47ba7', label: 'Rose' },
+  ]
 
   useEffect(() => {
     if (profile?.wellness_goals) setGoals(profile.wellness_goals)
     if (profile?.privacy_settings) setPrivacy(profile.privacy_settings)
+    if (profile?.display_name) setDisplayName(profile.display_name)
+    if (profile?.avatar_color) setAvatarColor(profile.avatar_color)
   }, [profile?.id])
+
+  const saveDisplayProfile = async () => {
+    if (!profile) return
+    setSavingProfile(true)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ display_name: displayName.trim() || null, avatar_color: avatarColor || null })
+      .eq('id', profile.id)
+    if (error) {
+      toast.error('Failed to save profile')
+    } else {
+      setProfile({ ...profile, display_name: displayName.trim() || null, avatar_color: avatarColor || null })
+      toast.success('Profile updated!')
+    }
+    setSavingProfile(false)
+  }
 
   const saveGoals = async () => {
     if (!profile) return
@@ -99,6 +129,63 @@ export default function SettingsPage() {
           <Settings size={22} color="var(--text-secondary)" /> Settings
         </h1>
         <p className={styles.pageTopDate}>Account and program settings</p>
+      </div>
+
+      {/* Display name and avatar color */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.settingsSectionTitle}>
+          <User size={16} color="var(--gold)" /> My Profile
+        </h3>
+        <p className={styles.settingsSectionNote}>
+          Set a display name for your dashboard greeting and sidebar. Pick a color for your avatar.
+        </p>
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Display name</label>
+          <input
+            className={styles.settingsInput}
+            type="text"
+            placeholder={`${profile?.first_name ?? ''} (default)`}
+            value={displayName}
+            onChange={e => setDisplayName(e.target.value)}
+            maxLength={32}
+          />
+        </div>
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Avatar color</label>
+          <div className={styles.colorPicker}>
+            {AVATAR_COLORS.map(c => (
+              <button
+                key={c.value}
+                className={`${styles.colorSwatch} ${avatarColor === c.value ? styles.colorSwatchSelected : ''}`}
+                style={{ background: c.value }}
+                title={c.label}
+                onClick={() => setAvatarColor(c.value)}
+                type="button"
+                aria-label={c.label}
+              />
+            ))}
+            {avatarColor && (
+              <button
+                className={styles.colorSwatchClear}
+                onClick={() => setAvatarColor('')}
+                type="button"
+                title="Reset to default"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+          {avatarColor && (
+            <div className={styles.avatarPreview} style={{ background: `${avatarColor}26`, borderColor: `${avatarColor}80`, color: avatarColor }}>
+              {displayName.trim()
+                ? displayName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase()
+                : `${profile?.first_name?.[0] ?? ''}${profile?.last_name?.[0] ?? ''}`.toUpperCase()}
+            </div>
+          )}
+        </div>
+        <button className={shared.btnPrimary} onClick={saveDisplayProfile} disabled={savingProfile}>
+          {savingProfile ? 'Saving...' : 'Save Profile'}
+        </button>
       </div>
 
       {/* Profile info */}

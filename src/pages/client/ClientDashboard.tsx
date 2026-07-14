@@ -138,7 +138,7 @@ export default function ClientDashboard() {
       {/* Header */}
       <div className={styles.greeting}>
         <h1 className={styles.greetingTitle}>
-          Good {hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'}, {profile?.first_name} 👋
+          Good {hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'}, {profile?.display_name || profile?.first_name} 👋
         </h1>
         <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
