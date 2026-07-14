@@ -537,11 +537,15 @@ export default function Glp1Assessment() {
     if (!emailVal) { setPhase('result'); return }
     setSubmitting(true)
     try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 4000)
       await fetch('/api/beehiiv-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailVal, firstName: nameVal }),
+        signal: controller.signal,
       })
+      clearTimeout(timer)
     } catch { /* show result regardless */ }
     setSubmitting(false)
     setPhase('result')
@@ -581,7 +585,7 @@ export default function Glp1Assessment() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
-            <div className={s.introEyebrow}>PharmD Clinical Assessment</div>
+            <div className={s.introEyebrow}>PharmD, CFNMP Clinical Assessment</div>
             <h1 className={s.introTitle}>Am I a GLP-1 Candidate?</h1>
             <p className={s.introSubhead}>
               Before you get on Ozempic, Wegovy, Zepbound, or the new oral options: get an honest clinical read on whether GLP-1 therapy fits your body, your history, and your goals.
@@ -590,7 +594,7 @@ export default function Glp1Assessment() {
               <p>Every week, someone asks me some version of: "Should I just get on Ozempic?"</p>
               <p>The honest answer depends on things a 3-minute intake form never asks. What does your metabolic picture actually look like? Have the underlying drivers of your weight resistance been identified? Is there anything in your history that changes the risk-benefit math? And do your expectations match what the research actually shows?</p>
               <p>This assessment is built around those questions. Depending on your profile, the honest recommendation might be GLP-1 therapy now, root-cause work first, or a specific evaluation before you start.</p>
-              <div className={s.trustLine}>15 questions · PharmD clinical framework · Screens for the contraindications rushed intakes miss</div>
+              <div className={s.trustLine}>15 questions · PharmD, CFNMP clinical framework · Screens for the contraindications rushed intakes miss</div>
             </div>
             <button className={s.startBtn} onClick={() => setPhase('quiz')}>
               Take the 4-Minute Assessment →
@@ -648,7 +652,7 @@ export default function Glp1Assessment() {
             <div className={s.introEyebrow}>Your results are ready</div>
             <h2 className={s.emailTitle}>Your assessment: {head.badge}</h2>
             <p className={s.emailBody}>
-              Enter your email to receive your full clinical breakdown, the safety flags that apply to your profile, and the exact labs and conversation points to bring to your prescriber.
+              Your full assessment is on the next screen. Add your email to save it and receive Dr. Hunter's weekly clinical insights from a PharmD, CFNMP perspective.
             </p>
             <form className={s.emailForm} onSubmit={handleEmailSubmit}>
               <div className={s.emailRow}>

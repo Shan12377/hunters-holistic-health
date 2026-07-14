@@ -638,12 +638,16 @@ export default function RootCauseQuiz() {
     if (!emailVal) { setPhase('result'); return }
     setSubmitting(true)
     try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 4000)
       await fetch('/api/beehiiv-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailVal, firstName: nameVal }),
+        signal: controller.signal,
       })
-    } catch { /* silent; show result regardless */ }
+      clearTimeout(timer)
+    } catch { /* show result regardless */ }
     setSubmitting(false)
     setPhase('result')
   }
@@ -698,7 +702,7 @@ export default function RootCauseQuiz() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
-            <div className={s.introEyebrow}>PharmD-Designed Assessment</div>
+            <div className={s.introEyebrow}>PharmD, CFNMP-Designed Assessment</div>
             <h1 className={s.introTitle}>What's Really Blocking Your Weight Loss?</h1>
             <p className={s.introSubhead}>
               18 questions to identify the hidden metabolic, hormonal, or biochemical pattern keeping you stuck, even when your effort is real.
@@ -706,7 +710,7 @@ export default function RootCauseQuiz() {
             <div className={s.introBody}>
               <p>Most weight-loss advice is built for the average person. But if you have been eating well, exercising consistently, and still not seeing results, you are not average: you are dealing with a root cause the standard playbook was never designed to address.</p>
               <p style={{ margin: '0.75rem 0 0' }}>This assessment uses the same root-cause framework used in functional-medicine clinics. It takes about three minutes and identifies your most likely underlying driver, and what to actually do about it.</p>
-              <p className={s.trustLine}>18 questions · Functional-PharmD framework · Maps 6 root-cause patterns</p>
+              <p className={s.trustLine}>18 questions · PharmD, CFNMP framework · Maps 6 root-cause patterns</p>
             </div>
             <button className={s.startBtn} onClick={() => setPhase('quiz')}>
               Find My Root Cause →
@@ -764,7 +768,7 @@ export default function RootCauseQuiz() {
             <div className={s.introEyebrow}>Your results are ready</div>
             <h2 className={s.emailTitle}>Your primary pattern: {RESULT_HEADS[displayCode].heading}</h2>
             <p className={s.emailBody}>
-              Enter your email to receive your full breakdown, the specific labs to request, and the prescriber script to use with your doctor.
+              Your full results are on the next screen. Add your email to save them and receive Dr. Hunter's weekly functional medicine insights.
             </p>
             <form className={s.emailForm} onSubmit={handleEmailSubmit}>
               <div className={s.emailRow}>
