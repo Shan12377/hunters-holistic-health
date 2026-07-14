@@ -74,6 +74,8 @@ import WhyCantILoseWeight from '@/pages/WhyCantILoseWeight'
 import Glp1Assessment from '@/pages/tools/Glp1Assessment'
 import Glp1CandidateLanding from '@/pages/Glp1CandidateLanding'
 import SupplementTiming from '@/pages/tools/SupplementTiming'
+import NutrientFoodSources from '@/pages/tools/NutrientFoodSources'
+import InsResScore from '@/pages/tools/InsResScore'
 import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
@@ -159,6 +161,8 @@ export default function App() {
         <Route path="/tools/glp1-assessment" element={<Glp1Assessment />} />
         <Route path="/glp1-candidate-assessment" element={<Glp1CandidateLanding />} />
         <Route path="/tools/supplement-timing" element={<SupplementTiming />} />
+        <Route path="/tools/nutrient-food-sources" element={<NutrientFoodSources />} />
+        <Route path="/tools/insulin-resistance-score" element={<InsResScore />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

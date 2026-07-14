@@ -1,0 +1,451 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 1.5rem 2rem;
+}
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.625rem;
+}
+.heroTitle {
+  font-family: var(--font-headline);
+  font-size: clamp(1.375rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  text-wrap: balance;
+}
+.heroSubhead {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  max-width: 580px;
+  line-height: 1.65;
+  margin-bottom: 0.875rem;
+}
+.heroBody {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  max-width: 580px;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+.heroBody a {
+  color: var(--teal);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: rgba(255,255,255,.08);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.3125rem 0.875rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Sticky Nav */
+.navWrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.25rem;
+}
+.navScroll {
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  padding: 0.75rem 0;
+  scrollbar-width: none;
+}
+.navScroll::-webkit-scrollbar { display: none; }
+.navChip {
+  flex-shrink: 0;
+  padding: 0.375rem 0.875rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.navChip:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.navChipActive {
+  background: var(--teal);
+  color: #fff;
+  border-color: var(--teal);
+}
+
+/* Main */
+.main {
+  padding: 1.75rem 1.25rem 3rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Superfoods banner */
+.sfBanner {
+  background: rgba(200,167,75,.08);
+  border: 1.5px solid rgba(200,167,75,.35);
+  border-radius: 14px;
+  padding: 1.125rem 1.375rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.sfBannerIcon { font-size: 1.625rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.sfBannerTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.sfBannerChips { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.sfBannerChip {
+  padding: 0.25rem 0.6875rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(200,167,75,.12);
+  color: var(--gold);
+  cursor: pointer;
+  border: 1px solid rgba(200,167,75,.28);
+  transition: all .15s;
+}
+.sfBannerChip:hover { background: var(--gold); color: #111; }
+
+/* Nutrient card */
+.nutCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.nutCardTop {
+  padding: 1.25rem 1.375rem 0.875rem;
+  border-bottom: 1px solid var(--border);
+}
+.nutTitle {
+  font-family: var(--font-headline);
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+  flex-wrap: wrap;
+}
+.whyMatters {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  line-height: 1.55;
+}
+.depletedBy {
+  font-size: 0.75rem;
+  background: rgba(11,158,142,.12);
+  color: var(--teal);
+  padding: 0.25rem 0.625rem;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 600;
+}
+
+/* Food rows */
+.foodRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.375rem;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.foodRow:last-child { border-bottom: none; }
+.foodRow:hover { background: var(--bg-hover); }
+.foodMain { min-width: 0; }
+.foodName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.125rem;
+}
+.foodGem {
+  font-size: 0.625rem;
+  font-weight: 700;
+  background: var(--gold);
+  color: #111;
+  padding: 0.125rem 0.4375rem;
+  border-radius: 5px;
+  letter-spacing: .3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.foodNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.foodBarWrap { text-align: right; min-width: 80px; }
+.foodBarTrack {
+  width: 80px;
+  height: 6px;
+  background: rgba(255,255,255,.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-bottom: 3px;
+}
+.foodBarFill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal) 0%, #0fd4bf 100%);
+}
+.foodStrength {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Supplement form row */
+.suppRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 560px) { .suppRow { grid-template-columns: 1fr; } }
+.suppRight {
+  background: rgba(11,158,142,.09);
+  padding: 0.875rem 1.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.suppAvoid {
+  background: rgba(180,50,50,.09);
+  padding: 0.875rem 1.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.suppLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 0.25rem;
+}
+.suppRight .suppLabel { color: var(--teal); }
+.suppAvoid .suppLabel { color: #e07070; }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+.sectionLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Superfoods section grid */
+.sfGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 1.75rem;
+}
+.sfCard {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 1.125rem 1rem;
+  transition: border-color .15s;
+}
+.sfCard:hover { border-color: var(--gold); }
+.sfIcon { font-size: 2rem; margin-bottom: 0.625rem; }
+.sfName { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.375rem; color: var(--text-primary); }
+.sfNutrients { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.sfNut {
+  font-size: 0.6875rem;
+  background: rgba(11,158,142,.14);
+  color: var(--teal);
+  padding: 0.125rem 0.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* Anti-nutrient note */
+.absNote {
+  background: rgba(200,167,75,.07);
+  border: 1.5px solid rgba(200,167,75,.28);
+  border-radius: 14px;
+  padding: 1.125rem 1.25rem;
+}
+.absNoteLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+.absNoteText {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+/* FAQ */
+.faqSection { margin: 2rem 0 0; }
+.faqTitle {
+  font-family: var(--font-headline);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  margin-bottom: 0.875rem;
+}
+.faqItem { border-bottom: 1px solid var(--border); }
+.faqQ {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 1rem 0 0.375rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  line-height: 1.4;
+}
+.faqToggle {
+  color: var(--teal);
+  font-size: 1.25rem;
+  font-weight: 400;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.faqA {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding-bottom: 1rem;
+  line-height: 1.65;
+}
+
+/* CTA */
+.ctaBlock {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+}
+.ctaTitle {
+  font-family: var(--font-headline);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.ctaBody {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.55;
+}
+.ctaBtn {
+  display: inline-block;
+  background: var(--gold);
+  color: #111;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 40px;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.ctaBtn:hover { opacity: 0.88; }
+
+/* Related tools */
+.relatedSection { margin: 0.5rem 0 0; }
+.relatedTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 0.875rem;
+}
+.relatedGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+@media (max-width: 540px) { .relatedGrid { grid-template-columns: 1fr; } }
+.relatedCard {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.125rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .15s;
+}
+.relatedCard:hover { border-color: var(--teal); }
+.relatedLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.375rem;
+}
+.relatedCardTitle { font-size: 0.9375rem; font-weight: 700; color: var(--teal); }
+.relatedCardSub { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+/* Disclaimer */
+.disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+.disclaimer strong { color: var(--text-secondary); }
+
+@media print {
+  .navWrap, .ctaBlock, .relatedSection, .sfBanner { display: none !important; }
+  .page { background: #fff !important; color: #111 !important; }
+  .nutCard, .sfCard, .absNote { background: #f5f5f5 !important; border-color: #ccc !important; }
+  .foodBarTrack { background: #ddd !important; }
+}

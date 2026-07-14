@@ -80,6 +80,20 @@
   </url>
 
   <url>
+    <loc>https://www.huntersholistichealth.com/tools/nutrient-food-sources</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.huntersholistichealth.com/tools/insulin-resistance-score</loc>
+    <lastmod>2026-07-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://www.huntersholistichealth.com/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
