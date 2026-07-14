@@ -103,6 +103,13 @@ export default function Glp1SideEffects() {
 
           <p>Related reading: <Link to="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound">Not All GLP-1s Are the Same</Link> | <Link to="/blog/glp1-supplements-what-actually-works">GLP-1 Supplements: What Actually Works</Link> | <Link to="/blog/glp1-and-food-culture-navigating-your-heritage">GLP-1 and Food Culture</Link></p>
 
+          <div className={styles.quizCtaBox}>
+            <p>Free Clinical Tool</p>
+            <p>Am I Actually a GLP-1 Candidate?</p>
+            <p>A PharmD-designed assessment that weighs your metabolic profile, safety screen, and root-cause picture before pointing you toward the right next step.</p>
+            <Link to="/glp1-candidate-assessment" className={styles.quizCtaBoxBtn}>Take the Free Assessment</Link>
+          </div>
+
           <hr className={styles.rule} />
 
           <NewsletterEmbed />

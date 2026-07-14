@@ -86,6 +86,13 @@ export default function Glp1Comparison() {
 
           <p>Related reading: <Link to="/blog/glp1-cost-how-to-pay-less">GLP-1 Medications Cost Too Much. Here Is How to Pay Less.</Link> | <Link to="/blog/glp1-side-effects-pharmacist-guide">GLP-1 Side Effects: A Pharmacist's Guide</Link> | <Link to="/blog/68-percent-glp1-weight-regain-how-to-beat-it">Why Most GLP-1 Users Regain Weight</Link></p>
 
+          <div className={styles.quizCtaBox}>
+            <p>Free Clinical Tool</p>
+            <p>Am I Actually a GLP-1 Candidate?</p>
+            <p>A PharmD-designed assessment that weighs your metabolic profile, safety screen, and root-cause picture before pointing you toward the right next step.</p>
+            <Link to="/glp1-candidate-assessment" className={styles.quizCtaBoxBtn}>Take the Free Assessment</Link>
+          </div>
+
           <hr className={styles.rule} />
 
           <NewsletterEmbed />

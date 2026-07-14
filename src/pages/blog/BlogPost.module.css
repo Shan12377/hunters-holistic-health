@@ -249,3 +249,51 @@
   font-size: 0.97rem;
   color: var(--text-secondary, inherit);
 }
+
+.quizCtaBox {
+  background: #182a28;
+  border: 1px solid #1f3331;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.quizCtaBox p:first-child {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c8a74b;
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.quizCtaBox p:nth-child(2) {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f7f7f7;
+  margin: 0 0 0.4rem;
+}
+
+.quizCtaBox p:nth-child(3) {
+  font-size: 0.92rem;
+  color: #8fa8a3;
+  margin: 0 0 1.1rem;
+}
+
+.quizCtaBoxBtn {
+  display: inline-block;
+  background: #c8a74b;
+  color: #0e1c1b;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.quizCtaBoxBtn:hover {
+  opacity: 0.88;
+  color: #0e1c1b;
+}

@@ -69,6 +69,11 @@ import FoodSearchPage from '@/pages/client/FoodSearchPage'
 import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
 import BPSimulatorPage from '@/pages/BPSimulatorPage'
 import MedicationNutrientChecker from '@/pages/tools/MedicationNutrientChecker'
+import RootCauseQuiz from '@/pages/tools/RootCauseQuiz'
+import WhyCantILoseWeight from '@/pages/WhyCantILoseWeight'
+import Glp1Assessment from '@/pages/tools/Glp1Assessment'
+import Glp1CandidateLanding from '@/pages/Glp1CandidateLanding'
+import SupplementTiming from '@/pages/tools/SupplementTiming'
 import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
@@ -149,6 +154,11 @@ export default function App() {
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />
         <Route path="/tools/medication-nutrient-checker" element={<MedicationNutrientChecker />} />
+        <Route path="/tools/root-cause-quiz" element={<RootCauseQuiz />} />
+        <Route path="/why-cant-i-lose-weight" element={<WhyCantILoseWeight />} />
+        <Route path="/tools/glp1-assessment" element={<Glp1Assessment />} />
+        <Route path="/glp1-candidate-assessment" element={<Glp1CandidateLanding />} />
+        <Route path="/tools/supplement-timing" element={<SupplementTiming />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

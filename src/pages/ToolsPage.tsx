@@ -222,7 +222,7 @@ export default function ToolsPage() {
         <p className={styles.heroEyebrow}>Free Clinical Tools</p>
         <h1 className={styles.heroTitle}>Know Your Metabolic Pattern</h1>
         <p className={styles.heroSub}>
-          Two tools used in functional medicine education. Free, private, and built on the research.
+          Free clinical tools built on functional-medicine research. No login required.
         </p>
       </section>
 
@@ -483,6 +483,36 @@ export default function ToolsPage() {
           </div>
         )}
       </div>
+
+      <section className={styles.moreTools}>
+        <h2 className={styles.moreTitle}>More Free Tools</h2>
+        <div className={styles.moreGrid}>
+          <Link to="/why-cant-i-lose-weight" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>18-Question Assessment</div>
+            <div className={styles.moreCardName}>Root Cause Weight-Loss Quiz</div>
+            <div className={styles.moreCardDesc}>Find the hormonal, thyroid, gut, or insulin driver keeping you stuck. Maps 6 root-cause patterns with labs to request.</div>
+            <span className={styles.moreCardCta}>Take the Quiz →</span>
+          </Link>
+          <Link to="/tools/medication-nutrient-checker" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>Drug-Nutrient Interactions</div>
+            <div className={styles.moreCardName}>Medication Nutrient Checker</div>
+            <div className={styles.moreCardDesc}>Select your medications and herbs. See which nutrients are depleted, with clinical evidence and a personalized supplement timing schedule.</div>
+            <span className={styles.moreCardCta}>Check My Medications →</span>
+          </Link>
+          <Link to="/glp1-candidate-assessment" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>15-Question Clinical Assessment</div>
+            <div className={styles.moreCardName}>Am I a GLP-1 Candidate?</div>
+            <div className={styles.moreCardDesc}>Honest clinical read on whether Ozempic, Wegovy, Zepbound, or Foundayo fits your profile, or whether root-cause work should come first.</div>
+            <span className={styles.moreCardCta}>Take the Assessment →</span>
+          </Link>
+          <Link to="/tools/supplement-timing" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>PharmD Timing Reference</div>
+            <div className={styles.moreCardName}>Supplement Timing Guide</div>
+            <div className={styles.moreCardDesc}>When to take magnesium, iron, vitamin D, B vitamins, and more. Which nutrients cancel each other out. The pairings that actually boost absorption.</div>
+            <span className={styles.moreCardCta}>View the Guide →</span>
+          </Link>
+        </div>
+      </section>
 
       <footer className={styles.footer}>
         <p>These tools are for educational purposes only and do not constitute medical advice. Always consult your healthcare provider before making changes to your health routine.</p>
