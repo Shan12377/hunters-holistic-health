@@ -1066,24 +1066,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Demo video */}
-      <section className={`${styles.section} ${styles.videoSection}`}>
-        <div className={styles.sectionKicker}>See It in Action</div>
-        <h2 className={styles.sectionTitle}>60 seconds. The whole platform.</h2>
-        <p className={styles.sectionSubtitle}>The Daily Command Center, AI Meal Guard, BP Tracker, and ROOTS curriculum, all in one walkthrough.</p>
-        <div className={styles.videoSlot}>
-          {/* Drop your Loom or YouTube URL here once recorded */}
-          {/* <iframe src="YOUR_VIDEO_URL" className={styles.videoFrame} allowFullScreen title="Platform demo" /> */}
-          <div className={styles.videoPlaceholder}>
-            <div className={styles.videoPlayRing}>
-              <span className={styles.videoPlayIcon}>▶</span>
-            </div>
-            <p className={styles.videoPlaceholderTitle}>Platform walkthrough video</p>
-            <p className={styles.videoPlaceholderSub}>Coming soon. Record a 60-second Loom and drop the URL here.</p>
-          </div>
-        </div>
-      </section>
-
       {/* ROOTS Framework */}
       <div className={styles.bgRoots}>
       <section className={`${styles.section} ${styles.reveal}`} data-reveal>
