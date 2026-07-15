@@ -596,7 +596,7 @@ export default function LandingPage() {
           <div className={styles.statItem}>
             <div className={`${styles.statNum} ${statsVisible ? styles.statVisible : ''}`} style={{ animationDelay: '0.2s' }}>5</div>
             <div className={styles.statLabel}>phases of root-cause education in the ROOTS Framework</div>
-            <div className={styles.statSource}>Review, Optimize, Transform, Sustain</div>
+            <div className={styles.statSource}>Review, Optimize Nutrition, Optimize Biochemical Balance, Transform, Sustain</div>
           </div>
           <div className={styles.statDivider} aria-hidden="true" />
           <div className={styles.statItem}>
