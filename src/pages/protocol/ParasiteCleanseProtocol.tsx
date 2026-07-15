@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import styles from './Protocol.module.css'
 
 const PC_META_TITLE = 'Parasite Cleanse Protocol | Hunter\'s Holistic Health'
@@ -111,7 +112,7 @@ export default function GutHealthProtocol() {
       <ParasiteMetaTags />
       <div className={styles.wrap}>
 
-        <p className={styles.logo}>Hunter's Holistic Health</p>
+        <Link to="/" className={styles.logo}>Hunter's Holistic Health</Link>
 
         <h1 className={styles.title}>Parasite Cleanse Protocol</h1>
         <p className={styles.subtitle}>
@@ -123,8 +124,13 @@ export default function GutHealthProtocol() {
         <div className={styles.disclosure}>
           <strong>Affiliate Disclosure:</strong> Product links below are Amazon affiliate links.
           If you purchase through one of these links, Hunter's Holistic Health may earn a small
-          commission at no additional cost to you. Only products I have personally researched and
-          would recommend are listed here.
+          commission at no additional cost to you. All recommendations are based on research and
+          trusted sources.
+          <br /><br />
+          <strong>These statements have not been evaluated by the Food and Drug Administration.
+          These products are not intended to diagnose, treat, cure, or prevent any disease.</strong>{' '}
+          Always consult your licensed healthcare provider before beginning any supplement,
+          especially if you have a diagnosed condition or take prescription medications.
         </div>
 
         {phases.map(ph => (

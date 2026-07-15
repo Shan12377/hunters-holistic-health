@@ -64,6 +64,7 @@ import WhyMealAppsFailAdvertorial from '@/pages/blog/WhyMealAppsFailAdvertorial'
 import BlogIndexPage from '@/pages/blog/BlogIndexPage'
 import ParasiteCleanseProtocol from '@/pages/protocol/ParasiteCleanseProtocol'
 import SupplementCatalog from '@/pages/protocol/SupplementCatalog'
+import MetalDetoxProtocol from '@/pages/protocol/MetalDetoxProtocol'
 import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
 import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
 import MetabolicToolsPage from '@/pages/client/MetabolicToolsPage'
@@ -162,6 +163,7 @@ export default function App() {
         <Route path="/blog/why-meal-planning-apps-fail" element={<WhyMealAppsFailAdvertorial />} />
         <Route path="/protocol/parasite-cleanse" element={<ParasiteCleanseProtocol />} />
         <Route path="/supplements" element={<SupplementCatalog />} />
+        <Route path="/protocol/metal-detox" element={<MetalDetoxProtocol />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />
         <Route path="/tools/medication-nutrient-checker" element={<MedicationNutrientChecker />} />
