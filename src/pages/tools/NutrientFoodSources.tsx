@@ -53,7 +53,7 @@ const NUTRIENTS: Nutrient[] = [
       { name: 'Eggs (whole, cooked)', note: '2 eggs = 1.2mcg. B12 concentrated in yolk. Soft-cook to preserve bioactive nutrients.', width: 40, strength: 'Good' },
     ],
     rightFormTitle: 'Right Form', rightForm: 'Methylcobalamin, sublingual (under the tongue) preferred for best absorption, bypasses gut absorption issues caused by metformin or low stomach acid',
-    avoidTitle: 'Avoid', avoid: 'Cyanocobalamin, bound to a cyanide molecule; the most common form in cheap multivitamins. Poorly utilized, especially by those with MTHFR gene variants.',
+    avoidTitle: 'Avoid', avoid: 'Cyanocobalamin, a cheaper synthetic form the body converts to active B12. Effective for most people; some clinicians prefer methylcobalamin, particularly in older adults or those with absorption issues.',
   },
   {
     id: 'iron', icon: '🩺', name: 'Iron',
@@ -87,8 +87,8 @@ const NUTRIENTS: Nutrient[] = [
   },
   {
     id: 'selenium', icon: '🧠', name: 'Selenium',
-    whyMatters: 'Converts inactive T4 thyroid hormone to active T3. Critical for Hashimoto\'s, thyroid health, immune function, and antioxidant defense. The thyroid gland has the highest selenium concentration of any organ.',
-    depletedBy: 'Depleted by: Oral contraceptives. Critical for thyroid patients on any medication.',
+    whyMatters: 'Converts inactive T4 thyroid hormone to active T3. Supports thyroid health, immune function, and antioxidant defense. Research has examined selenium in Hashimoto\'s thyroiditis, though evidence for supplementation is mixed. The thyroid gland has the highest selenium concentration of any organ.',
+    depletedBy: 'Depleted by: Oral contraceptives. May warrant monitoring in thyroid patients with low dietary selenium intake.',
     foods: [
       { name: 'Brazil Nuts', gem: 'Easiest Daily Fix', note: '1-2 nuts = 68-90mcg each, full daily value in 1 nut. Limit to 3 per day max (selenium toxicity is possible with excess). Soak to reduce phytic acid.', width: 100, strength: 'Exceptional' },
       { name: 'Oysters / Tuna', note: 'Tuna (3 oz) = 92mcg. Oysters = 130mcg per 3 oz. Highest animal sources alongside brazil nuts.', width: 88, strength: 'Exceptional' },
@@ -101,8 +101,8 @@ const NUTRIENTS: Nutrient[] = [
   },
   {
     id: 'coq10', icon: '⚡', name: 'Coenzyme Q10 (CoQ10)',
-    whyMatters: 'The spark plug of every cell\'s energy production (mitochondrial ATP). Statins block the same pathway that produces CoQ10. Muscle pain on statins is one of the most recognized presentations of CoQ10 depletion.',
-    depletedBy: 'Depleted by: Statins (all), beta-blockers, SSRIs, statin depletion is dose-dependent and well-documented',
+    whyMatters: 'The spark plug of every cell\'s energy production (mitochondrial ATP). Statins block the same pathway that produces CoQ10. Muscle pain and fatigue are among the symptoms that have been associated with statin-related CoQ10 reduction, though the clinical relationship continues to be studied.',
+    depletedBy: 'Depleted by: Statins (all, dose-dependent and well-documented), beta-blockers',
     foods: [
       { name: 'Beef Heart (organ meat)', gem: 'Highest Source', note: '100g = 113mg CoQ10, by far the richest food source. Heart meat is dense, flavorful, and inexpensive.', width: 100, strength: 'Exceptional' },
       { name: 'Sardines', note: '100g = 64mg CoQ10, and simultaneously covers B12, calcium, selenium, Vitamin D. Tinned is fine.', width: 80, strength: 'Outstanding' },
@@ -111,21 +111,21 @@ const NUTRIENTS: Nutrient[] = [
       { name: 'Peanuts / Peanut Butter', note: '100g = 27mg. One of the few plant-based CoQ10 sources. Choose natural, no added oils.', width: 45, strength: 'Good' },
       { name: 'Spinach', note: '100g cooked = 10mg. Lower than animal sources, but adds to cumulative intake when eating for CoQ10 recovery.', width: 28, strength: 'Moderate' },
     ],
-    rightFormTitle: 'Right Form', rightForm: 'Ubiquinol (the active, reduced form), especially important over age 40 or with statin use, when the body\'s ability to convert ubiquinone declines. Take with your largest fatty meal.',
-    avoidTitle: 'Avoid', avoid: 'Ubiquinone on its own after age 40 or if on a statin, the conversion step becomes inefficient. The price difference between ubiquinol and ubiquinone is worth it.',
+    rightFormTitle: 'Right Form', rightForm: 'Ubiquinol (the active, reduced form) is an option for statin users or older adults who may convert ubiquinone less efficiently. Take with your largest fatty meal.',
+    avoidTitle: 'Avoid', avoid: 'Ubiquinone is less efficient for some people at higher doses or with statin use, though the clinical difference between forms is still debated. Take with fat regardless of form.',
   },
   {
     id: 'chromium', icon: '🫘', name: 'Chromium + Vanadium',
-    whyMatters: 'These two trace minerals work together to make insulin work properly. Deficiency in either directly impairs insulin receptor function, a root driver of insulin resistance and Type 2 Diabetes. Most people have never heard of vanadium.',
+    whyMatters: 'These two trace minerals support insulin signaling and glucose metabolism. Low intake is associated with reduced insulin sensitivity in some research, though large human trials are limited. Most people have never heard of vanadium.',
     depletedBy: 'Depleted by: Refined sugar, high-carb diets, stress, poor soil quality. Chromium lost in urine when blood sugar is high.',
     foods: [
-      { name: 'String Beans (Green Beans)', gem: 'Richest in BOTH Minerals', note: 'Highest known food source of BOTH chromium AND vanadium among common vegetables. Daily intake, raw, steamed, or juiced, is the most direct dietary intervention for insulin sensitivity.', width: 100, strength: 'Exceptional' },
+      { name: 'String Beans (Green Beans)', gem: 'Richest in BOTH Minerals', note: 'Among the better-documented food sources of both chromium and vanadium. A practical daily addition for anyone focused on blood sugar support.', width: 100, strength: 'Exceptional' },
       { name: 'Broccoli', gem: 'Chromium', note: '1/2 cup cooked = 11mcg chromium (32% DV). One of the most chromium-dense vegetables. Also provides folate and Vitamin C.', width: 80, strength: 'Outstanding' },
       { name: 'Mushrooms (especially Shiitake)', note: 'Good source of vanadium. Also provides selenium, B vitamins, and CoQ10. Eat cooked, heat improves bioavailability.', width: 65, strength: 'Excellent' },
       { name: 'Nutritional Yeast', note: '2 tbsp = meaningful chromium + B vitamins, zinc, selenium. Can be added to soups, eggs, or popcorn.', width: 60, strength: 'Excellent' },
       { name: 'Whole Grains (oats, barley)', note: 'Chromium concentrates in the bran and germ, lost almost entirely in white flour processing. Choose intact whole grains.', width: 50, strength: 'Good' },
     ],
-    rightFormTitle: 'Right Form', rightForm: 'Chromium picolinate, best absorbed form. Vanadyl sulfate for vanadium supplementation. Food-first approach is strongly preferred: string beans daily is the most evidence-aligned intervention.',
+    rightFormTitle: 'Right Form', rightForm: 'Chromium picolinate, better absorbed than chromium chloride. Vanadyl sulfate for vanadium supplementation. Food-first is the preferred approach; the evidence base for chromium supplementation in non-deficient individuals is mixed.',
     avoidTitle: 'Avoid', avoid: 'Chromium chloride or chromium nicotinate, poorly absorbed. Sugar and refined carbohydrates actively deplete chromium, addressing diet simultaneously is essential for these minerals to work.',
   },
   {
@@ -145,7 +145,7 @@ const NUTRIENTS: Nutrient[] = [
   },
   {
     id: 'folate', icon: '🥬', name: 'Folate (Vitamin B9)',
-    whyMatters: 'DNA synthesis, red blood cell formation, neurotransmitter production, and pregnancy-critical neural tube development. Approximately 40% of people carry MTHFR gene variants that prevent them from converting synthetic folic acid to active methylfolate.',
+    whyMatters: 'DNA synthesis, red blood cell formation, neurotransmitter production, and pregnancy-critical neural tube development. Approximately 40% of people carry MTHFR gene variants that reduce the efficiency of converting synthetic folic acid to active methylfolate.',
     depletedBy: 'Depleted by: Oral contraceptives (significant), metformin, SSRIs, corticosteroids',
     foods: [
       { name: 'Edamame', gem: 'Best Plant Source', note: '1 cup = 482mcg (121% DV). Highest folate content of any common plant food. Frozen edamame is as nutritious as fresh.', width: 100, strength: 'Exceptional' },
@@ -156,7 +156,7 @@ const NUTRIENTS: Nutrient[] = [
       { name: 'Avocado', note: 'Half avocado = 82mcg + potassium and healthy fat. A folate-rich food that helps absorb fat-soluble vitamins simultaneously.', width: 50, strength: 'Good' },
     ],
     rightFormTitle: 'Right Form', rightForm: 'Methylfolate (5-MTHF), active form. Essential if you have MTHFR variants. Women switching off hormonal contraceptives to conceive should start methylfolate 3+ months before trying.',
-    avoidTitle: 'Avoid', avoid: 'Folic acid, synthetic form that requires conversion. People with MTHFR C677T or A1298C variants cannot convert it, and unmetabolized folic acid may accumulate and cause its own problems.',
+    avoidTitle: 'Avoid', avoid: 'Folic acid, synthetic form that requires conversion. People with MTHFR C677T or A1298C variants convert it less efficiently, and unmetabolized folic acid may accumulate at high intake levels.',
   },
   {
     id: 'vitamin_d', icon: '☀️', name: 'Vitamin D',
@@ -169,7 +169,7 @@ const NUTRIENTS: Nutrient[] = [
       { name: 'UV-Exposed Mushrooms', gem: 'Only Plant Source', note: 'Mushrooms exposed to UV light for 15-20 min generate Vitamin D2. Place gill-side-up in direct noon sun. Portobello and shiitake work best.', width: 58, strength: 'Excellent' },
       { name: 'Egg Yolks (pasture-raised)', note: '1 egg = 41 IU. Pasture-raised hens produce eggs with 3-4x more Vitamin D than conventional. Soft-cook to preserve the yolk\'s bioactive nutrients.', width: 38, strength: 'Moderate' },
     ],
-    rightFormTitle: 'Right Form', rightForm: 'Vitamin D3 (cholecalciferol) always paired with K2 (MK-7 form). K2 directs calcium into bone and away from arteries. Target serum 25-OH D of 50-80 ng/mL. 5,000-10,000 IU daily is appropriate for most deficient adults.',
+    rightFormTitle: 'Right Form', rightForm: 'Vitamin D3 (cholecalciferol) always paired with K2 (MK-7 form). K2 directs calcium into bone and away from arteries. Optimal target range is debated; many clinicians aim for 40-60 ng/mL serum 25-OH D. Dosing should be guided by baseline labs; 1,000-4,000 IU is a common maintenance range, higher doses require periodic testing.',
     avoidTitle: 'Avoid', avoid: 'Vitamin D2 (ergocalciferol), less potent, shorter half-life. D3 without K2, calcium can accumulate in soft tissue rather than bone. Take with fat, fat-soluble, poor absorption without it.',
   },
   {

@@ -23,6 +23,9 @@ import SettingsPage from '@/pages/client/SettingsPage'
 import CoachDashboard from '@/pages/coach/CoachDashboard'
 import ClientDetailPage from '@/pages/coach/ClientDetailPage'
 import ComplianceGuardPage from '@/pages/coach/ComplianceGuardPage'
+import CrmPipelinePage from '@/pages/coach/CrmPipelinePage'
+import CrmTasksPage from '@/pages/coach/CrmTasksPage'
+import CrmCalendarPage from '@/pages/coach/CrmCalendarPage'
 import AppLayout from '@/components/layout/AppLayout'
 import TermsPage from '@/pages/legal/TermsPage'
 import PrivacyPage from '@/pages/legal/PrivacyPage'
@@ -216,6 +219,9 @@ export default function App() {
           <Route path="events" element={<ManageEventsPage />} />
           <Route path="challenges" element={<ManageChallengesPage />} />
           <Route path="classroom" element={<ManageClassroomPage />} />
+          <Route path="crm" element={<CrmPipelinePage />} />
+          <Route path="crm/tasks" element={<CrmTasksPage />} />
+          <Route path="crm/calendar" element={<CrmCalendarPage />} />
         </Route>
 
         {/* Legacy redirects */}

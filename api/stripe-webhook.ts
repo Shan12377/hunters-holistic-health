@@ -103,6 +103,26 @@ async function handleWebhook(req: VercelRequest, res: VercelResponse) {
       .update({ plan, stripe_customer_id: customerId })
       .eq('id', user.id)
 
+    // CRM: convert any open lead with this email
+    const { data: lead } = await supabase
+      .from('leads')
+      .select('id')
+      .eq('email', email)
+      .neq('status', 'converted')
+      .limit(1)
+      .maybeSingle()
+
+    if (lead) {
+      await supabase
+        .from('leads')
+        .update({ status: 'converted', converted_to_profile_id: user.id })
+        .eq('id', lead.id)
+      await supabase
+        .from('activities')
+        .insert({ lead_id: lead.id, type: 'stage_change', body: `Converted to client on ${plan} plan` })
+      console.log(`CRM: lead ${lead.id} converted for ${email}`)
+    }
+
     console.log(`Plan updated: ${email} → ${plan}`)
   }
 

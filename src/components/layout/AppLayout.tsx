@@ -271,6 +271,9 @@ export default function AppLayout() {
               <NavLink to="/coach" end className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
                 <span className={styles.navIcon}>◈</span>Educator View
               </NavLink>
+              <NavLink to="/coach/crm" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>⟳</span>CRM Pipeline
+              </NavLink>
               <NavLink to="/coach/messages" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
                 <span className={styles.navIcon}>✉</span>Participant Messages
               </NavLink>
