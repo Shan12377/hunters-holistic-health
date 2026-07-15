@@ -712,3 +712,13 @@
     font-size: 0.8125rem;
   }
 }
+
+.heroImg {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}

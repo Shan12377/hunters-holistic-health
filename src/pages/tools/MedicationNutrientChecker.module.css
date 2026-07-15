@@ -517,3 +517,11 @@
 .footer strong { color: #8fa8a3; }
 .footer a { color: #c8a74b; text-decoration: none; }
 .footer a:hover { text-decoration: underline; }
+
+.heroImg {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: center top;
+}

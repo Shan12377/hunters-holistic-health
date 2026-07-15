@@ -28,48 +28,56 @@ const GLP1_POSTS = [
   {
     slug: '/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-comparison.jpg',
     title: 'Ozempic vs. Wegovy vs. Mounjaro vs. Zepbound: What the Data Says',
     desc: 'Dr. Hunter, PharmD, CFNMP, breaks down the head-to-head efficacy, side effect profiles, and cost differences between all four major GLP-1 options.',
   },
   {
     slug: '/blog/glp1-side-effects-pharmacist-guide',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-side-effects.jpg',
     title: 'GLP-1 Side Effects: Dr. Hunter\'s Complete Guide',
     desc: 'Nausea, muscle loss, rebound weight. What the prescribing data actually shows and how to reduce each risk with a root-cause protocol alongside.',
   },
   {
     slug: '/blog/glp1-muscle-loss-what-nobody-tells-you',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-muscle.jpg',
     title: 'GLP-1 and Muscle Loss: What Nobody Tells You',
     desc: 'On average, 25 to 39% of weight lost on GLP-1s is lean mass. Dr. Hunter, PharmD, CFNMP, explains why this matters and what the evidence says to do about it.',
   },
   {
     slug: '/blog/68-percent-glp1-weight-regain-how-to-beat-it',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-regain.jpg',
     title: '68% of GLP-1 Users Regain the Weight. Here Is How to Beat It.',
     desc: 'The SURMOUNT-4 trial data is clear: most weight returns within a year of stopping. The research on what actually prevents rebound.',
   },
   {
     slug: '/blog/glp1-supplements-what-actually-works',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-supplements.jpg',
     title: 'GLP-1 Supplements: What Actually Works',
     desc: 'Berberine, magnesium, B12, creatine, omega-3s. Which supplements have real evidence on GLP-1 therapy and which are noise.',
   },
   {
     slug: '/blog/functional-labs-glp1-what-to-test',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-labs.jpg',
     title: 'Functional Labs for GLP-1 Users: What to Test Before You Start',
     desc: 'HOMA-IR, fasting insulin, CRP, ferritin, B12. The labs that tell the full story before and during GLP-1 therapy.',
   },
   {
     slug: '/blog/glp1-cost-how-to-pay-less',
     tag: 'GLP-1 Education',
+    img: 'blog-glp1-cost.jpg',
     title: 'GLP-1 Cost: How to Pay Less',
     desc: 'Manufacturer coupons, compounding pharmacies, international pricing, and how to talk to your prescriber about cost. Dr. Hunter\'s 2026 guide.',
   },
   {
     slug: '/blog/glp1-and-food-culture-navigating-your-heritage',
     tag: 'GLP-1 Education',
+    img: 'blog-food-culture.jpg',
     title: 'GLP-1 and Food Culture: Navigating Your Heritage',
     desc: 'GLP-1 medications change your relationship with food. How to protect cultural food practices and family traditions while on therapy.',
   },
@@ -79,12 +87,14 @@ const METABOLIC_POSTS = [
   {
     slug: '/blog/metabolic-health-beyond-weight-loss',
     tag: 'Metabolic Health',
+    img: 'blog-metabolic-health.jpg',
     title: 'Metabolic Health Is Not a Number on a Scale',
     desc: 'Only 12% of American adults are metabolically healthy. Dr. Hunter, CFNMP, Functional Medicine Educator, explains the five markers, the insulin-resistance continuum, and why standard labs miss most of it.',
   },
   {
     slug: '/blog/why-meal-planning-apps-fail',
     tag: 'Platform Feature',
+    img: 'blog-meal-apps.jpg',
     title: 'The Real Reason Your Meal Planning App Has Never Actually Worked',
     desc: 'Why AI food trackers fail, why the strategies from your 20s stop working after 40, and what a metabolic-first approach to nutrition looks like.',
   },
@@ -94,12 +104,14 @@ const WELLNESS_POSTS = [
   {
     slug: '/blog/creatine-not-what-you-think',
     tag: 'Supplements',
+    img: 'blog-creatine.jpg',
     title: 'Creatine Is Not What You Think',
     desc: 'Most people associate creatine with bodybuilders. Dr. Hunter, PharmD, CFNMP, explains what the evidence actually shows for women, aging adults, and metabolic health.',
   },
   {
     slug: '/blog/rebounding-benefits',
     tag: 'Movement',
+    img: 'blog-rebounding.jpg',
     title: 'The Surprising Benefits of Rebounding for Metabolic Health',
     desc: 'Low-impact, high-return. What lymphatic drainage, bone density, and insulin sensitivity research says about rebounding as a daily practice.',
   },
@@ -140,9 +152,12 @@ export default function BlogIndexPage() {
         <div className={styles.grid}>
           {GLP1_POSTS.map(p => (
             <Link key={p.slug} to={p.slug} className={styles.card}>
-              <div className={styles.cardTag}>{p.tag}</div>
-              <div className={styles.cardTitle}>{p.title}</div>
-              <p className={styles.cardDesc}>{p.desc}</p>
+              <div className={styles.cardContent}>
+                <div className={styles.cardTag}>{p.tag}</div>
+                <div className={styles.cardTitle}>{p.title}</div>
+                <p className={styles.cardDesc}>{p.desc}</p>
+              </div>
+              <img src={`/images/ai/${p.img}`} alt={p.title} className={styles.cardThumb} />
             </Link>
           ))}
         </div>
@@ -152,9 +167,12 @@ export default function BlogIndexPage() {
         <div className={styles.grid}>
           {METABOLIC_POSTS.map(p => (
             <Link key={p.slug} to={p.slug} className={styles.card}>
-              <div className={styles.cardTag}>{p.tag}</div>
-              <div className={styles.cardTitle}>{p.title}</div>
-              <p className={styles.cardDesc}>{p.desc}</p>
+              <div className={styles.cardContent}>
+                <div className={styles.cardTag}>{p.tag}</div>
+                <div className={styles.cardTitle}>{p.title}</div>
+                <p className={styles.cardDesc}>{p.desc}</p>
+              </div>
+              <img src={`/images/ai/${p.img}`} alt={p.title} className={styles.cardThumb} />
             </Link>
           ))}
         </div>
@@ -164,9 +182,12 @@ export default function BlogIndexPage() {
         <div className={styles.grid}>
           {WELLNESS_POSTS.map(p => (
             <Link key={p.slug} to={p.slug} className={styles.card}>
-              <div className={styles.cardTag}>{p.tag}</div>
-              <div className={styles.cardTitle}>{p.title}</div>
-              <p className={styles.cardDesc}>{p.desc}</p>
+              <div className={styles.cardContent}>
+                <div className={styles.cardTag}>{p.tag}</div>
+                <div className={styles.cardTitle}>{p.title}</div>
+                <p className={styles.cardDesc}>{p.desc}</p>
+              </div>
+              <img src={`/images/ai/${p.img}`} alt={p.title} className={styles.cardThumb} />
             </Link>
           ))}
         </div>

@@ -514,3 +514,13 @@
   .scoreDisplay, .resultCard, .scriptBox, .homaCtaBox { background: #f5f5f5 !important; border-color: #ccc !important; }
   .resultHeading, .resultSectionTitle, .resultBody, .scoreNumber { color: #111 !important; }
 }
+
+.heroImg {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}

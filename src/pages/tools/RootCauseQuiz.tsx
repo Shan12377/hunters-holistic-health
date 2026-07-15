@@ -702,6 +702,11 @@ export default function RootCauseQuiz() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
+            <img
+              src="/images/ai/tool-metabolic-blueprint.jpg"
+              alt="Metabolic blueprint root cause quiz"
+              className={s.heroImg}
+            />
             <div className={s.introEyebrow}>PharmD, CFNMP-Designed Assessment</div>
             <h1 className={s.introTitle}>What's Really Blocking Your Weight Loss?</h1>
             <p className={s.introSubhead}>

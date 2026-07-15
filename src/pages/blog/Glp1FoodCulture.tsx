@@ -51,6 +51,12 @@ export default function Glp1FoodCulture() {
           <p className={styles.meta}>December 2025 · Reviewed June 2026 · 7 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-food-culture.jpg"
+          alt="Cultural food traditions and GLP-1 medication"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The problem with generic GLP-1 nutrition advice</h2>
           <p>Most GLP-1 nutrition guidance is written for a generic patient: someone who eats a standard American diet, shops at mainstream grocery stores, and has no particular food traditions. That guidance is not wrong. It is incomplete.</p>

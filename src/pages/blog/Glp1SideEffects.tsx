@@ -51,6 +51,12 @@ export default function Glp1SideEffects() {
           <p className={styles.meta}>July 14, 2026 · 9 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-side-effects.jpg"
+          alt="GLP-1 side effects guide from a pharmacist"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>Why side effects are the number one reason people stop</h2>
           <p>Clinical-trial data consistently show that gastrointestinal side effects, primarily nausea, vomiting, diarrhea, and constipation, are the most common reason people discontinue GLP-1 therapy before reaching therapeutic doses. In the STEP trials of semaglutide, roughly 7% of participants discontinued because of adverse events, with gastrointestinal effects the primary driver. The Wegovy label reports permanent discontinuation for adverse reactions in about 6.8% of adults treated with the 2.4 mg dose.</p>

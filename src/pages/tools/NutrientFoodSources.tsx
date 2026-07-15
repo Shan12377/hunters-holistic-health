@@ -328,6 +328,12 @@ export default function NutrientFoodSources() {
         }) }}
       />
 
+      <img
+        src="/images/ai/tool-nutrient-sources.jpg"
+        alt="Nutrient-rich foods for metabolic health"
+        className={s.heroImg}
+      />
+
       {/* Hero */}
       <div className={s.hero}>
         <div className={s.eyebrow}>Educational PharmD Food Reference · Companion to the Depletion Checker</div>

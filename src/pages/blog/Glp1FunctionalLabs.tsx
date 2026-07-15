@@ -51,6 +51,12 @@ export default function Glp1FunctionalLabs() {
           <p className={styles.meta}>February 2026 · Reviewed June 2026 · 8 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-labs.jpg"
+          alt="Functional lab testing for GLP-1 medication users"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The problem with standard metabolic testing</h2>
           <p>The standard metabolic panel most primary care physicians order includes fasting glucose, A1C, a lipid panel, and basic metabolic markers. These tests are useful. They are not sufficient for understanding the metabolic picture of a GLP-1 user.</p>

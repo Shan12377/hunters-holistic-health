@@ -52,6 +52,12 @@ export default function CreatineNotWhatYouThink() {
           <h1 className={styles.h1}>Creatine: Not What You Think It Is</h1>
         </header>
 
+        <img
+          src="/images/ai/blog-creatine.jpg"
+          alt="Creatine supplement facts and misconceptions"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <p>Creatine sat in the same mental bucket as protein shakes and pre-workout. A gym supplement. Something that did not come up much in everyday practice.</p>
           <p>Then the research caught up. And it turns out creatine is not a gym supplement at all. It is a cellular energy supplement that happens to show up everywhere your body needs ATP, which is everywhere your body does anything.</p>

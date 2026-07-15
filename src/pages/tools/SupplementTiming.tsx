@@ -97,6 +97,12 @@ export default function SupplementTiming() {
         <Link to="/join" className={s.navCta}>Join the Community</Link>
       </nav>
 
+      <img
+        src="/images/ai/tool-supplement-timing.jpg"
+        alt="Supplement timing optimization guide"
+        className={s.heroImg}
+      />
+
       <div className={s.seoIntro}>
         <div className={s.seoEyebrow}>PharmD Timing Reference · Companion to the Depletion Checker</div>
         <h1 className={s.seoH1}>Supplement Timing Guide: When to Take What, and What Never to Combine</h1>

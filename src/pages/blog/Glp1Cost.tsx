@@ -51,6 +51,12 @@ export default function Glp1Cost() {
           <p className={styles.meta}>February 2026 · Updated June 2026 · 8 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-cost.jpg"
+          alt="GLP-1 medication cost and how to pay less"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <blockquote className={styles.blockquote}><strong>Pricing changes constantly.</strong> Every number below was verified against manufacturer and public sources as of June 2026. Prices, program terms, and eligibility change frequently. Confirm the current figure directly with the manufacturer before you budget.</blockquote>
 

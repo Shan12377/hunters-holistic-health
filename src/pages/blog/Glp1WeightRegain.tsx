@@ -51,6 +51,12 @@ export default function Glp1WeightRegain() {
           <p className={styles.meta}>March 2026 · Reviewed June 2026 · 10 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-regain.jpg"
+          alt="Weight regain after stopping GLP-1 medications"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The number that changes everything</h2>
           <p>The STEP 1 trial extension, published in <em>Diabetes, Obesity and Metabolism</em> in 2022, followed participants for a full year after they stopped once-weekly semaglutide 2.4 mg and the structured lifestyle program. On average, they regained about two-thirds of the weight they had lost. That is where the widely quoted "roughly 68% regain" figure comes from. Weight remained about 5.6% below baseline at the end of follow-up, so the medication was not erased entirely, but the majority of the loss came back.</p>

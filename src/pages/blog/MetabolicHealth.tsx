@@ -51,6 +51,12 @@ export default function MetabolicHealth() {
           <p className={styles.meta}>January 2026 · Reviewed June 2026 · 8 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-metabolic-health.jpg"
+          alt="Metabolic health beyond weight loss"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The 12% problem</h2>
           <p>A 2019 study in <em>Metabolic Syndrome and Related Disorders</em>, using NHANES data from 2009 to 2016, found that only 12.2% of American adults met the criteria for optimal metabolic health. That means nearly 9 in 10 Americans have at least one marker of metabolic dysfunction, and most of them do not know it.</p>

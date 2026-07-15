@@ -51,6 +51,12 @@ export default function Glp1Comparison() {
           <p className={styles.meta}>July 14, 2026 · 8 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-comparison.jpg"
+          alt="Comparing Ozempic Wegovy Mounjaro and Zepbound GLP-1 medications"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <p>These medications are not interchangeable, and as a functional medicine educator that distinction matters more than most people realize. Which one you are on affects your results, your side effects, your insurance coverage, and how you manage the adjustment period. Most people do not know which molecule they are taking or why it matters. Here is what you need to know.</p>
 

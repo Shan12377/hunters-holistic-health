@@ -310,6 +310,11 @@ export default function InsResScore() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
+            <img
+              src="/images/ai/tool-homa-ir.jpg"
+              alt="Insulin resistance risk score assessment"
+              className={s.heroImg}
+            />
             <div className={s.eyebrow}>PharmD, CFNMP Clinical Assessment</div>
             <h1 className={s.introTitle}>What's Your Insulin Resistance Risk Score?</h1>
             <p className={s.introSubhead}>

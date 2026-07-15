@@ -792,3 +792,13 @@
   .scoreLabel { font-size: 0.8125rem; }
   .ctaBtnSecondary { margin-left: 0; margin-top: 0.625rem; display: block; text-align: center; }
 }
+
+.heroImg {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}

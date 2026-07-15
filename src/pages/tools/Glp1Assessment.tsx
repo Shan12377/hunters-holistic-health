@@ -600,6 +600,11 @@ export default function Glp1Assessment() {
         {/* INTRO */}
         {phase === 'intro' && (
           <div className={s.intro}>
+            <img
+              src="/images/ai/tool-glp1-assessment.jpg"
+              alt="GLP-1 candidate assessment tool"
+              className={s.heroImg}
+            />
             <div className={s.introEyebrow}>PharmD, CFNMP Educational Assessment</div>
             <h1 className={s.introTitle}>Am I a GLP-1 Candidate?</h1>
             <p className={s.introSubhead}>

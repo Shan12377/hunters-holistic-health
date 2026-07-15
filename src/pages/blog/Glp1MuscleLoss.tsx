@@ -51,6 +51,12 @@ export default function Glp1MuscleLoss() {
           <p className={styles.meta}>March 2026 · Reviewed June 2026 · 9 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-muscle.jpg"
+          alt="GLP-1 medication and muscle preservation"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The statistic your prescriber probably did not mention</h2>
           <p>When the STEP 1 trial showed that semaglutide produced average weight loss of 14.9% of body weight, the headlines celebrated. What the headlines did not emphasize: a meaningful portion of that weight loss can be lean mass rather than fat.</p>

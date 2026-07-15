@@ -51,6 +51,12 @@ export default function ReboundingBenefits() {
           <h1 className={styles.h1}>Rebounding Benefits: The One Health Tool I'll Never Give Up</h1>
         </header>
 
+        <img
+          src="/images/ai/blog-rebounding.jpg"
+          alt="Rebounding benefits for lymphatic health and metabolism"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
 
           <img

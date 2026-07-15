@@ -384,6 +384,12 @@ export default function MedicationNutrientChecker() {
         <Link to="/join" className={styles.navCta}>Join the Community</Link>
       </nav>
 
+      <img
+        src="/images/ai/tool-medication-nutrient.jpg"
+        alt="Medication nutrient depletion checker"
+        className={styles.heroImg}
+      />
+
       {/* ── SEO INTRO ── */}
       <div className={styles.intro}>
         <p className={styles.eyebrow}>PharmD Clinical Tool · Drug-Induced Nutrient Depletion</p>

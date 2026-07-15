@@ -60,6 +60,12 @@ export default function WhyMealAppsFailAdvertorial() {
           <p className={styles.meta}>July 2026 · 8 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-meal-apps.jpg"
+          alt="Why meal planning apps fail metabolic health goals"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <p>You have photographed every meal you eat. The app told you last Tuesday that your dinner was 412 calories. Your blood pressure has not moved. Your energy still crashes at 3 PM. You eat what most people would call clean, you log everything, and you are no closer to feeling the way you want to feel.</p>
 

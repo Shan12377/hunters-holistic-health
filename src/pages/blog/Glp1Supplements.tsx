@@ -51,6 +51,12 @@ export default function Glp1Supplements() {
           <p className={styles.meta}>March 2026 · Reviewed June 2026 · 11 min read</p>
         </header>
 
+        <img
+          src="/images/ai/blog-glp1-supplements.jpg"
+          alt="Supplement support protocol for GLP-1 medication users"
+          className={styles.blogImg}
+        />
+
         <div className={styles.body}>
           <h2>The supplement industry discovered GLP-1</h2>
           <p>Since semaglutide became a cultural phenomenon, the supplement industry has flooded the market with products marketed as "GLP-1 support," "natural GLP-1 boosters," and "Ozempic alternatives." Some contain ingredients with legitimate evidence. Many do not. A few contain ingredients that can interact with medications commonly taken by this population.</p>
