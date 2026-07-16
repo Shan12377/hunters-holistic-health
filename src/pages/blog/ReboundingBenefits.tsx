@@ -53,8 +53,8 @@ export default function ReboundingBenefits() {
 
         <img
           src="/images/ai/blog-rebounding.jpg"
-          alt="Rebounding benefits for lymphatic health and metabolism"
-          className={styles.blogImg}
+          alt="Silver-haired woman mid-air on a mini trampoline rebounder, smiling"
+          className={styles.blogImgCenter}
         />
 
         <div className={styles.body}>

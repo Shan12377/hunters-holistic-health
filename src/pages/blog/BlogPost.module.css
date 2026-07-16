@@ -155,6 +155,17 @@
   font-style: italic;
 }
 
+/* Action/motion shots: center the subject, not just the top */
+.blogImgCenter {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  margin: 2rem 0;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  object-position: center center;
+}
+
 /* Sources */
 .sources {
   font-size: 0.8rem;
