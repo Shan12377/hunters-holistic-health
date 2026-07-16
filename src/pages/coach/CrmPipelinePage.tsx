@@ -38,6 +38,7 @@ interface Appointment {
   start_at: string
   end_at: string
   status: string
+  meeting_url: string | null
 }
 
 const LEAD_STAGES = [
@@ -110,7 +111,7 @@ export default function CrmPipelinePage() {
     const [{ data: acts }, { data: tks }, { data: appts }] = await Promise.all([
       supabase.from('activities').select('id, type, body, created_at').eq(col, c.id).order('created_at', { ascending: false }),
       supabase.from('tasks').select('id, title, due_at, status').eq(col, c.id).neq('status', 'done').order('due_at'),
-      supabase.from('appointments').select('id, appointment_type, start_at, end_at, status').eq(col, c.id).order('start_at', { ascending: false }),
+      supabase.from('appointments').select('id, appointment_type, start_at, end_at, status, meeting_url').eq(col, c.id).order('start_at', { ascending: false }),
     ])
     setActivities((acts as Activity[]) ?? [])
     setTasks((tks as Task[]) ?? [])
@@ -349,6 +350,12 @@ export default function CrmPipelinePage() {
                 <div key={a.id} className={s.apptRow}>
                   <div className={s.apptType}>{a.appointment_type ?? 'Consultation'}</div>
                   <div className={s.apptTime}>{format(new Date(a.start_at), 'MMM d, h:mm a')}</div>
+                  {a.meeting_url && (() => {
+                    const urlMatch = a.meeting_url.match(/https?:\/\/[^\s]+/)
+                    return urlMatch ? (
+                      <a href={urlMatch[0]} target="_blank" rel="noopener noreferrer" className={s.joinLink}>Join</a>
+                    ) : null
+                  })()}
                 </div>
               ))}
             </div>

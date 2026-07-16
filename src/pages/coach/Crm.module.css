@@ -451,6 +451,18 @@
 .apptRow:last-child { border-bottom: none; }
 .apptType { font-size: 0.83rem; color: #e8f4f3; }
 .apptTime { font-size: 0.78rem; color: #8ab8b9; }
+.joinLink {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0e1c1b;
+  background: #0B9E8E;
+  padding: 2px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.joinLink:hover { opacity: 0.85; }
 
 /* ── Modal ──────────────────────────────────────────────────── */
 .modalOverlay {
