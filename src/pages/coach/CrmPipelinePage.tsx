@@ -92,17 +92,32 @@ export default function CrmPipelinePage() {
   const [showAddTask, setShowAddTask] = useState(false)
   const [taskForm, setTaskForm] = useState({ title: '', due_at: '' })
   const [saving, setSaving] = useState(false)
+  const [taskCounts, setTaskCounts] = useState<Record<string, { total: number; overdue: number }>>({})
+  const [briefText, setBriefText] = useState('')
+  const [briefLoading, setBriefLoading] = useState(false)
   const dragId = useRef<string | null>(null)
 
   useEffect(() => { fetchContacts() }, [])
 
   async function fetchContacts() {
     setLoading(true)
-    const { data } = await supabase
-      .from('contacts_view')
-      .select('*')
-      .order('last_activity_at', { ascending: false, nullsFirst: false })
-    setContacts((data as Contact[]) ?? [])
+    const [{ data: contactData }, { data: taskData }] = await Promise.all([
+      supabase.from('contacts_view').select('*').order('last_activity_at', { ascending: false, nullsFirst: false }),
+      supabase.from('tasks').select('lead_id, profile_id, due_at').eq('status', 'open'),
+    ])
+    setContacts((contactData as Contact[]) ?? [])
+    if (taskData) {
+      const now = new Date().toISOString()
+      const counts: Record<string, { total: number; overdue: number }> = {}
+      for (const t of taskData) {
+        const id = (t.lead_id ?? t.profile_id) as string | null
+        if (!id) continue
+        if (!counts[id]) counts[id] = { total: 0, overdue: 0 }
+        counts[id].total++
+        if (t.due_at < now) counts[id].overdue++
+      }
+      setTaskCounts(counts)
+    }
     setLoading(false)
   }
 
@@ -121,7 +136,37 @@ export default function CrmPipelinePage() {
   function selectContact(c: Contact) {
     setSelected(c)
     setNoteBody('')
+    setBriefText('')
     fetchDetails(c)
+  }
+
+  async function handleBrief(action: 'brief' | 'followup') {
+    if (!selected) return
+    setBriefLoading(true)
+    setBriefText('')
+    try {
+      const res = await fetch('/api/crm-brief', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          contact: {
+            name: displayName(selected),
+            email: selected.email,
+            source: SOURCE_LABELS[selected.source] ?? selected.source,
+            stage: selected.pipeline_stage,
+            notes: selected.notes ?? '',
+          },
+          activities: activities.slice(0, 8),
+          appointments,
+        }),
+      })
+      const json = await res.json()
+      setBriefText(json.text ?? 'No response generated.')
+    } catch {
+      setBriefText('Could not generate. Check your connection and try again.')
+    }
+    setBriefLoading(false)
   }
 
   async function handleStageChange(leadId: string, newStage: string) {
@@ -237,6 +282,11 @@ export default function CrmPipelinePage() {
                         {c.last_activity_at && (
                           <span className={s.cardAge}>{formatDistanceToNow(new Date(c.last_activity_at), { addSuffix: true })}</span>
                         )}
+                        {taskCounts[c.id] && (
+                          <span className={`${s.taskBadge} ${taskCounts[c.id].overdue > 0 ? s.taskBadgeOverdue : s.taskBadgeTeal}`}>
+                            {taskCounts[c.id].total} task{taskCounts[c.id].total !== 1 ? 's' : ''}
+                          </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -263,11 +313,16 @@ export default function CrmPipelinePage() {
                     >
                       <div className={s.cardName}>{displayName(c)}</div>
                       <div className={s.cardEmail}>{c.email}</div>
-                      {c.last_activity_at && (
-                        <div className={s.cardMeta}>
+                      <div className={s.cardMeta}>
+                        {c.last_activity_at && (
                           <span className={s.cardAge}>{formatDistanceToNow(new Date(c.last_activity_at), { addSuffix: true })}</span>
-                        </div>
-                      )}
+                        )}
+                        {taskCounts[c.id] && (
+                          <span className={`${s.taskBadge} ${taskCounts[c.id].overdue > 0 ? s.taskBadgeOverdue : s.taskBadgeTeal}`}>
+                            {taskCounts[c.id].total} task{taskCounts[c.id].total !== 1 ? 's' : ''}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -309,6 +364,25 @@ export default function CrmPipelinePage() {
           )}
 
           {selected.notes && <div className={s.panelNotes}>{selected.notes}</div>}
+
+          <div className={s.aiActions}>
+            {appointments.some(a => a.status === 'booked') && (
+              <button className={s.aiBtn} onClick={() => handleBrief('brief')} disabled={briefLoading}>
+                {briefLoading ? 'Generating...' : 'Session Brief'}
+              </button>
+            )}
+            <button className={s.aiBtn} onClick={() => handleBrief('followup')} disabled={briefLoading}>
+              {briefLoading ? 'Generating...' : 'Draft Follow-up'}
+            </button>
+          </div>
+
+          {briefText && (
+            <div className={s.aiBriefBox}>
+              <div className={s.aiBriefLabel}>AI</div>
+              <div className={s.aiBriefText}>{briefText}</div>
+              <button className={s.aiBriefCopy} onClick={() => navigator.clipboard.writeText(briefText)}>Copy</button>
+            </div>
+          )}
 
           <div className={s.addNoteBox}>
             <select className={s.noteTypeSelect} value={noteType} onChange={e => setNoteType(e.target.value)}>

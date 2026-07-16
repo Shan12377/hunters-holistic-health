@@ -679,6 +679,78 @@
 
 .noAppts { font-size: 0.82rem; color: #3d7a7b; padding: 8px 0; }
 
+/* ── Task badges on pipeline cards ─────────────────────────── */
+.taskBadge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+.taskBadgeTeal { background: #0f3334; color: #0B9E8E; }
+.taskBadgeOverdue { background: #3a1a1a; color: #e05555; }
+
+/* ── AI Actions (Session Brief + Follow-up) ─────────────────── */
+.aiActions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #1c5253;
+}
+
+.aiBtn {
+  flex: 1;
+  background: #0f2829;
+  color: #0B9E8E;
+  border: 1px solid #0B9E8E;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.aiBtn:hover:not(:disabled) { background: #0B9E8E; color: #0e1c1b; }
+.aiBtn:disabled { opacity: 0.45; cursor: default; }
+
+.aiBriefBox {
+  margin: 0 18px 14px;
+  background: #0f2829;
+  border: 1px solid #0B9E8E;
+  border-radius: 8px;
+  padding: 12px 14px;
+  position: relative;
+}
+
+.aiBriefLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #0B9E8E;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.aiBriefText {
+  font-size: 0.82rem;
+  color: #c8e6e6;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.aiBriefCopy {
+  display: block;
+  margin-top: 10px;
+  background: transparent;
+  color: #5a9fa0;
+  border: 1px solid #2a6d6f;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.aiBriefCopy:hover { background: #1c5253; color: #e8f4f3; }
+
 /* ── Nav sub-tabs (used inside CRM pages) ───────────────────── */
 .crmNav {
   display: flex;
