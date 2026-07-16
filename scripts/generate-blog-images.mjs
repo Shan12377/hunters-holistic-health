@@ -67,7 +67,7 @@ const IMAGES = [
   },
   {
     file: 'blog-rebounding.jpg',
-    prompt: `Lifestyle health photography. A 56-year-old white woman with silver hair and a bright smile is caught mid-bounce on a mini rebounder trampoline in a sun-lit living room. She wears workout leggings and a fitted top, arms slightly out for balance. Her face shows pure joy — this is clearly her thing. Face and upper body in the top third of the portrait frame. Background: blurred bright living room, plant on windowsill. Sony A7C, 50mm f/1.8, natural morning window light. Lifestyle editorial, candid energy, not a posed gym photo.`
+    prompt: `Photorealistic action photo. Silver-haired white woman, mid-50s, caught mid-air bouncing on a small mini trampoline rebounder inside a bright living room. She is visibly airborne — both feet off the trampoline — arms slightly out for balance, wide smile, silver hair moving with the motion. She wears fitted workout clothes. The rebounder and her jumping body fill the frame. Her face and upper body are in the top half of the image. Bright natural window light, blurred living room background. Editorial lifestyle photography, not a posed portrait.`
   },
 
   // ── Tool pages ───────────────────────────────────────────────────────────────
