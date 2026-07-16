@@ -48,7 +48,7 @@ export default function Glp1MuscleLoss() {
         <header className={styles.articleHeader}>
           <p className={styles.byline}>Dr. Shallanda Hunter, PharmD, CFNMP | Functional Medicine Educator</p>
           <h1 className={styles.h1}>GLP-1 and Muscle Loss: What Nobody Tells You Before You Start</h1>
-          <p className={styles.meta}>July 21, 2026 · 9 min read</p>
+          <p className={styles.meta}>March 2026 · Reviewed June 2026 · 9 min read</p>
         </header>
 
         <img
