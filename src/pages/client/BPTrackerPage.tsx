@@ -168,6 +168,7 @@ export default function BPTrackerPage() {
   const [dietTag, setDietTag] = useState<DietTag | null>(null)
   const [stressTag, setStressTag] = useState<StressTag | null>(null)
   const [moveTag, setMoveTag] = useState<MoveTag | null>(null)
+  const [customMove, setCustomMove] = useState('')
   // today's daily log for gauges
   const [todayEnergy, setTodayEnergy] = useState(5)
   const [todaySteps, setTodaySteps] = useState(0)
@@ -225,7 +226,7 @@ export default function BPTrackerPage() {
       notes: [
         dietTag && `Diet: ${dietTag}`,
         stressTag && `Stress: ${stressTag}`,
-        moveTag && `Movement: ${moveTag}`,
+        (moveTag || customMove.trim()) && `Movement: ${moveTag ?? customMove.trim()}`,
         form.notes,
       ].filter(Boolean).join(' | ') || null,
       logged_at: new Date().toISOString(),
@@ -236,7 +237,7 @@ export default function BPTrackerPage() {
       toast.success('Blood pressure reading saved!')
       setForm({ systolic: '', diastolic: '', pulse: '', notes: '' })
       setSelectedCategory(null)
-      setDietTag(null); setStressTag(null); setMoveTag(null)
+      setDietTag(null); setStressTag(null); setMoveTag(null); setCustomMove('')
       setShowForm(false)
       fetchReadings()
     }
@@ -519,9 +520,18 @@ export default function BPTrackerPage() {
                 {MOVE_TAGS.map(t => (
                   <button key={t} type="button"
                     className={moveTag === t ? styles.tagActive : styles.tag}
-                    onClick={() => setMoveTag(moveTag === t ? null : t)}>{t}</button>
+                    onClick={() => { setMoveTag(moveTag === t ? null : t); setCustomMove('') }}>{t}</button>
                 ))}
               </div>
+              <input
+                className={styles.input}
+                style={{ marginTop: '0.5rem' }}
+                type="text"
+                placeholder="Other (e.g. yoga, cycling, swimming...)"
+                value={customMove}
+                onChange={e => { setCustomMove(e.target.value); setMoveTag(null) }}
+                maxLength={60}
+              />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>Additional notes (optional)</label>
