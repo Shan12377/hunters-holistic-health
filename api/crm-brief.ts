@@ -1,9 +1,33 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { createClient } from '@supabase/supabase-js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
+    // Verify Supabase JWT and confirm educator role before touching OpenAI
+    const authHeader = req.headers.authorization
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized' })
+    }
+    const token = authHeader.slice(7)
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) return res.status(401).json({ error: 'Unauthorized' })
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' })
+
     const { action, contact, activities, appointments } = req.body as {
       action: 'brief' | 'followup'
       contact: { name: string; email: string; source: string; stage: string; notes: string }
