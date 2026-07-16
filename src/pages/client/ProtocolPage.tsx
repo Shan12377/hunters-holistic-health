@@ -134,7 +134,7 @@ export default function ProtocolPage() {
         <div className={styles.resourceList}>
           {[
             { label: 'Schedule a Session (Doxy.me)', url: 'https://doxy.me/drshallandahunter', desc: 'HIPAA-compliant video education sessions' },
-            { label: 'Supplement Dispensary (Fullscript)', url: 'https://fullscript.com/go/huntersholistichealth', desc: 'Practitioner-grade supplements at a discount' },
+            { label: 'Supplement Dispensary (Fullscript)', url: 'https://us.fullscript.com/welcome/shunter1782126408', desc: 'Practitioner-grade supplements at a discount' },
           ].map(({ label, url, desc }) => (
             <a key={url} href={url} target="_blank" rel="noopener noreferrer" className={styles.resourceLink}>
               <div className={styles.resourceBody}>

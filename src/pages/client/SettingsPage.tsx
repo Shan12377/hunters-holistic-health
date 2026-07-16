@@ -299,7 +299,7 @@ export default function SettingsPage() {
         <p className={styles.cardText}>
           Access Dr. Hunter's curated Fullscript dispensary for practitioner-grade supplements at up to 25% off retail pricing.
         </p>
-        <a href="https://fullscript.com/go/huntersholistichealth" target="_blank" rel="noopener noreferrer" className={shared.btnSecondary}>
+        <a href="https://us.fullscript.com/welcome/shunter1782126408" target="_blank" rel="noopener noreferrer" className={shared.btnSecondary}>
           <ExternalLink size={16} /> Open Fullscript Dispensary
         </a>
         <p className={styles.cardFootnote}>

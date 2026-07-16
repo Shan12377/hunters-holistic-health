@@ -280,7 +280,7 @@ export default function SupplementLogPage() {
           <div className={styles.suppRowName}>Order Practitioner-Grade Supplements</div>
           <div className={styles.suppRowMeta}>Access Dr. Hunter's curated dispensary on Fullscript, up to 25% off retail pricing</div>
         </div>
-        <a href="https://fullscript.com/go/huntersholistichealth" target="_blank" rel="noopener noreferrer" className={shared.btnTeal}>
+        <a href="https://us.fullscript.com/welcome/shunter1782126408" target="_blank" rel="noopener noreferrer" className={shared.btnTeal}>
           <ExternalLink size={14} /> Shop Now
         </a>
       </div>
