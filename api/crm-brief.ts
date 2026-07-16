@@ -96,8 +96,7 @@ Do not include a greeting or sign-off. Just the body of the message.`
     })
 
     if (!response.ok) {
-      const err = await response.text()
-      console.error('OpenAI error:', err)
+      console.error('crm-brief: OpenAI returned', response.status)
       return res.status(502).json({ error: 'AI request failed' })
     }
 
@@ -106,7 +105,7 @@ Do not include a greeting or sign-off. Just the body of the message.`
     return res.status(200).json({ text })
 
   } catch (err) {
-    console.error('crm-brief error:', err)
+    console.error('crm-brief: handler error', err instanceof Error ? err.message : 'unknown')
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
