@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
+import { useRegisterSW } from 'virtual:pwa-register/react'
+import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import LandingPage from '@/pages/LandingPage'
@@ -114,6 +117,32 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: 
 
 export default function App() {
   const { setUser, setSession, setLoading, fetchProfile } = useAuthStore()
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+
+  useEffect(() => {
+    if (needRefresh) {
+      toast.custom(
+        (t) => (
+          <div style={{ display:'flex', alignItems:'center', gap:'0.75rem', background:'#182a28', border:'1px solid #1f3331', borderRadius:'10px', padding:'0.75rem 1rem', color:'#f7f7f7', fontSize:'0.875rem' }}>
+            <span>🔄 Update available</span>
+            <button
+              onClick={() => { updateServiceWorker(true); toast.dismiss(t.id) }}
+              style={{ background:'#0B9E8E', color:'#fff', border:'none', borderRadius:'6px', padding:'0.3rem 0.75rem', fontSize:'0.8rem', fontWeight:600, cursor:'pointer' }}
+            >
+              Reload
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              style={{ background:'transparent', border:'none', color:'#8aada8', cursor:'pointer', fontSize:'0.9rem' }}
+            >
+              ✕
+            </button>
+          </div>
+        ),
+        { duration: 8000 }
+      )
+    }
+  }, [needRefresh])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -238,6 +267,7 @@ export default function App() {
         <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <PWAInstallBanner />
     </BrowserRouter>
   )
 }
