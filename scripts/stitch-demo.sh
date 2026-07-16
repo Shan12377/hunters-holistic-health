@@ -97,12 +97,15 @@ for i in "${!AUDIO_FILES[@]}"; do
 
   echo "  Mixing scene $((i+1))..."
 
-  # Overlay narration audio onto silent video clip (Playwright clips have no audio track)
+  # Freeze the last frame for up to 120s so the narration always plays fully.
+  # -shortest then cuts the output at whichever ends first (audio).
   "$FFMPEG" -y \
     -i "$MP4" \
     -i "$AUDIO_FILE" \
-    -map "0:v" -map "1:a" \
-    -c:v copy -c:a aac -b:a 192k \
+    -filter_complex "[0:v]tpad=stop_mode=clone:stop_duration=120[vout]" \
+    -map "[vout]" -map "1:a" \
+    -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p \
+    -c:a aac -b:a 192k \
     -shortest \
     "$MIXED_OUT" -loglevel error
 
@@ -126,8 +129,21 @@ cat "$CONCAT_LIST"
 echo ""
 echo "── Step 4: Exporting final video ──"
 
+N=${#MIXED[@]}
+
+# Build -i args and filter_complex concat string
+INPUT_ARGS=()
+FILTER=""
+for i in "${!MIXED[@]}"; do
+  INPUT_ARGS+=(-i "${MIXED[$i]}")
+  FILTER+="[${i}:v][${i}:a]"
+done
+FILTER+="concat=n=${N}:v=1:a=1[v][a]"
+
 "$FFMPEG" -y \
-  -f concat -safe 0 -i "$CONCAT_LIST" \
+  "${INPUT_ARGS[@]}" \
+  -filter_complex "$FILTER" \
+  -map "[v]" -map "[a]" \
   -c:v libx264 -preset fast -crf 20 \
   -c:a aac -b:a 192k \
   -movflags +faststart \

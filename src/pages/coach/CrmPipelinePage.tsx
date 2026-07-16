@@ -95,6 +95,9 @@ export default function CrmPipelinePage() {
   const [taskCounts, setTaskCounts] = useState<Record<string, { total: number; overdue: number }>>({})
   const [briefText, setBriefText] = useState('')
   const [briefLoading, setBriefLoading] = useState(false)
+  const [emailDraft, setEmailDraft] = useState<{ subject: string; body: string } | null>(null)
+  const [emailType, setEmailType] = useState<'lead_outreach' | 'consult_followup' | 'checkin' | 'reengagement' | 'post_session'>('lead_outreach')
+  const [showEmailDraft, setShowEmailDraft] = useState(false)
   const dragId = useRef<string | null>(null)
 
   useEffect(() => { fetchContacts() }, [])
@@ -169,6 +172,42 @@ export default function CrmPipelinePage() {
       setBriefText(json.text ?? 'No response generated.')
     } catch {
       setBriefText('Could not generate. Check your connection and try again.')
+    }
+    setBriefLoading(false)
+  }
+
+  async function handleEmailDraft() {
+    if (!selected) return
+    setBriefLoading(true)
+    setEmailDraft(null)
+    setShowEmailDraft(true)
+    setBriefText('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/crm-brief', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({
+          action: 'email_draft',
+          emailType,
+          contact: {
+            name: displayName(selected),
+            email: selected.email,
+            source: SOURCE_LABELS[selected.source] ?? selected.source,
+            stage: selected.pipeline_stage,
+            notes: selected.notes ?? '',
+          },
+          activities: activities.slice(0, 8),
+          appointments,
+        }),
+      })
+      const json = await res.json()
+      setEmailDraft({ subject: json.subject ?? '', body: json.body ?? json.text ?? '' })
+    } catch {
+      setEmailDraft({ subject: '', body: 'Could not generate draft. Check your connection and try again.' })
     }
     setBriefLoading(false)
   }
@@ -371,20 +410,72 @@ export default function CrmPipelinePage() {
 
           <div className={s.aiActions}>
             {appointments.some(a => a.status === 'booked') && (
-              <button className={s.aiBtn} onClick={() => handleBrief('brief')} disabled={briefLoading}>
+              <button className={s.aiBtn} onClick={() => { setShowEmailDraft(false); handleBrief('brief') }} disabled={briefLoading}>
                 {briefLoading ? 'Generating...' : 'Session Brief'}
               </button>
             )}
-            <button className={s.aiBtn} onClick={() => handleBrief('followup')} disabled={briefLoading}>
-              {briefLoading ? 'Generating...' : 'Draft Follow-up'}
+            <button className={s.aiBtn} onClick={() => { setShowEmailDraft(false); handleBrief('followup') }} disabled={briefLoading}>
+              {briefLoading ? 'Generating...' : 'Quick Follow-up'}
             </button>
           </div>
 
-          {briefText && (
+          <div className={s.emailDraftRow}>
+            <select
+              className={s.emailTypeSelect}
+              value={emailType}
+              onChange={e => setEmailType(e.target.value as typeof emailType)}
+            >
+              <option value="lead_outreach">Lead Outreach</option>
+              <option value="consult_followup">Post-Consult</option>
+              <option value="checkin">Client Check-in</option>
+              <option value="reengagement">Re-engagement</option>
+              <option value="post_session">Post-Session</option>
+            </select>
+            <button className={s.emailDraftBtn} onClick={handleEmailDraft} disabled={briefLoading}>
+              {briefLoading && showEmailDraft ? 'Drafting...' : 'Draft Email'}
+            </button>
+          </div>
+
+          {briefText && !showEmailDraft && (
             <div className={s.aiBriefBox}>
               <div className={s.aiBriefLabel}>AI</div>
               <div className={s.aiBriefText}>{briefText}</div>
               <button className={s.aiBriefCopy} onClick={() => navigator.clipboard.writeText(briefText)}>Copy</button>
+            </div>
+          )}
+
+          {showEmailDraft && (
+            <div className={s.emailDraftBox}>
+              <div className={s.emailDraftHeader}>
+                <span className={s.aiBriefLabel}>EMAIL DRAFT</span>
+                <button className={s.emailDraftClose} onClick={() => setShowEmailDraft(false)}>✕</button>
+              </div>
+              {briefLoading ? (
+                <div className={s.emailDraftLoading}>Drafting in Dr. Hunter&apos;s voice...</div>
+              ) : emailDraft && (
+                <>
+                  <div className={s.emailDraftSubjectRow}>
+                    <div className={s.emailDraftLabel}>Subject</div>
+                    <div className={s.emailDraftSubject}>{emailDraft.subject}</div>
+                    <button
+                      className={s.aiBriefCopy}
+                      onClick={() => navigator.clipboard.writeText(emailDraft.subject)}
+                    >Copy</button>
+                  </div>
+                  <div className={s.emailDraftBodyRow}>
+                    <div className={s.emailDraftLabel}>Body</div>
+                    <div className={s.emailDraftBody}>{emailDraft.body}</div>
+                    <button
+                      className={s.aiBriefCopy}
+                      onClick={() => navigator.clipboard.writeText(emailDraft.body)}
+                    >Copy</button>
+                  </div>
+                  <button
+                    className={s.emailDraftCopyAll}
+                    onClick={() => navigator.clipboard.writeText(`Subject: ${emailDraft.subject}\n\n${emailDraft.body}`)}
+                  >Copy full email</button>
+                </>
+              )}
             </div>
           )}
 

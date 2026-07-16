@@ -29,6 +29,7 @@ import ComplianceGuardPage from '@/pages/coach/ComplianceGuardPage'
 import CrmPipelinePage from '@/pages/coach/CrmPipelinePage'
 import CrmTasksPage from '@/pages/coach/CrmTasksPage'
 import CrmCalendarPage from '@/pages/coach/CrmCalendarPage'
+import CommunicationsStudioPage from '@/pages/coach/CommunicationsStudioPage'
 import AppLayout from '@/components/layout/AppLayout'
 import TermsPage from '@/pages/legal/TermsPage'
 import PrivacyPage from '@/pages/legal/PrivacyPage'
@@ -261,6 +262,7 @@ export default function App() {
           <Route path="crm" element={<CrmPipelinePage />} />
           <Route path="crm/tasks" element={<CrmTasksPage />} />
           <Route path="crm/calendar" element={<CrmCalendarPage />} />
+          <Route path="comms" element={<CommunicationsStudioPage />} />
         </Route>
 
         {/* Legacy redirects */}

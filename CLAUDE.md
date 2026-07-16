@@ -301,3 +301,81 @@ The app's `/clinical-inquiry` form is a gateway only. All sensitive follow-up ha
   UPDATE public.profiles SET role = 'educator'
   WHERE id = (SELECT id FROM auth.users WHERE email = 'your@email.com');
   ```
+
+---
+
+## Challenge Build Context (added July 2026)
+
+Dr. Hunter is building three wellness challenges based on trending research. This section captures all decisions made so far. Read this before touching anything challenge-related.
+
+### The Three Challenges
+
+**Challenge 1: 28-Day Hormone Intelligence Challenge (build first)**
+The trending data shows cycle syncing and hormonal mood tracking are the highest-commercial-momentum opportunity in her niche. This is the priority build.
+
+**Challenge 2: Flat Belly Reset (lead magnet + paid)**
+5-day free email sequence as lead magnet, then 21-day paid version. Hook is cortisol belly fat, not willpower. Core exercise is the dead bug position (not plank). Supplement stack: KSM-66 Ashwagandha 300mg twice daily, Doctor's Best Magnesium Glycinate 400mg at night, Gaia Herbs Lemon Balm 500mg.
+
+**Challenge 3: Nervous System Reset (bonus, build last)**
+7-14 day format tied to adrenal health. Bonus content for Challenge 1 Week 4 (luteal phase). Not a standalone product yet.
+
+---
+
+### Challenge 1: 28-Day Hormone Intelligence Challenge
+
+#### The Foundation Tool
+`/HORMONE-CYCLE-INTELLIGENCE.html` is already built and lives in this repo root. It is a full hormone cycle intelligence dashboard covering 10 female conditions and 4 male conditions. It already outputs per-phase supplement recommendations with specific brands and doses, movement guidance, nutrition, self-care, lab timing, and when to see a provider.
+
+The challenge does not duplicate this tool. The challenge is the daily experience that teaches women to USE it over 28 days.
+
+#### What the Challenge Tool Needs to Build
+A new page/route (suggested: `/challenge/hormone`) that provides:
+
+1. Cycle day input (what day are you on today, 1-28)
+2. Condition selector (PCOS, Hashimoto's, perimenopause, endometriosis, adrenal, estrogen dominance, fibroids, fertility, none)
+3. Today's phase display (pulled from HORMONE-CYCLE-INTELLIGENCE.html data)
+4. Daily habit checklist (did you take your supplements, do your movement, hit your sleep target)
+5. Mood and energy check-in (1-5 scale, stored daily)
+6. Streak counter
+7. Simple chart showing mood and energy over 28 days so the pattern becomes visible
+
+Data storage: Supabase. One table: `challenge_progress` with columns `user_id`, `challenge_day`, `cycle_day`, `condition`, `mood_score`, `energy_score`, `habits_completed` (JSONB), `logged_at`.
+
+#### Week-by-Week Structure
+- Week 1 (Days 1-7): Learn to read your cycle. Follow the tool daily.
+- Week 2 (Days 8-14): Follicular phase, estrogen rising, fuel and movement focus.
+- Week 3 (Days 15-21): Ovulatory and early luteal, supplement focus (CoQ10, zinc).
+- Week 4 (Days 22-28): Luteal landing, nervous system support, magnesium glycinate, B6.
+- Day 28 CTA: Book a clarity call.
+
+#### Compliance Requirements for This Tool
+Before this page goes live, it MUST have:
+1. Gate disclaimer (active acknowledgment modal before tool loads, per Point 7 of the compliance skill)
+2. DSHEA disclaimer on all supplement mentions
+3. Drug interaction warnings for: Vitex, Berberine, DIM, Ashwagandha (see compliance skill for exact language)
+4. "Educational only, not medical advice" in the footer of every phase card
+5. No language suggesting the tool diagnoses or treats any condition
+
+Run `/health-educator-compliance-reviewer` on all content before publishing.
+
+#### Mobile Roadmap
+The web tool (React + Supabase) is the first step. Timeline:
+- Phase 1: Web tool live on huntersholistichealth.com (current build)
+- Phase 2: Make it a PWA (Progressive Web App) so users can add it to their iPhone home screen without an App Store. Requires adding a `manifest.json` and a service worker.
+- Phase 3: When user base justifies it, build a React Native/Expo mobile app using the same Supabase backend for App Store submission. No backend rewrite needed.
+
+---
+
+### ECC Skills Installed (July 2026)
+
+The following AI skill modules have been installed and are available in Claude Code sessions:
+
+**Content and research:** `/last30days`, `/deep-research`, `/scientific-db-pubmed-database`, `/scientific-thinking-literature-review`, `/article-writing`, `/brand-voice`, `/content-engine`, `/seo`, `/marketing-campaign`, `/market-research`, `/competitive-platform-analysis`
+
+**Website building:** `/react-patterns`, `/react-performance`, `/frontend-design-direction`, `/motion-ui`, `/accessibility`, `/postgres-patterns`, `/database-migrations`
+
+**Compliance and security:** `/health-educator-compliance-reviewer`, `/healthcare-phi-compliance`, `/security-review`, `/gateguard`
+
+**Social:** `/crosspost`, `/social-publisher`
+
+A full click-to-copy reference is saved at `~/Desktop/HHH-Skills-Reference.html`.
