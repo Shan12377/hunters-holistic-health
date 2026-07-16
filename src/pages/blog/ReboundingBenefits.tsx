@@ -60,8 +60,8 @@ export default function ReboundingBenefits() {
         <div className={styles.body}>
 
           <img
-            src="/images/rebounding-benefits-hero.jpg"
-            alt="Woman jumping on a mini trampoline rebounder indoors, mid-air with energy lines showing movement"
+            src="/images/ai/blog-rebounding.jpg"
+            alt="Woman on a mini trampoline rebounder in a bright living room"
             className={styles.blogImg}
           />
 
