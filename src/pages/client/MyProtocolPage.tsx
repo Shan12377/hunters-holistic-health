@@ -4,13 +4,31 @@ import type { ProtocolData, ProtocolSection } from '@/data/protocols/types'
 import styles from './ProtocolPage.module.css'
 
 const PILLAR_ORDER = ['R', 'O1', 'O2', 'T', 'S']
+
+const PILLAR_COLORS: Record<string, string> = {
+  R:  '#7c6ef5',
+  O1: '#0B9E8E',
+  O2: '#c8a74b',
+  T:  '#4be08a',
+  S:  '#58a6ff',
+}
+
 const PILLAR_NAMES: Record<string, string> = {
-  R: 'Review',
+  R:  'Review',
   O1: 'Nutrition',
   O2: 'Supplements',
-  T: 'Lifestyle',
-  S: 'Sustain',
+  T:  'Lifestyle',
+  S:  'Sustain',
 }
+
+const PHASE_STEPS = [
+  { key: 0, label: 'Prep',     color: '#0B9E8E', desc: 'Open drainage pathways and prepare your body before the protocol begins.' },
+  { key: 1, label: 'Kill',     color: '#c8a74b', desc: 'Active clearance. This phase targets the root cause directly.' },
+  { key: 2, label: 'Heal',     color: '#4be08a', desc: 'Repair the gut lining and restore beneficial flora after clearance.' },
+  { key: 3, label: 'Maintain', color: '#7c6ef5', desc: 'Sustain your results with long-term maintenance support.' },
+]
+
+type PhaseKey = number | 'all' | 'supplements'
 
 function sectionsForPhase(data: ProtocolData, phase: number | 'all'): Array<{ pillarId: string; section: ProtocolSection }> {
   const result: Array<{ pillarId: string; section: ProtocolSection }> = []
@@ -19,7 +37,6 @@ function sectionsForPhase(data: ProtocolData, phase: number | 'all'): Array<{ pi
       if (!section.shared) continue
       const hasItems = section.items.some(i => i.checked && i.shared)
       if (!hasItems) continue
-
       if (phase === 'all') {
         if (section.phase === undefined) result.push({ pillarId: pillar.id, section })
       } else {
@@ -29,17 +46,6 @@ function sectionsForPhase(data: ProtocolData, phase: number | 'all'): Array<{ pi
   }
   return result.sort((a, b) => PILLAR_ORDER.indexOf(a.pillarId) - PILLAR_ORDER.indexOf(b.pillarId))
 }
-
-type PhaseKey = number | 'all' | 'supplements'
-
-const PHASES: Array<{ key: PhaseKey; label: string }> = [
-  { key: 0, label: 'Phase 0: Prep' },
-  { key: 1, label: 'Phase 1: Kill' },
-  { key: 2, label: 'Phase 2: Heal' },
-  { key: 3, label: 'Phase 3: Maintain' },
-  { key: 'all', label: 'Overview' },
-  { key: 'supplements', label: 'Supplements' },
-]
 
 function supplementSections(data: ProtocolData): Array<{ pillarId: string; section: ProtocolSection }> {
   const result: Array<{ pillarId: string; section: ProtocolSection }> = []
@@ -87,73 +93,172 @@ export default function MyProtocolPage() {
   }
 
   const protocolLabel = data.type === 'parasite_cleanse'
-    ? 'ROOTS Framework: Parasite Cleanse Protocol'
+    ? 'Parasite Cleanse Protocol'
     : data.type.replace(/_/g, ' ')
 
   const sections = activePhase === 'supplements'
     ? supplementSections(data)
     : sectionsForPhase(data, activePhase as number | 'all')
 
+  const activeStep = typeof activePhase === 'number'
+    ? PHASE_STEPS.find(s => s.key === activePhase) ?? null
+    : null
+
   return (
     <div className={styles.root}>
+
+      {/* Header */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Your Protocol</h1>
-        <p className={styles.subtitle}>{protocolLabel}</p>
-        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem' }}>
-          Tap a phase to see your plan for that stage. New here? Start with Phase 0: Prep. Want just your supplements? Tap the Supplements tab.
-        </p>
+        <p className={styles.protocolBadge}>ROOTS Framework</p>
+        <h1 className={styles.title}>{protocolLabel}</h1>
       </div>
 
-      <div className={styles.phaseTabs}>
-        {PHASES.map(p => (
+      {/* Phase journey stepper */}
+      <div className={styles.stepperWrap}>
+        <div className={styles.stepper}>
+          {PHASE_STEPS.map((step, idx) => {
+            const isActive = activePhase === step.key
+            const isPast = typeof activePhase === 'number' && step.key < activePhase
+            return (
+              <div key={step.key} className={styles.stepItem}>
+                {idx > 0 && (
+                  <div
+                    className={styles.stepLine}
+                    style={{ background: isPast || isActive ? step.color : 'var(--border)' }}
+                  />
+                )}
+                <button
+                  className={styles.stepBtn}
+                  onClick={() => setActivePhase(step.key)}
+                  style={isActive ? { borderColor: step.color, background: step.color, color: '#fff' }
+                    : isPast ? { borderColor: step.color, color: step.color }
+                    : {}}
+                >
+                  {step.key}
+                </button>
+                <span
+                  className={styles.stepLabel}
+                  style={isActive ? { color: step.color, fontWeight: 700 } : {}}
+                >
+                  {step.label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Secondary utility tabs */}
+        <div className={styles.utilityTabs}>
           <button
-            key={String(p.key)}
-            className={activePhase === p.key ? styles.phaseTabActive : styles.phaseTab}
-            onClick={() => setActivePhase(p.key)}
+            className={activePhase === 'all' ? styles.utilTabActive : styles.utilTab}
+            onClick={() => setActivePhase('all')}
           >
-            {p.label}
+            Overview
           </button>
-        ))}
+          <button
+            className={activePhase === 'supplements' ? styles.utilTabActive : styles.utilTab}
+            onClick={() => setActivePhase('supplements')}
+          >
+            Supplements
+          </button>
+        </div>
       </div>
 
+      {/* Active phase hero */}
+      {activeStep && (
+        <div className={styles.phaseHero} style={{ borderColor: activeStep.color }}>
+          <div className={styles.phaseHeroNum} style={{ color: activeStep.color }}>
+            Phase {activeStep.key}
+          </div>
+          <div className={styles.phaseHeroName} style={{ color: activeStep.color }}>
+            {activeStep.label}
+          </div>
+          <p className={styles.phaseHeroDesc}>{activeStep.desc}</p>
+        </div>
+      )}
+
+      {activePhase === 'all' && (
+        <div className={styles.phaseHero} style={{ borderColor: '#91a0ac' }}>
+          <div className={styles.phaseHeroName} style={{ color: '#91a0ac' }}>Full Protocol Overview</div>
+          <p className={styles.phaseHeroDesc}>Every section assigned to your protocol across all phases.</p>
+        </div>
+      )}
+
+      {activePhase === 'supplements' && (
+        <div className={styles.phaseHero} style={{ borderColor: '#c8a74b' }}>
+          <div className={styles.phaseHeroName} style={{ color: '#c8a74b' }}>Your Supplements</div>
+          <p className={styles.phaseHeroDesc}>All supplements assigned to your protocol. Tap any link to order.</p>
+        </div>
+      )}
+
+      {/* Empty state */}
       {sections.length === 0 && (
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', textAlign: 'center', padding: '2rem 0' }}>
+        <p className={styles.emptyState}>
           {activePhase === 'supplements'
             ? 'No supplements assigned yet. Ask your educator to add them.'
             : 'Nothing assigned for this phase yet. Check another tab or ask your educator.'}
         </p>
       )}
 
+      {/* Section cards */}
       {sections.map(({ pillarId, section }) => {
         const sharedItems = section.items.filter(i => i.checked && i.shared)
+        const pillarColor = PILLAR_COLORS[pillarId] ?? '#0B9E8E'
         return (
-          <div key={section.id} className={styles.pillarSection}>
-            <div className={styles.pillarLabel}>
-              <span className={styles.pillarDot} />
+          <div key={section.id} className={styles.sectionBlock}>
+
+            <div className={styles.pillarTag} style={{ color: pillarColor }}>
+              <span className={styles.pillarDot} style={{ background: pillarColor }} />
               {PILLAR_NAMES[pillarId] ?? pillarId}
             </div>
-            <div className={styles.card}>
-              <h3 className={styles.cardTitle}>{section.title}</h3>
+
+            <div className={styles.sectionCard} style={{ borderLeftColor: pillarColor }}>
+              <h3 className={styles.sectionTitle}>{section.title}</h3>
               {section.clientNote && (
-                <div className={styles.itemNote}>{section.clientNote}</div>
+                <div className={styles.sectionNote} style={{ borderLeftColor: pillarColor }}>
+                  {section.clientNote}
+                </div>
               )}
-              <div className={styles.items}>
+
+              <div className={styles.itemList}>
                 {sharedItems.map(item => (
-                  <div key={item.id} className={styles.item}>
-                    <span className={styles.itemText}>{item.text}</span>
-                    {item.subtext && <span className={styles.itemSubtext}>{item.subtext}</span>}
+                  <div key={item.id} className={styles.itemCard}>
+                    <div className={styles.itemHeader}>
+                      <span className={styles.itemName}>{item.text}</span>
+                    </div>
+                    {item.subtext && (
+                      <p className={styles.itemDesc}>{item.subtext}</p>
+                    )}
+                    {item.clientNote && (
+                      <div className={styles.itemClientNote} style={{ borderLeftColor: pillarColor }}>
+                        {item.clientNote}
+                      </div>
+                    )}
                     {(item.dose || item.timing || item.link) && (
-                      <div className={styles.itemMeta}>
-                        {item.dose && <span className={styles.itemDose}>{item.dose}</span>}
-                        {item.timing && <span className={styles.itemTiming}>{item.timing}</span>}
+                      <div className={styles.itemFooter}>
+                        <div className={styles.itemPills}>
+                          {item.dose && (
+                            <span className={styles.dosePill} style={{ color: pillarColor, borderColor: `${pillarColor}50`, background: `${pillarColor}12` }}>
+                              {item.dose}
+                            </span>
+                          )}
+                          {item.timing && (
+                            <span className={styles.timingPill}>{item.timing}</span>
+                          )}
+                        </div>
                         {item.link && (
-                          <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.itemLink}>
-                            {item.linkLabel ?? 'Buy'}
+                          <a
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.buyBtn}
+                            style={{ color: pillarColor, borderColor: `${pillarColor}60` }}
+                          >
+                            {item.linkLabel ?? 'Get the supplement'} →
                           </a>
                         )}
                       </div>
                     )}
-                    {item.clientNote && <div className={styles.itemNote}>{item.clientNote}</div>}
                   </div>
                 ))}
               </div>
@@ -162,9 +267,9 @@ export default function MyProtocolPage() {
         )
       })}
 
-      <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', textAlign: 'center', paddingTop: '1rem', lineHeight: 1.5 }}>
+      <p className={styles.disclaimer}>
         For educational purposes only. Not medical advice. Always consult your physician before starting any new supplement or protocol.
-      </div>
+      </p>
     </div>
   )
 }
