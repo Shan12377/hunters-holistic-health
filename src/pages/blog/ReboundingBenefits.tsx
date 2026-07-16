@@ -59,12 +59,6 @@ export default function ReboundingBenefits() {
 
         <div className={styles.body}>
 
-          <img
-            src="/images/ai/blog-rebounding.jpg"
-            alt="Woman on a mini trampoline rebounder in a bright living room"
-            className={styles.blogImg}
-          />
-
           <p>Rebounding benefits are the reason a mini trampoline has lived in my home for years, and it is the one health tool I will never give up.</p>
 
           <h2>How Rebounding Benefits Your Body (And Why NASA Agrees)</h2>
