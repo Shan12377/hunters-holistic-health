@@ -589,7 +589,7 @@ export default function LandingPage() {
         <div className={styles.statsGrid}>
           <div className={styles.statItem}>
             <div className={`${styles.statNum} ${statsVisible ? styles.statVisible : ''}`}>12<span className={styles.statSuffix}>%</span></div>
-            <div className={styles.statLabel}>of American adults are metabolically healthy</div>
+            <div className={styles.statLabel}>of adults are metabolically healthy. Are you one of them?</div>
             <div className={styles.statSource}>Metabolic Syndrome and Related Disorders, 2022</div>
           </div>
           <div className={styles.statDivider} aria-hidden="true" />
