@@ -88,6 +88,9 @@ import MyProtocolPage from '@/pages/client/MyProtocolPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
 import SnapshotPage from '@/pages/client/SnapshotPage'
 import VaultPage from '@/pages/client/VaultPage'
+import HormoneChallengePage from '@/pages/tools/HormoneChallengePage'
+import FlatBellyChallengePage from '@/pages/tools/FlatBellyChallengePage'
+import NervousSystemResetPage from '@/pages/tools/NervousSystemResetPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -174,6 +177,9 @@ export default function App() {
         <Route path="/tools/supplement-timing" element={<SupplementTiming />} />
         <Route path="/tools/nutrient-food-sources" element={<NutrientFoodSources />} />
         <Route path="/tools/insulin-resistance-score" element={<InsResScore />} />
+        <Route path="/tools/hormone-challenge" element={<HormoneChallengePage />} />
+        <Route path="/tools/flat-belly-reset" element={<FlatBellyChallengePage />} />
+        <Route path="/tools/nervous-system-reset" element={<NervousSystemResetPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

@@ -542,6 +542,24 @@ export default function ToolsPage() {
             <div className={styles.moreCardDesc}>When to take magnesium, iron, vitamin D, B vitamins, and more. Which nutrients cancel each other out. The pairings that actually boost absorption.</div>
             <span className={styles.moreCardCta}>View the Guide →</span>
           </Link>
+          <Link to="/tools/hormone-challenge" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>28-Day Challenge</div>
+            <div className={styles.moreCardName}>Hormone Intelligence Challenge</div>
+            <div className={styles.moreCardDesc}>Track your cycle phases, mood, energy, and daily habits over 28 days. Understand how your hormonal cycle drives your energy, mood, and metabolic patterns.</div>
+            <span className={styles.moreCardCta}>Start the Challenge →</span>
+          </Link>
+          <Link to="/tools/flat-belly-reset" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>5-Day Reset</div>
+            <div className={styles.moreCardName}>Flat Belly Reset</div>
+            <div className={styles.moreCardDesc}>The cortisol-belly connection explained. Dead bug core exercise, protein-first eating, and the 3-supplement cortisol stack. Not willpower.</div>
+            <span className={styles.moreCardCta}>Start Day 1 →</span>
+          </Link>
+          <Link to="/tools/nervous-system-reset" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>7-Day Reset</div>
+            <div className={styles.moreCardName}>Nervous System Reset</div>
+            <div className={styles.moreCardDesc}>7 days of HPA axis dysregulation education with daily breathing practices, vagal tone exercises, and the adaptogenic supplement stack for cortisol recovery.</div>
+            <span className={styles.moreCardCta}>Start Day 1 →</span>
+          </Link>
         </div>
       </section>
 
