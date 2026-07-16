@@ -48,7 +48,7 @@ export default function Glp1WeightRegain() {
         <header className={styles.articleHeader}>
           <p className={styles.byline}>Dr. Shallanda Hunter, PharmD, CFNMP | Functional Medicine Educator</p>
           <h1 className={styles.h1}>Why Most GLP-1 Users Regain Weight After Stopping, and How to Be the Exception</h1>
-          <p className={styles.meta}>March 2026 · Reviewed June 2026 · 10 min read</p>
+          <p className={styles.meta}>July 21, 2026 · 10 min read</p>
         </header>
 
         <img
