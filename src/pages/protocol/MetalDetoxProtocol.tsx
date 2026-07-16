@@ -25,10 +25,23 @@ const PHASES: Phase[] = [
         what: 'Fills the bone matrix with calcium, the preferred mineral that lead and other metals try to mimic. Vitamin K2 (MK-7) directs calcium into bone tissue and away from arterial walls. Requires fat for absorption.',
       },
       {
-        name: 'Selenomethionine',
+        name: 'Selenium',
         brand: 'Thorne (NSF Certified for Sport)',
         link: 'https://amzn.to/4fDVjJa',
         what: 'Supports thyroid hormone conversion (T4 to T3) and provides antioxidant protection to thyroid tissue during the clearance process. Selenomethionine is the organic, food-derived form with the highest bioavailability. NSF Certified for Sport; appropriate for athletes and active individuals.',
+      },
+      {
+        name: 'Brazil Nuts',
+        brand: "I'm A Nut",
+        link: 'https://amzn.to/4vwegCc',
+        what: "One of the richest natural food sources of selenium on the planet. Two to three nuts daily provides meaningful selenium to complement your supplement stack and support thyroid hormone conversion and antioxidant defense during the clearance process. Also studied for its role in supporting healthy testosterone levels through its selenium, zinc, and hormone-supportive fat content.",
+        note: 'Do not exceed three to four nuts per day. Brazil nuts are so concentrated in selenium that too many can become counterproductive.',
+      },
+      {
+        name: 'Glutaryl Topical Glutathione',
+        brand: 'Auro Wellness',
+        link: 'https://aurowellness.com/collections/all-products/products/glutaryl',
+        what: 'Glutathione is a tri-peptide amino acid produced naturally in every cell of the body. Often called the Master Antioxidant, it supports detox pathways, liver health, immune function, mitochondrial energy, and protects cells from oxidative stress. Natural production begins to decline around age 30 while environmental exposure continues to rise. Auro GSH uses sub-nano technology for enhanced topical absorption, making this one of the most bioavailable glutathione delivery systems available.',
       },
       {
         name: 'Zinc',
