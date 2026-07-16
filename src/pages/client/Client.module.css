@@ -9805,6 +9805,21 @@
   cursor: pointer;
 }
 
+/* ---- BP quick-select category buttons ---- */
+.bpQuickSelect { margin-bottom: var(--space-4); }
+.bpQuickRow { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.bpQuickBtn {
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-page);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.bpQuickBtn:hover { opacity: 0.85; }
+
 /* ---- BP live gauges grid ---- */
 .bpGaugeGrid {
   display: grid;

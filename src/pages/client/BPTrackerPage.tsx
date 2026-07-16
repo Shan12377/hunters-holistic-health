@@ -124,6 +124,15 @@ const BP_LEVERS = [
   },
 ]
 
+// Quick-select BP categories — pre-fill form with representative midpoint values per AHA/ACC zone
+const BP_QUICK_CATEGORIES = [
+  { label: 'Normal',     systolic: 115, diastolic: 75,  color: '#4be08a' },
+  { label: 'Elevated',   systolic: 125, diastolic: 75,  color: '#e0b84b' },
+  { label: 'Stage 1',    systolic: 135, diastolic: 84,  color: '#e08a4b' },
+  { label: 'Stage 2',    systolic: 145, diastolic: 92,  color: '#e05c5c' },
+  { label: 'Very High',  systolic: 185, diastolic: 122, color: '#c0392b' },
+] as const
+
 // context tags appended to notes when logging a reading
 const DIET_TAGS = ['Whole foods', 'Average day', 'Salty snacks', 'Fast food / heavy processed'] as const
 const STRESS_TAGS = ['Very calm', 'Moderate', 'High stress', 'Very high stress'] as const
@@ -153,6 +162,7 @@ export default function BPTrackerPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ systolic: '', diastolic: '', pulse: '', notes: '' })
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [openEdu, setOpenEdu] = useState<string | null>(null)
   // context tags
   const [dietTag, setDietTag] = useState<DietTag | null>(null)
@@ -225,6 +235,7 @@ export default function BPTrackerPage() {
     } else {
       toast.success('Blood pressure reading saved!')
       setForm({ systolic: '', diastolic: '', pulse: '', notes: '' })
+      setSelectedCategory(null)
       setDietTag(null); setStressTag(null); setMoveTag(null)
       setShowForm(false)
       fetchReadings()
@@ -442,14 +453,39 @@ export default function BPTrackerPage() {
         <div className={styles.card}>
           <h3 className={styles.cardTitleSolo}>New Reading</h3>
           <form onSubmit={handleSubmit} className={styles.logForm}>
+            {/* Quick-select category */}
+            <div className={styles.bpQuickSelect}>
+              <label className={styles.label}>Quick select your BP range (or enter exact numbers below)</label>
+              <div className={styles.bpQuickRow}>
+                {BP_QUICK_CATEGORIES.map(cat => (
+                  <button
+                    key={cat.label}
+                    type="button"
+                    className={styles.bpQuickBtn}
+                    style={selectedCategory === cat.label ? {
+                      borderColor: cat.color,
+                      background: `${cat.color}18`,
+                      color: cat.color,
+                      fontWeight: 600,
+                    } : { borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                    onClick={() => {
+                      setSelectedCategory(cat.label)
+                      setForm(f => ({ ...f, systolic: String(cat.systolic), diastolic: String(cat.diastolic) }))
+                    }}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className={styles.inputRow3}>
               <div className={styles.field}>
                 <label className={styles.label}>Systolic (top) *</label>
-                <input className={styles.input} type="number" placeholder="120" value={form.systolic} onChange={e => setForm(f => ({...f, systolic: e.target.value}))} required min={60} max={250} />
+                <input className={styles.input} type="number" placeholder="120" value={form.systolic} onChange={e => { setSelectedCategory(null); setForm(f => ({...f, systolic: e.target.value})) }} required min={60} max={250} />
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>Diastolic (bottom) *</label>
-                <input className={styles.input} type="number" placeholder="80" value={form.diastolic} onChange={e => setForm(f => ({...f, diastolic: e.target.value}))} required min={40} max={150} />
+                <input className={styles.input} type="number" placeholder="80" value={form.diastolic} onChange={e => { setSelectedCategory(null); setForm(f => ({...f, diastolic: e.target.value})) }} required min={40} max={150} />
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>Pulse (bpm)</label>
