@@ -97,34 +97,73 @@ const IMAGES = [
   },
 ]
 
-// ── API call ─────────────────────────────────────────────────────────────────
+// ── API call (WaveSpeed Nano Banana Pro = Google Gemini 3 Pro Image) ─────────
 
 async function generateImage(apiKey, prompt) {
-  const res = await fetch('https://api.openai.com/v1/images/generations', {
+  // Step 1: kick off generation
+  const res = await fetch('https://api.wavespeed.ai/api/v3/google/nano-banana-pro/text-to-image', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-image-1',
       prompt,
-      n: 1,
-      size: '1024x1536',        // 2:3 portrait — tall so the 16:7 crop shows faces at top
-      quality: 'high',
+      aspect_ratio: '2:3',          // portrait — 16:7 hero crop shows faces at top
+      num_images: 1,
       output_format: 'jpeg',
+      enable_sync_mode: false,
+      enable_base64_output: true,
     }),
   })
 
   if (!res.ok) {
     const err = await res.text()
-    throw new Error(`OpenAI API error ${res.status}: ${err}`)
+    throw new Error(`WaveSpeed API error ${res.status}: ${err}`)
   }
 
-  const data = await res.json()
-  const b64 = data.data?.[0]?.b64_json
-  if (!b64) throw new Error(`No image data in response: ${JSON.stringify(data)}`)
-  return Buffer.from(b64, 'base64')
+  const startData = await res.json()
+  const requestId = startData.data?.id ?? startData.id
+  if (!requestId) throw new Error(`No request ID returned: ${JSON.stringify(startData)}`)
+
+  // Step 2: poll until complete (up to 2 minutes)
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 2000))
+    const poll = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}/result`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+    })
+    if (!poll.ok) continue
+
+    const result = await poll.json()
+    const status = result.data?.status ?? result.status
+
+    if (status === 'completed' || status === 'success') {
+      const outputs = result.data?.outputs ?? result.outputs
+      const first = Array.isArray(outputs) ? outputs[0] : outputs
+
+      if (first?.b64_json) return Buffer.from(first.b64_json, 'base64')
+      if (first?.b64)      return Buffer.from(first.b64, 'base64')
+      if (typeof first === 'string' && first.startsWith('data:')) {
+        return Buffer.from(first.split(',')[1], 'base64')
+      }
+      if (typeof first === 'string' && first.startsWith('http')) {
+        const imgRes = await fetch(first)
+        return Buffer.from(await imgRes.arrayBuffer())
+      }
+      // Raw base64 string (no prefix)
+      if (typeof first === 'string' && first.length > 100) {
+        return Buffer.from(first, 'base64')
+      }
+      throw new Error(`Unknown output format: ${JSON.stringify(first).slice(0, 200)}`)
+    }
+
+    if (status === 'failed' || status === 'error') {
+      throw new Error(`Generation failed: ${JSON.stringify(result)}`)
+    }
+    // still pending — keep polling
+  }
+
+  throw new Error('Timeout: image generation took longer than 2 minutes')
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
@@ -133,14 +172,15 @@ async function main() {
   const { readFileSync } = await import('fs')
 
   // Load API key
-  let API_KEY = process.env.OPENAI_API_KEY || ''
+  let API_KEY = process.env.WaveSpeed_API_key || process.env.WAVESPEED_API_KEY || ''
   if (!API_KEY) {
     try {
       const raw = readFileSync(join(__dir, '../.env.local'), 'utf-8')
       for (const line of raw.split('\n')) {
         const eq = line.indexOf('=')
         if (eq < 0) continue
-        if (line.slice(0, eq).trim() === 'OPENAI_API_KEY') {
+        const varName = line.slice(0, eq).trim()
+        if (varName === 'WaveSpeed_API_key' || varName === 'WAVESPEED_API_KEY') {
           API_KEY = line.slice(eq + 1).trim().replace(/^["']|["']$/g, '')
           break
         }
@@ -149,7 +189,8 @@ async function main() {
   }
 
   if (!API_KEY) {
-    console.error('Error: OPENAI_API_KEY not found in .env.local or environment')
+    console.error('Error: WaveSpeed_API_key not found in .env.local or environment')
+    console.error('Add it to .env.local as: WaveSpeed_API_key=your_key_here')
     process.exit(1)
   }
 
@@ -169,6 +210,10 @@ async function main() {
 
   for (const img of targets) {
     const outPath = join(OUT_DIR, img.file)
+    if (!filter && existsSync(outPath)) {
+      console.log(`  ⏭  Skipping (already exists): ${img.file}`)
+      continue
+    }
     console.log(`→ ${img.file}`)
     try {
       const buffer = await generateImage(API_KEY, img.prompt)
@@ -185,7 +230,8 @@ async function main() {
   }
 
   console.log('Done. Review images in public/images/ai/')
-  console.log('If any look off, regenerate that file: node scripts/generate-blog-images.mjs <filename-without-extension>')
+  console.log('Regenerate one: node scripts/generate-blog-images.mjs blog-creatine')
+  console.log('Uses WaveSpeed Nano Banana Pro (Google Gemini 3 Pro Image) — $0.07/image')
 }
 
 main()
