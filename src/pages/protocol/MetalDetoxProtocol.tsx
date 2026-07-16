@@ -34,7 +34,7 @@ const PHASES: Phase[] = [
         name: 'Brazil Nuts',
         brand: "I'm A Nut",
         link: 'https://amzn.to/4vwegCc',
-        what: "One of the richest natural food sources of selenium on the planet. Two to three nuts daily provides meaningful selenium to complement your supplement stack and support thyroid hormone conversion and antioxidant defense during the clearance process. Also studied for its role in supporting healthy testosterone levels through its selenium, zinc, and hormone-supportive fat content.",
+        what: 'One of the richest natural food sources of selenium on the planet. Two to three nuts daily provides meaningful selenium to complement your supplement stack and support thyroid hormone conversion, antioxidant defense, and healthy hormone balance for both men and women. Selenium supports the enzymes that protect hormone-producing cells from oxidative stress, making it relevant across the full spectrum of hormonal health including thyroid, estrogen, and testosterone balance.',
         note: 'Do not exceed three to four nuts per day. Brazil nuts are so concentrated in selenium that too many can become counterproductive.',
       },
       {
