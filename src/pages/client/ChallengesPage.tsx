@@ -1,11 +1,33 @@
 import { useEffect, useState } from 'react'
-import { Zap, CheckCircle, Clock, Users, CalendarDays } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Zap, CheckCircle, Clock, Users, CalendarDays, ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { format, parseISO, differenceInDays, isAfter, isBefore, isToday } from 'date-fns'
 import toast from 'react-hot-toast'
 import { awardPoints } from '@/lib/points'
 import styles from './Client.module.css'
+
+const CHALLENGE_TOOLS = [
+  {
+    to: '/tools/hormone-challenge',
+    icon: '⬡',
+    title: '28-Day Hormone Intelligence Challenge',
+    desc: 'Track your cycle, sync your habits to each phase, and watch your energy and mood shift over 28 days.',
+  },
+  {
+    to: '/tools/flat-belly-reset',
+    icon: '◉',
+    title: 'Flat Belly Reset',
+    desc: 'A cortisol-focused reset — not willpower. Combines ashwagandha, magnesium, and targeted movement to reduce belly inflammation.',
+  },
+  {
+    to: '/tools/nervous-system-reset',
+    icon: '◷',
+    title: 'Nervous System Reset',
+    desc: '7 to 14 days of adrenal support, sleep regulation, and stress-response retraining.',
+  },
+]
 
 interface Challenge {
   id: string
@@ -278,6 +300,27 @@ export default function ChallengesPage() {
         </h1>
         <p className={styles.challengesSub}>Group challenges set by your educator. Check in daily to build your streak.</p>
       </div>
+
+      {/* Challenge program tools — always visible */}
+      <section>
+        <div className={styles.challengesSectionLabel}>Challenge Programs</div>
+        <div className={styles.challengesList}>
+          {CHALLENGE_TOOLS.map(tool => (
+            <Link key={tool.to} to={tool.to} className={styles.challengeToolCard}>
+              <div className={styles.challengeCardTop}>
+                <div className={styles.challengeIconWrap}>
+                  <span className={styles.challengeToolIcon}>{tool.icon}</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div className={styles.challengeTitle}>{tool.title}</div>
+                  <div className={styles.challengeDesc}>{tool.desc}</div>
+                </div>
+                <ArrowRight size={16} className={styles.challengeToolArrow} />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {loading ? (
         <p className={styles.evEmpty}>Loading challenges...</p>
