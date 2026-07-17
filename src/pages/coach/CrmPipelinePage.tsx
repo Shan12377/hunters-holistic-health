@@ -2,7 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { formatDistanceToNow, format, isPast, isToday } from 'date-fns'
+import toast from 'react-hot-toast'
 import s from './Crm.module.css'
+
+const BOOKING_LINKS = [
+  { label: 'VIP Member Session', detail: '45 min', booking: 'https://tidycal.com/drshallandahunter/vip-member-session', zoom: null },
+  { label: 'Member Protocol Review', detail: '20 min', booking: 'https://tidycal.com/drshallandahunter/member-protocol-review', zoom: null },
+  { label: 'Protocol Review', detail: '$97 · 20 min', booking: 'https://tidycal.com/drshallandahunter/protocol-review', zoom: null },
+  { label: 'Private Education Session', detail: '$197 · 45 min', booking: 'https://tidycal.com/drshallandahunter/private-education-session', zoom: null },
+  { label: 'ROOTS Detox Follow-Up', detail: '1 hr', booking: 'https://tidycal.com/drshallandahunter/roots-framework-follow-up-detox', zoom: 'https://us06web.zoom.us/j/85663176184?pwd=mGna7yHmC6TbB3sDSkyJ2p7iZwsWO5.1' },
+  { label: 'Heavy Metal and Cardiovascular Health Education', detail: '1 hr', booking: 'https://tidycal.com/drshallandahunter/sustainable-heavy-metal-and-cardiovascular-health-eucation', zoom: 'https://us06web.zoom.us/j/89224844101?pwd=DYhTOASY05XsDduoziQybgQ1OaaJsm.1' },
+  { label: 'Viome Coaching', detail: '', booking: 'https://tidycal.com/drshallandahunter/viome-coaching', zoom: 'https://us06web.zoom.us/j/6768665268?pwd=VW1IUkJ3bmxLNXRHR3ptN2d6RkVLdz09' },
+]
 
 interface Contact {
   id: string
@@ -291,6 +302,26 @@ export default function CrmPipelinePage() {
         <NavLink to="/coach/crm/tasks" className={({ isActive }) => `${s.crmNavLink} ${isActive ? s.crmNavLinkActive : ''}`}>Tasks</NavLink>
         <NavLink to="/coach/crm/calendar" className={({ isActive }) => `${s.crmNavLink} ${isActive ? s.crmNavLinkActive : ''}`}>Calendar</NavLink>
       </nav>
+
+      <details className={s.bookingLinksPanel}>
+        <summary className={s.bookingLinksSummary}>Booking links and meeting rooms</summary>
+        <div className={s.bookingLinksGrid}>
+          {BOOKING_LINKS.map(link => (
+            <div key={link.label} className={s.bookingLinkRow}>
+              <div className={s.bookingLinkInfo}>
+                <span className={s.bookingLinkLabel}>{link.label}</span>
+                {link.detail && <span className={s.bookingLinkDetail}>{link.detail}</span>}
+              </div>
+              <div className={s.bookingLinkActions}>
+                <button className={s.ghostBtn} onClick={() => { navigator.clipboard.writeText(link.booking); toast.success('Booking link copied') }}>Copy booking</button>
+                {link.zoom && (
+                  <button className={s.ghostBtn} onClick={() => { navigator.clipboard.writeText(link.zoom!); toast.success('Zoom link copied') }}>Copy Zoom</button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
 
       {loading ? (
         <div className={s.loading}>Loading contacts...</div>

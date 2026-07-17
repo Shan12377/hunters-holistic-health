@@ -16,7 +16,7 @@ const APP_AREAS = [
   'Dashboard',
   'Daily Log',
   'BP Tracker',
-  'Meal Guard',
+  'Nourish Log',
   'Classroom',
   'Community Feed',
   'Challenges',

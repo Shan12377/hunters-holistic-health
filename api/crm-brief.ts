@@ -169,20 +169,94 @@ POST:
 [Twitter/X post or thread]`,
 }
 
+const WORKSPACE_ID = '00000000-0000-0000-0000-000000000001'
+
+const SOURCE_MAP: Record<string, string> = {
+  early_access:     'intake_join',
+  clinical_inquiry: 'intake_clinical_inquiry',
+  support:          'intake_support',
+  feature_request:  'intake_feature_request',
+}
+
 // ─── HANDLER ─────────────────────────────────────────────────────────────────
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
-    const authHeader = req.headers.authorization
-    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' })
-    const token = authHeader.slice(7)
-
     const supabase = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
+
+    const { action } = req.body as { action?: string }
+
+    // ── WEBHOOK: Lead submission from n8n (webhook secret auth) ──────────────
+    if (action === 'lead_submit') {
+      const secret = process.env.VITE_N8N_WEBHOOK_SECRET
+      const incoming = req.headers['x-webhook-secret']
+      if (!secret || incoming !== secret) return res.status(401).json({ error: 'Unauthorized' })
+
+      const body = req.body ?? {}
+      const submissionType: string = body.submissionType ?? body.submission_type ?? ''
+      const email: string = (body.email ?? '').trim().toLowerCase()
+      const fullName: string = (body.name ?? '').trim()
+      const nameParts = fullName.split(' ')
+      const firstName = nameParts[0] ?? ''
+      const lastName = nameParts.slice(1).join(' ') || null
+      const phone: string | null = body.phone ?? null
+      const source = SOURCE_MAP[submissionType] ?? 'intake_join'
+
+      if (!email) return res.status(400).json({ error: 'email is required' })
+
+      const { data: existing } = await supabase
+        .from('leads')
+        .select('id')
+        .eq('workspace_id', WORKSPACE_ID)
+        .eq('email', email)
+        .neq('status', 'converted')
+        .maybeSingle()
+
+      let leadId: string
+      if (existing) {
+        await supabase.from('leads').update({ source, updated_at: new Date().toISOString() }).eq('id', existing.id)
+        leadId = existing.id
+      } else {
+        const { data: newLead, error } = await supabase.from('leads').insert({
+          workspace_id: WORKSPACE_ID,
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone,
+          source,
+          status: 'new',
+        }).select('id').single()
+        if (error || !newLead) return res.status(500).json({ error: 'Failed to create lead' })
+        leadId = newLead.id
+      }
+
+      const activityBody = [
+        `Form: ${submissionType}`,
+        body.message ? `Message: ${body.message}` : null,
+        body.symptoms ? `Symptoms: ${body.symptoms}` : null,
+        body.goals ? `Goals: ${body.goals}` : null,
+        body.hearAbout ? `Heard about us: ${body.hearAbout}` : null,
+      ].filter(Boolean).join(' | ')
+
+      await supabase.from('activities').insert({
+        workspace_id: WORKSPACE_ID,
+        lead_id: leadId,
+        type: 'form_submission',
+        body: activityBody || `Submitted ${submissionType} form`,
+      })
+
+      return res.status(200).json({ ok: true, leadId })
+    }
+
+    // ── All other actions require educator JWT auth ───────────────────────────
+    const authHeader = req.headers.authorization
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' })
+    const token = authHeader.slice(7)
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) return res.status(401).json({ error: 'Unauthorized' })
@@ -193,9 +267,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' })
+    if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' }}
 
     const { action } = req.body as { action: string }
+
+    // ── COMMS POLISH ────────────────────────────────────────────────────────
+    if (action === 'comms_polish') {
+      const { channel, draft, topic, audience } = req.body as {
+        channel: string; draft: string; topic?: string; audience?: string
+      }
+      if (!draft) return res.status(400).json({ error: 'draft is required' })
+      const polishPrompt = `You are editing a draft written by Dr. Shallanda Hunter. Your job is to polish it, not rewrite it.
+
+Keep her words, her rhythm, her examples. Fix grammar, tighten sentences, remove filler, and make sure it sounds like her. Do not add new ideas she did not include. Do not change her meaning. Do not add em dashes.
+
+Channel: ${channel}
+${topic ? `Context / goal: ${topic}` : ''}
+${audience ? `Audience: ${audience}` : ''}
+
+DRAFT TO POLISH:
+${draft}
+
+Return only the polished version. No preamble, no explanation.`
+
+      const message = await claude.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 900,
+        system: VOICE_CORE,
+        messages: [{ role: 'user', content: polishPrompt }],
+      })
+      const text = message.content[0].type === 'text' ? message.content[0].text.trim() : ''
+      return res.status(200).json({ raw: text, message: text, body: text, post: text })
+    }
 
     // ── COMMS STUDIO DRAFT ──────────────────────────────────────────────────
     if (action === 'comms_draft') {

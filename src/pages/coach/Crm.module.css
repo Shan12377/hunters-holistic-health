@@ -890,3 +890,58 @@
 }
 .crmNavLink:hover { color: #e8f4f3; }
 .crmNavLinkActive { color: #0B9E8E; border-bottom-color: #0B9E8E; }
+
+/* Booking links panel */
+.bookingLinksPanel {
+  margin: 0 0 20px;
+}
+.bookingLinksSummary {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a9fa0;
+  cursor: pointer;
+  padding: 8px 0;
+  user-select: none;
+  list-style: none;
+}
+.bookingLinksSummary::-webkit-details-marker { display: none; }
+.bookingLinksSummary::before { content: '▸ '; }
+details[open] .bookingLinksSummary::before { content: '▾ '; }
+.bookingLinksGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+.bookingLinkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #0e2223;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.bookingLinkInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.bookingLinkLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e8f4f3;
+}
+.bookingLinkDetail {
+  font-size: 0.72rem;
+  color: #5a9fa0;
+}
+.bookingLinkActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}

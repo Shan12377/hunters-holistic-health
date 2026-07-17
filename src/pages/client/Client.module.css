@@ -10546,3 +10546,226 @@
   flex-shrink: 0;
   margin-top: var(--space-2);
 }
+
+/* ============================================================
+   MealGuard Nutrition Tracker Upgrade
+   ============================================================ */
+
+/* Tab navigation */
+.tabNav {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.tabBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tabBtn:hover {
+  border-color: var(--border);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.tabBtnActive {
+  composes: tabBtn;
+  border-color: var(--teal);
+  color: var(--teal);
+  background: rgba(11, 158, 142, 0.08);
+}
+
+/* Disclaimer banner */
+.nutritionDisclaimerBanner {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: rgba(var(--gold-rgb), 0.06);
+  border: 1px solid rgba(var(--gold-rgb), 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
+}
+
+/* Daily macro progress bars */
+.macroProgressList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.macroProgressRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.macroProgressLabels {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.macroProgressName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.macroProgressValues {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.macroProgressBar {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--border-subtle);
+  overflow: hidden;
+}
+
+.macroProgressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.macroProgressRemaining {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Meal item actions (heart + alert) */
+.mealItemActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.heartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.heartBtn:hover {
+  border-color: #e05c5c;
+  color: #e05c5c;
+  background: rgba(224, 92, 92, 0.08);
+}
+
+/* Quick log button in saved foods list */
+.quickLogBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--teal);
+  background: transparent;
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quickLogBtn:hover {
+  background: rgba(11, 158, 142, 0.1);
+}
+
+/* Hidden ingredient prompt */
+.hiddenIngredientRow {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.hiddenIngredientLabel {
+  display: block;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.hiddenIngredientInputRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Goals tab */
+.goalsTab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.goalsHint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+.goalsTdeeRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.goalsField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.goalsLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tdeeResult {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: rgba(11, 158, 142, 0.08);
+  border: 1px solid rgba(11, 158, 142, 0.2);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.goalsDisclaimer {
+  margin-top: var(--space-4);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-3);
+}

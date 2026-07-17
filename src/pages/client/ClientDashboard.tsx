@@ -347,7 +347,7 @@ export default function ClientDashboard() {
         <div className={styles.actionGrid}>
           {[
             { to: '/app/blood-pressure', icon: Heart, label: 'Log BP', color: '#e05c5c' },
-            { to: '/app/meal-guard', icon: Shield, label: 'AI Meal Guard', color: 'var(--gold)' },
+            { to: '/app/meal-guard', icon: Shield, label: 'Nourish Log', color: 'var(--gold)' },
             { to: '/app/daily-log', icon: ClipboardList, label: 'Daily Log', color: 'var(--teal)' },
             { to: '/app/protocol', icon: BookOpen, label: 'My Protocol', color: '#9b59b6' },
           ].map(({ to, icon: Icon, label, color }) => (

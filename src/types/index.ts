@@ -30,6 +30,9 @@ export interface MealLog {
   food_name: string
   meal_type: 'morning_fast' | 'meal1' | 'meal2' | 'snack'
   calories: number | null
+  protein: number | null
+  fat: number | null
+  carbs: number | null
   ai_flag: boolean
   ai_warning: string | null
   ai_alternatives: string[] | null

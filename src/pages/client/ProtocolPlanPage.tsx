@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check, Plus, Trash2 } from 'lucide-react'
+import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check, Plus, Trash2, Download } from 'lucide-react'
 import {
   PROTOCOL_RECIPES,
   PROTOCOL_SYNERGIES,
@@ -241,6 +241,27 @@ export default function ProtocolPlanPage() {
     navigator.clipboard.writeText(parts.join('\n\n'))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  function handleDownloadGrocery() {
+    const lines: string[] = ["Hunter's Holistic Health — Shopping List", new Date().toLocaleDateString(), '']
+    CATEGORY_ORDER.filter(cat => groceryListByCategory[cat]?.length > 0).forEach(cat => {
+      lines.push(cat.toUpperCase())
+      groceryListByCategory[cat].forEach(item => lines.push(`  [ ]  ${item}`))
+      lines.push('')
+    })
+    if (customGroceries.length > 0) {
+      lines.push('EXTRA ITEMS')
+      customGroceries.forEach(item => lines.push(`  [ ]  ${item}`))
+      lines.push('')
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'shopping-list.txt'
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -532,12 +553,6 @@ export default function ProtocolPlanPage() {
                   url: 'https://amzn.to/4sFhOBs',
                 },
                 {
-                  name: 'Serrapeptase',
-                  note: 'A proteolytic enzyme derived from silkworm bacteria. Studied for its role in breaking down fibrin and supporting a healthy inflammatory response. Must be taken on an empty stomach to reach the bloodstream intact.',
-                  timing: 'Morning on empty stomach',
-                  url: 'https://amzn.to/4lmmREg',
-                },
-                {
                   name: 'Personal Rebounder',
                   note: 'Lymphatic activation tool. Used personally by Dr. Hunter as part of the daily movement protocol. This is the specific model recommended for home use.',
                   timing: '10-15 minutes daily',
@@ -700,6 +715,11 @@ export default function ProtocolPlanPage() {
                 <span className={styles.ppGroceryListCount}>{groceryTotalCount} items</span>
                 {groceryTotalCount > 0 && (
                   <span className={styles.ppGroceryCheckedCount}>{checkedItems.size} checked</span>
+                )}
+                {groceryTotalCount > 0 && (
+                  <button className={styles.ppGroceryCopyBtn} onClick={handleDownloadGrocery} title="Download shopping list">
+                    <Download size={13} /> Download
+                  </button>
                 )}
               </div>
 

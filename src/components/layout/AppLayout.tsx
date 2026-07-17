@@ -37,7 +37,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Nutrition',
     items: [
-      { to: '/app/meal-guard',       icon: '⚡', label: 'Meal Guard' },
+      { to: '/app/meal-guard',       icon: '⚡', label: 'Nourish Log' },
       { to: '/app/meal-plan',        icon: '◉', label: 'Meal Plan' },
       { to: '/app/daily-plate',      icon: '◉', label: 'Daily Plate' },
       { to: '/app/build-your-plate', icon: '⚡', label: 'Build Your Plate' },
@@ -67,6 +67,13 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/challenges',  icon: '⚡', label: 'Challenges' },
       { to: '/app/events',      icon: '◷', label: 'Events' },
       { to: '/app/messages',    icon: '✉', label: 'Messages' },
+    ],
+  },
+  {
+    label: 'Goals & Habits',
+    items: [
+      { to: '/app/health-goals', icon: '◎', label: 'Health Goals' },
+      { to: '/app/habits',       icon: '✓', label: 'Daily Habits' },
     ],
   },
   {
@@ -291,6 +298,9 @@ export default function AppLayout() {
               </NavLink>
               <NavLink to="/coach/compliance-guard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
                 <span className={styles.navIcon}>✓</span>FTC Compliance Guard
+              </NavLink>
+              <NavLink to="/coach/applications" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>◈</span>Applications
               </NavLink>
             </>
           )}

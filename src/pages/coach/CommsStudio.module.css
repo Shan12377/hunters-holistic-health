@@ -316,3 +316,64 @@
   text-align: right;
   margin-top: -8px;
 }
+
+/* Mode toggle */
+.modeRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.modeBtn {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #2a6d6f;
+  background: transparent;
+  color: #8ab8b9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modeBtn:hover { border-color: #0B9E8E; color: #e8f4f3; }
+.modeBtnActive { background: #0B9E8E22; border-color: #0B9E8E; color: #0B9E8E; }
+
+/* Booking links */
+.bookingLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0 4px;
+}
+.bookingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #0e2223;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.bookingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.bookingLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e8f4f3;
+}
+.bookingDetail {
+  font-size: 0.75rem;
+  color: #5a9fa0;
+}
+.bookingActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}

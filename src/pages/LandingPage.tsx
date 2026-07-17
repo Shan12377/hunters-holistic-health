@@ -33,7 +33,7 @@ const checkoutUrl = (key: keyof typeof STRIPE) => STRIPE[key] || '/join'
 // --- Static data ---
 const FEATURES = [
   { img: '/features/blood-pressure-tracker.jpeg', title: 'Blood Pressure Tracker',   desc: 'Log readings and visualize trends with AHA-zone color-coding. Understand the pattern, not just the number.' },
-  { img: '/features/ai-meal-guard.jpeg',           title: 'AI Meal Guard',             desc: 'Get instant educational context on a food choice before you eat. Grounded in functional and nutritional medicine.' },
+  { img: '/features/ai-meal-guard.jpeg',           title: 'Nourish Log',          desc: 'Get instant educational context on a food choice before you eat. Grounded in functional and nutritional medicine.' },
   { img: '/features/daily-command-center.jpeg',    title: 'Daily Command Center',      desc: 'Fasting, meals, supplements, steps, and water in one 10-minute daily check-in.' },
   { img: '/features/weekly-report-card.jpeg',      title: 'Weekly Report Card',        desc: 'Your consistency score and grade across every tracked habit, every week.' },
   { img: '/features/community-rooms.jpeg',         title: 'Community Rooms',           desc: 'Private group rooms with levels, streaks, and a leaderboard. Progress is more visible when others see it.' },
@@ -178,7 +178,7 @@ const TIERS: Tier[] = [
     stripeMonthly: 'program_monthly',
     stripeAnnual: 'program_annual',
     core: [
-      'Everything in Foundation, plus Unlimited AI Meal Guard',
+      'Everything in Foundation, plus Unlimited Nourish Log',
       'Live monthly group education sessions with Dr. Hunter',
       'Weekly Pulse AI: your personalized health education summary',
       'Private cohort room and monthly challenges with recognition',
@@ -218,7 +218,7 @@ const TIERS: Tier[] = [
     stripeAnnual: 'foundation_annual',
     core: [
       'The full ROOTS curriculum, self-paced',
-      'VitaPlate AI Meal System (smart recipe builder + 5 daily Meal Guard queries)',
+      'VitaPlate AI Meal System (smart recipe builder + 5 daily Nourish Log entries)',
       'Metabolic Tracking Suite: BP, Blood Sugar, HOMA-IR, Daily Command Center',
       'Weekly Report Card to track your educational consistency',
       'Full Community Feed, Leaderboard, and Challenges',

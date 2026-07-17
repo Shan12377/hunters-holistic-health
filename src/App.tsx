@@ -89,6 +89,10 @@ import NutrientFoodSources from '@/pages/tools/NutrientFoodSources'
 import InsResScore from '@/pages/tools/InsResScore'
 import HealthHubPage from '@/pages/client/HealthHubPage'
 import MyProtocolPage from '@/pages/client/MyProtocolPage'
+import HealthGoalsPage from '@/pages/client/HealthGoalsPage'
+import HabitTrackerPage from '@/pages/client/HabitTrackerPage'
+import ApplyPage from '@/pages/ApplyPage'
+import ApplicationsPage from '@/pages/coach/ApplicationsPage'
 import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
 import SnapshotPage from '@/pages/client/SnapshotPage'
 import VaultPage from '@/pages/client/VaultPage'
@@ -178,6 +182,7 @@ export default function App() {
         <Route path="/feature-request" element={<FeatureRequestPage />} />
         <Route path="/clinical-inquiry" element={<ClinicalInquiryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/apply" element={<ApplyPage />} />
         <Route path="/privacy-scorecard" element={<PrivacyScorecardPage />} />
         <Route path="/shop" element={<Navigate to="/creatine" replace />} />
         <Route path="/creatine" element={<CreatinePage />} />
@@ -248,6 +253,8 @@ export default function App() {
           <Route path="weight" element={<WeightTrackerPage />} />
           <Route path="snapshot" element={<SnapshotPage />} />
           <Route path="vault" element={<VaultPage />} />
+          <Route path="health-goals" element={<HealthGoalsPage />} />
+          <Route path="habits" element={<HabitTrackerPage />} />
         </Route>
 
         {/* Educator routes */}
@@ -263,6 +270,7 @@ export default function App() {
           <Route path="crm/tasks" element={<CrmTasksPage />} />
           <Route path="crm/calendar" element={<CrmCalendarPage />} />
           <Route path="comms" element={<CommunicationsStudioPage />} />
+          <Route path="applications" element={<ApplicationsPage />} />
         </Route>
 
         {/* Legacy redirects */}

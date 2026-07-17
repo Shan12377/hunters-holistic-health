@@ -119,7 +119,7 @@ type Tab = 'protocol' | 'homa'
 type PGStep = 'goal' | 'symptoms' | 'gate' | 'results'
 
 const TOOLS_META_TITLE = 'Free Metabolic Health Tools | Hunter\'s Holistic Health'
-const TOOLS_META_DESC = 'Free health education tools: blood pressure simulator, metabolic blueprint quiz, meal guard, and more. Evidence-informed guidance from Dr. Shallanda Hunter, CFNMP.'
+const TOOLS_META_DESC = 'Free health education tools: blood pressure simulator, metabolic blueprint quiz, Nourish Log, and more. Evidence-informed guidance from Dr. Shallanda Hunter, CFNMP.'
 
 function ToolsMetaTags() {
   if (typeof document === 'undefined') return null

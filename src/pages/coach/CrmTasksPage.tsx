@@ -32,6 +32,10 @@ function dueDateLabel(due: string): string {
 export default function CrmTasksPage() {
   const [tasks, setTasks] = useState<TaskRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [showAddTask, setShowAddTask] = useState(false)
+  const [newTaskTitle, setNewTaskTitle] = useState('')
+  const [newTaskDue, setNewTaskDue] = useState('')
+  const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => { fetchTasks() }, [])
@@ -58,6 +62,23 @@ export default function CrmTasksPage() {
     until.setHours(9, 0, 0, 0)
     await supabase.from('tasks').update({ status: 'snoozed', snoozed_until: until.toISOString() }).eq('id', id)
     setTasks(t => t.map(task => task.id === id ? { ...task, status: 'snoozed', snoozed_until: until.toISOString() } : task))
+  }
+
+  async function handleAddTask() {
+    if (!newTaskTitle.trim() || !newTaskDue) return
+    setSaving(true)
+    await supabase.from('tasks').insert({
+      title: newTaskTitle.trim(),
+      due_at: newTaskDue,
+      status: 'open',
+      lead_id: null,
+      profile_id: null,
+    })
+    setSaving(false)
+    setShowAddTask(false)
+    setNewTaskTitle('')
+    setNewTaskDue('')
+    fetchTasks()
   }
 
   function openContact(t: TaskRow) {
@@ -105,6 +126,7 @@ export default function CrmTasksPage() {
           <h1 className={s.title}>Tasks</h1>
           <p className={s.sub}>{total} open{overdue.length > 0 ? ` · ${overdue.length} overdue` : ''}</p>
         </div>
+        <button className={s.primaryBtn} onClick={() => setShowAddTask(true)}>+ Add Task</button>
       </div>
 
       <nav className={s.crmNav}>
@@ -125,6 +147,37 @@ export default function CrmTasksPage() {
           </>
         )}
       </div>
+      {showAddTask && (
+        <div className={s.modalOverlay} onClick={() => setShowAddTask(false)}>
+          <div className={s.modal} onClick={e => e.stopPropagation()}>
+            <div className={s.modalTitle}>Add Task</div>
+            <input
+              className={s.input}
+              placeholder="Task title"
+              value={newTaskTitle}
+              onChange={e => setNewTaskTitle(e.target.value)}
+              autoFocus
+            />
+            <label className={s.stageLabel}>Due date</label>
+            <input
+              className={s.input}
+              type="datetime-local"
+              value={newTaskDue}
+              onChange={e => setNewTaskDue(e.target.value)}
+            />
+            <div className={s.modalActions}>
+              <button className={s.ghostBtn} onClick={() => setShowAddTask(false)}>Cancel</button>
+              <button
+                className={s.primaryBtn}
+                onClick={handleAddTask}
+                disabled={saving || !newTaskTitle.trim() || !newTaskDue}
+              >
+                {saving ? 'Adding...' : 'Add Task'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -214,7 +214,7 @@ export default function SettingsPage() {
           <Target size={16} color="var(--gold)" /> Your Wellness Goals
         </h3>
         <p className={styles.settingsSectionNote}>
-          Used to personalize your AI Meal Guard, Smart Recipe Builder, and VitaPlate Plate Coach. Not clinical data. Not shared with third parties.
+          Used to personalize your Nourish Log, Smart Recipe Builder, and VitaPlate Plate Coach. Not clinical data. Not shared with third parties.
         </p>
         <div className={styles.settingsRow}>
           <label className={styles.label}>Primary wellness goal</label>

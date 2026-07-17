@@ -4,6 +4,17 @@ import toast from 'react-hot-toast'
 import s from './CommsStudio.module.css'
 
 type Channel = 'email' | 'sms' | 'whatsapp' | 'instagram' | 'linkedin' | 'facebook' | 'twitter'
+type Mode = 'generate' | 'polish'
+
+const BOOKING_LINKS = [
+  { label: 'VIP Member Session', detail: '45 min', booking: 'https://tidycal.com/drshallandahunter/vip-member-session', zoom: null },
+  { label: 'Member Protocol Review', detail: '20 min', booking: 'https://tidycal.com/drshallandahunter/member-protocol-review', zoom: null },
+  { label: 'Protocol Review', detail: '$97 · 20 min', booking: 'https://tidycal.com/drshallandahunter/protocol-review', zoom: null },
+  { label: 'Private Education Session', detail: '$197 · 45 min', booking: 'https://tidycal.com/drshallandahunter/private-education-session', zoom: null },
+  { label: 'ROOTS Detox Follow-Up', detail: '1 hr', booking: 'https://tidycal.com/drshallandahunter/roots-framework-follow-up-detox', zoom: 'https://us06web.zoom.us/j/85663176184?pwd=mGna7yHmC6TbB3sDSkyJ2p7iZwsWO5.1' },
+  { label: 'Heavy Metal and Cardiovascular Health Education', detail: '1 hr', booking: 'https://tidycal.com/drshallandahunter/sustainable-heavy-metal-and-cardiovascular-health-eucation', zoom: 'https://us06web.zoom.us/j/89224844101?pwd=DYhTOASY05XsDduoziQybgQ1OaaJsm.1' },
+  { label: 'Viome Coaching', detail: '', booking: 'https://tidycal.com/drshallandahunter/viome-coaching', zoom: 'https://us06web.zoom.us/j/6768665268?pwd=VW1IUkJ3bmxLNXRHR3ptN2d6RkVLdz09' },
+]
 
 interface DraftResult {
   raw: string
@@ -43,7 +54,9 @@ function copyText(text: string, label: string) {
 
 export default function CommunicationsStudioPage() {
   const [channel, setChannel] = useState<Channel>('email')
+  const [mode, setMode] = useState<Mode>('generate')
   const [topic, setTopic] = useState('')
+  const [draftToPolish, setDraftToPolish] = useState('')
   const [audience, setAudience] = useState('')
   const [emailType, setEmailType] = useState('lead_outreach')
   const [contactName, setContactName] = useState('')
@@ -51,11 +64,13 @@ export default function CommunicationsStudioPage() {
   const [contactNotes, setContactNotes] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<DraftResult | null>(null)
+  const [linksOpen, setLinksOpen] = useState(false)
 
   const selectedChannel = CHANNELS.find(c => c.id === channel)!
 
   async function handleGenerate() {
-    if (!topic.trim()) { toast.error('Add a topic first'); return }
+    if (mode === 'generate' && !topic.trim()) { toast.error('Add a topic first'); return }
+    if (mode === 'polish' && !draftToPolish.trim()) { toast.error('Paste your draft first'); return }
     setLoading(true)
     setResult(null)
     try {
@@ -67,9 +82,10 @@ export default function CommunicationsStudioPage() {
           'Authorization': `Bearer ${session?.access_token ?? ''}`,
         },
         body: JSON.stringify({
-          action: 'comms_draft',
+          action: mode === 'polish' ? 'comms_polish' : 'comms_draft',
           channel,
           topic: topic.trim(),
+          draft: draftToPolish.trim(),
           audience: audience.trim(),
           emailType: channel === 'email' ? emailType : undefined,
           contactName: contactName.trim() || undefined,
@@ -198,6 +214,16 @@ export default function CommunicationsStudioPage() {
       <div className={s.body}>
         <div className={s.form}>
 
+          {/* Mode toggle */}
+          <div className={s.modeRow}>
+            <button className={`${s.modeBtn} ${mode === 'generate' ? s.modeBtnActive : ''}`} onClick={() => { setMode('generate'); setResult(null) }}>
+              Write for me
+            </button>
+            <button className={`${s.modeBtn} ${mode === 'polish' ? s.modeBtnActive : ''}`} onClick={() => { setMode('polish'); setResult(null) }}>
+              Polish my draft
+            </button>
+          </div>
+
           {/* Channel selector */}
           <div className={s.channelRow}>
             {CHANNELS.map(ch => (
@@ -230,9 +256,23 @@ export default function CommunicationsStudioPage() {
             </div>
           )}
 
+          {/* Polish mode: paste your draft */}
+          {mode === 'polish' && (
+            <div className={s.field}>
+              <label className={s.label}>Paste your draft <span className={s.required}>*</span></label>
+              <textarea
+                className={s.textarea}
+                placeholder="Paste what you wrote. The AI will clean it up, fix the flow, and make sure it sounds like you."
+                rows={6}
+                value={draftToPolish}
+                onChange={e => setDraftToPolish(e.target.value)}
+              />
+            </div>
+          )}
+
           {/* Topic */}
           <div className={s.field}>
-            <label className={s.label}>Topic or message goal <span className={s.required}>*</span></label>
+            <label className={s.label}>{mode === 'polish' ? 'Context or goal (optional)' : <>Topic or message goal <span className={s.required}>*</span></>}</label>
             <textarea
               className={s.textarea}
               placeholder={channel === 'email'
@@ -302,10 +342,34 @@ export default function CommunicationsStudioPage() {
           <button
             className={s.generateBtn}
             onClick={handleGenerate}
-            disabled={loading || !topic.trim()}
+            disabled={loading || (mode === 'generate' ? !topic.trim() : !draftToPolish.trim())}
           >
-            {loading ? `Drafting for ${selectedChannel.label}...` : `Draft ${selectedChannel.label} in my voice`}
+            {loading
+              ? (mode === 'polish' ? 'Polishing...' : `Drafting for ${selectedChannel.label}...`)
+              : (mode === 'polish' ? `Polish in my voice` : `Draft ${selectedChannel.label} in my voice`)
+            }
           </button>
+
+          {/* Booking Links */}
+          <details className={s.contactToggle} open={linksOpen} onToggle={e => setLinksOpen((e.target as HTMLDetailsElement).open)}>
+            <summary className={s.contactSummary}>Booking links and meeting rooms</summary>
+            <div className={s.bookingLinks}>
+              {BOOKING_LINKS.map(link => (
+                <div key={link.label} className={s.bookingRow}>
+                  <div className={s.bookingInfo}>
+                    <span className={s.bookingLabel}>{link.label}</span>
+                    {link.detail && <span className={s.bookingDetail}>{link.detail}</span>}
+                  </div>
+                  <div className={s.bookingActions}>
+                    <button className={s.copyBtn} onClick={() => copyText(link.booking, 'Booking link')}>Copy booking link</button>
+                    {link.zoom && (
+                      <button className={s.copyBtn} onClick={() => copyText(link.zoom!, 'Zoom link')}>Copy Zoom</button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </details>
 
         </div>
 
