@@ -195,3 +195,46 @@ img, svg {
   padding: 0.25rem;
   flex-shrink: 0;
 }
+
+.pwa-banner--ios {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+
+.pwa-banner__ios-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pwa-banner__steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.pwa-banner__step {
+  font-size: 0.73rem;
+  color: #8aada8;
+  line-height: 1.4;
+}
+
+.pwa-banner__step strong {
+  color: #c9dedd;
+}
+
+.pwa-banner__share-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #3a5a57;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #f7f7f7;
+  vertical-align: middle;
+  letter-spacing: 0.02em;
+}
