@@ -60,13 +60,14 @@ export default function CommunicationsStudioPage() {
     setResult(null)
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch('/api/comms-draft', {
+      const res = await fetch('/api/crm-brief', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token ?? ''}`,
         },
         body: JSON.stringify({
+          action: 'comms_draft',
           channel,
           topic: topic.trim(),
           audience: audience.trim(),
