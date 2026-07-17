@@ -99,6 +99,9 @@ import VaultPage from '@/pages/client/VaultPage'
 import HormoneChallengePage from '@/pages/tools/HormoneChallengePage'
 import FlatBellyChallengePage from '@/pages/tools/FlatBellyChallengePage'
 import NervousSystemResetPage from '@/pages/tools/NervousSystemResetPage'
+import MorningProtocolPage from '@/pages/client/MorningProtocolPage'
+import KpiDashboardPage from '@/pages/coach/KpiDashboardPage'
+import BrainDumpPage from '@/pages/coach/BrainDumpPage'
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -255,6 +258,7 @@ export default function App() {
           <Route path="vault" element={<VaultPage />} />
           <Route path="health-goals" element={<HealthGoalsPage />} />
           <Route path="habits" element={<HabitTrackerPage />} />
+          <Route path="morning" element={<MorningProtocolPage />} />
         </Route>
 
         {/* Educator routes */}
@@ -271,6 +275,8 @@ export default function App() {
           <Route path="crm/calendar" element={<CrmCalendarPage />} />
           <Route path="comms" element={<CommunicationsStudioPage />} />
           <Route path="applications" element={<ApplicationsPage />} />
+          <Route path="kpis" element={<KpiDashboardPage />} />
+          <Route path="brain-dump" element={<BrainDumpPage />} />
         </Route>
 
         {/* Legacy redirects */}

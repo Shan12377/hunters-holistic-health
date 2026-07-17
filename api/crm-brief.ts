@@ -43,7 +43,19 @@ Example of her opening patterns:
 - "You asked for clarity. Here it is."
 - "The scale weighs everything: muscle, water, bone, that salty dinner. It cannot tell you the one thing that matters most."
 
-This is not a clinical context. This is educational health content for adults 40+ navigating metabolic health.`
+This is not a clinical context. This is educational health content for adults 40+ navigating metabolic health.
+
+CORRECTIONS (permanent rules from past mistakes — never repeat these):
+- Credential intro: always "licensed pharmacist and Certified Functional Nutritional Medicine Practitioner." Never "clinical pharmacist."
+- "adrenal fatigue" is banned. Use "HPA axis dysregulation" instead.
+- "we adjust" implies clinical management. Write "adjustments you make to your routine."
+- "what your labs indicate" is clinical scope. Write "how to read your own lab trends."
+- Never call a supplement "natural [drug name]" (example: "natural Ozempic"). State the actual mechanism.
+- DEXA measures lean soft tissue. Say "lean soft tissue loss on DEXA," not "lean muscle loss."
+- GLP-1 is one topic. It is never her entire identity.
+- Scarcity must be real. Never claim an audience size she does not have.
+- Personal testimony: "reversed, addressed, focused on" — never "fixed, treated, managed, cured."
+- Only include what was asked for. Do not add unrequested information to client messages.`
 
 // ─── COMMS STUDIO VOICE + CHANNEL RULES ─────────────────────────────────────
 
@@ -69,7 +81,19 @@ VOICE LAWS — non-negotiable:
 
 Her authority framing: "I am a licensed pharmacist and Certified Functional Nutritional Medicine Practitioner. I reversed my own metabolic health twice."
 
-DSHEA disclaimer required any time a supplement is mentioned: "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."`
+DSHEA disclaimer required any time a supplement is mentioned: "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."
+
+CORRECTIONS (permanent rules from past mistakes — never repeat these):
+- Credential intro: always "licensed pharmacist and Certified Functional Nutritional Medicine Practitioner." Never "clinical pharmacist" — that signals an active clinical role.
+- "adrenal fatigue" is banned. Use "HPA axis dysregulation" instead.
+- "we adjust" implies clinical management. Write "adjustments you make to your routine."
+- "what your labs indicate" is clinical scope. Write "how to read your own lab trends and ask better questions of your provider."
+- Never call a supplement "natural [drug name]" (example: "natural Ozempic"). State the actual mechanism instead.
+- DEXA studies measure lean soft tissue, not just muscle. Say "lean soft tissue loss on DEXA." Never say "lean muscle loss" or "muscle wasting."
+- GLP-1 is one content topic. It is never her entire identity or specialty.
+- Scarcity must be real. Never claim an audience size she does not have. For a new list, say "small exclusive group of founding readers."
+- Personal testimony: "reversed, addressed, focused on" her own condition. Never "fixed, treated, managed, cured."
+- Only include what was asked for. Never add unrequested information to client messages.`
 
 const CHANNEL_RULES: Record<string, string> = {
   email: `EMAIL RULES:
@@ -468,6 +492,80 @@ Requirements:
 - P.S.: one line, second hook or reply prompt.
 - Final line: "Educational content only, not medical advice. I'm a PharmD acting as a functional medicine educator, not your prescribing physician. Always consult your healthcare provider. Unsubscribe anytime: {{UNSUBSCRIBE_LINK}}"
 - Under 250 words total.`
+
+    } else if (action === 'objection_draft') {
+      const { objectionType, prospectNotes } = req.body as {
+        objectionType: string
+        prospectNotes?: string
+      }
+
+      const OBJECTION_SCRIPTS: Record<string, string> = {
+        too_expensive: `The objection is "too expensive." The prospect is comparing price to what they know, not to what this is worth.
+
+Your response must:
+- Acknowledge without apologizing
+- Anchor to the real cost of NOT acting (time lost, money spent on things that didn't work, health decline continuing)
+- Show the math: $4,997 for the 6-Month Overhaul vs. another year of trial-and-error, random supplements, and co-pays
+- One sentence on real scarcity: only 3 Overhaul spots available, none until the next cohort
+- Close with one question that reveals their actual priority`,
+
+        not_right_time: `The objection is "not the right time." There is no perfect time. The real issue is priority.
+
+Your response must:
+- Validate the season they're in, genuinely
+- Pivot to what they already told you about their health: if it matters enough to show up to a call, it matters enough to act
+- Ask: "When would be the right time, and what would need to be different?"
+- Offer a way to hold their spot (waitlist, application on file)
+- No guilt, no pressure. Warm and direct.`,
+
+        need_to_think: `The objection is "I need to think about it." This usually means they have a question they didn't ask.
+
+Your response must:
+- Name what thinking often masks: uncertainty about the outcome, wondering if they're the right fit, or a money question they haven't said yet
+- Give them permission to name it: "What specifically would help you decide?"
+- Remind them what they came to the call looking for
+- One line on what happens while they wait (the health situation keeps going)
+- Do not pressure. Do invite.`,
+
+        need_spouse: `The objection is "I need to talk to my spouse." This is often real and should be respected.
+
+Your response must:
+- Acknowledge it immediately and genuinely
+- Offer to help them have that conversation: give them 2-3 sentences they can actually say to their partner
+- Give a clear deadline: the spot is held for 48 hours
+- Offer a joint call if they want: 15 minutes, both of them, all questions answered
+- No pressure. Clear timeline.`,
+      }
+
+      const script = OBJECTION_SCRIPTS[objectionType]
+      if (!script) return res.status(400).json({ error: 'Unknown objection type' })
+
+      const userPrompt = `${script}
+
+${prospectNotes ? `About this prospect: ${prospectNotes}` : ''}
+
+Pricing to reference if needed:
+- Foundation: $37/month
+- The Program: $97/month
+- VIP Intensive: $997
+- 6-Month Overhaul: $4,997 (only 3 spots, next cohort TBD)
+
+Write a response script for Dr. Hunter to use on a sales call or in a follow-up message.
+Requirements:
+- Conversational, warm, direct. Not salesy.
+- 100-200 words.
+- Prose only, no bullet points in the output.
+- No em dashes.
+- End with one clear question or call to action.`
+
+      const msg = await claude.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        system: VOICE_CORE,
+        messages: [{ role: 'user', content: userPrompt }],
+      })
+      const objText = msg.content[0].type === 'text' ? msg.content[0].text.trim() : ''
+      return res.status(200).json({ raw: objText })
 
     } else {
       return res.status(400).json({ error: 'Invalid action' })

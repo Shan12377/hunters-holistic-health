@@ -74,6 +74,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/app/health-goals', icon: '◎', label: 'Health Goals' },
       { to: '/app/habits',       icon: '✓', label: 'Daily Habits' },
+      { to: '/app/morning',      icon: '★', label: 'Morning Protocol' },
     ],
   },
   {
@@ -301,6 +302,12 @@ export default function AppLayout() {
               </NavLink>
               <NavLink to="/coach/applications" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
                 <span className={styles.navIcon}>◈</span>Applications
+              </NavLink>
+              <NavLink to="/coach/kpis" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>◉</span>KPI Dashboard
+              </NavLink>
+              <NavLink to="/coach/brain-dump" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
+                <span className={styles.navIcon}>✍</span>Brain Dump
               </NavLink>
             </>
           )}

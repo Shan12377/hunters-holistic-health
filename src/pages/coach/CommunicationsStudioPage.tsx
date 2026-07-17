@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import s from './CommsStudio.module.css'
 
 type Channel = 'email' | 'sms' | 'whatsapp' | 'instagram' | 'linkedin' | 'facebook' | 'twitter'
-type Mode = 'generate' | 'polish'
+type Mode = 'generate' | 'polish' | 'objection'
 
 const BOOKING_LINKS = [
   { label: 'VIP Member Session', detail: '45 min', booking: 'https://tidycal.com/drshallandahunter/vip-member-session', zoom: null },
@@ -65,6 +65,7 @@ export default function CommunicationsStudioPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<DraftResult | null>(null)
   const [linksOpen, setLinksOpen] = useState(false)
+  const [objectionType, setObjectionType] = useState('too_expensive')
 
   const selectedChannel = CHANNELS.find(c => c.id === channel)!
 
@@ -81,17 +82,21 @@ export default function CommunicationsStudioPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token ?? ''}`,
         },
-        body: JSON.stringify({
-          action: mode === 'polish' ? 'comms_polish' : 'comms_draft',
-          channel,
-          topic: topic.trim(),
-          draft: draftToPolish.trim(),
-          audience: audience.trim(),
-          emailType: channel === 'email' ? emailType : undefined,
-          contactName: contactName.trim() || undefined,
-          contactStage: contactStage.trim() || undefined,
-          contactNotes: contactNotes.trim() || undefined,
-        }),
+        body: JSON.stringify(
+          mode === 'objection'
+            ? { action: 'objection_draft', objectionType, prospectNotes: contactNotes.trim() || undefined }
+            : {
+                action: mode === 'polish' ? 'comms_polish' : 'comms_draft',
+                channel,
+                topic: topic.trim(),
+                draft: draftToPolish.trim(),
+                audience: audience.trim(),
+                emailType: channel === 'email' ? emailType : undefined,
+                contactName: contactName.trim() || undefined,
+                contactStage: contactStage.trim() || undefined,
+                contactNotes: contactNotes.trim() || undefined,
+              }
+        ),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Generation failed')
@@ -222,38 +227,71 @@ export default function CommunicationsStudioPage() {
             <button className={`${s.modeBtn} ${mode === 'polish' ? s.modeBtnActive : ''}`} onClick={() => { setMode('polish'); setResult(null) }}>
               Polish my draft
             </button>
+            <button className={`${s.modeBtn} ${mode === 'objection' ? s.modeBtnActive : ''}`} onClick={() => { setMode('objection'); setResult(null) }}>
+              Handle objection
+            </button>
           </div>
 
-          {/* Channel selector */}
-          <div className={s.channelRow}>
-            {CHANNELS.map(ch => (
-              <button
-                key={ch.id}
-                className={`${s.channelBtn} ${channel === ch.id ? s.channelBtnActive : ''}`}
-                onClick={() => { setChannel(ch.id); setResult(null) }}
-              >
-                <span className={s.channelIcon}>{ch.icon}</span>
-                <span className={s.channelLabel}>{ch.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <p className={s.channelHint}>{selectedChannel.hint}</p>
-
-          {/* Email type (only for email) */}
-          {channel === 'email' && (
+          {/* Objection handler UI */}
+          {mode === 'objection' && (
             <div className={s.field}>
-              <label className={s.label}>Email type</label>
+              <label className={s.label}>What objection did they raise?</label>
               <select
                 className={s.select}
-                value={emailType}
-                onChange={e => setEmailType(e.target.value)}
+                value={objectionType}
+                onChange={e => setObjectionType(e.target.value)}
               >
-                {EMAIL_TYPES.map(t => (
-                  <option key={t.id} value={t.id}>{t.label} — {t.desc}</option>
-                ))}
+                <option value="too_expensive">Too expensive</option>
+                <option value="not_right_time">Not the right time</option>
+                <option value="need_to_think">Need to think about it</option>
+                <option value="need_spouse">Need to talk to my spouse</option>
               </select>
+              <div className={s.field} style={{ marginTop: '10px' }}>
+                <label className={s.label}>Notes about this prospect <span className={s.optional}>(optional)</span></label>
+                <textarea
+                  className={s.textarea}
+                  placeholder="e.g. She has been on the email list 6 months, mentioned struggling with belly fat after menopause, called it a 'big investment'"
+                  rows={3}
+                  value={contactNotes}
+                  onChange={e => setContactNotes(e.target.value)}
+                />
+              </div>
             </div>
+          )}
+
+          {/* Channel selector, hint, email type — hidden in objection mode */}
+          {mode !== 'objection' && (
+            <>
+              <div className={s.channelRow}>
+                {CHANNELS.map(ch => (
+                  <button
+                    key={ch.id}
+                    className={`${s.channelBtn} ${channel === ch.id ? s.channelBtnActive : ''}`}
+                    onClick={() => { setChannel(ch.id); setResult(null) }}
+                  >
+                    <span className={s.channelIcon}>{ch.icon}</span>
+                    <span className={s.channelLabel}>{ch.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className={s.channelHint}>{selectedChannel.hint}</p>
+
+              {channel === 'email' && (
+                <div className={s.field}>
+                  <label className={s.label}>Email type</label>
+                  <select
+                    className={s.select}
+                    value={emailType}
+                    onChange={e => setEmailType(e.target.value)}
+                  >
+                    {EMAIL_TYPES.map(t => (
+                      <option key={t.id} value={t.id}>{t.label} — {t.desc}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </>
           )}
 
           {/* Polish mode: paste your draft */}
@@ -270,83 +308,85 @@ export default function CommunicationsStudioPage() {
             </div>
           )}
 
-          {/* Topic */}
-          <div className={s.field}>
-            <label className={s.label}>{mode === 'polish' ? 'Context or goal (optional)' : <>Topic or message goal <span className={s.required}>*</span></>}</label>
-            <textarea
-              className={s.textarea}
-              placeholder={channel === 'email'
-                ? 'e.g. Explain the connection between cortisol and belly fat, invite them to the free 5-Day Belly Reset'
-                : channel === 'instagram'
-                  ? 'e.g. Fasting glucose reflects your liver, not your breakfast'
-                  : channel === 'linkedin'
-                    ? 'e.g. GLP-1 medications and lean mass preservation during weight loss'
-                    : channel === 'sms' || channel === 'whatsapp'
-                      ? 'e.g. Reminder that the free 5-Day Belly Reset starts Monday'
-                      : 'e.g. The 3pm energy crash is chemistry, not willpower'
-              }
-              rows={3}
-              value={topic}
-              onChange={e => setTopic(e.target.value)}
-            />
-          </div>
-
-          {/* Audience (optional) */}
-          <div className={s.field}>
-            <label className={s.label}>Audience <span className={s.optional}>(optional)</span></label>
-            <input
-              className={s.input}
-              placeholder="e.g. Women 40+ dealing with unexplained weight gain, or leave blank for general audience"
-              value={audience}
-              onChange={e => setAudience(e.target.value)}
-            />
-          </div>
-
-          {/* Contact (optional) */}
-          <details className={s.contactToggle}>
-            <summary className={s.contactSummary}>Writing for a specific person? (optional)</summary>
-            <div className={s.contactFields}>
-              <div className={s.fieldRow}>
-                <div className={s.field}>
-                  <label className={s.label}>Name</label>
-                  <input
-                    className={s.input}
-                    placeholder="First name or full name"
-                    value={contactName}
-                    onChange={e => setContactName(e.target.value)}
-                  />
-                </div>
-                <div className={s.field}>
-                  <label className={s.label}>Stage / relationship</label>
-                  <input
-                    className={s.input}
-                    placeholder="e.g. New lead, VIP client, post-consult"
-                    value={contactStage}
-                    onChange={e => setContactStage(e.target.value)}
-                  />
-                </div>
-              </div>
+          {/* Topic, audience, contact — hidden in objection mode */}
+          {mode !== 'objection' && (
+            <>
               <div className={s.field}>
-                <label className={s.label}>Context or notes about them</label>
+                <label className={s.label}>{mode === 'polish' ? 'Context or goal (optional)' : <>Topic or message goal <span className={s.required}>*</span></>}</label>
                 <textarea
                   className={s.textarea}
-                  placeholder="e.g. She mentioned struggling with the 3pm crash and hasn't booked yet"
-                  rows={2}
-                  value={contactNotes}
-                  onChange={e => setContactNotes(e.target.value)}
+                  placeholder={channel === 'email'
+                    ? 'e.g. Explain the connection between cortisol and belly fat, invite them to the free 5-Day Belly Reset'
+                    : channel === 'instagram'
+                      ? 'e.g. Fasting glucose reflects your liver, not your breakfast'
+                      : channel === 'linkedin'
+                        ? 'e.g. GLP-1 medications and lean mass preservation during weight loss'
+                        : channel === 'sms' || channel === 'whatsapp'
+                          ? 'e.g. Reminder that the free 5-Day Belly Reset starts Monday'
+                          : 'e.g. The 3pm energy crash is chemistry, not willpower'
+                  }
+                  rows={3}
+                  value={topic}
+                  onChange={e => setTopic(e.target.value)}
                 />
               </div>
-            </div>
-          </details>
+
+              <div className={s.field}>
+                <label className={s.label}>Audience <span className={s.optional}>(optional)</span></label>
+                <input
+                  className={s.input}
+                  placeholder="e.g. Women 40+ dealing with unexplained weight gain, or leave blank for general audience"
+                  value={audience}
+                  onChange={e => setAudience(e.target.value)}
+                />
+              </div>
+
+              <details className={s.contactToggle}>
+                <summary className={s.contactSummary}>Writing for a specific person? (optional)</summary>
+                <div className={s.contactFields}>
+                  <div className={s.fieldRow}>
+                    <div className={s.field}>
+                      <label className={s.label}>Name</label>
+                      <input
+                        className={s.input}
+                        placeholder="First name or full name"
+                        value={contactName}
+                        onChange={e => setContactName(e.target.value)}
+                      />
+                    </div>
+                    <div className={s.field}>
+                      <label className={s.label}>Stage / relationship</label>
+                      <input
+                        className={s.input}
+                        placeholder="e.g. New lead, VIP client, post-consult"
+                        value={contactStage}
+                        onChange={e => setContactStage(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className={s.field}>
+                    <label className={s.label}>Context or notes about them</label>
+                    <textarea
+                      className={s.textarea}
+                      placeholder="e.g. She mentioned struggling with the 3pm crash and hasn't booked yet"
+                      rows={2}
+                      value={contactNotes}
+                      onChange={e => setContactNotes(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </details>
+            </>
+          )}
 
           <button
             className={s.generateBtn}
             onClick={handleGenerate}
-            disabled={loading || (mode === 'generate' ? !topic.trim() : !draftToPolish.trim())}
+            disabled={loading || (mode === 'generate' ? !topic.trim() : mode === 'polish' ? !draftToPolish.trim() : false)}
           >
             {loading
-              ? (mode === 'polish' ? 'Polishing...' : `Drafting for ${selectedChannel.label}...`)
-              : (mode === 'polish' ? `Polish in my voice` : `Draft ${selectedChannel.label} in my voice`)
+              ? (mode === 'objection' ? 'Writing response...' : mode === 'polish' ? 'Polishing...' : `Drafting for ${selectedChannel.label}...`)
+              : (mode === 'objection' ? 'Write my response' : mode === 'polish' ? 'Polish in my voice' : `Draft ${selectedChannel.label} in my voice`)
             }
           </button>
 
