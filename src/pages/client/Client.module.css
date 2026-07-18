@@ -11009,3 +11009,427 @@
   text-align: center;
   padding: var(--space-6) 0;
 }
+
+/* ============================================================
+   WORKOUT TRACKER
+   ============================================================ */
+
+.wkTabs {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--bg-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  margin-bottom: var(--space-5);
+}
+.wkTab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.wkTabActive {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Energy selector */
+.wkEnergyCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.wkEnergyPrompt {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+.wkEnergyRow {
+  display: flex;
+  gap: var(--space-2);
+}
+.wkEnergyBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-3) var(--space-2);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.wkEnergyBtn:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+.wkEnergyBtnActive {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.wkEnergyNum {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.wkEnergyLbl {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+}
+.wkLightNote {
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Progress line */
+.wkProgressLine {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+}
+
+/* Exercise list */
+.wkExList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.wkExCard {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: border-color var(--transition-fast), opacity var(--transition-fast);
+}
+.wkExCardDone {
+  border-color: var(--success);
+  opacity: 0.85;
+}
+.wkExRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.wkCheckBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wkCheckDone { color: var(--success); }
+.wkCheckEmpty { color: var(--border-subtle); }
+.wkCheckBtn:hover .wkCheckEmpty { color: var(--accent); }
+
+.wkExBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.wkExName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.wkExMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+.wkLastLabel {
+  font-size: 12px;
+  color: var(--success);
+  font-weight: 500;
+}
+.wkCue {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+.wkInfoBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: var(--space-1);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.wkInfoBtn:hover {
+  color: var(--accent);
+  background: var(--bg-hover);
+}
+
+/* Optional reps/weight */
+.wkOptional {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+.wkExpandBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wkInputRow {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+.wkInputLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.wkInput {
+  width: 90px;
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+.wkInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* All done banner */
+.wkAllDone {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* My Routines tab */
+.wkRoutineCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.wkRoutineTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+.wkRoutineDesc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.wkRoutineList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.wkRoutineRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.wkRoutineNum {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  width: 20px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.wkRoutineDetail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wkRoutineName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.wkRoutineMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+.wkRoutineTempo {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* History tab */
+.wkHistoryCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.wkHistoryTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+.wkCalendar {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.wkCalDot {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--border-subtle);
+}
+.wkCalDotFilled {
+  background: var(--success);
+}
+.wkCalCount {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.wkHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.wkHistoryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.wkHistoryDate {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.wkHistoryEnergy {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.wkEmptyState {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: var(--space-8) 0;
+}
+
+/* Info modal */
+.wkInfoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-4);
+}
+@media (min-width: 640px) {
+  .wkInfoOverlay { align-items: center; }
+}
+.wkInfoModal {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-xl);
+}
+.wkInfoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.wkInfoTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.wkInfoClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: var(--space-1);
+  display: flex;
+  border-radius: var(--radius-sm);
+}
+.wkInfoClose:hover { color: var(--text-primary); }
+.wkInfoSection {
+  margin-bottom: var(--space-4);
+}
+.wkInfoSection:last-child { margin-bottom: 0; }
+.wkInfoLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+.wkInfoText {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
