@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download } from 'lucide-react'
+import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download, BellRing, Send } from 'lucide-react'
 import ReminderSettings from '@/components/ui/ReminderSettings'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
@@ -8,6 +8,26 @@ import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 import type { WellnessGoals, PrivacySettings } from '@/types'
+
+const FASTING_HOURS = [10, 12, 13, 14, 15, 16, 17, 18, 20]
+const TIMEZONES = [
+  { value: 'America/New_York',    label: 'Eastern (ET)' },
+  { value: 'America/Chicago',     label: 'Central (CT)' },
+  { value: 'America/Denver',      label: 'Mountain (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific (PT)' },
+  { value: 'America/Anchorage',   label: 'Alaska (AKT)' },
+  { value: 'Pacific/Honolulu',    label: 'Hawaii (HT)' },
+  { value: 'America/Puerto_Rico', label: 'Puerto Rico (AST)' },
+  { value: 'Europe/London',       label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris',        label: 'Central Europe (CET)' },
+]
+
+function formatHour(h: number): string {
+  if (h === 0) return '12:00 AM'
+  if (h < 12) return `${h}:00 AM`
+  if (h === 12) return '12:00 PM'
+  return `${h - 12}:00 PM`
+}
 
 const GOAL_OPTIONS = [
   '',
@@ -51,6 +71,13 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
   const [avatarColor, setAvatarColor] = useState(profile?.avatar_color ?? '')
   const [savingProfile, setSavingProfile] = useState(false)
+  const [fastingEnabled, setFastingEnabled] = useState(false)
+  const [fastingStartHour, setFastingStartHour] = useState(20)
+  const [fastingDuration, setFastingDuration] = useState(16)
+  const [fastingTz, setFastingTz] = useState('America/New_York')
+  const [telegramLinked, setTelegramLinked] = useState(false)
+  const [checkingTelegram, setCheckingTelegram] = useState(false)
+  const [savingFasting, setSavingFasting] = useState(false)
 
   const AVATAR_COLORS = [
     { value: '#0B9E8E', label: 'Teal' },
@@ -67,6 +94,62 @@ export default function SettingsPage() {
     if (profile?.display_name) setDisplayName(profile.display_name)
     if (profile?.avatar_color) setAvatarColor(profile.avatar_color)
   }, [profile?.id])
+
+  useEffect(() => {
+    if (!profile?.id) return
+    supabase
+      .from('profiles')
+      .select('fasting_reminders, fasting_start_hour, fasting_duration_hours, fasting_tz, telegram_chat_id')
+      .eq('id', profile.id)
+      .single()
+      .then(({ data }) => {
+        if (!data) return
+        setFastingEnabled(data.fasting_reminders ?? false)
+        setFastingStartHour(data.fasting_start_hour ?? 20)
+        setFastingDuration(data.fasting_duration_hours ?? 16)
+        setFastingTz(data.fasting_tz ?? 'America/New_York')
+        setTelegramLinked(!!data.telegram_chat_id)
+      })
+  }, [profile?.id])
+
+  const saveFasting = async () => {
+    if (!profile) return
+    setSavingFasting(true)
+    const { error } = await supabase.from('profiles').update({
+      fasting_reminders: fastingEnabled,
+      fasting_start_hour: fastingStartHour,
+      fasting_duration_hours: fastingDuration,
+      fasting_tz: fastingTz,
+    }).eq('id', profile.id)
+    if (error) {
+      toast.error('Failed to save fasting settings')
+    } else {
+      toast.success('Fasting reminders saved!')
+    }
+    setSavingFasting(false)
+  }
+
+  const checkTelegramLink = async () => {
+    if (!profile) return
+    setCheckingTelegram(true)
+    const { data } = await supabase
+      .from('profiles')
+      .select('telegram_chat_id')
+      .eq('id', profile.id)
+      .single()
+    setTelegramLinked(!!data?.telegram_chat_id)
+    setCheckingTelegram(false)
+    if (data?.telegram_chat_id) {
+      toast.success('Telegram is connected!')
+    } else {
+      toast('Not connected yet. Complete the steps in Telegram first.', { icon: 'ℹ️' })
+    }
+  }
+
+  const botUsername = import.meta.env.VITE_TELEGRAM_BOT_USERNAME as string | undefined
+  const telegramConnectUrl = botUsername && profile?.id
+    ? `https://t.me/${botUsername}?start=${profile.id}`
+    : null
 
   const saveDisplayProfile = async () => {
     if (!profile) return
@@ -241,6 +324,97 @@ export default function SettingsPage() {
 
       {/* Reminders */}
       <ReminderSettings />
+
+      {/* Fasting Reminders via Telegram */}
+      <div className={styles.settingsSection}>
+        <h3 className={styles.settingsSectionTitle}>
+          <BellRing size={16} color="var(--gold)" /> Fasting Reminders via Telegram
+        </h3>
+        <p className={styles.settingsSectionNote}>
+          Get a Telegram message 1 hour before your fast starts, when it starts, 1 hour before you can eat, and when you can eat. No health data is sent through Telegram.
+        </p>
+
+        {/* Telegram connection */}
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Telegram status</label>
+          {telegramLinked ? (
+            <div className={styles.telegramStatus}>
+              <span className={styles.telegramConnected}>Connected</span>
+              <button className={shared.btnSecondary} onClick={checkTelegramLink} disabled={checkingTelegram} style={{ marginLeft: 8 }}>
+                {checkingTelegram ? 'Checking...' : 'Refresh'}
+              </button>
+            </div>
+          ) : (
+            <div className={styles.telegramStatus}>
+              {telegramConnectUrl ? (
+                <>
+                  <a href={telegramConnectUrl} target="_blank" rel="noopener noreferrer" className={shared.btnTeal} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Send size={14} /> Connect Telegram
+                  </a>
+                  <button className={shared.btnSecondary} onClick={checkTelegramLink} disabled={checkingTelegram} style={{ marginLeft: 8 }}>
+                    {checkingTelegram ? 'Checking...' : 'Check connection'}
+                  </button>
+                </>
+              ) : (
+                <span className={styles.telegramNote}>Telegram bot not configured. Contact your educator.</span>
+              )}
+            </div>
+          )}
+        </div>
+        {!telegramLinked && telegramConnectUrl && (
+          <p className={styles.settingsSectionNote} style={{ marginTop: 0 }}>
+            Tap "Connect Telegram," press START in the Telegram app, then tap "Check connection" to confirm.
+          </p>
+        )}
+
+        {/* Fasting schedule */}
+        <div className={styles.privacyToggleRow}>
+          <div>
+            <div className={styles.privacyToggleLabel}>Enable fasting reminders</div>
+            <div className={styles.privacyToggleDesc}>Requires Telegram to be connected above</div>
+          </div>
+          <label className={styles.toggle}>
+            <input
+              type="checkbox"
+              checked={fastingEnabled}
+              disabled={!telegramLinked}
+              onChange={e => setFastingEnabled(e.target.checked)}
+            />
+            <span className={styles.toggleSlider} />
+          </label>
+        </div>
+
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Fast start time</label>
+          <select className={styles.settingsSelect} value={fastingStartHour} onChange={e => setFastingStartHour(Number(e.target.value))}>
+            {Array.from({ length: 24 }, (_, i) => (
+              <option key={i} value={i}>{formatHour(i)}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Fasting window</label>
+          <select className={styles.settingsSelect} value={fastingDuration} onChange={e => setFastingDuration(Number(e.target.value))}>
+            {FASTING_HOURS.map(h => (
+              <option key={h} value={h}>{h} hours (eat at {formatHour((fastingStartHour + h) % 24)})</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.settingsRow}>
+          <label className={styles.label}>Your timezone</label>
+          <select className={styles.settingsSelect} value={fastingTz} onChange={e => setFastingTz(e.target.value)}>
+            {TIMEZONES.map(tz => (
+              <option key={tz.value} value={tz.value}>{tz.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <button className={shared.btnPrimary} onClick={saveFasting} disabled={savingFasting}>
+          {savingFasting ? 'Saving...' : 'Save Fasting Settings'}
+        </button>
+      </div>
 
       {/* Privacy settings */}
       <div className={styles.settingsSection}>

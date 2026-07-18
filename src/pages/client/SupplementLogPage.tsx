@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Pill, Plus, Check, ExternalLink, Trash2 } from 'lucide-react'
+import { Pill, Plus, Check, ExternalLink, Trash2, Microscope } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format, subDays } from 'date-fns'
 import { calcSupplementAdherence } from '@/lib/adherence'
+import { useAuthStore } from '@/store/authStore'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
@@ -28,15 +29,70 @@ interface SupplementLog {
 const TIMING_LABELS = { am: 'Morning', pm: 'Evening', with_meal: 'With Meal', as_needed: 'As Needed' }
 const TIMING_COLORS = { am: '#c8a74b', pm: '#9b59b6', with_meal: '#0b9e8e', as_needed: '#91a0ac' }
 
+interface ResearchData {
+  strength: 'strong' | 'moderate' | 'emerging' | 'limited'
+  strengthLabel: string
+  findings: string[]
+  cautions: string[]
+  populations: string
+  disclaimer: string
+}
+
+const STRENGTH_LABELS: Record<string, string> = {
+  strong: 'Strong Evidence',
+  moderate: 'Moderate Evidence',
+  emerging: 'Emerging Evidence',
+  limited: 'Limited Evidence',
+}
+
 export default function SupplementLogPage() {
+  const { profile } = useAuthStore()
   const [supplements, setSupplements] = useState<Supplement[]>([])
   const [logs, setLogs] = useState<SupplementLog[]>([])
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', dose: '', timing: 'am' as Supplement['timing'], notes: '' })
+  const [researchSupp, setResearchSupp] = useState<Supplement | null>(null)
+  const [researchData, setResearchData] = useState<ResearchData | null>(null)
+  const [researchLoading, setResearchLoading] = useState(false)
+  const [researchError, setResearchError] = useState<string | null>(null)
   const today = format(new Date(), 'yyyy-MM-dd')
   // Fetch 14 days so adherence can be computed without an extra query.
   const windowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
+
+  const isProgram = profile?.plan === 'program' || profile?.plan === 'vip'
+
+  const openResearch = async (supp: Supplement) => {
+    setResearchSupp(supp)
+    setResearchData(null)
+    setResearchError(null)
+    if (!isProgram) return
+    setResearchLoading(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/supplement-research', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ supplementName: supp.name, dose: supp.dose }),
+      })
+      const data = await res.json() as ResearchData | { error: string }
+      if ('error' in data) setResearchError(data.error)
+      else setResearchData(data)
+    } catch {
+      setResearchError('Could not load research. Check your connection and try again.')
+    } finally {
+      setResearchLoading(false)
+    }
+  }
+
+  const closeResearch = () => {
+    setResearchSupp(null)
+    setResearchData(null)
+    setResearchError(null)
+  }
 
   useEffect(() => { fetchData() }, [])
 
@@ -262,6 +318,9 @@ export default function SupplementLogPage() {
                         <div className={taken ? styles.suppRowNameTaken : styles.suppRowName}>{supp.name}</div>
                         <div className={styles.suppRowMeta}>{supp.dose} · {TIMING_LABELS[supp.timing]}{supp.notes ? ` · ${supp.notes}` : ''}</div>
                       </div>
+                      <button onClick={() => openResearch(supp)} className={styles.researchBtn} title="Research Check">
+                        <Microscope size={14} />
+                      </button>
                       <button onClick={() => removeSupplement(supp.id)} className={styles.deleteBtn}>
                         <Trash2 size={14} />
                       </button>
@@ -291,6 +350,73 @@ export default function SupplementLogPage() {
       <p className={styles.footerNote}>
         Supplement recommendations are for educational purposes only. Always consult your healthcare provider before starting any new supplement regimen.
       </p>
+
+      {researchSupp && (
+        <div className={styles.researchOverlay} onClick={closeResearch}>
+          <div className={styles.researchModal} onClick={e => e.stopPropagation()}>
+            <button className={styles.researchModalClose} onClick={closeResearch}>✕</button>
+            <div>
+              <div className={styles.researchModalTitle}>{researchSupp.name}</div>
+              <div className={styles.researchModalDose}>{researchSupp.dose} · Research Check</div>
+            </div>
+
+            {!isProgram ? (
+              <div className={styles.researchUpgradeBox}>
+                <div className={styles.researchUpgradeIcon}>🔬</div>
+                <div className={styles.researchUpgradeTitle}>Program Feature</div>
+                <p className={styles.researchUpgradeText}>
+                  Research Check summarizes what published studies say about each supplement, including evidence strength, key findings, and known cautions. Available on the Program plan.
+                </p>
+                <a href="/pricing" className={shared.btnPrimary}>Upgrade to Program</a>
+              </div>
+            ) : researchLoading ? (
+              <div className={styles.researchLoadingText}>Searching the research...</div>
+            ) : researchError ? (
+              <p className={styles.researchLoadingText} style={{ color: 'var(--error)' }}>{researchError}</p>
+            ) : researchData ? (
+              <>
+                <div className={styles.researchSection}>
+                  <span className={`${styles.researchStrengthBadge} ${styles[researchData.strength]}`}>
+                    {STRENGTH_LABELS[researchData.strength] ?? researchData.strength}
+                  </span>
+                  <p className={styles.researchStrengthLabel}>{researchData.strengthLabel}</p>
+                </div>
+
+                {researchData.findings.length > 0 && (
+                  <div className={styles.researchSection}>
+                    <div className={styles.researchSectionTitle}>What studies show</div>
+                    <ul className={styles.researchList}>
+                      {researchData.findings.map((f, i) => (
+                        <li key={i} className={styles.researchListItem}>{f}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {researchData.cautions.length > 0 && (
+                  <div className={styles.researchSection}>
+                    <div className={styles.researchSectionTitle}>Cautions to know</div>
+                    <ul className={styles.researchList}>
+                      {researchData.cautions.map((c, i) => (
+                        <li key={i} className={styles.researchCautionItem}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {researchData.populations && (
+                  <div className={styles.researchSection}>
+                    <div className={styles.researchSectionTitle}>Who has been studied</div>
+                    <p className={styles.researchPopulations}>{researchData.populations}</p>
+                  </div>
+                )}
+
+                <p className={styles.researchDisclaimer}>{researchData.disclaimer}</p>
+              </>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

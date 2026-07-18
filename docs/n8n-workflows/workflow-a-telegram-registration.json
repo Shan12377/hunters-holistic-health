@@ -1,0 +1,162 @@
+{
+  "name": "HHH - Telegram Registration",
+  "nodes": [
+    {
+      "id": "node-telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "HHH Telegram Bot"
+        }
+      }
+    },
+    {
+      "id": "node-extract",
+      "name": "Extract userId and chatId",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300],
+      "parameters": {
+        "jsCode": "const message = $input.first().json.message;\nconst text = (message?.text ?? '').trim();\nconst chatId = String(message?.chat?.id ?? '');\n\n// Only handle /start messages that include the HHH user ID payload\nif (!text.startsWith('/start') || !chatId) {\n  return [];\n}\n\nconst payload = text.replace('/start', '').trim();\n\n// Payload must look like a UUID (basic check)\nif (!payload || payload.length < 10) {\n  return [];\n}\n\nreturn [{ json: { userId: payload, chatId } }];"
+      }
+    },
+    {
+      "id": "node-link",
+      "name": "Link to HHH App",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.huntersholistichealth.com/api/telegram-link",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-webhook-secret",
+              "value": "={{ $env.N8N_INBOUND_SECRET }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"userId\": \"{{ $json.userId }}\", \"chatId\": \"{{ $json.chatId }}\" }",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "node-check-success",
+      "name": "Link Successful?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-ok",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "node-confirm",
+      "name": "Send Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1120, 240],
+      "parameters": {
+        "chatId": "={{ $('Extract userId and chatId').first().json.chatId }}",
+        "text": "You're connected to Hunter's Holistic Health!\n\nGo back to the app, open Settings, and tap \"Check connection\" to confirm. Once confirmed, set your fasting window and turn on reminders.",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "HHH Telegram Bot"
+        }
+      }
+    },
+    {
+      "id": "node-error",
+      "name": "Send Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1120, 400],
+      "parameters": {
+        "chatId": "={{ $('Extract userId and chatId').first().json.chatId }}",
+        "text": "Something went wrong linking your account. Please try the button in the app again, or contact your educator at info@huntersholistichealth.com.",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "HHH Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [{ "node": "Extract userId and chatId", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract userId and chatId": {
+      "main": [
+        [{ "node": "Link to HHH App", "type": "main", "index": 0 }]
+      ]
+    },
+    "Link to HHH App": {
+      "main": [
+        [{ "node": "Link Successful?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Link Successful?": {
+      "main": [
+        [{ "node": "Send Confirmation", "type": "main", "index": 0 }],
+        [{ "node": "Send Error", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "_notes": [
+    "SETUP REQUIRED after import:",
+    "1. Create a Telegram credential named 'HHH Telegram Bot' using your bot token from BotFather.",
+    "2. Set N8N_INBOUND_SECRET as an n8n environment variable (same value you added to Vercel).",
+    "3. Activate the workflow.",
+    "The workflow only fires when someone sends /start <userId> to the bot.",
+    "If the UUID payload is missing or malformed, the Code node returns empty and the workflow stops silently."
+  ]
+}

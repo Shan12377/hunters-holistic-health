@@ -1,0 +1,137 @@
+{
+  "name": "HHH - Fasting Reminders",
+  "nodes": [
+    {
+      "id": "node-schedule",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "node-fetch-profiles",
+      "name": "Get Active Fasting Profiles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [460, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/profiles",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,telegram_chat_id,fasting_start_hour,fasting_duration_hours,fasting_tz"
+            },
+            {
+              "name": "fasting_reminders",
+              "value": "eq.true"
+            },
+            {
+              "name": "telegram_chat_id",
+              "value": "not.is.null"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "node-calculate",
+      "name": "Calculate Reminders Due Now",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "parameters": {
+        "jsCode": "// Supabase REST returns an array directly as the response body.\n// n8n wraps it so $input.first().json is the array.\nconst raw = $input.first().json;\nconst profiles = Array.isArray(raw) ? raw : [];\n\nconst now = new Date();\n\nfunction localHour(ianaZone) {\n  try {\n    const formatted = new Intl.DateTimeFormat('en-US', {\n      hour: 'numeric',\n      hour12: false,\n      timeZone: ianaZone\n    }).format(now);\n    // Intl returns '24' for midnight in some locales — normalize to 0.\n    const h = parseInt(formatted, 10);\n    return h === 24 ? 0 : h;\n  } catch {\n    // Fall back to UTC if the timezone string is invalid.\n    return now.getUTCHours();\n  }\n}\n\nfunction fmt12(h) {\n  const norm = ((h % 24) + 24) % 24;\n  const suffix = norm >= 12 ? 'PM' : 'AM';\n  const hour = norm % 12 || 12;\n  return `${hour}:00 ${suffix}`;\n}\n\nconst messages = [];\n\nfor (const p of profiles) {\n  const chatId = String(p.telegram_chat_id ?? '').trim();\n  if (!chatId) continue;\n\n  const fastStart = Number(p.fasting_start_hour ?? 20);  // default 8 PM\n  const duration = Number(p.fasting_duration_hours ?? 16);\n  const tz = p.fasting_tz || 'America/New_York';\n\n  const eatStart = (fastStart + duration) % 24;\n  const warnFast = ((fastStart - 1) + 24) % 24;\n  const warnEat = ((eatStart - 1) + 24) % 24;\n  const energyCheckHour = (eatStart + 2) % 24;  // 2 hours after eating window opens\n\n  const curHour = localHour(tz);\n  let text = null;\n\n  if (curHour === warnFast) {\n    text = `Heads up: your fast starts in 1 hour at ${fmt12(fastStart)}. Finish eating soon and hydrate well.`;\n  } else if (curHour === fastStart) {\n    text = `Your ${duration}-hour fast has started. Your eating window opens at ${fmt12(eatStart)}. Drink water and stay consistent.`;\n  } else if (curHour === warnEat) {\n    text = `Your eating window opens in 1 hour at ${fmt12(eatStart)}. Start thinking about your first meal — prioritize protein.`;\n  } else if (curHour === eatStart) {\n    text = `Time to eat! Your eating window is open. Break your fast with something nourishing. Protein first.`;\n  } else if (curHour === energyCheckHour) {\n    text = `Energy check-in: how are you feeling right now?\\n\\nReply with a number:\\n1 - Exhausted\\n2 - Low\\n3 - Okay\\n4 - Good\\n5 - Great\\n\\n(We'll add in-app logging soon.)`;\n  }\n\n  if (text) {\n    messages.push({ json: { chatId, text } });\n  }\n}\n\nreturn messages;"
+      }
+    },
+    {
+      "id": "node-send",
+      "name": "Send Telegram Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "HHH Telegram Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [
+        [{ "node": "Get Active Fasting Profiles", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Active Fasting Profiles": {
+      "main": [
+        [{ "node": "Calculate Reminders Due Now", "type": "main", "index": 0 }]
+      ]
+    },
+    "Calculate Reminders Due Now": {
+      "main": [
+        [{ "node": "Send Telegram Reminder", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "_notes": [
+    "SETUP REQUIRED after import:",
+    "1. In n8n Settings > Variables, add two environment variables:",
+    "   SUPABASE_URL = (same value as your Vercel SUPABASE_URL, without /rest/v1)",
+    "   SUPABASE_SERVICE_ROLE_KEY = (same as your Vercel SUPABASE_SERVICE_ROLE_KEY)",
+    "2. Create a Telegram credential named 'HHH Telegram Bot' using your bot token from BotFather.",
+    "3. Run migration 037_telegram_fasting.sql in Supabase SQL Editor before activating.",
+    "4. Activate the workflow — it will check every hour on the hour.",
+    "",
+    "REMINDER LOGIC (per user, per their local timezone):",
+    "  1 hour before fast starts  → warning to finish eating",
+    "  At fast start hour         → fast has begun notification",
+    "  1 hour before eating opens → prep reminder",
+    "  At eating window open      → break fast notification",
+    "  2 hours after eating opens → energy check-in (reply 1-5)",
+    "",
+    "If a user has no reminder matching the current hour, no message is sent.",
+    "If no users have reminders enabled, the Code node returns empty and Telegram node never fires."
+  ]
+}
