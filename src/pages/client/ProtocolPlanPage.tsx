@@ -109,6 +109,7 @@ export default function ProtocolPlanPage() {
   const [expandedIngredients, setExpandedIngredients] = useState<Set<string>>(new Set())
   const [customGroceries, setCustomGroceries] = useState<string[]>([])
   const [customInput, setCustomInput] = useState('')
+  const [groceryWeek, setGroceryWeek] = useState(0)
 
   const weekDays = useMemo(() => {
     const start = selectedWeek * 7 + 1
@@ -150,15 +151,17 @@ export default function ProtocolPlanPage() {
     return PROTOCOL_RECIPES.filter(r => r.type === modalSlot.slot)
   }, [modalSlot])
 
+  const weekPrefix = `w${groceryWeek}-`
+
   const hasAnyMeals = useMemo(() =>
-    Object.values(groceryPlan).some(m => m !== null),
-    [groceryPlan]
+    Object.entries(groceryPlan).some(([k, m]) => k.startsWith(weekPrefix) && m !== null),
+    [groceryPlan, weekPrefix]
   )
 
   const groceryListByCategory = useMemo(() => {
     const allIngredients = new Set<string>()
-    Object.entries(groceryPlan).forEach(([, meal]) => {
-      if (!meal?.id) return
+    Object.entries(groceryPlan).forEach(([k, meal]) => {
+      if (!k.startsWith(weekPrefix) || !meal?.id) return
       const recipe = PROTOCOL_RECIPES.find(r => r.id === meal.id)
       recipe?.ingredients.forEach(ing => allIngredients.add(ing))
     })
@@ -185,8 +188,10 @@ export default function ProtocolPlanPage() {
     })
   }
 
+  function gKey(dayIndex: number, slotKey: string) { return `w${groceryWeek}-${dayIndex}-${slotKey}` }
+
   function startEditSlot(dayIndex: number, slotKey: string, recipeType: MealSlotType) {
-    const current = groceryPlan[`${dayIndex}-${slotKey}`]
+    const current = groceryPlan[gKey(dayIndex, slotKey)]
     setEditingSlot({ dayIndex, slotKey, recipeType })
     setEditingInput(current?.name ?? '')
   }
@@ -194,20 +199,20 @@ export default function ProtocolPlanPage() {
   function saveSlot(dayIndex: number, slotKey: string) {
     const name = editingInput.trim()
     if (name) {
-      setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: { name } }))
+      setGroceryPlan(prev => ({ ...prev, [gKey(dayIndex, slotKey)]: { name } }))
     }
     setEditingSlot(null)
     setEditingInput('')
   }
 
   function saveSlotFromRecipe(dayIndex: number, slotKey: string, recipe: ProtocolRecipe) {
-    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: { id: recipe.id, name: recipe.name } }))
+    setGroceryPlan(prev => ({ ...prev, [gKey(dayIndex, slotKey)]: { id: recipe.id, name: recipe.name } }))
     setEditingSlot(null)
     setEditingInput('')
   }
 
   function removeGroceryMeal(dayIndex: number, slotKey: string) {
-    setGroceryPlan(prev => ({ ...prev, [`${dayIndex}-${slotKey}`]: null }))
+    setGroceryPlan(prev => ({ ...prev, [gKey(dayIndex, slotKey)]: null }))
   }
 
   function addCustomGrocery(e: React.FormEvent) {
@@ -224,11 +229,11 @@ export default function ProtocolPlanPage() {
       { key: 'm2',  label: 'Meal 2' },
       { key: 'm3',  label: 'Meal 3' },
     ]
-    const parts: string[] = []
+    const parts: string[] = [`Week ${groceryWeek + 1} Shopping List`]
     const mealLines: string[] = []
     DAY_NAMES_FULL.forEach((dayName, dayIndex) => {
       const slots = COPY_SLOTS.map(({ key, label }) => {
-        const meal = groceryPlan[`${dayIndex}-${key}`]
+        const meal = groceryPlan[gKey(dayIndex, key)]
         return meal ? `  ${label}: ${meal.name}` : null
       }).filter(Boolean) as string[]
       if (slots.length > 0) mealLines.push(`${dayName}:\n${slots.join('\n')}`)
@@ -591,6 +596,18 @@ export default function ProtocolPlanPage() {
         ]
         return (
           <div className={styles.ppSection}>
+            {/* Week selector */}
+            <div className={styles.ppWeekRow}>
+              {WEEK_LABELS.map((label, i) => (
+                <button
+                  key={i}
+                  className={groceryWeek === i ? styles.ppWeekBtnActive : styles.ppWeekBtn}
+                  onClick={() => setGroceryWeek(i)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div className={styles.ppGroceryTop}>
               <div>
                 <div className={styles.ppGroceryTitle}>
@@ -612,7 +629,7 @@ export default function ProtocolPlanPage() {
                 <div className={styles.ppGroceryDayHead}>{dayName}</div>
                 <div className={styles.ppGroceryDaySlots}>
                   {GROCERY_SLOTS.map(({ key, label, recipeType }) => {
-                    const planKey = `${dayIndex}-${key}`
+                    const planKey = gKey(dayIndex, key)
                     const meal = groceryPlan[planKey]
                     const isEditing = editingSlot?.dayIndex === dayIndex && editingSlot?.slotKey === key
                     const quickPicks = PROTOCOL_RECIPES.filter(r => r.type === recipeType).slice(0, 5)

@@ -37,14 +37,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Nutrition',
     items: [
-      { to: '/app/meal-guard',       icon: '⚡', label: 'Nourish Log' },
-      { to: '/app/meal-plan',        icon: '◉', label: 'Meal Plan' },
-      { to: '/app/daily-plate',      icon: '◉', label: 'Daily Plate' },
-      { to: '/app/build-your-plate', icon: '⚡', label: 'Build Your Plate' },
-      { to: '/app/trending-meals',   icon: '◎', label: 'Trending Meals' },
-      { to: '/app/food-search',      icon: '◇', label: 'Food Search' },
-      { to: '/app/recipe-builder',   icon: '◈', label: 'Recipe Builder' },
-      { to: '/app/recipes',          icon: '◇', label: 'Recipe Ideas' },
+      { to: '/app/meal-guard',  icon: '⚡', label: 'Nourish Log' },
+      { to: '/app/meal-plan',   icon: '◉', label: 'Meal Plan' },
+      { to: '/app/daily-plate', icon: '◉', label: 'Daily Plate' },
+      { to: '/app/recipes',     icon: '◇', label: 'Recipes' },
     ],
   },
   {
