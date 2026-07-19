@@ -5,6 +5,7 @@ import { detectSynergies, type FoodSynergy } from '@/data/synergies'
 import styles from './Client.module.css'
 import { usePlan } from '@/hooks/usePlan'
 import { useAuthStore } from '@/store/authStore'
+import { authHeaders } from '@/lib/authHeaders'
 
 type Plate = Record<MealSlot, FoodItem[]>
 
@@ -146,7 +147,7 @@ export default function DailyPlatePage() {
     try {
       const res = await fetch('/api/plate-analysis', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify({ plateDescription, vitaScore, synergiesDetected: synergies.map(s => s.title), dayTotals, userGoal, dietaryStyle }),
       })
       if (!res.ok) throw new Error('Analysis failed')

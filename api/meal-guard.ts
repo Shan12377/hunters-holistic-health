@@ -10,8 +10,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+import { requireUser } from './_guard'
 
 function buildSystemPrompt(primaryGoal: string, dietaryPref: string): string {
   const goalLine = primaryGoal ? `The user's primary wellness goal is: ${primaryGoal}.` : 'The user has not specified a primary wellness goal.'
@@ -45,6 +44,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+
+  // Auth + rate limit (CLAUDE.md, API Endpoint Auth Rule). Response is already sent on failure.
+  const user = await requireUser(req, res)
+  if (!user) return
+
+  // Client is initialized inside the handler so failures surface in runtime logs.
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
   const { food, primary_goal, dietary_preference, image, nutrition_data } = req.body as {
     food?: string

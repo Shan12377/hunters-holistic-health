@@ -10,6 +10,7 @@
 // with safe educational equivalents ("blood sugar management").
 
 import { sanitizeMealGuardPayload } from '@/lib/deidSanitizer'
+import { authHeaders } from '@/lib/authHeaders'
 
 export interface NutritionData {
   calories: number
@@ -44,7 +45,7 @@ export async function checkMealGuard(
     })
     const response = await fetch('/api/meal-guard', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify({
         food: sanitized.food,
         primary_goal: sanitized.primary_goal,

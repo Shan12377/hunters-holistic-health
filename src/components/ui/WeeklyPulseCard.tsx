@@ -4,6 +4,7 @@ import { Sparkles, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { sanitizeForPulse, type RawPulseData } from '@/lib/deidSanitizer'
+import { authHeaders } from '@/lib/authHeaders'
 import styles from '@/pages/client/Client.module.css'
 import PlanGate from './PlanGate'
 
@@ -100,7 +101,7 @@ export default function WeeklyPulseCard() {
     try {
       const apiRes = await fetch('/api/weekly-pulse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify(sanitized),
       })
 

@@ -4,6 +4,7 @@ import { Flame, Send, Loader2, Info, CheckCircle2, AlertTriangle, BadgeCheck } f
 import styles from './Client.module.css'
 import PlanGate from '@/components/ui/PlanGate'
 import { useAuthStore } from '@/store/authStore'
+import { authHeaders } from '@/lib/authHeaders'
 
 type Restriction =
   | 'dairy_free' | 'gluten_free' | 'soy_free' | 'nut_free'
@@ -81,7 +82,7 @@ export default function SmartRecipeBuilderPage() {
     try {
       const res = await fetch('/api/recipe-builder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify({ prompt: prompt.trim(), restrictions, userGoal, dietaryStyle }),
       })
       if (!res.ok) {

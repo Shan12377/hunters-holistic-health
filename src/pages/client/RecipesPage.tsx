@@ -8,6 +8,7 @@ import { RECIPES, SYNERGIES, type Recipe, type RootsPhase } from '@/data/recipes
 import { TRENDING_MEALS, PLATFORM_LABELS, PLATFORM_COLORS, getTrendScore, type TrendingMeal } from '@/data/trendingMeals'
 import PlanGate from '@/components/ui/PlanGate'
 import { useAuthStore } from '@/store/authStore'
+import { authHeaders } from '@/lib/authHeaders'
 import styles from './Client.module.css'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -229,7 +230,7 @@ export default function RecipesPage() {
     try {
       const res = await fetch('/api/recipe-builder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await authHeaders(),
         body: JSON.stringify({ prompt: buildPrompt.trim(), restrictions, userGoal, dietaryStyle }),
       })
       if (!res.ok) {

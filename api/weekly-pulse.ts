@@ -11,8 +11,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Anthropic from '@anthropic-ai/sdk'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { requireUser } from './_guard'
 
 const SYSTEM_PROMPT = `You are a functional medicine wellness educator assistant built for Hunter's Holistic Health.
 
@@ -64,6 +63,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+
+  // Auth + rate limit (CLAUDE.md, API Endpoint Auth Rule). Response is already sent on failure.
+  const authedUser = await requireUser(req, res)
+  if (!authedUser) return
+
+  // Client is initialized inside the handler so failures surface in runtime logs.
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
   const payload = req.body as SanitizedPulsePayload
 
