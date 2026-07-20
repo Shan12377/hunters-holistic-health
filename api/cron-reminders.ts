@@ -14,6 +14,7 @@ const supabase = createClient(
 )
 
 const REMINDER_COPY: Record<string, { title: string; body: string }> = {
+  morning:       { title: "Good morning from Hunter's Holistic Health", body: "One small step starts the day. Log your water or your first meal and keep your rhythm going." },
   fasting_open:  { title: "Fasting window open", body: "Your fast starts now. Log your last meal and let the window begin." },
   fasting_close: { title: "Fasting window closed", body: "Time to break your fast. Log your first meal when you are ready." },
   supplements:   { title: "Supplement reminder", body: "Time for your supplements. Log them in the app to keep your streak." },
@@ -27,11 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).end()
   }
 
-  const now = new Date()
-  // HH:MM in UTC — each user's reminder_settings stores times in their local HH:MM
-  // We match on HH:MM UTC; users set times knowing they are in their local timezone.
-  // For v1 we treat all times as UTC. A timezone field can be added to profiles later.
-  const hhmm = `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`
+  // ponytail: Vercel Hobby allows one cron per day, so this runs once at 11:00 UTC
+  // (7 AM Eastern in summer, 6 AM in winter) and sends ONE morning reminder to every
+  // subscribed member with any reminder enabled, ignoring per-reminder HH:MM times.
+  // Upgrade path: on Vercel Pro, set the schedule back to */30 and restore matching
+  // each REMINDER_COPY key against its cfg.time (times are stored per user already).
 
   // Fetch all profiles with reminder_settings and their push subscriptions
   const { data: rows, error } = await supabase
@@ -41,40 +42,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (error) return res.status(500).json({ error: error.message })
 
+  const morning = REMINDER_COPY.morning
+
   let sent = 0
   const errors: string[] = []
 
   for (const row of (rows ?? [])) {
     const settings = row.reminder_settings as Record<string, { enabled: boolean; time: string }> | null
     if (!settings) continue
+    // Any enabled reminder counts as opting in to the morning nudge.
+    if (!Object.values(settings).some(cfg => cfg?.enabled)) continue
     const sub = (row.push_subscriptions as unknown as { subscription: webpush.PushSubscription }[])?.[0]?.subscription
     if (!sub) continue
 
-    for (const [key, copy] of Object.entries(REMINDER_COPY)) {
-      const cfg = settings[key]
-      if (!cfg?.enabled) continue
-      // Match HH:MM — cron runs every 30 min so we match on the nearest half-hour
-      if (cfg.time !== hhmm) continue
-
-      try {
-        await webpush.sendNotification(sub, JSON.stringify({
-          title: copy.title,
-          body: copy.body,
-          icon: '/pwa-192.png',
-          badge: '/logo-mark.png',
-          tag: key,
-          url: '/app/daily-log',
-        }))
-        sent++
-      } catch (e: unknown) {
-        errors.push(`${row.id}:${key} — ${e instanceof Error ? e.message : String(e)}`)
-        // If subscription expired, clean it up
-        if (e instanceof Error && e.message.includes('410')) {
-          await supabase.from('push_subscriptions').delete().eq('user_id', row.id)
-        }
+    try {
+      await webpush.sendNotification(sub, JSON.stringify({
+        title: morning.title,
+        body: morning.body,
+        icon: '/pwa-192.png',
+        badge: '/logo-mark.png',
+        tag: 'morning',
+        url: '/app/daily-log',
+      }))
+      sent++
+    } catch (e: unknown) {
+      errors.push(`${row.id} — ${e instanceof Error ? e.message : String(e)}`)
+      // If subscription expired, clean it up
+      if (e instanceof Error && e.message.includes('410')) {
+        await supabase.from('push_subscriptions').delete().eq('user_id', row.id)
       }
     }
   }
 
-  return res.status(200).json({ sent, errors, hhmm })
+  return res.status(200).json({ sent, errors })
 }
