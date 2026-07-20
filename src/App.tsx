@@ -104,6 +104,7 @@ const NervousSystemResetPage = lazy(() => import('@/pages/tools/NervousSystemRes
 const MorningProtocolPage = lazy(() => import('@/pages/client/MorningProtocolPage'))
 const KpiDashboardPage = lazy(() => import('@/pages/coach/KpiDashboardPage'))
 const BrainDumpPage = lazy(() => import('@/pages/coach/BrainDumpPage'))
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -288,7 +289,7 @@ export default function App() {
 
         {/* Legacy redirects */}
         <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       </Suspense>
       </ErrorBoundary>
