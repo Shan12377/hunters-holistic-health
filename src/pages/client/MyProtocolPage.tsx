@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
 import { supabase } from '@/lib/supabase'
-import type { ProtocolData, ProtocolSection } from '@/data/protocols/types'
+import type { ProtocolData, ProtocolItem, ProtocolSection } from '@/data/protocols/types'
 import styles from './ProtocolPage.module.css'
 
 const PILLAR_ORDER = ['R', 'O1', 'O2', 'T', 'S']
@@ -28,7 +29,48 @@ const PHASE_STEPS = [
   { key: 3, label: 'Maintain', color: '#7c6ef5', desc: 'Sustain your results with long-term maintenance support.' },
 ]
 
-type PhaseKey = number | 'all' | 'supplements'
+type PhaseKey = number | 'all' | 'supplements' | 'day'
+
+// My Day: bucket every shared item by its timing text so the client sees
+// their day at a glance. ponytail: keyword matching on free-text timing,
+// falls back to Anytime; refine buckets if educators start using new phrasing.
+const DAY_BUCKETS = [
+  { key: 'morning', label: 'Morning', test: /morning|(^|\s)am\b|wake|breakfast|empty stomach/i },
+  { key: 'meals', label: 'With meals', test: /meal|lunch|food|midday|noon/i },
+  { key: 'evening', label: 'Evening', test: /evening|(^|\s)pm\b|night|bed|dinner/i },
+  { key: 'anytime', label: 'Anytime', test: /./ },
+]
+
+function dayBuckets(data: ProtocolData): Array<{ label: string; items: Array<ProtocolItem & { pillarId: string }> }> {
+  const all: Array<ProtocolItem & { pillarId: string }> = []
+  for (const pillar of data.pillars) {
+    for (const section of pillar.sections) {
+      if (!section.shared) continue
+      for (const item of section.items) {
+        if (item.checked && item.shared) all.push({ ...item, pillarId: pillar.id })
+      }
+    }
+  }
+  return DAY_BUCKETS.map(bucket => ({
+    label: bucket.label,
+    items: all.filter(item => {
+      const firstMatch = DAY_BUCKETS.find(b => b.test.test(item.timing ?? ''))
+      return (item.timing ? firstMatch?.key : 'anytime') === bucket.key
+    }),
+  })).filter(b => b.items.length > 0)
+}
+
+function dayChecksKey(): string {
+  return `protocol_day_checks_${format(new Date(), 'yyyy-MM-dd')}`
+}
+
+function loadDayChecks(): Record<string, boolean> {
+  try {
+    return JSON.parse(localStorage.getItem(dayChecksKey()) ?? '{}')
+  } catch {
+    return {}
+  }
+}
 
 function sectionsForPhase(data: ProtocolData, phase: number | 'all'): Array<{ pillarId: string; section: ProtocolSection }> {
   const result: Array<{ pillarId: string; section: ProtocolSection }> = []
@@ -63,7 +105,14 @@ function supplementSections(data: ProtocolData): Array<{ pillarId: string; secti
 export default function MyProtocolPage() {
   const [data, setData] = useState<ProtocolData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activePhase, setActivePhase] = useState<PhaseKey>(0)
+  const [activePhase, setActivePhase] = useState<PhaseKey>('day')
+  const [dayChecks, setDayChecks] = useState<Record<string, boolean>>(loadDayChecks)
+
+  const toggleDayCheck = (id: string) => {
+    const next = { ...loadDayChecks(), [id]: !dayChecks[id] }
+    localStorage.setItem(dayChecksKey(), JSON.stringify(next))
+    setDayChecks(next)
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -96,9 +145,14 @@ export default function MyProtocolPage() {
     ? 'Parasite Cleanse Protocol'
     : data.type.replace(/_/g, ' ')
 
-  const sections = activePhase === 'supplements'
+  const sections = activePhase === 'day' ? []
+    : activePhase === 'supplements'
     ? supplementSections(data)
     : sectionsForPhase(data, activePhase as number | 'all')
+
+  const buckets = activePhase === 'day' ? dayBuckets(data) : []
+  const dayTotal = buckets.reduce((n, b) => n + b.items.length, 0)
+  const dayDone = buckets.reduce((n, b) => n + b.items.filter(i => dayChecks[i.id]).length, 0)
 
   const activeStep = typeof activePhase === 'number'
     ? PHASE_STEPS.find(s => s.key === activePhase) ?? null
@@ -111,6 +165,13 @@ export default function MyProtocolPage() {
       <div className={styles.header}>
         <p className={styles.protocolBadge}>ROOTS Framework</p>
         <h1 className={styles.title}>{protocolLabel}</h1>
+        <div className={styles.summaryChips}>
+          <span className={styles.summaryChip}>
+            {supplementSections(data).reduce((n, s) => n + s.section.items.filter(i => i.checked && i.shared).length, 0)} supplements
+          </span>
+          <span className={styles.summaryChip}>{PHASE_STEPS.length} phases</span>
+          <span className={styles.summaryChipGold}>Prepared for you by Dr. Hunter</span>
+        </div>
       </div>
 
       {/* Phase journey stepper */}
@@ -149,6 +210,12 @@ export default function MyProtocolPage() {
 
         {/* Secondary utility tabs */}
         <div className={styles.utilityTabs}>
+          <button
+            className={activePhase === 'day' ? styles.utilTabActive : styles.utilTab}
+            onClick={() => setActivePhase('day')}
+          >
+            My Day
+          </button>
           <button
             className={activePhase === 'all' ? styles.utilTabActive : styles.utilTab}
             onClick={() => setActivePhase('all')}
@@ -191,8 +258,64 @@ export default function MyProtocolPage() {
         </div>
       )}
 
+      {/* My Day: the client's protocol as a daily rhythm with tap-to-check */}
+      {activePhase === 'day' && (
+        <>
+          <div className={styles.phaseHero} style={{ borderColor: 'var(--gold, #c8a74b)' }}>
+            <div className={styles.phaseHeroName} style={{ color: 'var(--gold, #c8a74b)' }}>
+              Today, {format(new Date(), 'EEEE, MMMM d')}
+            </div>
+            <p className={styles.phaseHeroDesc}>
+              {dayTotal === 0
+                ? 'Your daily items will appear here once your educator assigns them.'
+                : dayDone === dayTotal
+                ? 'Everything checked off. Beautifully done today.'
+                : `Tap each item as you go. ${dayDone} of ${dayTotal} done today.`}
+            </p>
+          </div>
+
+          {buckets.map(bucket => (
+            <div key={bucket.label} className={styles.dayGroup}>
+              <div className={styles.dayGroupTitle}>{bucket.label}</div>
+              {bucket.items.map(item => {
+                const done = !!dayChecks[item.id]
+                const pillarColor = PILLAR_COLORS[item.pillarId] ?? '#0B9E8E'
+                return (
+                  <button
+                    key={item.id}
+                    className={done ? styles.dayItemDone : styles.dayItem}
+                    onClick={() => toggleDayCheck(item.id)}
+                  >
+                    <span
+                      className={done ? styles.dayCheckOn : styles.dayCheckOff}
+                      style={done ? { background: pillarColor, borderColor: pillarColor } : { borderColor: pillarColor }}
+                    >
+                      {done ? '✓' : ''}
+                    </span>
+                    <span className={styles.dayItemBody}>
+                      <span className={styles.dayItemName}>{item.text}</span>
+                      {(item.dose || item.timing) && (
+                        <span className={styles.dayItemMeta}>
+                          {[item.dose, item.timing].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          ))}
+
+          {dayTotal > 0 && (
+            <p className={styles.dayFootnote}>
+              Checks reset each morning. This is your rhythm, not a test.
+            </p>
+          )}
+        </>
+      )}
+
       {/* Empty state */}
-      {sections.length === 0 && (
+      {activePhase !== 'day' && sections.length === 0 && (
         <p className={styles.emptyState}>
           {activePhase === 'supplements'
             ? 'No supplements assigned yet. Ask your educator to add them.'

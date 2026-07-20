@@ -349,3 +349,107 @@
   .phaseHeroName { font-size: 1rem; }
   .title { font-size: 1.3rem; }
 }
+
+/* My Protocol: summary chips + My Day view */
+.summaryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.summaryChip {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #8aada8);
+  border: 1px solid var(--border, #1f3331);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+}
+
+.summaryChipGold {
+  font-size: 0.75rem;
+  color: var(--gold, #c8a74b);
+  border: 1px solid var(--gold, #c8a74b);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+}
+
+.dayGroup {
+  margin-bottom: 1.25rem;
+}
+
+.dayGroupTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #8aada8);
+  margin-bottom: 0.5rem;
+}
+
+.dayItem,
+.dayItemDone {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  background: var(--surface, #182a28);
+  border: 1px solid var(--border, #1f3331);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dayItem:hover {
+  border-color: var(--gold, #c8a74b);
+}
+
+.dayItemDone {
+  opacity: 0.65;
+}
+
+.dayCheckOff,
+.dayCheckOn {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.dayItemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.dayItemName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary, #f7f7f7);
+}
+
+.dayItemDone .dayItemName {
+  text-decoration: line-through;
+}
+
+.dayItemMeta {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #8aada8);
+}
+
+.dayFootnote {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #8aada8);
+  text-align: center;
+  margin-top: 0.5rem;
+}
