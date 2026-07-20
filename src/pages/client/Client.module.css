@@ -11433,3 +11433,21 @@
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+/* Progress ring checklist: shows exactly what counts toward today's score (Rule C) */
+.progressChecklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.progressItem {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.progressItemDone {
+  font-size: 0.75rem;
+  color: var(--gold);
+}

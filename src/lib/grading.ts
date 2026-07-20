@@ -1,4 +1,5 @@
 import type { DailyLog } from '@/types'
+import { STEPS_GOAL, WATER_GOAL_OZ } from '@/lib/goals'
 
 export interface GradeResult {
   grade: string
@@ -28,7 +29,7 @@ export function calcGrade(score: number): GradeResult {
 export function calcGradeFromData(logs: DailyLog[], feedPostCount: number): GradeResult {
   const totalDays = 7
   const loggedDays = logs.length
-  const movementMet = logs.filter(l => (l.steps ?? 0) >= 8000).length
+  const movementMet = logs.filter(l => (l.steps ?? 0) >= STEPS_GOAL).length
   const movementMissed = totalDays - movementMet
   const mealsMissed = logs.filter(l => !l.meal1_logged).length
   const lateSlipsSubmitted = logs.filter(l => l.late_slip_reason != null && l.late_slip_reason !== '').length
@@ -64,8 +65,8 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
   const meal1Days = logs.filter(l => l.meal1_logged).length
   const suppAmDays = logs.filter(l => l.supplement_am_done).length
   const suppPmDays = logs.filter(l => l.supplement_pm_done).length
-  const stepsDays = logs.filter(l => (l.steps ?? 0) >= 8000).length
-  const waterDays = logs.filter(l => (l.water_oz ?? 0) >= 64).length
+  const stepsDays = logs.filter(l => (l.steps ?? 0) >= STEPS_GOAL).length
+  const waterDays = logs.filter(l => (l.water_oz ?? 0) >= WATER_GOAL_OZ).length
   const loggedDays = logs.length
 
   const breakdown: WeekBreakdown[] = [
@@ -74,8 +75,8 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
     { label: 'Meal 1 Logged', score: meal1Days, max: days, pct: Math.round((meal1Days / days) * 100) },
     { label: 'AM Supplements', score: suppAmDays, max: days, pct: Math.round((suppAmDays / days) * 100) },
     { label: 'PM Supplements', score: suppPmDays, max: days, pct: Math.round((suppPmDays / days) * 100) },
-    { label: '8,000+ Steps', score: stepsDays, max: days, pct: Math.round((stepsDays / days) * 100) },
-    { label: '64oz Water', score: waterDays, max: days, pct: Math.round((waterDays / days) * 100) },
+    { label: `${STEPS_GOAL.toLocaleString()}+ Steps`, score: stepsDays, max: days, pct: Math.round((stepsDays / days) * 100) },
+    { label: `${WATER_GOAL_OZ}oz Water`, score: waterDays, max: days, pct: Math.round((waterDays / days) * 100) },
   ]
 
   const score = Math.round(breakdown.reduce((a, b) => a + b.pct, 0) / breakdown.length)
@@ -89,8 +90,8 @@ export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): numbe
   const meal1Days = logs.filter(l => l.meal1_logged).length
   const suppAmDays = logs.filter(l => l.supplement_am_done).length
   const suppPmDays = logs.filter(l => l.supplement_pm_done).length
-  const stepsDays = logs.filter(l => (l.steps ?? 0) >= 8000).length
-  const waterDays = logs.filter(l => (l.water_oz ?? 0) >= 64).length
+  const stepsDays = logs.filter(l => (l.steps ?? 0) >= STEPS_GOAL).length
+  const waterDays = logs.filter(l => (l.water_oz ?? 0) >= WATER_GOAL_OZ).length
   const loggedDays = logs.length
 
   const pcts = [

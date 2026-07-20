@@ -3,6 +3,7 @@ import { ClipboardList, Save } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { enqueueLog } from '@/lib/offlineQueue'
+import { STEPS_GOAL, WATER_GOAL_OZ } from '@/lib/goals'
 import { getPushPermissionState, requestPushPermission, subscribeToPush } from '@/lib/pushNotifications'
 import { format, subDays } from 'date-fns'
 import type { DailyLog } from '@/types'
@@ -173,15 +174,15 @@ export default function DailyLogPage() {
           <div className={styles.field}>
             <label className={styles.label}>Steps Today</label>
             <input className={styles.input} type="number" value={log.steps ?? 0} onChange={setNum('steps')} min={0} max={100000} placeholder="0" />
-            <div className={(log.steps ?? 0) >= 8000 ? styles.goalHintMet : styles.goalHint}>
-              Goal: 8,000 {(log.steps ?? 0) >= 8000 ? '✓ Reached!' : `(${Math.max(0, 8000 - (log.steps ?? 0)).toLocaleString()} to go)`}
+            <div className={(log.steps ?? 0) >= STEPS_GOAL ? styles.goalHintMet : styles.goalHint}>
+              Goal: {STEPS_GOAL.toLocaleString()} {(log.steps ?? 0) >= STEPS_GOAL ? '✓ Reached!' : `(${Math.max(0, STEPS_GOAL - (log.steps ?? 0)).toLocaleString()} to go)`}
             </div>
           </div>
           <div className={styles.field}>
             <label className={styles.label}>Water (oz)</label>
             <input className={styles.input} type="number" value={log.water_oz ?? 0} onChange={setNum('water_oz')} min={0} max={300} placeholder="0" />
-            <div className={(log.water_oz ?? 0) >= 64 ? styles.goalHintMet : styles.goalHint}>
-              Goal: 64 oz {(log.water_oz ?? 0) >= 64 ? '✓ Reached!' : `(${Math.max(0, 64 - (log.water_oz ?? 0))} to go)`}
+            <div className={(log.water_oz ?? 0) >= WATER_GOAL_OZ ? styles.goalHintMet : styles.goalHint}>
+              Goal: {WATER_GOAL_OZ} oz {(log.water_oz ?? 0) >= WATER_GOAL_OZ ? '✓ Reached!' : `(${Math.max(0, WATER_GOAL_OZ - (log.water_oz ?? 0))} to go)`}
             </div>
           </div>
         </div>

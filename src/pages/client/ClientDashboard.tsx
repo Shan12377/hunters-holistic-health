@@ -6,9 +6,10 @@ import { supabase } from '@/lib/supabase'
 import { format, addDays } from 'date-fns'
 import type { DailyLog, BPReading, BSReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
-import LateSlipModal from '@/components/ui/LateSlipModal'
+import LateSlipModal, { lateSlipDismissKey } from '@/components/ui/LateSlipModal'
 import WeeklyPulseCard from '@/components/ui/WeeklyPulseCard'
 import { getTotalPoints, getLevelInfo } from '@/lib/points'
+import { STEPS_GOAL, WATER_GOAL_OZ } from '@/lib/goals'
 import styles from './Client.module.css'
 
 const DOXY_URL = 'https://doxy.me/drshallandahunter'
@@ -28,12 +29,13 @@ function fmtDate(dateStr: string): string {
   return format(new Date(dateStr + 'T12:00:00'), 'EEEE, MMMM d')
 }
 
+// Values live on the same 1 to 10 scale as the Daily Log energy slider (Rule C).
 const ENERGY_LEVELS = [
-  { value: 1, label: 'Drained' },
-  { value: 2, label: 'Low' },
-  { value: 3, label: 'Okay' },
-  { value: 4, label: 'Good' },
-  { value: 5, label: 'Strong' },
+  { value: 2, label: 'Drained' },
+  { value: 4, label: 'Low' },
+  { value: 6, label: 'Okay' },
+  { value: 8, label: 'Good' },
+  { value: 10, label: 'Strong' },
 ]
 
 export default function ClientDashboard() {
@@ -54,12 +56,18 @@ export default function ClientDashboard() {
   }, [])
 
   useEffect(() => {
-    // Show Late Slip after 9 PM if daily log is incomplete
+    // Evening check-in after 9 PM if the daily log is incomplete.
+    // Rule B (CLAUDE.md): never for educators, only once per day, never instantly on load.
+    if (profile?.role === 'educator') return
+    if (localStorage.getItem(lateSlipDismissKey())) return
     if (hour >= 21 && todayLog && !todayLog.late_slip_reason) {
       const incomplete = !todayLog.meal1_logged || !todayLog.supplement_am_done
-      if (incomplete) setShowLateSlip(true)
+      if (incomplete) {
+        const t = setTimeout(() => setShowLateSlip(true), 5000)
+        return () => clearTimeout(t)
+      }
     }
-  }, [todayLog, hour])
+  }, [todayLog, hour, profile?.role])
 
   useEffect(() => {
     // Show midday energy check-in between 11am and 8pm if not already done today
@@ -119,16 +127,17 @@ export default function ClientDashboard() {
     setUpcomingSession(within24h ?? null)
   }
 
-  const completionItems = todayLog ? [
-    todayLog.morning_fast_done,
-    todayLog.meal1_logged,
-    todayLog.meal2_logged,
-    todayLog.supplement_am_done,
-    todayLog.supplement_pm_done,
-    (todayLog.steps ?? 0) >= 5000,
-    (todayLog.water_oz ?? 0) >= 64,
+  // Labeled so the user can always see what counts toward the score (Rule C).
+  const checklist = todayLog ? [
+    { label: 'Morning fast', done: !!todayLog.morning_fast_done },
+    { label: 'Meal 1', done: !!todayLog.meal1_logged },
+    { label: 'Meal 2', done: !!todayLog.meal2_logged },
+    { label: 'AM supplements', done: !!todayLog.supplement_am_done },
+    { label: 'PM supplements', done: !!todayLog.supplement_pm_done },
+    { label: `${STEPS_GOAL.toLocaleString()} steps`, done: (todayLog.steps ?? 0) >= STEPS_GOAL },
+    { label: `${WATER_GOAL_OZ} oz water`, done: (todayLog.water_oz ?? 0) >= WATER_GOAL_OZ },
   ] : []
-  const completionPct = completionItems.length > 0 ? Math.round((completionItems.filter(Boolean).length / completionItems.length) * 100) : 0
+  const completionPct = checklist.length > 0 ? Math.round((checklist.filter(c => c.done).length / checklist.length) * 100) : 0
 
   const bpZone = latestBP ? getBPZone(latestBP.systolic, latestBP.diastolic) : null
   const bsZone = latestBS ? getBSZone(latestBS.glucose_mg_dl, latestBS.reading_context) : null
@@ -219,6 +228,15 @@ export default function ClientDashboard() {
              completionPct >= 40 ? '📈 Good start, stay consistent.' :
              '🌱 Your journey starts with one step.'}
           </div>
+          {checklist.length > 0 && (
+            <div className={styles.progressChecklist}>
+              {checklist.map(item => (
+                <span key={item.label} className={item.done ? styles.progressItemDone : styles.progressItem}>
+                  {item.done ? '✓' : '○'} {item.label}
+                </span>
+              ))}
+            </div>
+          )}
           <Link to="/app/daily-log" className={styles.progressLink}>
             Update today's log →
           </Link>
@@ -287,7 +305,7 @@ export default function ClientDashboard() {
             <div className={`${styles.miniValue} ${styles.miniValueTeal}`}>
               {(todayLog?.steps ?? 0).toLocaleString()}
             </div>
-            <div className={styles.miniSub}>Goal: 8,000</div>
+            <div className={styles.miniSub}>Goal: {STEPS_GOAL.toLocaleString()}</div>
           </div>
         </Link>
 
@@ -301,7 +319,7 @@ export default function ClientDashboard() {
             <div className={`${styles.miniValue} ${styles.miniValueBlue}`}>
               {todayLog?.water_oz ?? 0}
             </div>
-            <div className={styles.miniSub}>Goal: 64 oz</div>
+            <div className={styles.miniSub}>Goal: {WATER_GOAL_OZ} oz</div>
           </div>
         </Link>
 

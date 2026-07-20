@@ -1,108 +1,109 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import toast from 'react-hot-toast'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner'
+import ErrorBoundary from '@/components/ui/ErrorBoundary'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import LandingPage from '@/pages/LandingPage'
 import LoginPage from '@/pages/auth/LoginPage'
-import SignupPage from '@/pages/auth/SignupPage'
-import ResetPasswordPage from '@/pages/auth/ResetPasswordPage'
-import ClientDashboard from '@/pages/client/ClientDashboard'
-import BPTrackerPage from '@/pages/client/BPTrackerPage'
-import BloodSugarPage from '@/pages/client/BloodSugarPage'
-import MealGuardPage from '@/pages/client/MealGuardPage'
-import DailyLogPage from '@/pages/client/DailyLogPage'
-import ProtocolPage from '@/pages/client/ProtocolPage'
-import SupplementLogPage from '@/pages/client/SupplementLogPage'
-import WeeklyGradePage from '@/pages/client/WeeklyGradePage'
-import FeedPage from '@/pages/client/FeedPage'
-import CohortPage from '@/pages/client/CohortPage'
-import SessionsPage from '@/pages/client/SessionsPage'
-import RecipesPage from '@/pages/client/RecipesPage'
-import SettingsPage from '@/pages/client/SettingsPage'
-import CoachDashboard from '@/pages/coach/CoachDashboard'
-import ClientDetailPage from '@/pages/coach/ClientDetailPage'
-import ComplianceGuardPage from '@/pages/coach/ComplianceGuardPage'
-import CrmPipelinePage from '@/pages/coach/CrmPipelinePage'
-import CrmTasksPage from '@/pages/coach/CrmTasksPage'
-import CrmCalendarPage from '@/pages/coach/CrmCalendarPage'
-import CommunicationsStudioPage from '@/pages/coach/CommunicationsStudioPage'
+const SignupPage = lazy(() => import('@/pages/auth/SignupPage'))
+const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'))
+const ClientDashboard = lazy(() => import('@/pages/client/ClientDashboard'))
+const BPTrackerPage = lazy(() => import('@/pages/client/BPTrackerPage'))
+const BloodSugarPage = lazy(() => import('@/pages/client/BloodSugarPage'))
+const MealGuardPage = lazy(() => import('@/pages/client/MealGuardPage'))
+const DailyLogPage = lazy(() => import('@/pages/client/DailyLogPage'))
+const ProtocolPage = lazy(() => import('@/pages/client/ProtocolPage'))
+const SupplementLogPage = lazy(() => import('@/pages/client/SupplementLogPage'))
+const WeeklyGradePage = lazy(() => import('@/pages/client/WeeklyGradePage'))
+const FeedPage = lazy(() => import('@/pages/client/FeedPage'))
+const CohortPage = lazy(() => import('@/pages/client/CohortPage'))
+const SessionsPage = lazy(() => import('@/pages/client/SessionsPage'))
+const RecipesPage = lazy(() => import('@/pages/client/RecipesPage'))
+const SettingsPage = lazy(() => import('@/pages/client/SettingsPage'))
+const CoachDashboard = lazy(() => import('@/pages/coach/CoachDashboard'))
+const ClientDetailPage = lazy(() => import('@/pages/coach/ClientDetailPage'))
+const ComplianceGuardPage = lazy(() => import('@/pages/coach/ComplianceGuardPage'))
+const CrmPipelinePage = lazy(() => import('@/pages/coach/CrmPipelinePage'))
+const CrmTasksPage = lazy(() => import('@/pages/coach/CrmTasksPage'))
+const CrmCalendarPage = lazy(() => import('@/pages/coach/CrmCalendarPage'))
+const CommunicationsStudioPage = lazy(() => import('@/pages/coach/CommunicationsStudioPage'))
 import AppLayout from '@/components/layout/AppLayout'
-import TermsPage from '@/pages/legal/TermsPage'
-import PrivacyPage from '@/pages/legal/PrivacyPage'
-import JoinPage from '@/pages/intake/JoinPage'
-import SupportPage from '@/pages/intake/SupportPage'
-import FeatureRequestPage from '@/pages/intake/FeatureRequestPage'
-import ClinicalInquiryPage from '@/pages/intake/ClinicalInquiryPage'
-import ContactPage from '@/pages/intake/ContactPage'
-import MessagesPage from '@/pages/client/MessagesPage'
-import LeaderboardPage from '@/pages/client/LeaderboardPage'
-import EventsPage from '@/pages/client/EventsPage'
-import ManageEventsPage from '@/pages/coach/ManageEventsPage'
-import ChallengesPage from '@/pages/client/ChallengesPage'
-import ClassroomPage from '@/pages/client/ClassroomPage'
-import ExercisePage from '@/pages/client/ExercisePage'
-import WorkoutTrackerPage from '@/pages/client/WorkoutTrackerPage'
-import FeedbackPage from '@/pages/client/FeedbackPage'
-import CoursePage from '@/pages/client/CoursePage'
-import ManageChallengesPage from '@/pages/coach/ManageChallengesPage'
-import ManageClassroomPage from '@/pages/coach/ManageClassroomPage'
-import EducatorMessagesPage from '@/pages/coach/EducatorMessagesPage'
-import PrivacyScorecardPage from '@/pages/PrivacyScorecardPage'
-import ShopPage from '@/pages/ShopPage'
-import CreatinePage from '@/pages/CreatinePage'
-import CreatineNotWhatYouThink from '@/pages/blog/CreatineNotWhatYouThink'
-import ReboundingBenefits from '@/pages/blog/ReboundingBenefits'
-import Glp1MuscleLoss from '@/pages/blog/Glp1MuscleLoss'
-import Glp1WeightRegain from '@/pages/blog/Glp1WeightRegain'
-import Glp1Supplements from '@/pages/blog/Glp1Supplements'
-import Glp1FunctionalLabs from '@/pages/blog/Glp1FunctionalLabs'
-import Glp1Cost from '@/pages/blog/Glp1Cost'
-import Glp1SideEffects from '@/pages/blog/Glp1SideEffects'
-import MetabolicHealth from '@/pages/blog/MetabolicHealth'
-import Glp1FoodCulture from '@/pages/blog/Glp1FoodCulture'
-import Glp1Comparison from '@/pages/blog/Glp1Comparison'
-import WhyMealAppsFailAdvertorial from '@/pages/blog/WhyMealAppsFailAdvertorial'
-import BlogIndexPage from '@/pages/blog/BlogIndexPage'
-import ParasiteCleanseProtocol from '@/pages/protocol/ParasiteCleanseProtocol'
-import SupplementCatalog from '@/pages/protocol/SupplementCatalog'
-import MetalDetoxProtocol from '@/pages/protocol/MetalDetoxProtocol'
-import ProtocolPlanPage from '@/pages/client/ProtocolPlanPage'
-import ProtocolMatrixPage from '@/pages/client/ProtocolMatrixPage'
-import MetabolicToolsPage from '@/pages/client/MetabolicToolsPage'
-import ToolsPage from '@/pages/ToolsPage'
-import DailyPlatePage from '@/pages/client/DailyPlatePage'
-import BuildYourPlatePage from '@/pages/client/BuildYourPlatePage'
-import TrendingMealsPage from '@/pages/client/TrendingMealsPage'
-import FoodSearchPage from '@/pages/client/FoodSearchPage'
-import SmartRecipeBuilderPage from '@/pages/client/SmartRecipeBuilderPage'
-import BPSimulatorPage from '@/pages/BPSimulatorPage'
-import MedicationNutrientChecker from '@/pages/tools/MedicationNutrientChecker'
-import RootCauseQuiz from '@/pages/tools/RootCauseQuiz'
-import WhyCantILoseWeight from '@/pages/WhyCantILoseWeight'
-import Glp1Assessment from '@/pages/tools/Glp1Assessment'
-import Glp1CandidateLanding from '@/pages/Glp1CandidateLanding'
-import SupplementTiming from '@/pages/tools/SupplementTiming'
-import NutrientFoodSources from '@/pages/tools/NutrientFoodSources'
-import InsResScore from '@/pages/tools/InsResScore'
-import HealthHubPage from '@/pages/client/HealthHubPage'
-import MyProtocolPage from '@/pages/client/MyProtocolPage'
-import HealthGoalsPage from '@/pages/client/HealthGoalsPage'
-import HabitTrackerPage from '@/pages/client/HabitTrackerPage'
-import ApplyPage from '@/pages/ApplyPage'
-import ApplicationsPage from '@/pages/coach/ApplicationsPage'
-import WeightTrackerPage from '@/pages/client/WeightTrackerPage'
-import SnapshotPage from '@/pages/client/SnapshotPage'
-import VaultPage from '@/pages/client/VaultPage'
-import HormoneChallengePage from '@/pages/tools/HormoneChallengePage'
-import FlatBellyChallengePage from '@/pages/tools/FlatBellyChallengePage'
-import NervousSystemResetPage from '@/pages/tools/NervousSystemResetPage'
-import MorningProtocolPage from '@/pages/client/MorningProtocolPage'
-import KpiDashboardPage from '@/pages/coach/KpiDashboardPage'
-import BrainDumpPage from '@/pages/coach/BrainDumpPage'
+const TermsPage = lazy(() => import('@/pages/legal/TermsPage'))
+const PrivacyPage = lazy(() => import('@/pages/legal/PrivacyPage'))
+const JoinPage = lazy(() => import('@/pages/intake/JoinPage'))
+const SupportPage = lazy(() => import('@/pages/intake/SupportPage'))
+const FeatureRequestPage = lazy(() => import('@/pages/intake/FeatureRequestPage'))
+const ClinicalInquiryPage = lazy(() => import('@/pages/intake/ClinicalInquiryPage'))
+const ContactPage = lazy(() => import('@/pages/intake/ContactPage'))
+const MessagesPage = lazy(() => import('@/pages/client/MessagesPage'))
+const LeaderboardPage = lazy(() => import('@/pages/client/LeaderboardPage'))
+const EventsPage = lazy(() => import('@/pages/client/EventsPage'))
+const ManageEventsPage = lazy(() => import('@/pages/coach/ManageEventsPage'))
+const ChallengesPage = lazy(() => import('@/pages/client/ChallengesPage'))
+const ClassroomPage = lazy(() => import('@/pages/client/ClassroomPage'))
+const ExercisePage = lazy(() => import('@/pages/client/ExercisePage'))
+const WorkoutTrackerPage = lazy(() => import('@/pages/client/WorkoutTrackerPage'))
+const FeedbackPage = lazy(() => import('@/pages/client/FeedbackPage'))
+const CoursePage = lazy(() => import('@/pages/client/CoursePage'))
+const ManageChallengesPage = lazy(() => import('@/pages/coach/ManageChallengesPage'))
+const ManageClassroomPage = lazy(() => import('@/pages/coach/ManageClassroomPage'))
+const EducatorMessagesPage = lazy(() => import('@/pages/coach/EducatorMessagesPage'))
+const PrivacyScorecardPage = lazy(() => import('@/pages/PrivacyScorecardPage'))
+const ShopPage = lazy(() => import('@/pages/ShopPage'))
+const CreatinePage = lazy(() => import('@/pages/CreatinePage'))
+const CreatineNotWhatYouThink = lazy(() => import('@/pages/blog/CreatineNotWhatYouThink'))
+const ReboundingBenefits = lazy(() => import('@/pages/blog/ReboundingBenefits'))
+const Glp1MuscleLoss = lazy(() => import('@/pages/blog/Glp1MuscleLoss'))
+const Glp1WeightRegain = lazy(() => import('@/pages/blog/Glp1WeightRegain'))
+const Glp1Supplements = lazy(() => import('@/pages/blog/Glp1Supplements'))
+const Glp1FunctionalLabs = lazy(() => import('@/pages/blog/Glp1FunctionalLabs'))
+const Glp1Cost = lazy(() => import('@/pages/blog/Glp1Cost'))
+const Glp1SideEffects = lazy(() => import('@/pages/blog/Glp1SideEffects'))
+const MetabolicHealth = lazy(() => import('@/pages/blog/MetabolicHealth'))
+const Glp1FoodCulture = lazy(() => import('@/pages/blog/Glp1FoodCulture'))
+const Glp1Comparison = lazy(() => import('@/pages/blog/Glp1Comparison'))
+const WhyMealAppsFailAdvertorial = lazy(() => import('@/pages/blog/WhyMealAppsFailAdvertorial'))
+const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
+const ParasiteCleanseProtocol = lazy(() => import('@/pages/protocol/ParasiteCleanseProtocol'))
+const SupplementCatalog = lazy(() => import('@/pages/protocol/SupplementCatalog'))
+const MetalDetoxProtocol = lazy(() => import('@/pages/protocol/MetalDetoxProtocol'))
+const ProtocolPlanPage = lazy(() => import('@/pages/client/ProtocolPlanPage'))
+const ProtocolMatrixPage = lazy(() => import('@/pages/client/ProtocolMatrixPage'))
+const MetabolicToolsPage = lazy(() => import('@/pages/client/MetabolicToolsPage'))
+const ToolsPage = lazy(() => import('@/pages/ToolsPage'))
+const DailyPlatePage = lazy(() => import('@/pages/client/DailyPlatePage'))
+const BuildYourPlatePage = lazy(() => import('@/pages/client/BuildYourPlatePage'))
+const TrendingMealsPage = lazy(() => import('@/pages/client/TrendingMealsPage'))
+const FoodSearchPage = lazy(() => import('@/pages/client/FoodSearchPage'))
+const SmartRecipeBuilderPage = lazy(() => import('@/pages/client/SmartRecipeBuilderPage'))
+const BPSimulatorPage = lazy(() => import('@/pages/BPSimulatorPage'))
+const MedicationNutrientChecker = lazy(() => import('@/pages/tools/MedicationNutrientChecker'))
+const RootCauseQuiz = lazy(() => import('@/pages/tools/RootCauseQuiz'))
+const WhyCantILoseWeight = lazy(() => import('@/pages/WhyCantILoseWeight'))
+const Glp1Assessment = lazy(() => import('@/pages/tools/Glp1Assessment'))
+const Glp1CandidateLanding = lazy(() => import('@/pages/Glp1CandidateLanding'))
+const SupplementTiming = lazy(() => import('@/pages/tools/SupplementTiming'))
+const NutrientFoodSources = lazy(() => import('@/pages/tools/NutrientFoodSources'))
+const InsResScore = lazy(() => import('@/pages/tools/InsResScore'))
+const HealthHubPage = lazy(() => import('@/pages/client/HealthHubPage'))
+const MyProtocolPage = lazy(() => import('@/pages/client/MyProtocolPage'))
+const HealthGoalsPage = lazy(() => import('@/pages/client/HealthGoalsPage'))
+const HabitTrackerPage = lazy(() => import('@/pages/client/HabitTrackerPage'))
+const ApplyPage = lazy(() => import('@/pages/ApplyPage'))
+const ApplicationsPage = lazy(() => import('@/pages/coach/ApplicationsPage'))
+const WeightTrackerPage = lazy(() => import('@/pages/client/WeightTrackerPage'))
+const SnapshotPage = lazy(() => import('@/pages/client/SnapshotPage'))
+const VaultPage = lazy(() => import('@/pages/client/VaultPage'))
+const HormoneChallengePage = lazy(() => import('@/pages/tools/HormoneChallengePage'))
+const FlatBellyChallengePage = lazy(() => import('@/pages/tools/FlatBellyChallengePage'))
+const NervousSystemResetPage = lazy(() => import('@/pages/tools/NervousSystemResetPage'))
+const MorningProtocolPage = lazy(() => import('@/pages/client/MorningProtocolPage'))
+const KpiDashboardPage = lazy(() => import('@/pages/coach/KpiDashboardPage'))
+const BrainDumpPage = lazy(() => import('@/pages/coach/BrainDumpPage'))
 import shared from '@/styles/shared.module.css'
 
 function LoadingScreen() {
@@ -154,17 +155,19 @@ export default function App() {
   }, [needRefresh])
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
+      // Rule A (CLAUDE.md): the profile must be loaded before loading flips false,
+      // otherwise role-gated routes redirect while profile is still null.
+      if (session?.user) await fetchProfile(session.user.id)
       setLoading(false)
     })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else setLoading(false)
+      if (session?.user) await fetchProfile(session.user.id)
+      setLoading(false)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -172,6 +175,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" toastOptions={{ style: { background:'#182a28', color:'#f7f7f7', border:'1px solid #1f3331' }, success: { iconTheme: { primary:'#c8a74b', secondary:'#0e1c1b' } }, error: { iconTheme: { primary:'#e05c5c', secondary:'#0e1c1b' } } }} />
+      <ErrorBoundary>
+      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
@@ -285,6 +290,8 @@ export default function App() {
         <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
+      </ErrorBoundary>
       <PWAInstallBanner />
     </BrowserRouter>
   )

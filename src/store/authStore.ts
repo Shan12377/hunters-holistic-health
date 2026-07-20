@@ -34,11 +34,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchProfile: async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single()
     if (data) set({ profile: data as Profile })
+    // Rule E (CLAUDE.md): failures must be visible, never silently swallowed.
+    else if (error) console.error('[auth] profile fetch failed:', error.message)
   },
 }))

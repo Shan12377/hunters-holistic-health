@@ -8,16 +8,26 @@ interface LateSlipModalProps {
   onClose: () => void
 }
 
+// One dismissal per day, shared by every trigger of this modal (CLAUDE.md Rule B).
+export function lateSlipDismissKey(): string {
+  return `late_slip_dismissed_${format(new Date(), 'yyyy-MM-dd')}`
+}
+
 export default function LateSlipModal({ onSubmit, onClose }: LateSlipModalProps) {
   const [reason, setReason] = useState('')
   const [loading, setLoading] = useState(false)
   const [mode, setMode] = useState<'private' | 'feed'>('private')
+
+  const dismissForToday = () => {
+    localStorage.setItem(lateSlipDismissKey(), '1')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!reason.trim()) return
     setLoading(true)
     await onSubmit(reason.trim())
+    dismissForToday()
     setLoading(false)
   }
 
@@ -30,8 +40,8 @@ export default function LateSlipModal({ onSubmit, onClose }: LateSlipModalProps)
             <AlertCircle size={20} color="var(--gold)" />
           </div>
           <div>
-            <div className={shared.modalTitle}>Late Slip Required</div>
-            <div className={shared.modalSub}>{format(new Date(), 'h:mm a')}: some goals are still incomplete</div>
+            <div className={shared.modalTitle}>Evening Check-In</div>
+            <div className={shared.modalSub}>{format(new Date(), 'h:mm a')}: an optional moment to reflect</div>
           </div>
         </div>
 
@@ -66,8 +76,8 @@ export default function LateSlipModal({ onSubmit, onClose }: LateSlipModalProps)
             <button type="submit" className={`${shared.btnPrimary} ${shared.modalActionMain}`} disabled={loading || !reason.trim()}>
               {loading ? 'Submitting...' : 'Submit Late Slip'}
             </button>
-            <button type="button" onClick={onClose} className={shared.btnSecondary}>
-              Skip
+            <button type="button" onClick={() => { dismissForToday(); onClose() }} className={shared.btnSecondary}>
+              Skip for today
             </button>
           </div>
         </form>

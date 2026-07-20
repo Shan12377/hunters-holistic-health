@@ -6,7 +6,8 @@ import { supabase } from '@/lib/supabase'
 import { flushQueue } from '@/lib/offlineQueue'
 import { format, subDays } from 'date-fns'
 import toast from 'react-hot-toast'
-import LateSlipModal from '@/components/ui/LateSlipModal'
+import LateSlipModal, { lateSlipDismissKey } from '@/components/ui/LateSlipModal'
+import ErrorBoundary from '@/components/ui/ErrorBoundary'
 import styles from './AppLayout.module.css'
 
 interface NavItem {
@@ -137,15 +138,21 @@ export default function AppLayout() {
 
   useEffect(() => {
     if (!user?.id) return
+    // Rule B (CLAUDE.md): never for educators, only once per day, and never on the
+    // pages where the user is already logging (do not interrupt the fix).
+    if (profile?.role === 'educator') return
+    if (localStorage.getItem(lateSlipDismissKey())) return
+    if (['/app/daily-log', '/app/meal-guard'].some(p => location.pathname.startsWith(p))) return
     const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd')
     Promise.all([
       supabase.from('daily_logs').select('id').eq('user_id', user.id).eq('log_date', yesterday).maybeSingle(),
       supabase.from('daily_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id).limit(1),
     ]).then(([yesterdayRes, countRes]) => {
       const hasAnyLogs = (countRes.count ?? 0) > 0
-      if (hasAnyLogs && !yesterdayRes.data) setShowLateSlip(true)
+      // Small delay so the page is visible and interactive before any prompt appears.
+      if (hasAnyLogs && !yesterdayRes.data) setTimeout(() => setShowLateSlip(true), 5000)
     })
-  }, [user?.id])
+  }, [user?.id, profile?.role])
 
   const handleLateSlipSubmit = async (reason: string) => {
     if (!user?.id || !profile) return
@@ -352,7 +359,7 @@ export default function AppLayout() {
         </div>
 
         <div className={styles.content}>
-          <Outlet />
+          <ErrorBoundary><Outlet /></ErrorBoundary>
         </div>
       </main>
     </div>
