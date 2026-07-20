@@ -30,3 +30,7 @@ vite.config.ts.timestamp-*.mjs
 .env*
 .playwright-mcp/
 .claude/
+
+# Apple image formats (not browser-compatible)
+*.heic
+*.HEIC
