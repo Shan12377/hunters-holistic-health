@@ -331,3 +331,32 @@
   line-height: 16px;
   flex-shrink: 0;
 }
+
+/* Tab bar for consolidated page sets (Rule F consolidation, July 2026) */
+.pageTabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+
+.pageTab {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.pageTab:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.pageTabActive {
+  color: var(--gold);
+  border-color: var(--gold);
+  font-weight: 600;
+}

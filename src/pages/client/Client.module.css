@@ -11451,3 +11451,64 @@
   font-size: 0.75rem;
   color: var(--gold);
 }
+
+/* First-week onboarding checklist */
+.onboardCard {
+  background: var(--surface, #182a28);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.onboardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.onboardTitle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.onboardCount {
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.onboardList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.onboardItem {
+  font-size: 0.85rem;
+  color: var(--text-primary, #f7f7f7);
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+
+.onboardItem:hover {
+  color: var(--gold);
+}
+
+.onboardItemDone {
+  font-size: 0.85rem;
+  color: var(--gold);
+  padding: 0.25rem 0;
+  opacity: 0.85;
+}
+
+.onboardHide {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #8aada8);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 0 0;
+}

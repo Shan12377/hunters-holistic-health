@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
+import {
+  ChevronDown, LayoutDashboard, ClipboardList, Heart, Droplet, Scale, Pill, Activity,
+  Star, TrendingUp, Shield, CalendarDays, ChefHat, Lock, BookOpen, GraduationCap,
+  Gauge, Users, HeartHandshake, Trophy, Zap, Calendar, Mail, Target, ListChecks,
+  HeartPulse, Clock, MessageSquare, Briefcase, PenLine, ShieldCheck, Inbox, BarChart3, Brain,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { supabase } from '@/lib/supabase'
 import { flushQueue } from '@/lib/offlineQueue'
@@ -12,7 +18,7 @@ import styles from './AppLayout.module.css'
 
 interface NavItem {
   to: string
-  icon: string
+  icon: LucideIcon
   label: string
 }
 
@@ -21,68 +27,90 @@ interface NavGroup {
   items: NavItem[]
 }
 
+// Consolidated July 2026 (Rule F, approved by Dr. Hunter): related pages became
+// tabs inside one destination (see PAGE_TABS below). All routes still work.
 const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Track',
     items: [
-      { to: '/app/daily-log',      icon: '✓', label: 'Daily Log' },
-      { to: '/app/blood-pressure', icon: '♥', label: 'BP Tracker' },
-      { to: '/app/blood-sugar',    icon: '◉', label: 'Blood Sugar' },
-      { to: '/app/weight',         icon: '⚖', label: 'Weight' },
-      { to: '/app/supplements',    icon: '⬡', label: 'Supplements' },
-      { to: '/app/exercise',         icon: '◎', label: 'Movement Log' },
-      { to: '/app/workout-tracker', icon: '◈', label: 'Workout Tracker' },
-      { to: '/app/weekly-grade',   icon: '★', label: 'Weekly Grade' },
-      { to: '/app/snapshot',       icon: '◈', label: 'My Snapshot' },
+      { to: '/app/daily-log',      icon: ClipboardList, label: 'Daily Log' },
+      { to: '/app/blood-pressure', icon: Heart, label: 'BP Tracker' },
+      { to: '/app/blood-sugar',    icon: Droplet, label: 'Blood Sugar' },
+      { to: '/app/weight',         icon: Scale, label: 'Weight' },
+      { to: '/app/supplements',    icon: Pill, label: 'Supplements' },
+      { to: '/app/exercise',       icon: Activity, label: 'Movement' },
+      { to: '/app/weekly-grade',   icon: Star, label: 'Weekly Grade' },
+      { to: '/app/snapshot',       icon: TrendingUp, label: 'My Snapshot' },
     ],
   },
   {
     label: 'Nutrition',
     items: [
-      { to: '/app/meal-guard',  icon: '⚡', label: 'Nourish Log' },
-      { to: '/app/meal-plan',   icon: '◉', label: 'Meal Plan' },
-      { to: '/app/daily-plate', icon: '◉', label: 'Daily Plate' },
-      { to: '/app/recipes',     icon: '◇', label: 'Recipes' },
+      { to: '/app/meal-guard', icon: Shield, label: 'Nourish Log' },
+      { to: '/app/meal-plan',  icon: CalendarDays, label: 'Meal Plan' },
+      { to: '/app/recipes',    icon: ChefHat, label: 'Recipes' },
     ],
   },
   {
     label: 'Learn',
     items: [
-      { to: '/app/vault',             icon: '🔓', label: 'The Vault' },
-      { to: '/app/my-protocol',       icon: '◈', label: 'My Protocol' },
-      { to: '/app/protocol',         icon: '◈', label: 'ROOTS Framework' },
-      { to: '/app/protocol-matrix',  icon: '⬡', label: 'Protocol Matrix' },
-      { to: '/app/classroom',        icon: '◈', label: 'Classroom' },
-      { to: '/app/metabolic-tools',  icon: '◉', label: 'Metabolic Tools' },
+      { to: '/app/vault',           icon: Lock, label: 'The Vault' },
+      { to: '/app/my-protocol',     icon: BookOpen, label: 'My Protocol' },
+      { to: '/app/classroom',       icon: GraduationCap, label: 'Classroom' },
+      { to: '/app/metabolic-tools', icon: Gauge, label: 'Metabolic Tools' },
     ],
   },
   {
     label: 'Community',
     items: [
-      { to: '/app/feed',        icon: '◎', label: 'Community Feed' },
-      { to: '/app/cohort',      icon: '◑', label: 'My Cohort' },
-      { to: '/app/leaderboard', icon: '★', label: 'Leaderboard' },
-      { to: '/app/challenges',  icon: '⚡', label: 'Challenges' },
-      { to: '/app/events',      icon: '◷', label: 'Events' },
-      { to: '/app/messages',    icon: '✉', label: 'Messages' },
+      { to: '/app/feed',        icon: Users, label: 'Community Feed' },
+      { to: '/app/cohort',      icon: HeartHandshake, label: 'My Cohort' },
+      { to: '/app/leaderboard', icon: Trophy, label: 'Leaderboard' },
+      { to: '/app/challenges',  icon: Zap, label: 'Challenges' },
+      { to: '/app/events',      icon: Calendar, label: 'Events' },
+      { to: '/app/messages',    icon: Mail, label: 'Messages' },
     ],
   },
   {
     label: 'Goals & Habits',
     items: [
-      { to: '/app/health-goals', icon: '◎', label: 'Health Goals' },
-      { to: '/app/habits',       icon: '✓', label: 'Daily Habits' },
-      { to: '/app/morning',      icon: '★', label: 'Morning Protocol' },
+      { to: '/app/health-goals', icon: Target, label: 'Health Goals' },
+      { to: '/app/habits',       icon: ListChecks, label: 'Daily Habits' },
     ],
   },
   {
     label: 'Sessions',
     items: [
-      { to: '/app/health-hub', icon: '🫀', label: 'My Health Hub' },
-      { to: '/app/sessions',   icon: '◷', label: 'My Sessions' },
-      { to: '/app/feedback',   icon: '◎', label: 'Give Feedback' },
+      { to: '/app/health-hub', icon: HeartPulse, label: 'My Health Hub' },
+      { to: '/app/sessions',   icon: Clock, label: 'My Sessions' },
+      { to: '/app/feedback',   icon: MessageSquare, label: 'Give Feedback' },
     ],
   },
+]
+
+// Pages absorbed into a sibling as tabs. The tab bar renders above the page.
+const PAGE_TABS: { match: string[]; tabs: { to: string; label: string }[] }[] = [
+  { match: ['/app/meal-plan', '/app/daily-plate'], tabs: [
+    { to: '/app/meal-plan', label: 'Meal Plan' },
+    { to: '/app/daily-plate', label: 'Daily Plate' },
+  ]},
+  { match: ['/app/recipes', '/app/recipe-builder'], tabs: [
+    { to: '/app/recipes', label: 'Recipes' },
+    { to: '/app/recipe-builder', label: 'AI Recipe Builder' },
+  ]},
+  { match: ['/app/my-protocol', '/app/protocol', '/app/protocol-matrix'], tabs: [
+    { to: '/app/my-protocol', label: 'My Protocol' },
+    { to: '/app/protocol', label: 'ROOTS Framework' },
+    { to: '/app/protocol-matrix', label: 'Protocol Matrix' },
+  ]},
+  { match: ['/app/exercise', '/app/workout-tracker'], tabs: [
+    { to: '/app/exercise', label: 'Movement Log' },
+    { to: '/app/workout-tracker', label: 'Workout Tracker' },
+  ]},
+  { match: ['/app/habits', '/app/morning'], tabs: [
+    { to: '/app/habits', label: 'Daily Habits' },
+    { to: '/app/morning', label: 'Morning Protocol' },
+  ]},
 ]
 
 function activeGroup(pathname: string): string {
@@ -228,7 +256,7 @@ export default function AppLayout() {
             className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            <span className={styles.navIcon}>⬡</span>
+            <span className={styles.navIcon}><LayoutDashboard size={15} /></span>
             Dashboard
           </NavLink>
 
@@ -263,7 +291,7 @@ export default function AppLayout() {
                           }
                         }}
                       >
-                        <span className={styles.navIcon}>{item.icon}</span>
+                        <span className={styles.navIcon}><item.icon size={15} /></span>
                         {item.label}
                         {item.to === '/app/feed' && feedBadge > 0 && (
                           <span className={styles.feedBadge}>{feedBadge > 99 ? '99+' : feedBadge}</span>
@@ -281,37 +309,37 @@ export default function AppLayout() {
             <>
               <div className={styles.navSection}>Educator</div>
               <NavLink to="/coach" end className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>◈</span>Educator View
+                <span className={styles.navIcon}><LayoutDashboard size={15} /></span>Educator View
               </NavLink>
               <NavLink to="/coach/crm" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>⟳</span>CRM Pipeline
+                <span className={styles.navIcon}><Briefcase size={15} /></span>CRM Pipeline
               </NavLink>
               <NavLink to="/coach/comms" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>✍</span>Comms Studio
+                <span className={styles.navIcon}><PenLine size={15} /></span>Comms Studio
               </NavLink>
               <NavLink to="/coach/messages" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>✉</span>Participant Messages
+                <span className={styles.navIcon}><Mail size={15} /></span>Participant Messages
               </NavLink>
               <NavLink to="/coach/challenges" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>⚡</span>Manage Challenges
+                <span className={styles.navIcon}><Zap size={15} /></span>Manage Challenges
               </NavLink>
               <NavLink to="/coach/classroom" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>◈</span>Manage Classroom
+                <span className={styles.navIcon}><GraduationCap size={15} /></span>Manage Classroom
               </NavLink>
               <NavLink to="/coach/events" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>◷</span>Manage Events
+                <span className={styles.navIcon}><Calendar size={15} /></span>Manage Events
               </NavLink>
               <NavLink to="/coach/compliance-guard" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>✓</span>FTC Compliance Guard
+                <span className={styles.navIcon}><ShieldCheck size={15} /></span>FTC Compliance Guard
               </NavLink>
               <NavLink to="/coach/applications" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>◈</span>Applications
+                <span className={styles.navIcon}><Inbox size={15} /></span>Applications
               </NavLink>
               <NavLink to="/coach/kpis" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>◉</span>KPI Dashboard
+                <span className={styles.navIcon}><BarChart3 size={15} /></span>KPI Dashboard
               </NavLink>
               <NavLink to="/coach/brain-dump" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`} onClick={() => setMobileOpen(false)}>
-                <span className={styles.navIcon}>✍</span>Brain Dump
+                <span className={styles.navIcon}><Brain size={15} /></span>Brain Dump
               </NavLink>
             </>
           )}
@@ -359,6 +387,24 @@ export default function AppLayout() {
         </div>
 
         <div className={styles.content}>
+          {(() => {
+            const tabs = PAGE_TABS.find(s => s.match.includes(location.pathname))?.tabs
+            if (!tabs) return null
+            return (
+              <div className={styles.pageTabs}>
+                {tabs.map(t => (
+                  <NavLink
+                    key={t.to}
+                    to={t.to}
+                    end
+                    className={({ isActive }) => `${styles.pageTab} ${isActive ? styles.pageTabActive : ''}`}
+                  >
+                    {t.label}
+                  </NavLink>
+                ))}
+              </div>
+            )
+          })()}
           <ErrorBoundary><Outlet /></ErrorBoundary>
         </div>
       </main>

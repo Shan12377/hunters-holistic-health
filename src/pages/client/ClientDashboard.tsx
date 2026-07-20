@@ -7,6 +7,7 @@ import { format, addDays } from 'date-fns'
 import type { DailyLog, BPReading, BSReading } from '@/types'
 import { getBPZone, BP_ZONE_LABELS, BP_ZONE_COLORS, getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import LateSlipModal, { lateSlipDismissKey } from '@/components/ui/LateSlipModal'
+import OnboardingChecklist from '@/components/ui/OnboardingChecklist'
 import WeeklyPulseCard from '@/components/ui/WeeklyPulseCard'
 import { getTotalPoints, getLevelInfo } from '@/lib/points'
 import { STEPS_GOAL, WATER_GOAL_OZ } from '@/lib/goals'
@@ -151,6 +152,9 @@ export default function ClientDashboard() {
         </h1>
         <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
       </div>
+
+      {/* First-week onboarding (hides itself when complete or dismissed) */}
+      <OnboardingChecklist todayLog={todayLog} latestBP={latestBP} latestBS={latestBS} />
 
       {/* Level badge */}
       {totalPoints !== null && (() => {
@@ -367,7 +371,7 @@ export default function ClientDashboard() {
             { to: '/app/blood-pressure', icon: Heart, label: 'Log BP', color: '#e05c5c' },
             { to: '/app/meal-guard', icon: Shield, label: 'Nourish Log', color: 'var(--gold)' },
             { to: '/app/daily-log', icon: ClipboardList, label: 'Daily Log', color: 'var(--teal)' },
-            { to: '/app/protocol', icon: BookOpen, label: 'My Protocol', color: '#9b59b6' },
+            { to: '/app/my-protocol', icon: BookOpen, label: 'My Protocol', color: '#9b59b6' },
           ].map(({ to, icon: Icon, label, color }) => (
             <Link key={to} to={to} className={styles.miniLink}>
               <div className={styles.actionCard}>
