@@ -63,6 +63,34 @@ export default function SettingsPage() {
   const navigate = useNavigate()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteInput, setDeleteInput] = useState('')
+  const [exporting, setExporting] = useState(false)
+
+  // Data portability: everything the client logged, as one JSON file they keep.
+  const handleExportData = async () => {
+    setExporting(true)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const tables = ['daily_logs', 'blood_pressure_logs', 'blood_sugar_logs', 'weight_logs', 'habit_logs'] as const
+      const out: Record<string, unknown> = { exported_at: new Date().toISOString() }
+      for (const table of tables) {
+        const { data, error } = await supabase.from(table).select('*').eq('user_id', user.id)
+        out[table] = error ? `unavailable: ${error.message}` : (data ?? [])
+      }
+      const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `my-hhh-data-${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      toast.success('Your data file is downloading')
+    } catch {
+      toast.error('Export failed. Please try again.')
+    } finally {
+      setExporting(false)
+    }
+  }
   const [goals, setGoals] = useState<WellnessGoals>(profile?.wellness_goals ?? {})
   const [privacy, setPrivacy] = useState<PrivacySettings>(
     profile?.privacy_settings ?? { share_weight: true, share_steps: true, share_meals: true }
@@ -515,6 +543,19 @@ export default function SettingsPage() {
             </a>
           ))}
         </div>
+      </div>
+
+      {/* Download my data */}
+      <div className={styles.card}>
+        <h3 className={styles.cardTitle}>
+          <Download size={16} /> Download My Data
+        </h3>
+        <p className={styles.cardText}>
+          Export everything you have logged (daily logs, blood pressure, blood sugar, weight, habits) as a file you keep.
+        </p>
+        <button onClick={handleExportData} className={shared.btnSecondary} disabled={exporting}>
+          {exporting ? 'Preparing your file...' : 'Download my data'}
+        </button>
       </div>
 
       {/* Sign out */}

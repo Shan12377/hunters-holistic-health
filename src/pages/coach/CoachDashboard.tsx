@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Users, Activity, AlertTriangle, TrendingUp, TrendingDown, Download } from 'lucide-react'
+import { Users, Activity, AlertTriangle, TrendingUp, TrendingDown, Download, MessageCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format, subDays, startOfWeek, endOfWeek } from 'date-fns'
 import type { DailyLog } from '@/types'
@@ -75,6 +75,24 @@ export default function CoachDashboard() {
   const [programCohorts, setProgramCohorts] = useState<ProgramCohort[]>([])
   const [showCohortForm, setShowCohortForm] = useState(false)
   const [cohortForm, setCohortForm] = useState({ name: '', starts_on: '', ends_on: '' })
+  const [nudged, setNudged] = useState<Set<string>>(new Set())
+
+  // One-tap check-in: sends a warm message straight to the participant's inbox.
+  const sendNudge = async (clientId: string, firstName: string) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { error } = await supabase.from('messages').insert({
+      sender_id: user.id,
+      recipient_id: clientId,
+      content: `Hi ${firstName}, just checking in on you today. One small log counts, even water. If something is getting in the way, reply here and tell me.`,
+    })
+    if (error) {
+      toast.error('Nudge failed to send')
+    } else {
+      toast.success(`Check-in sent to ${firstName}`)
+      setNudged(prev => new Set(prev).add(clientId))
+    }
+  }
   const [cohortMemberIds, setCohortMemberIds] = useState<string[]>([])
   const [savingCohort, setSavingCohort] = useState(false)
   const [upcomingSessions, setUpcomingSessions] = useState<UpcomingSession[]>([])
@@ -483,6 +501,21 @@ export default function CoachDashboard() {
                         <div className={styles.metricEmpty}>No BP</div>
                       )}
                     </div>
+
+                    <button
+                      className={styles.nudgeBtn}
+                      aria-label={`Send a check-in message to ${client.first_name}`}
+                      title="Send a quick check-in"
+                      disabled={nudged.has(client.id)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        sendNudge(client.id, client.first_name)
+                      }}
+                    >
+                      <MessageCircle size={15} />
+                      {nudged.has(client.id) ? 'Sent' : 'Nudge'}
+                    </button>
 
                     <div className={styles.statusDot} style={{ background: client.streak > 0 ? '#4be08a' : '#e05c5c' }} />
                   </div>

@@ -1978,3 +1978,29 @@
   .protocolSessionGrid { grid-template-columns: 1fr 1fr; }
   .protocolLeverGrid { flex-direction: column; }
 }
+
+/* One-tap check-in nudge on the roster */
+.nudgeBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: 1px solid var(--gold, #c8a74b);
+  color: var(--gold, #c8a74b);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nudgeBtn:hover:not(:disabled) {
+  background: var(--gold, #c8a74b);
+  color: #0e1c1b;
+}
+
+.nudgeBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

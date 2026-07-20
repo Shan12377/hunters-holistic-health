@@ -220,7 +220,7 @@ export default function ManageClassroomPage() {
                   >
                     {expandedCourse === course.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </button>
-                  <button className={styles.evMgmtDelete} onClick={() => handleDeleteCourse(course.id)} title="Delete course">
+                  <button className={styles.evMgmtDelete} onClick={() => handleDeleteCourse(course.id)} title="Delete course" aria-label="Delete course">
                     <Trash2 size={15} />
                   </button>
                 </div>

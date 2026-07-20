@@ -133,6 +133,15 @@ export default function AppLayout() {
     () => new Set([activeGroup(location.pathname)])
   )
 
+  // Lightweight page-view tracking (table: page_views, migration 039).
+  // Fire-and-forget; a missing table or RLS denial must never affect the user.
+  useEffect(() => {
+    if (!user?.id) return
+    supabase.from('page_views')
+      .insert({ user_id: user.id, page: location.pathname })
+      .then(() => undefined)
+  }, [location.pathname, user?.id])
+
   // Keep the active group open when navigating
   useEffect(() => {
     const current = activeGroup(location.pathname)

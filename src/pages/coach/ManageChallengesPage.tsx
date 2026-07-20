@@ -189,7 +189,7 @@ export default function ManageChallengesPage() {
                     : <ToggleLeft size={20} color="var(--text-muted)" />
                   }
                 </button>
-                <button className={styles.evMgmtDelete} onClick={() => handleDelete(ch.id)} title="Delete">
+                <button className={styles.evMgmtDelete} onClick={() => handleDelete(ch.id)} title="Delete" aria-label="Delete challenge">
                   <Trash2 size={15} />
                 </button>
               </div>
