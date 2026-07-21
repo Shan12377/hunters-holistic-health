@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import HormoneCyclePreview from '../components/ui/HormoneCyclePreview'
+import MensHormonePreview from '../components/ui/MensHormonePreview'
 import HeroParticles from '../components/HeroParticles'
 import { Shield, Award, Users, BookOpen, Pill, Activity, Heart, ChevronRight, ExternalLink, ChevronDown, CheckCircle, Dumbbell, Zap } from 'lucide-react'
 import styles from './LandingPage.module.css'
 import shared from '../styles/shared.module.css'
 
 // --- Types ---
-type ToolTab = 'bp' | 'glucose' | 'symptom' | 'waist' | 'hormone'
+type ToolTab = 'bp' | 'glucose' | 'symptom' | 'waist' | 'hormone' | 'mens-hormone'
 type BillingCycle = 'monthly' | 'annual'
 
 interface BPResult {
@@ -610,7 +611,7 @@ export default function LandingPage() {
       {/* Free Tools */}
       <section className={styles.section} id="free-tools">
         <div className={styles.sectionKicker}>No Account Needed</div>
-        <h2 className={styles.sectionTitle}>Five Free Education Tools</h2>
+        <h2 className={styles.sectionTitle}>Free Education Tools</h2>
         <p className={styles.sectionSubtitle}>These tools give you educational context about your numbers. They are not a clinical assessment and do not replace your healthcare provider.</p>
 
         <div className={styles.toolTabs}>
@@ -619,7 +620,8 @@ export default function LandingPage() {
             { id: 'glucose', label: 'Blood Sugar Zone' },
             { id: 'symptom', label: 'Metabolic Pattern Check' },
             { id: 'waist',   label: 'Waist-to-Height Check' },
-            { id: 'hormone', label: 'Hormone Cycle Snapshot' },
+            { id: 'hormone',       label: 'Hormone Cycle Snapshot' },
+            { id: 'mens-hormone', label: "Men's Hormone Rhythm" },
           ] as { id: ToolTab; label: string }[]).map(t => (
             <button
               key={t.id}
@@ -967,6 +969,7 @@ export default function LandingPage() {
 
         {/* Hormone Cycle Snapshot */}
         {toolTab === 'hormone' && <HormoneCyclePreview />}
+        {toolTab === 'mens-hormone' && <MensHormonePreview />}
       </section>
 
       {/* More free tools bridge */}

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Men's Daily Hormone Rhythm | Hunter's Holistic Health</title>
+<meta name="description" content="A free educational men's hormone dashboard. See your natural 24-hour testosterone and cortisol rhythm, what is happening in your body right now, and how to train, eat, and rest with it.">
+<style>
+/* ─── Design Tokens: Dark Teal Dashboard (matches HHH website toolkit) ─── */
+:root {
+  --bg:     #0C1B1B;
+  --panel:  #122525;
+  --panel2: #1A3030;
+  --panel3: #1F3838;
+  --border: rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.15);
+  --teal:   #0F8F8F;
+  --teal-d: #0F5F5F;
+  --teal-l: rgba(15,143,143,.18);
+  --gold:   #C8A84B;
+  --gold-l: rgba(200,168,75,.15);
+  --red:    #E05555;
+  --red-l:  rgba(224,85,85,.15);
+  --text:   #FFFFFF;
+  --text2:  rgba(255,255,255,.68);
+  --text3:  rgba(255,255,255,.42);
+  --t-line:    #3DD4CC;
+  --cort-line: #C8A84B;
+  --seg-morning:  #1D5FA0;
+  --seg-mid:      #0E6060;
+  --seg-after:    #2A6E45;
+  --seg-eve:      #8B5F0A;
+  --seg-night:    #3E2E8E;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:15px;line-height:1.65;
+  color:var(--text);background:var(--bg);
+  min-height:100vh;
+}
+
+/* ─── HEADER ─── */
+.hdr{
+  background:linear-gradient(135deg,#0A3030 0%,#061818 100%);
+  border-bottom:1px solid var(--border2);
+  padding:24px 28px 22px;
+}
+.hdr-eye{
+  font-size:11px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+}
+.hdr h1{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(20px,4vw,30px);font-weight:normal;
+  line-height:1.22;margin-bottom:8px;
+}
+.hdr p{font-size:13.5px;color:var(--text2);max-width:560px;}
+.hdr-badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.hdr-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.07);border:1px solid var(--border2);
+  border-radius:20px;padding:4px 12px;font-size:11.5px;color:var(--text2);
+}
+
+/* ─── CONTROLS ─── */
+.controls-bar{
+  background:var(--panel);border-bottom:1px solid var(--border);
+  padding:16px 24px;
+}
+.controls{
+  display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;
+  max-width:1300px;margin:0 auto;
+}
+.ctrl label{
+  display:block;font-size:10.5px;font-weight:700;
+  letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:6px;
+}
+select{
+  background:var(--panel2);color:var(--text);
+  border:1.5px solid var(--border2);border-radius:8px;
+  padding:9px 13px;font-size:13.5px;font-weight:600;
+  outline:none;min-width:240px;cursor:pointer;
+  transition:border-color .15s;font-family:inherit;
+}
+select:focus{border-color:var(--teal);}
+.time-box{
+  background:var(--panel2);border:1.5px solid var(--border2);
+  border-radius:8px;padding:9px 13px;min-width:270px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.slider{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:5px;border-radius:5px;
+  background:linear-gradient(90deg,
+    var(--seg-night),var(--seg-morning),var(--seg-mid),
+    var(--seg-after),var(--seg-eve),var(--seg-night));
+  outline:none;cursor:pointer;
+}
+.slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--teal);cursor:pointer;
+  box-shadow:0 0 0 3px rgba(61,212,204,.25);
+}
+.slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--teal);
+  cursor:pointer;border:none;
+}
+.tick-row{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text3);}
+.now-chip{
+  background:linear-gradient(135deg,var(--teal-d),#0A4545);
+  color:#fff;font-weight:800;font-size:15px;
+  padding:9px 18px;border-radius:8px;
+  white-space:nowrap;text-align:center;border:1px solid var(--teal-d);
+}
+.now-chip small{
+  display:block;font-size:10.5px;font-weight:600;
+  opacity:.8;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;
+}
+.theme-btn{
+  background:var(--panel2);color:var(--text2);
+  border:1.5px solid var(--border2);border-radius:8px;
+  padding:9px 13px;font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+}
+
+/* ─── MAIN LAYOUT ─── */
+.main{max-width:1300px;margin:0 auto;padding:22px 20px 52px;}
+.grid{
+  display:grid;
+  grid-template-columns:minmax(280px,1fr) minmax(380px,1.7fr);
+  gap:16px;align-items:start;
+}
+.col{display:flex;flex-direction:column;gap:16px;}
+
+/* ─── HERO CARD (matches the colored phase card in the screenshot) ─── */
+.t-hero{
+  background:linear-gradient(135deg,#0A5555 0%,#062E2E 100%);
+  border:1px solid rgba(61,212,204,.22);
+  border-radius:14px;padding:22px;
+}
+.t-hero-eye{
+  font-size:10.5px;font-weight:700;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--teal);margin-bottom:10px;
+}
+.t-hero h2{
+  font-size:28px;font-weight:900;color:#fff;
+  line-height:1.1;margin-bottom:6px;
+}
+.t-hero-sub{font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:18px;}
+.t-stats{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px;}
+.t-stat-val{font-size:28px;font-weight:900;color:#fff;line-height:1;}
+.t-stat-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:4px;}
+.t-bar-wrap{margin-bottom:14px;}
+.t-bar-lbl{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px;}
+.t-bar{height:8px;border-radius:8px;background:rgba(255,255,255,.12);overflow:hidden;}
+.t-bar span{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--gold),var(--teal));transition:width .4s ease;}
+.t-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.6;}
+
+/* ─── CARDS ─── */
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:18px 20px;
+}
+.card-eye{
+  font-size:10.5px;font-weight:700;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--text3);margin-bottom:12px;
+}
+
+/* ─── MINI TILES ─── */
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mini-card{
+  background:var(--panel2);border:1px solid var(--border);
+  border-radius:10px;padding:14px;
+}
+.mini-key{font-size:11px;font-weight:700;color:var(--text3);display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+.mini-ic{font-size:15px;}
+.mini-t{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.mini-s{font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* ─── CONDITION NOTE ─── */
+.cond-note{
+  border-left:3px solid var(--teal);
+  background:var(--teal-l);border-radius:0 8px 8px 0;
+  padding:12px 14px;font-size:13px;color:var(--text);line-height:1.65;
+}
+.cond-note b{color:#3DD4CC;}
+
+/* ─── LABS ─── */
+.labs-list{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:2px;}
+.labs-list li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);line-height:1.45;}
+.labs-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;}
+.labs-foot{font-size:11.5px;color:var(--text3);margin-top:10px;font-style:italic;line-height:1.5;}
+
+/* ─── CHART ─── */
+.chart-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px 6px;flex-wrap:wrap;gap:10px;
+}
+.chart-ttl{font-size:14.5px;font-weight:700;color:var(--text);}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--text2);}
+.legend b{display:inline-flex;align-items:center;gap:5px;font-weight:700;color:var(--text);}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.chartbox{padding:0 10px 6px;overflow-x:auto;}
+svg{width:100%;height:auto;display:block;}
+
+/* ─── PHASE TIMELINE ─── */
+.phase-wrap{padding:4px 20px 18px;}
+.phase-lbl{
+  font-size:10.5px;font-weight:700;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--text3);margin-bottom:9px;
+}
+.segs{display:flex;border-radius:7px;overflow:hidden;gap:2px;height:40px;}
+.seg{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.6);
+  opacity:.35;transition:opacity .2s;text-align:center;
+  padding:0 3px;border-radius:3px;
+}
+.seg.on{opacity:1;color:#fff;}
+.seg-ticks{display:flex;margin-top:7px;font-size:10.5px;color:var(--text3);}
+.seg-ticks span{flex:1;text-align:center;}
+
+/* ─── HAPPENING NOW ─── */
+.hap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;}
+.hap{background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:13px;}
+.hap-ic{font-size:17px;margin-bottom:5px;}
+.hap-tx{font-size:12.5px;color:var(--text2);line-height:1.55;}
+
+/* ─── LIFESTYLE LEVERS ─── */
+.levers{display:flex;flex-direction:column;gap:9px;margin-top:4px;}
+.lever{
+  background:var(--panel2);border:1px solid var(--border);
+  border-radius:9px;padding:13px 14px;
+  display:flex;gap:11px;align-items:flex-start;
+}
+.lever-ic{font-size:19px;flex-shrink:0;}
+.lever-t{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.lever-s{font-size:12px;color:var(--text2);line-height:1.55;}
+
+/* ─── SEESAW STRIP ─── */
+.seesaw{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:24px;
+  position:relative;overflow:hidden;
+}
+.seesaw::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(15,143,143,.08),transparent 70%);
+}
+.seesaw-eye{
+  font-size:10.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+}
+.seesaw h2{
+  font-family:Georgia,serif;font-size:18px;font-weight:normal;
+  color:var(--text);margin-bottom:18px;line-height:1.4;
+}
+.ss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.ss-item{
+  background:var(--panel2);border:1px solid var(--border);
+  border-radius:9px;padding:13px 14px;
+}
+.ss-ic{font-size:18px;margin-bottom:6px;}
+.ss-h{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.ss-b{font-size:12px;color:var(--text2);line-height:1.55;}
+
+/* ─── WARN ─── */
+.warn-strip{
+  margin-top:14px;
+  background:var(--red-l);border:1px solid rgba(224,85,85,.25);
+  border-radius:11px;padding:13px 16px;
+  display:flex;gap:11px;align-items:flex-start;
+}
+.warn-ic{font-size:18px;flex-shrink:0;margin-top:1px;}
+.warn-tx{font-size:12.5px;color:var(--text2);line-height:1.6;}
+.warn-tx b{color:var(--red);}
+
+/* ─── CTA ─── */
+.cta{
+  margin-top:14px;
+  background:var(--gold-l);border:1px solid rgba(200,168,75,.2);
+  border-radius:12px;padding:18px 22px;
+  display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;
+}
+.cta-ic{font-size:26px;flex-shrink:0;}
+.cta-body{font-size:13px;color:var(--text2);line-height:1.65;}
+.cta-body b{color:var(--gold);}
+.cta-body a{color:var(--teal);text-decoration:none;font-weight:700;}
+
+/* ─── BELOW-FOLD ROW ─── */
+.below-grid{
+  display:grid;
+  grid-template-columns:minmax(240px,1fr) minmax(320px,1.5fr);
+  gap:16px;margin-top:18px;align-items:start;
+}
+
+/* ─── FOOTER ─── */
+.foot{
+  margin-top:22px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:11.5px;color:var(--text3);line-height:1.75;text-align:center;
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:960px){
+  .grid{grid-template-columns:1fr;}
+  .below-grid{grid-template-columns:1fr;}
+  .mini-grid{grid-template-columns:1fr 1fr;}
+  .hap-grid{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .mini-grid{grid-template-columns:1fr;}
+  .controls{flex-direction:column;align-items:stretch;}
+  .controls-bar{padding:14px;}
+  .hdr{padding:20px 16px 18px;}
+}
+@media print{
+  .controls-bar,.seesaw,.cta,.warn-strip{display:none;}
+  .card{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-eye">Hunter's Holistic Health &middot; Dr. Shallanda Hunter, PharmD, MBA, CFNMP</div>
+  <h1>Men's Daily Hormone Rhythm</h1>
+  <p>Your natural 24-hour testosterone and cortisol pattern, what is happening right now, how to train and eat with it, and what tests to request at your next visit.</p>
+  <div class="hdr-badges">
+    <span class="hdr-badge">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>
+      Nothing stored &middot; No labs needed
+    </span>
+    <span class="hdr-badge">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Educational only &middot; Not medical advice
+    </span>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <div class="controls">
+    <div class="ctrl">
+      <label>Your focus area</label>
+      <select id="condSel" onchange="render()"></select>
+    </div>
+    <div class="ctrl">
+      <label>Time of day</label>
+      <div class="time-box">
+        <input type="range" class="slider" id="timeSlider" min="0" max="23" step="1" value="7" oninput="render()">
+        <div class="tick-row"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span></div>
+      </div>
+    </div>
+    <div class="now-chip" id="nowBadge">7:00 AM<small id="nowSeg">Morning Peak</small></div>
+    <button class="theme-btn" onclick="(function(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light';})()">Toggle Theme</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="col">
+
+      <!-- Hero card -->
+      <div class="t-hero">
+        <div class="t-hero-eye">Testosterone Right Now</div>
+        <h2 id="heroH">Daily Peak</h2>
+        <div class="t-hero-sub" id="heroSub"></div>
+        <div class="t-stats">
+          <div>
+            <div class="t-stat-val" id="heroStat1"></div>
+            <div class="t-stat-lbl">Relative Level</div>
+          </div>
+          <div>
+            <div class="t-stat-val" id="heroStat2"></div>
+            <div class="t-stat-lbl">Phase</div>
+          </div>
+        </div>
+        <div class="t-bar-wrap">
+          <div class="t-bar-lbl"><span>T Level</span><span id="tPct"></span></div>
+          <div class="t-bar"><span id="tFill" style="width:100%"></span></div>
+        </div>
+        <div class="t-desc" id="tDesc"></div>
+      </div>
+
+      <!-- Mind / Train / Eat -->
+      <div class="card">
+        <div class="card-eye">Mind, Train, and Fuel</div>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <div class="mini-key"><span class="mini-ic">🧠</span>Mind Mode</div>
+            <div class="mini-t" id="mindT"></div>
+            <div class="mini-s" id="mindS"></div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-key"><span class="mini-ic">🏋</span>Train Now</div>
+            <div class="mini-t" id="trainT"></div>
+            <div class="mini-s" id="trainS"></div>
+          </div>
+        </div>
+        <div class="mini-card" style="margin-top:10px;">
+          <div class="mini-key"><span class="mini-ic">🍽</span>Fuel Right Now</div>
+          <div class="mini-t" id="eatT"></div>
+          <div class="mini-s" id="eatS"></div>
+        </div>
+      </div>
+
+      <!-- Condition note -->
+      <div class="card">
+        <div class="card-eye" id="condEye">What to know</div>
+        <div class="cond-note" id="condNote"></div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="col">
+
+      <!-- Chart -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div class="chart-head">
+          <div class="chart-ttl">24-Hour Hormone Curve</div>
+          <div class="legend">
+            <b><span class="dot" style="background:var(--t-line)"></span>Testosterone</b>
+            <b><span class="dot" style="background:var(--cort-line)"></span>Cortisol</b>
+          </div>
+        </div>
+        <div class="chartbox" id="chartBox"></div>
+        <div class="phase-wrap">
+          <div class="phase-lbl">Daily Phase Timeline</div>
+          <div class="segs" id="segs"></div>
+          <div class="seg-ticks"><span>5a</span><span>9a</span><span>1p</span><span>5p</span><span>10p</span></div>
+        </div>
+      </div>
+
+      <!-- What's Happening -->
+      <div class="card">
+        <div class="card-eye">What's Happening in Your Body Right Now</div>
+        <div class="hap-grid" id="hapGrid"></div>
+      </div>
+
+      <!-- Lifestyle Levers -->
+      <div class="card">
+        <div class="card-eye">Top Moves for Your Focus Area</div>
+        <div class="levers" id="leversGrid"></div>
+      </div>
+
+    </div><!-- /right -->
+  </div><!-- /grid -->
+
+  <!-- BELOW-FOLD: LABS + SEESAW -->
+  <div class="below-grid">
+
+    <!-- Labs -->
+    <div class="card">
+      <div class="card-eye">Lab Tests to Request at Your Next Visit</div>
+      <ul class="labs-list" id="labsList"></ul>
+      <p class="labs-foot">Request hormone draws before 10 AM. Testosterone fluctuates significantly across the day and a single afternoon draw routinely reads lower than the true morning value. You have a legal right to a copy of your own results.</p>
+    </div>
+
+    <!-- Seesaw -->
+    <div class="seesaw">
+      <div class="seesaw-eye">Cortisol-Testosterone Seesaw: Educational Framework</div>
+      <h2>Why these two hormones compete, and how to tip the balance in your favor</h2>
+      <div class="ss-grid">
+        <div class="ss-item">
+          <div class="ss-ic">🔬</div>
+          <div class="ss-h">Same starting material</div>
+          <div class="ss-b">Cortisol and testosterone both originate from cholesterol, processed through the same pregnenolone pathway. Under prolonged adrenal demand, the body redirects this shared pool away from testosterone synthesis.</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-ic">📉</div>
+          <div class="ss-h">Chronic stress suppresses T</div>
+          <div class="ss-b">Cortisol suppresses GnRH at the hypothalamus, which reduces LH pulses from the pituitary, which reduces testosterone output from Leydig cells. Acute stress briefly raises T. Chronic stress reliably lowers it.</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-ic">☀️</div>
+          <div class="ss-h">The morning cortisol surge</div>
+          <div class="ss-b">The cortisol awakening response (CAR) is a 50 to 160% surge in the first 20 to 30 minutes after waking. It is healthy and necessary. A blunted CAR is a hallmark of HPA exhaustion (burnout).</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-ic">🌙</div>
+          <div class="ss-h">Testosterone is made at night</div>
+          <div class="ss-b">The majority of a man's testosterone is synthesized during slow-wave and REM sleep, driven by pulsatile LH release from the pituitary. One week of 5-hour nights reduces testosterone by 10 to 15% in healthy young men (Leproult and Van Cauter, JAMA 2011).</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-ic">⚡</div>
+          <div class="ss-h">The burnout signature</div>
+          <div class="ss-b">In clinical burnout, cortisol does not follow its normal arc. Instead of peaking after waking and declining through the day, it runs flat: elevated when it should be low, low when it should be high. A 4-point salivary panel reveals this; a single morning blood draw does not.</div>
+        </div>
+        <div class="ss-item">
+          <div class="ss-ic">🎯</div>
+          <div class="ss-h">Flip the lever</div>
+          <div class="ss-b">Sleep is the single intervention that simultaneously lowers cortisol and raises testosterone. Resistance training, adequate protein, and stress reduction complete the picture. No supplement stack outperforms those four foundations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARNING -->
+  <div class="warn-strip">
+    <div class="warn-ic">⚠️</div>
+    <div class="warn-tx">
+      <b>See your provider without delay if you experience:</b> testicular pain or swelling, blood in semen or urine, difficulty urinating, rapid unexplained weight loss, chest pain with exertion, or an erection lasting longer than 4 hours. These symptoms require clinical evaluation, not a dashboard. This tool is for education only.
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-ic">🔬</div>
+    <div class="cta-body">
+      <b>Want to understand your actual numbers?</b> This dashboard shows the pattern every man's hormonal system follows. It is not measuring yours. If your energy, drive, recovery, or body composition feels off, that is worth a conversation with your provider. The Hunter's Holistic Health platform gives you the lab language, functional ranges, and root-cause education to walk into that appointment knowing exactly what to ask for. <a href="https://shop.huntersholistichealth.com" target="_blank" rel="noopener">shop.huntersholistichealth.com</a> &middot; or DM <b>ROOTS</b>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="foot">
+    Educational only. Not medical advice, diagnosis, or clinical treatment. Individual hormone rhythms vary with age, sleep quality, stress, body composition, medications, and health status.<br>
+    These statements have not been evaluated by the Food and Drug Administration. These products are not intended to diagnose, treat, cure, or prevent any disease. Always consult your licensed healthcare provider before beginning any supplement or making changes to your health regimen.<br><br>
+    Hunter's Holistic Health LLC &middot; Dr. Shallanda Hunter, PharmD, MBA, CFNMP &middot; Licensed Pharmacist and Certified Functional Nutritional Medicine Practitioner
+  </div>
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+//  24-HOUR HORMONE DATA
+//  Sources: Bremner et al 1983 J Clin Endocrinol Metab;
+//  Clow et al 2004 Trends Endocrinol Metab;
+//  Leproult and Van Cauter 2011 JAMA
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Normalized 0 to 105. Index = hour 0 to 24.
+const T_BASE = [
+  55, 58, 62, 68, 76, 85, 93,100,100, 97, 93, 88,
+  83, 78, 74, 70, 67, 64, 61, 58, 56, 55, 55, 55, 55
+];
+const CORT = [
+   6,  5,  5,  6,  9, 20, 48, 88,100, 84, 68, 56,
+  46, 38, 32, 27, 23, 19, 16, 13, 10,  8,  7,  6,  6
+];
+const T_MEAN = 72;
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  DAILY SEGMENTS
+// ─────────────────────────────────────────────────────────────────────────────
+const SEGS = {
+  morning: {
+    name:"Morning Peak", color:"var(--seg-morning)",
+    energy:{lvl:"Daily Peak",pct:100,sub:"Peak Drive"},
+    mind:{t:"Decisive and driven",s:"Best window for high-stakes decisions, negotiation, and focused initiative. The testosterone-to-cortisol ratio is at its most favorable for confident action."},
+    train:{t:"Heavy compound lifts",s:"Peak testosterone plus the cortisol awakening response creates the strongest hormonal environment for intensity and strength. Squat, deadlift, press."},
+    eat:{t:"Protein-forward, low glycemic",s:"30 to 40 g of protein stabilizes blood sugar and supports the peak. Hold off on large refined carbohydrates; they spike then crash you before noon."},
+    hap:[
+      {ic:"⚡",tx:"The cortisol awakening response (CAR) surges 50 to 160% within 20 to 30 minutes of waking. This is healthy. It mobilizes glucose and anchors the day's energy rhythm."},
+      {ic:"🔝",tx:"Testosterone peaks in the early morning hours, driven by overnight pulsatile LH release from the pituitary that stimulated Leydig cell production during sleep."}
+    ]
+  },
+  midday: {
+    name:"Midday Focus", color:"var(--seg-mid)",
+    energy:{lvl:"High and Steady",pct:83,sub:"Clear Focus"},
+    mind:{t:"Deep work, analytical",s:"The cortisol decline reduces noise while testosterone remains elevated. Often the best window for sustained analytical or complex creative tasks."},
+    train:{t:"Skill and moderate training",s:"Strength peak comes late afternoon. Use this window for technique, skill acquisition, or moderate intensity cardio."},
+    eat:{t:"Protein, fiber, and fat: balanced",s:"Keep refined carbohydrates modest to avoid the afternoon crash. A high-glycemic lunch noticeably blunts afternoon alertness and productivity."},
+    hap:[
+      {ic:"📉",tx:"Cortisol is declining steadily from its morning peak. A flat slope in this window (cortisol not dropping) is a sign of HPA dysregulation."},
+      {ic:"📊",tx:"Testosterone is past its peak but still in its upper daily range. Cognitive drive and working memory performance remain strong for most men."}
+    ]
+  },
+  afternoon: {
+    name:"Afternoon Window", color:"var(--seg-after)",
+    energy:{lvl:"Physical Peak",pct:72,sub:"Performance Window"},
+    mind:{t:"Systematic and structured",s:"Save high-stakes creative decisions for the morning peak. The afternoon is well-suited for execution, review, calls, and systematic processing."},
+    train:{t:"Strongest training window",s:"Late afternoon is consistently the strongest physical performance window in research (Drust et al 2005). Body temperature peak drives power output, reaction time, and muscle efficiency."},
+    eat:{t:"Light protein snack, hydrate",s:"A 20 to 30 g protein snack stabilizes blood sugar. Stop caffeine by 2 PM. Its 6-hour half-life directly cuts into the slow-wave sleep that produces tomorrow's testosterone."},
+    hap:[
+      {ic:"🌡️",tx:"Core body temperature reaches its daily maximum around 4 to 6 PM, coinciding with peak neuromuscular efficiency, grip strength, reaction time, and VO2 performance."},
+      {ic:"😴",tx:"The post-lunch dip (1 to 3 PM) is a genuine circadian trough, driven by adenosine accumulation and a minor core temperature dip, not just the meal."}
+    ]
+  },
+  evening: {
+    name:"Evening Wind-Down", color:"var(--seg-eve)",
+    energy:{lvl:"Winding Down",pct:46,sub:"Recovery Mode"},
+    mind:{t:"Reflective and social",s:"Lower drive makes this time better for connection, low-stakes thinking, and reflection. Difficult decisions pushed to evening tend to go worse."},
+    train:{t:"Light movement only",s:"Intense training after 8 to 9 PM spikes cortisol and epinephrine, delaying sleep onset and reducing slow-wave sleep. That is the exact window testosterone is produced in."},
+    eat:{t:"Finish eating 2 to 3 hours before bed",s:"Alcohol suppresses overnight testosterone by impairing Leydig cell function and disrupting REM sleep. Even 2 drinks taken in the evening measurably reduces morning testosterone."},
+    hap:[
+      {ic:"🌙",tx:"Cortisol should be near its daily floor by 8 to 10 PM, allowing melatonin to begin rising. Screens, bright light, and alcohol all delay this transition."},
+      {ic:"🍺",tx:"Alcohol in the evening suppresses testosterone production by impairing Leydig cell function and reducing REM sleep, the primary testosterone-manufacturing sleep stage."}
+    ]
+  },
+  night: {
+    name:"Overnight Rebuild", color:"var(--seg-night)",
+    energy:{lvl:"Rebuild Mode",pct:31,sub:"Tomorrow's T"},
+    mind:{t:"Offline: cognitive repair",s:"Memory consolidation, emotional processing, and cellular repair all depend on this window. Protecting it is the most productive health decision of the day."},
+    train:{t:"Sleep is the workout",s:"Growth hormone (released primarily in the first 2 hours of deep sleep) and testosterone together drive the muscle repair and adaptation from every training session you completed today."},
+    eat:{t:"Nothing: your fasting window",s:"Late heavy meals elevate insulin and disrupt sleep architecture. Magnesium glycinate (200 to 400 mg) supports GABA receptor activity involved in deep sleep quality without dependence risk."},
+    hap:[
+      {ic:"😴",tx:"The majority of a man's testosterone is produced during slow-wave and REM sleep via pulsatile LH release from the pituitary signaling the Leydig cells in the testes."},
+      {ic:"💪",tx:"One week of sleeping 5 to 6 hours instead of 7 to 8 reduces testosterone by approximately 10 to 15% in healthy young men (Leproult and Van Cauter, JAMA 2011)."}
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  CONDITIONS: 8 focus areas, all facts verified
+// ─────────────────────────────────────────────────────────────────────────────
+const COND = {
+  healthy:{
+    name:"General / Healthy Rhythm",
+    scale:1.0, amp:1.0,
+    headline:"Your natural hormone blueprint",
+    note:"This is the healthy male 24-hour testosterone and cortisol pattern. Testosterone peaks in the first 2 to 3 hours after waking, then declines steadily through the day. Cortisol mirrors it: rising sharply with waking (the cortisol awakening response), then declining toward a nighttime floor. The single highest-leverage intervention you control: <b>sleep quality and duration.</b> Strength training, nutrition, and stress management build on top of that foundation.",
+    labs:["Total testosterone (early AM, before 10 AM)","Free testosterone and SHBG","LH and FSH (assesses pituitary-testicular axis)","Estradiol, sensitive assay (LC-MS/MS preferred)","PSA baseline (age 40+)","Comprehensive metabolic panel","Vitamin D 25-OH, zinc, magnesium (RBC)","Thyroid panel: TSH, Free T3, Free T4"],
+    levers:[
+      {ic:"🌙",t:"Sleep 7 to 9 hours: the non-negotiable foundation",s:"Most testosterone is synthesized during slow-wave and REM sleep. Consistent short sleep is the fastest way to suppress levels without a disease or medication."},
+      {ic:"🏋",t:"Compound lifts 3 to 4 times per week",s:"Squat, deadlift, and press produce the strongest acute testosterone and growth hormone response of any exercise type. Consistency outweighs intensity."},
+      {ic:"⚖️",t:"Manage waist circumference",s:"Visceral fat carries high aromatase activity, converting testosterone to estradiol. Losing excess visceral fat raises free testosterone without any other intervention required."}
+    ],
+    tips:{}
+  },
+  lowt:{
+    name:"Low Testosterone / Low T",
+    scale:0.57, amp:0.59,
+    headline:"Low testosterone (hypogonadism)",
+    note:"With low T, the whole daily curve shifts down and the <b>morning peak is blunted.</b> That flat, unmotivated feeling on waking, absent morning erections, low drive, mental fog, and reduced recovery, is the lived experience of a suppressed morning peak. <b>Proper diagnosis requires two separate early-morning draws on different days.</b> A single afternoon draw routinely produces a false low. Total testosterone below 300 ng/dL on two morning draws with symptoms is the standard clinical threshold for evaluation. Sleep deprivation, excess visceral fat, and chronic stress are the most common modifiable causes before any medication discussion.",
+    labs:["Total testosterone: 2 separate morning draws before 10 AM","Free testosterone and SHBG (calculated free T is less accurate)","LH and FSH: essential for distinguishing primary vs secondary hypogonadism","Estradiol, sensitive assay","Prolactin (elevated level can indicate pituitary adenoma)","CBC, comprehensive metabolic panel, lipid panel","PSA if age 40+","Vitamin D 25-OH"],
+    levers:[
+      {ic:"🌙",t:"Protect deep sleep above everything",s:"7 to 9 hours of unbroken sleep is the most evidence-supported natural intervention for testosterone. Five hours a night for one week drops T by 10 to 15%."},
+      {ic:"🔆",t:"Bring vitamin D to 40 to 60 ng/mL",s:"Vitamin D receptors (VDR) are present in Leydig cells. Deficiency is directly and independently associated with lower total testosterone in multiple studies."},
+      {ic:"🚫",t:"Reduce alcohol to fewer than 2 drinks per week",s:"Alcohol acutely suppresses testosterone production for up to 24 hours per episode and disrupts the slow-wave sleep in which testosterone is synthesized overnight."}
+    ],
+    tips:{morning:"Notice the blunted morning peak in the curve. That missing early-day drive and edge is the most common lived symptom of low T.",night:"This is where testosterone is manufactured. Protecting this window is the primary intervention. Everything else is secondary."}
+  },
+  ed:{
+    name:"ED / Sexual Function",
+    scale:0.73, amp:0.76,
+    headline:"Erectile dysfunction and sexual function",
+    note:"A healthy erection requires four systems working simultaneously: adequate testosterone (typically above 300 ng/dL), intact vascular function (endothelial nitric oxide production), healthy neurological signaling, and an appropriate psychological state. Low testosterone accounts for approximately <b>15 to 20% of ED cases.</b> Vascular and metabolic factors are more common root causes. <b>ED in men under 50 is a cardiovascular warning sign.</b> Research shows it precedes significant coronary artery disease by an average of 3 to 5 years in this age group (the Montorsi principle). Nocturnal and morning erections require intact T, vascular health, and nerve function. Consistently absent morning erections are clinically significant.",
+    labs:["Total testosterone and free testosterone (early AM)","Estradiol, sensitive assay","Fasting glucose and HbA1c (vascular and metabolic risk)","Lipid panel: LDL, HDL, triglycerides","Blood pressure: multiple home readings","Thyroid: TSH, Free T3","PSA if age 40+","Consider penile Doppler ultrasound if vascular ED is suspected"],
+    levers:[
+      {ic:"🫀",t:"Cardiovascular workup first",s:"ED under 50 is a vascular event until proven otherwise. Fasting glucose, lipid panel, and blood pressure evaluation belong at the top of this priority list, ahead of testosterone optimization."},
+      {ic:"🏃",t:"Aerobic exercise 150+ minutes per week",s:"Exercise directly improves endothelial function, the blood vessel lining that produces nitric oxide. Endothelial health drives erectile quality independently of testosterone levels."},
+      {ic:"🚭",t:"No tobacco. Alcohol fewer than 1 per night.",s:"Tobacco is among the highest-risk factors for vascular ED, directly damaging endothelium and reducing nitric oxide production. Alcohol blunts overnight testosterone and damages vascular tissue chronically."}
+    ],
+    tips:{morning:"Morning erections (NPT) are strongest during the testosterone surge and REM sleep. Consistently absent morning erections are clinically significant and worth raising with your provider.",night:"NPT occurs primarily during REM sleep. Protecting sleep architecture directly protects this function."}
+  },
+  burnout:{
+    name:"High Cortisol / Burnout",
+    scale:0.64, amp:0.66,
+    headline:"High cortisol and HPA burnout",
+    note:"Cortisol and testosterone compete for the same precursor (pregnenolone) and are functionally antagonistic. Chronic cortisol elevation suppresses testosterone through two mechanisms: <b>reduced GnRH signaling</b> at the hypothalamus and <b>direct pregnenolone competition.</b> The result is what many men describe as burnout: low drive, emotional flatness, poor recovery, disrupted sleep, and cognitive fog, often with testosterone levels that test as borderline rather than frankly low. In burnout, the cortisol pattern itself becomes abnormal. Instead of peaking after waking and declining through the day, cortisol stays <b>flat:</b> elevated when it should be low, low when it should be high. A <b>4-point salivary cortisol panel</b> (morning, noon, afternoon, night) captures this pattern; a single morning serum cortisol does not.",
+    labs:["Total testosterone and free testosterone (early AM)","4-point salivary cortisol panel: AM, noon, PM, night","DHEA-S (marker of adrenal reserve; declines under chronic stress)","Thyroid panel: TSH, Free T3, Free T4 (cortisol impairs T4-to-T3 conversion)","Magnesium RBC (depleted by chronic adrenal demand)","hs-CRP (inflammation marker; elevated in HPA dysregulation)","Vitamin D"],
+    levers:[
+      {ic:"⬇️",t:"Address the cortisol burden before anything else",s:"No testosterone optimization protocol works well inside a chronically stressed system. Identify the primary cortisol driver: sleep deprivation, work demand, perceived uncontrollability, before adding supplements or more testing."},
+      {ic:"😴",t:"Add 45 to 60 more minutes of sleep",s:"Sleep simultaneously lowers cortisol and restores the pulsatile LH signaling that manufactures testosterone. Even a modest increase in sleep duration measurably shifts the cortisol-to-T ratio."},
+      {ic:"🌿",t:"Ashwagandha 300 to 600 mg/day (discuss with provider)",s:"Multiple RCTs show standardized ashwagandha extract significantly reduces morning salivary cortisol and self-reported stress at 8 to 12 weeks (Chandrasekhar et al 2012). Discuss with your provider if on thyroid medications."}
+    ],
+    tips:{morning:"Chronic cortisol elevation flattens the morning testosterone peak. The 'morning never arrives' feeling is the hallmark HPA burnout symptom.",evening:"Cortisol that does not fall in the evening (flat diurnal slope) is a key HPA dysregulation marker. The gold standard is a 4-point salivary panel, not a single morning blood draw."}
+  },
+  metabolic:{
+    name:"Metabolic Syndrome / Belly Fat",
+    scale:0.67, amp:0.69,
+    headline:"Metabolic syndrome and low testosterone",
+    note:"Visceral fat, stored around the organs inside the abdomen, contains high concentrations of aromatase, the enzyme that converts testosterone to estradiol. More visceral fat drives more aromatization, which lowers free testosterone, which promotes further fat storage. This loop is bidirectional. <b>Insulin resistance is intertwined:</b> low T worsens insulin sensitivity, and insulin resistance suppresses testosterone through multiple pathways. A waist circumference above <b>40 inches (102 cm)</b> is a clinical metabolic syndrome criterion. The most powerful intervention is <b>fat loss plus resistance training,</b> which addresses both the aromatase excess and the insulin resistance simultaneously.",
+    labs:["Total testosterone, free testosterone, SHBG (low SHBG amplifies the visceral fat-T relationship)","Estradiol, sensitive assay (expect elevation with high visceral fat)","Fasting insulin and fasting glucose: calculate HOMA-IR (insulin x glucose divided by 405)","HbA1c","Lipid panel: prioritize triglycerides and HDL-C","hs-CRP","Uric acid (metabolic marker, often elevated alongside insulin resistance)"],
+    levers:[
+      {ic:"⚡",t:"Reduce refined carbohydrates and added sugar",s:"Chronic insulin spikes suppress SHBG, which directly reduces free testosterone. Lowering dietary glycemic load is one of the fastest ways to shift free T without any other change."},
+      {ic:"🏋",t:"Resistance training is the metabolic anchor",s:"Skeletal muscle is the largest glucose-disposal site. Building it improves insulin sensitivity, reduces the insulin-T suppression loop, and cuts visceral fat more effectively than cardio alone."},
+      {ic:"🥩",t:"30 to 40 g of protein at every meal",s:"Adequate protein preserves lean mass during fat loss, reduces appetite-driven overeating that drives visceral accumulation, and supports the testosterone environment that muscle requires."}
+    ],
+    tips:{morning:"Higher visceral fat burden blunts the morning T peak and reduces the cortisol awakening response, both visible in the shifted curve above.",afternoon:"Late-afternoon resistance training is particularly valuable here: performance is at its peak and the insulin-sensitizing effect arrives when it is most needed."}
+  },
+  highe:{
+    name:"High Estrogen / Gynecomastia",
+    scale:0.73, amp:0.75,
+    headline:"High estrogen and testosterone-to-estradiol imbalance",
+    note:"Estradiol excess relative to testosterone is more common in men than most realize. The primary driver is visceral fat, which contains aromatase, the enzyme that converts testosterone to estradiol. More visceral fat means more aromatization, which lowers free testosterone and raises estradiol simultaneously. Additional causes include alcohol (directly promotes aromatase and impairs liver estrogen clearance), certain medications (spironolactone, SSRIs, opioids), liver dysfunction, and unmonitored testosterone replacement therapy. <b>The key metric is the testosterone-to-estradiol ratio,</b> not estradiol alone. Gynecomastia (breast tissue development) is the most visible sign, but estradiol excess also drives fatigue, water retention, emotional sensitivity, low libido, and erectile dysfunction without obvious breast tissue. Request the <b>sensitive estradiol assay</b> (LC-MS/MS), not the standard immunoassay, which overestimates in men.",
+    labs:["Total testosterone (AM, before 10 AM) and free testosterone","Estradiol, sensitive assay (LC-MS/MS): standard immunoassay overestimates in men","T:E2 ratio (functional target: total T ng/dL divided by E2 pg/mL, target above 15:1)","SHBG (low SHBG in men raises free estradiol alongside free testosterone)","LH (low LH on TRT = suppressed; elevated LH with low T = primary failure)","Prolactin (elevated prolactin can cause gynecomastia independently of estradiol)","ALT and AST, functional target below 25: liver clears estrogen and impaired clearance raises levels","Gamma-GT (sensitive liver marker; elevated by alcohol before ALT or AST rise)"],
+    levers:[
+      {ic:"⚖️",t:"Visceral fat loss is the primary lever",s:"Adipose tissue, especially visceral, is the largest source of aromatase activity in men. Each 10-pound reduction in visceral fat measurably reduces estradiol and improves the T:E2 ratio without any medication or supplement."},
+      {ic:"🚫",t:"Eliminate or dramatically reduce alcohol",s:"Alcohol directly activates hepatic aromatase, promotes testosterone conversion to estradiol, and impairs the liver's ability to clear estrogen from circulation. Even moderate intake (7 to 14 drinks per week) raises estradiol and lowers the T:E2 ratio significantly."},
+      {ic:"🥦",t:"DIM 150 to 300 mg/day and cruciferous vegetables daily",s:"Diindolylmethane (DIM), derived from indole-3-carbinol in cruciferous vegetables, supports favorable estrogen metabolism pathways and is the most studied non-pharmaceutical estrogen modulator for men. Discuss dose with your provider, especially if on any CYP1A2-metabolized medications."}
+    ],
+    tips:{morning:"With elevated estradiol, the morning testosterone peak is partially offset by competitive estrogen signaling at androgen receptors. The typical drive and edge on waking are blunted even when total testosterone tests in the normal range.",evening:"Estradiol disrupts REM sleep architecture. Men with high E2 often notice restless or unrefreshing sleep, which then further suppresses testosterone production overnight."}
+  },
+  sleep:{
+    name:"Sleep Apnea / Poor Sleep",
+    scale:0.59, amp:0.61,
+    headline:"Sleep apnea and poor sleep quality",
+    note:"Obstructive sleep apnea (OSA) affects approximately <b>26% of men ages 30 to 70</b> (Peppard et al 2013, American Journal of Respiratory and Critical Care Medicine). Each apneic event produces an oxygen drop and a cortisol spike, fragmenting the slow-wave and REM sleep stages where testosterone is synthesized. Men with untreated OSA consistently show significantly lower morning testosterone, often borderline or low-normal, independent of age, weight, or lifestyle. <b>CPAP therapy raises morning testosterone in men with OSA,</b> typically by 60 to 80 ng/dL, without any other intervention. Key screening signs: loud snoring, witnessed apneas, and daytime sleepiness. A neck circumference above <b>17 inches</b> is an independent risk factor. A home sleep apnea test is an accessible first step.",
+    labs:["Total testosterone (early AM, before 10 AM)","Home sleep apnea test (HSAT) or in-lab polysomnography","Thyroid panel: TSH, Free T3 (hypothyroidism worsens OSA severity)","DHEA-S","Ferritin and full iron studies (low ferritin below 50 ng/mL causes fatigue independent of anemia)","hs-CRP (OSA drives systemic inflammation)","Complete metabolic panel"],
+    levers:[
+      {ic:"😮‍💨",t:"Screen for OSA before anything else",s:"If you snore and are tired during the day, request a home sleep apnea test. CPAP reliably raises morning testosterone by restoring the deep sleep that manufactures it, without any other intervention required."},
+      {ic:"🌙",t:"Anchor sleep timing before optimizing duration",s:"Consistent bed and wake times, including weekends, resets cortisol and melatonin rhythms. Inconsistent sleep timing is its own hormonal disruptor, separate from and additive to duration."},
+      {ic:"📵",t:"No screens or bright light 60 minutes before bed",s:"Blue-spectrum light suppresses melatonin, delays sleep onset, and specifically reduces slow-wave sleep. That is the stage where testosterone and growth hormone are released in their largest daily pulses."}
+    ],
+    tips:{morning:"With OSA or chronic poor sleep, the morning T peak is blunted or absent. The curve above reflects that physiological reality.",night:"This window is the core of the problem. OSA fragments the exact sleep stages that build testosterone. Treating the apnea treats the low T."}
+  },
+  dht:{
+    name:"DHT / Hair Loss and Prostate",
+    scale:1.0, amp:1.0,
+    headline:"DHT, hair loss, and prostate health",
+    note:"DHT (dihydrotestosterone) is produced from testosterone by the enzyme 5-alpha reductase, predominantly in the skin, scalp, and prostate. Unlike testosterone, DHT does not vary significantly across the day. The curve above shows your general testosterone rhythm, while DHT's effects unfold over months. DHT drives both <b>androgenic alopecia</b> (through hair follicle miniaturization) and <b>benign prostatic hyperplasia</b> (BPH). BPH affects roughly 50% of men by age 60 and 90% by age 85 (AUA guidelines). <b>Get a PSA baseline before starting any 5-alpha reductase inhibitor</b> (finasteride, dutasteride): these medications reduce PSA by approximately 50%, permanently masking cancer-screening values if a baseline was not established first.",
+    labs:["PSA baseline: must be obtained before starting any 5-ARI","Total testosterone, free testosterone, SHBG","DHT (serum)","Estradiol","Thyroid panel: TSH, Free T3, Free T4 (hypothyroidism is a common overlooked cause of hair loss)","Ferritin and iron studies (low ferritin below 50 ng/mL causes hair shedding in men)","CBC (rule out anemia)"],
+    levers:[
+      {ic:"📋",t:"PSA baseline before 5-ARI, then adjust readings",s:"Finasteride and dutasteride lower PSA by approximately 50% after 6 months of use. After that point, multiply your PSA by 2 for cancer-screening interpretation. Not doing this leads to missed diagnoses."},
+      {ic:"🥦",t:"Cruciferous vegetables and DIM (discuss dose)",s:"Indole-3-carbinol and its metabolite DIM, found in broccoli, cauliflower, and Brussels sprouts, support favorable estrogen metabolism. Discuss supplemental doses with your provider."},
+      {ic:"🩺",t:"Saw palmetto 320 mg/day for BPH urinary symptoms",s:"Standardized saw palmetto extract (liposterolic) has modest RCT evidence for reducing BPH-related urinary symptoms (frequency, hesitancy, and nocturia). It does not significantly lower PSA, which preserves PSA as a cancer-screening tool."}
+    ],
+    tips:{}
+  },
+  fertility:{
+    name:"Male Fertility",
+    scale:1.0, amp:1.0,
+    headline:"Male fertility and sperm health",
+    note:"Spermatogenesis runs on a <b>74-day cycle</b> from initial production to sperm maturity. Today's choices appear in a semen analysis roughly 2 to 3 months later. The testes require a temperature <b>2 to 4 degrees C below core body temperature.</b> Hot tubs (40 degrees C+), saunas, heated car seats, tight underwear, and laptops on the lap all raise scrotal temperature and measurably reduce sperm production and motility. <b>Do not start testosterone therapy if actively trying to conceive:</b> exogenous T suppresses FSH and LH, halting sperm production entirely. This is fully reversible after stopping, but recovery takes 3 to 6+ months. Varicocele (dilated veins in the scrotum) is present in approximately 15% of all men and 40% of men evaluated for infertility. It is surgically correctable.",
+    labs:["Semen analysis x2: two separate samples, 3 days of abstinence each","Total testosterone, LH, FSH (LH/FSH elevated = testicular failure; low = pituitary or hypothalamic issue)","Estradiol","Prolactin","Thyroid (TSH): hypothyroidism directly impairs sperm quality","Scrotal ultrasound if varicocele is suspected","Karyotype and Y-microdeletion testing if azoospermia is confirmed"],
+    levers:[
+      {ic:"🌡️",t:"Cool the scrotal environment 74 days before target",s:"No hot tubs (40 degrees C) for 74 days before actively trying. Boxers over briefs. No laptop directly on lap for extended sessions. Every degree above the optimal 34 to 35 degrees C measurably reduces sperm motility and production."},
+      {ic:"🚫",t:"Zero testosterone therapy during active conception attempts",s:"Exogenous T completely suppresses FSH and LH, shutting sperm production down. This is the most common cause of preventable iatrogenic male infertility. Recovery after stopping TRT takes 3 to 6+ months."},
+      {ic:"💊",t:"CoQ10 400 mg/day and zinc 25 mg/day (discuss with provider)",s:"Oxidative stress is the leading modifiable cause of poor sperm morphology and motility. CoQ10 and zinc have the strongest RCT evidence base for improving sperm parameters in subfertile men (Balercia et al 2009; Colagar et al 2009)."}
+    ],
+    tips:{night:"LH and FSH, the pituitary hormones that drive sperm production alongside testosterone, are released in pulses during sleep. Protecting sleep architecture supports sperm quality directly."}
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  UTILITIES
+// ─────────────────────────────────────────────────────────────────────────────
+function fmtTime(h){const ap=h<12?'AM':'PM';let hh=h%12;if(!hh)hh=12;return hh+':00 '+ap;}
+function segKey(h){
+  if(h>=5 && h<9)  return 'morning';
+  if(h>=9 && h<13) return 'midday';
+  if(h>=13&& h<17) return 'afternoon';
+  if(h>=17&& h<22) return 'evening';
+  return 'night';
+}
+function shapeT(ck){
+  const c=COND[ck];
+  return T_BASE.map(v=>Math.max(4,Math.min(105,(T_MEAN+(v-T_MEAN)*c.amp)*c.scale)));
+}
+
+// Catmull-Rom to cubic Bezier smooth path
+function smoothPath(vals,W,H,pad){
+  const n=vals.length;
+  const x=i=>pad+(W-2*pad)*(i/(n-1));
+  const y=v=>(H-pad)-(H-2*pad)*(v/105);
+  let d=`M ${x(0).toFixed(1)} ${y(vals[0]).toFixed(1)}`;
+  for(let i=0;i<n-1;i++){
+    const p0=vals[i-1]??vals[i],p1=vals[i],p2=vals[i+1],p3=vals[i+2]??vals[i+1];
+    const dx=x(i+1)-x(i);
+    const x1=x(i)+dx/3,x2=x(i+1)-dx/3;
+    const y1=y(p1)+(y(p2)-y(p0))/6,y2=y(p2)-(y(p3)-y(p1))/6;
+    d+=` C ${x1.toFixed(1)} ${y1.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}, ${x(i+1).toFixed(1)} ${y(p2).toFixed(1)}`;
+  }
+  return d;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  CHART (dark bg, bright cyan T line + gold cortisol line)
+// ─────────────────────────────────────────────────────────────────────────────
+function buildChart(ck,hour){
+  const W=720,H=280,pad=38;
+  const tv=shapeT(ck);
+  const tPath=smoothPath(tv,W,H,pad);
+  const cPath=smoothPath(CORT,W,H,pad);
+  const x=i=>pad+(W-2*pad)*(i/24);
+  const y=v=>(H-pad)-(H-2*pad)*(v/105);
+  const areaT=tPath+` L ${x(24).toFixed(1)} ${(H-pad).toFixed(1)} L ${x(0).toFixed(1)} ${(H-pad).toFixed(1)} Z`;
+
+  let grid='';
+  [0,25,50,75,100].forEach(g=>{
+    const yy=y(g).toFixed(1);
+    grid+=`<line x1="${pad}" y1="${yy}" x2="${W-pad}" y2="${yy}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+      <text x="${pad-8}" y="${(parseFloat(yy)+4).toFixed(0)}" fill="rgba(255,255,255,.3)" font-size="10.5" text-anchor="end">${g}%</text>`;
+  });
+
+  let ticks='';
+  [[0,'12a'],[6,'6a'],[12,'12p'],[18,'6p'],[24,'']].forEach(([hh,lab])=>{
+    ticks+=`<text x="${x(hh).toFixed(1)}" y="${H-9}" fill="rgba(255,255,255,.3)" font-size="10.5" text-anchor="middle">${lab}</text>`;
+  });
+
+  const mx=x(hour).toFixed(1),my=y(tv[hour]).toFixed(1);
+  const marker=`<line x1="${mx}" y1="${pad}" x2="${mx}" y2="${H-pad}" stroke="rgba(61,212,204,.4)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <circle cx="${mx}" cy="${my}" r="7" fill="#122525" stroke="#3DD4CC" stroke-width="2.5"/>`;
+
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="24-hour testosterone and cortisol curve">
+    <defs>
+      <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3DD4CC" stop-opacity=".15"/>
+        <stop offset="1" stop-color="#3DD4CC" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${grid}${ticks}
+    <path d="${areaT}" fill="url(#tg)"/>
+    <path d="${cPath}" fill="none" stroke="#C8A84B" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="${tPath}" fill="none" stroke="#3DD4CC" stroke-width="3" stroke-linecap="round"/>
+    ${marker}
+  </svg>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+function render(){
+  const ck   = document.getElementById('condSel').value;
+  const hour = parseInt(document.getElementById('timeSlider').value,10);
+  const sk   = segKey(hour);
+  const seg  = SEGS[sk];
+  const cond = COND[ck];
+
+  document.getElementById('nowBadge').innerHTML=fmtTime(hour)+'<small>'+seg.name+'</small>';
+
+  const pct = Math.round(seg.energy.pct * cond.scale);
+  document.getElementById('heroH').textContent=seg.energy.lvl;
+  document.getElementById('heroSub').textContent=seg.energy.sub;
+  document.getElementById('heroStat1').textContent=Math.max(4,pct)+'%';
+  document.getElementById('heroStat2').textContent=seg.name;
+  document.getElementById('tPct').textContent=Math.max(4,pct)+'%';
+  document.getElementById('tFill').style.width=Math.max(4,pct)+'%';
+  document.getElementById('tDesc').textContent=seg.energy.desc;
+
+  document.getElementById('mindT').textContent=seg.mind.t;
+  document.getElementById('mindS').textContent=seg.mind.s;
+  document.getElementById('trainT').textContent=seg.train.t;
+  document.getElementById('trainS').textContent=seg.train.s;
+  document.getElementById('eatT').textContent=seg.eat.t;
+  document.getElementById('eatS').textContent=seg.eat.s;
+
+  document.getElementById('condEye').textContent=cond.headline;
+  document.getElementById('condNote').innerHTML=cond.note;
+
+  document.getElementById('chartBox').innerHTML=buildChart(ck,hour);
+
+  document.getElementById('segs').innerHTML=
+    ['morning','midday','afternoon','evening','night'].map(k=>
+      `<div class="seg ${k===sk?'on':''}" style="background:${SEGS[k].color}">${SEGS[k].name}</div>`
+    ).join('');
+
+  let haps=seg.hap.slice();
+  if(cond.tips&&cond.tips[sk])haps=[{ic:'📌',tx:cond.tips[sk]},...haps].slice(0,4);
+  document.getElementById('hapGrid').innerHTML=haps.slice(0,4).map(h=>
+    `<div class="hap"><div class="hap-ic">${h.ic}</div><div class="hap-tx">${h.tx}</div></div>`
+  ).join('');
+
+  document.getElementById('leversGrid').innerHTML=cond.levers.map(lv=>
+    `<div class="lever"><div class="lever-ic">${lv.ic}</div><div><div class="lever-t">${lv.t}</div><div class="lever-s">${lv.s}</div></div></div>`
+  ).join('');
+
+  document.getElementById('labsList').innerHTML=cond.labs.map(l=>`<li>${l}</li>`).join('');
+}
+
+function init(){
+  const sel=document.getElementById('condSel');
+  sel.innerHTML=Object.keys(COND).map(k=>`<option value="${k}">${COND[k].name}</option>`).join('');
+  document.getElementById('timeSlider').value=new Date().getHours();
+  render();
+}
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

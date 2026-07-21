@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hormone Health Visit Prep - Hunter's Holistic Health</title>
+<meta name="description" content="A free educational hormone visit-prep tool from Dr. Shallanda Hunter, PharmD. Explore 17 hormone conditions, check your symptoms and labs, then generate a printable one-page brief to bring to your doctor, the exact tests to request and questions to ask. Fully private, nothing stored.">
+<style>
+  :root {
+    --teal: #0B9E8E; --teal-deep: #087468; --teal-light: #2aa8a8; --teal-pale: #e8f5f5; --teal-wash: #E8F5F3;
+    --gold: #c9922a; --navy: #1a2a3a;
+    --gray-100: #f4f6f8; --gray-200: #e2e8f0; --gray-400: #94a3b8; --gray-600: #475569; --gray-800: #1e293b;
+    --female: #8b5cf6; --female-light: #ede9fe; --male: #3b82f6; --male-light: #dbeafe;
+    --red: #ef4444; --green: #22c55e; --white: #ffffff;
+    --shadow: 0 2px 8px rgba(0,0,0,0.10); --shadow-lg: 0 4px 20px rgba(0,0,0,0.15);
+    --radius: 10px; --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); color: var(--gray-800); min-height: 100vh; }
+  .header { background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%); color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-lg); position: sticky; top: 0; z-index: 100; }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-logo { width: 42px; height: 42px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+  .header-title { font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .header-sub { font-size: 12px; opacity: 0.75; margin-top: 1px; }
+  .privacy-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9); }
+  .app-body { display: flex; height: calc(100vh - 68px); overflow: hidden; }
+  .sidebar { width: 250px; min-width: 250px; background: white; border-right: 1px solid var(--gray-200); overflow-y: auto; display: flex; flex-direction: column; }
+  .sidebar-search { padding: 12px; border-bottom: 1px solid var(--gray-200); }
+  .sidebar-search input { width: 100%; padding: 7px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 13px; outline: none; }
+  .sidebar-search input:focus { border-color: var(--teal); }
+  .sidebar-section { padding: 10px 12px 4px; }
+  .sidebar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); margin-bottom: 6px; }
+  .condition-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; cursor: pointer; border-radius: var(--radius-sm); margin: 1px 4px; transition: background 0.12s; font-size: 13.5px; color: var(--gray-600); }
+  .condition-item:hover { background: var(--gray-100); color: var(--gray-800); }
+  .condition-item.active { background: var(--teal-pale); color: var(--teal); font-weight: 600; }
+  .condition-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-female { background: var(--female); }
+  .dot-male { background: var(--male); }
+  .main { flex: 1; overflow-y: auto; padding: 24px; }
+  .condition-header { background: white; border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .condition-header-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .type-female { color: var(--female); } .type-male { color: var(--male); }
+  .condition-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .condition-desc { font-size: 13.5px; color: var(--gray-600); line-height: 1.5; max-width: 700px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 9px 18px; border-radius: var(--radius-sm); border: none; background: white; color: var(--gray-600); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.12s; box-shadow: var(--shadow); }
+  .tab:hover { background: var(--gray-100); color: var(--gray-800); }
+  .tab.active { background: var(--teal); color: white; font-weight: 600; }
+  .tab-prep.active { background: var(--gold); }
+  .card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--gray-200); font-weight: 700; font-size: 14px; color: var(--navy); display: flex; align-items: center; justify-content: space-between; }
+  .card-body { padding: 16px 20px; }
+  .symptom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .symptom-item { border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+  .symptom-check { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--gray-200); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+  .symptom-check.checked { background: var(--teal); border-color: var(--teal); }
+  .symptom-check svg { opacity: 0; transition: opacity 0.15s; }
+  .symptom-check.checked svg { opacity: 1; }
+  .symptom-name { font-size: 13.5px; color: var(--gray-800); }
+  .symptom-count { text-align: center; margin-top: 16px; font-size: 14px; color: var(--gray-600); }
+  .symptom-count b { color: var(--teal); font-size: 20px; }
+  .labs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .lab-item { border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 14px; transition: border-color 0.15s; }
+  .lab-item.result-shown { border-color: var(--teal-light); }
+  .lab-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .lab-ranges { font-size: 11px; color: var(--gray-400); margin-bottom: 8px; line-height: 1.5; }
+  .lab-input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--gray-200); border-radius: 4px; font-size: 14px; outline: none; transition: border-color 0.12s; }
+  .lab-input:focus { border-color: var(--teal); }
+  .lab-result { margin-top: 8px; font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 6px; display: none; line-height: 1.4; }
+  .lab-result.show { display: block; }
+  .lab-result.optimal { background: #dcfce7; color: #16a34a; }
+  .lab-result.borderline { background: #fef9c3; color: #ca8a04; }
+  .lab-result.high { background: #fee2e2; color: #dc2626; }
+  .lab-result.low { background: #dbeafe; color: #2563eb; }
+  .lab-ephemeral-note { font-size: 11px; color: var(--gray-400); text-align: center; margin-top: 14px; line-height: 1.5; }
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--gray-400); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+  .empty-desc { font-size: 13px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .tag-female { background: var(--female-light); color: var(--female); }
+  .tag-male { background: var(--male-light); color: var(--male); }
+  .prep-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .btn { padding: 10px 18px; border: none; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-gold { background: var(--gold); color: white; }
+  .btn-gold:hover { filter: brightness(1.06); }
+  .btn-ghost { background: white; color: var(--gray-600); box-shadow: var(--shadow); }
+  .btn-ghost:hover { background: var(--gray-100); }
+  .brief { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px 36px; max-width: 780px; }
+  .brief-head { border-bottom: 2px solid var(--navy); padding-bottom: 14px; margin-bottom: 20px; }
+  .brief-kicker { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); }
+  .brief-h1 { font-size: 24px; font-weight: 800; color: var(--navy); margin: 4px 0 6px; }
+  .brief-meta { font-size: 12px; color: var(--gray-400); }
+  .brief-sec { margin-bottom: 22px; }
+  .brief-sec h2 { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--gray-200); }
+  .brief-sec ul { list-style: none; }
+  .brief-sec li { font-size: 13.5px; color: var(--gray-800); line-height: 1.55; padding: 4px 0 4px 20px; position: relative; }
+  .brief-sec li::before { content: ''; position: absolute; left: 4px; top: 12px; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+  .brief-sec li.off::before { background: var(--red); }
+  .brief-sec li.done::before { background: var(--green); }
+  .brief-lab-val { font-weight: 700; }
+  .brief-lab-note { color: var(--gray-400); font-size: 12px; }
+  .brief-tag { font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 9px; margin-left: 6px; }
+  .brief-tag.off { background: #fee2e2; color: #dc2626; }
+  .brief-tag.check { background: #fef9c3; color: #ca8a04; }
+  .brief-empty { font-size: 13px; color: var(--gray-400); font-style: italic; padding: 2px 0; }
+  .brief-note { margin-top: 8px; font-size: 12px; color: var(--gray-600); background: var(--gray-100); border-left: 3px solid var(--gold); padding: 10px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; line-height: 1.6; }
+  .brief-foot { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--gray-200); font-size: 11px; color: var(--gray-400); line-height: 1.6; }
+  .qa-item { margin-bottom: 14px; border-bottom: 1px solid var(--gray-200); padding-bottom: 14px; }
+  .qa-q { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 8px; cursor: pointer; user-select: none; }
+  .qa-q:hover { color: var(--teal); }
+  .qa-a { font-size: 13.5px; color: var(--gray-600); line-height: 1.65; padding-left: 16px; display: none; }
+  .qa-a.open { display: block; }
+  .key-fact-item { padding: 10px 0 10px 20px; position: relative; font-size: 13.5px; color: var(--gray-800); line-height: 1.6; border-bottom: 1px solid var(--gray-200); }
+  .key-fact-item::before { content: ''; position: absolute; left: 0; top: 18px; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); display: block; }
+  ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 10px; }
+  @media (max-width: 768px) {
+    .app-body { flex-direction: column; height: auto; }
+    .sidebar { width: 100%; min-width: 100%; max-height: 200px; border-right: none; border-bottom: 1px solid var(--gray-200); }
+    .main { overflow: visible; }
+    .header { flex-wrap: wrap; gap: 10px; }
+  }
+  @media print {
+    .sidebar, .header, .tabs, .condition-header, .prep-actions, .no-print { display: none !important; }
+    .app-body { display: block; } .main { overflow: visible; padding: 0; }
+    .brief { box-shadow: none; padding: 0; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    .brief-sec { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">HH</div>
+    <div>
+      <div class="header-title">Hormone Health Visit Prep</div>
+      <div class="header-sub">Hunter's Holistic Health &middot; Dr. Shallanda Hunter, PharmD, MBA, CFNMP</div>
+    </div>
+  </div>
+  <div class="privacy-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>
+    Nothing stored &middot; Nothing sent &middot; Fully private
+  </div>
+</div>
+<div class="app-body">
+  <div class="sidebar">
+    <div class="sidebar-search">
+      <input type="text" placeholder="Search conditions..." oninput="filterConditions(this.value)" id="sidebarSearch">
+    </div>
+    <div class="sidebar-section"><div class="sidebar-label">Female Conditions</div></div>
+    <div id="femaleList"></div>
+    <div class="sidebar-section" style="margin-top:8px;"><div class="sidebar-label">Male Conditions</div></div>
+    <div id="maleList"></div>
+    <div style="flex:1;"></div>
+    <div style="padding:12px; font-size:11px; color:var(--gray-400); border-top:1px solid var(--gray-200); line-height:1.5;">
+      No data is stored, saved, or sent.<br>
+      Your entries disappear when you close this page.<br>
+      For educational use only, not medical advice.
+    </div>
+  </div>
+  <div class="main" id="mainContent">
+    <div id="welcomeState">
+      <div class="empty-state" style="padding-top:80px;">
+        <div class="empty-icon">&#9672;</div>
+        <div class="empty-title">Walk into your next appointment prepared</div>
+        <div class="empty-desc">Pick a hormone condition, check the symptoms you have and enter any labs you already know, then generate a one-page brief to hand your doctor.</div>
+        <div style="margin-top:16px; font-size:13px; color:var(--gray-400);">
+          Nothing you enter here is stored, saved, or sent anywhere.<br>
+          Close the page and it&rsquo;s gone.
+        </div>
+        <div style="margin-top:24px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <span class="tag tag-female">9 Female Conditions</span>
+          <span class="tag tag-male">8 Male Conditions</span>
+        </div>
+      </div>
+    </div>
+    <div id="conditionView" style="display:none;">
+      <div class="condition-header">
+        <div class="condition-header-type" id="conditionType"></div>
+        <div class="condition-title" id="conditionTitle"></div>
+        <div class="condition-desc" id="conditionDesc"></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('symptoms',this)">Symptom Check</button>
+        <button class="tab" onclick="showTab('labs',this)">Check Your Labs</button>
+        <button class="tab" onclick="showTab('education',this)">Education / Q&amp;A</button>
+        <button class="tab tab-prep" onclick="showTab('prep',this)">&#128203; Doctor Visit Prep</button>
+      </div>
+      <div id="tab-symptoms">
+        <div class="card">
+          <div class="card-header">
+            Do any of these apply to you?
+            <span style="font-size:11px; color:var(--gray-400); font-weight:400;">Tap the ones you experience, nothing is saved</span>
+          </div>
+          <div class="card-body">
+            <div id="symptomGrid" class="symptom-grid"></div>
+            <div class="symptom-count" id="symptomCount"></div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-labs" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            Check Your Lab Values
+            <span style="font-size:11px; color:var(--gray-400); font-weight:400;">Enter a number to see where you fall</span>
+          </div>
+          <div class="card-body">
+            <div id="labGrid" class="labs-grid"></div>
+            <div class="lab-ephemeral-note">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>
+              Your numbers are <b>not stored</b>. They exist only on your screen right now and disappear when you navigate away.<br>
+              Optimal / functional ranges are wellness targets, not diagnostic thresholds. Interpret with your clinician.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-education" style="display:none;"></div>
+      <div id="tab-prep" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+<script>
+const CONDITIONS = {
+  pcos: {
+    name:"PCOS / PMMOS",fullName:"Polycystic Metabolic Ovarian Syndrome (PCOS / PMMOS)",sex:"female",
+    desc:"A metabolic-hormonal disorder causing irregular periods, elevated androgens, and polycystic ovaries. Now increasingly termed PMMOS (Polycystic Metabolic Ovarian Syndrome) to reflect the metabolic root cause. Closely linked to insulin resistance and metabolic dysfunction.",
+    symptoms:["Irregular or missing periods","Acne / oily skin","Excess facial / body hair","Hair thinning (scalp)","Weight gain (belly)","Difficulty losing weight","Carb / sugar cravings","Fatigue","Mood swings","Infertility / difficulty conceiving","Bloating","Low libido"],
+    labs:[
+      {name:"LH",unit:"mIU/mL",optimalRange:"2-15 (follicular)",standardRange:"1-18"},
+      {name:"FSH",unit:"mIU/mL",optimalRange:"3-10 (follicular)",standardRange:"2-15"},
+      {name:"LH:FSH Ratio",unit:"ratio",optimalRange:"<2.0",standardRange:"<3.0"},
+      {name:"Free Testosterone",unit:"pg/mL",optimalRange:"<6.0 pg/mL",standardRange:"0-8.5"},
+      {name:"Total Testosterone",unit:"ng/dL",optimalRange:"15-70",standardRange:"10-80"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"65-250",standardRange:"45-320"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"40-120",standardRange:"20-200"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"HbA1c",unit:"%",optimalRange:"<5.4%",standardRange:"<5.7%"},
+      {name:"Fasting Glucose",unit:"mg/dL",optimalRange:"70-85",standardRange:"70-100"},
+      {name:"AMH",unit:"ng/mL",optimalRange:"1.0-3.5",standardRange:"0.3-5.0"}
+    ]
+  },
+  hypothyroid: {
+    name:"Hypothyroidism / Hashimoto's",fullName:"Hypothyroidism / Hashimoto's Thyroiditis",sex:"female",
+    desc:"Underactive thyroid, often autoimmune (Hashimoto's). TSH, Free T3/T4, and antibody testing together reveal the full picture. Standard TSH range often misses subclinical dysfunction.",
+    symptoms:["Fatigue / sluggishness","Cold intolerance","Weight gain (unexplained)","Constipation","Brain fog / poor memory","Depression / low mood","Dry skin","Dry / brittle hair","Hair loss","Slow heart rate","Muscle weakness or aching","Puffy face / eyelids","Hoarse voice","Heavy periods"],
+    labs:[
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0 (functional)",standardRange:"0.5-4.5"},
+      {name:"Free T3",unit:"pg/mL",optimalRange:"3.2-4.4 (upper 1/3)",standardRange:"2.3-4.4"},
+      {name:"Free T4",unit:"ng/dL",optimalRange:"1.1-1.8 (upper 1/2)",standardRange:"0.8-1.8"},
+      {name:"Reverse T3",unit:"ng/dL",optimalRange:"<15",standardRange:"<25"},
+      {name:"TPO Antibodies",unit:"IU/mL",optimalRange:"<35 (negative)",standardRange:"<35"},
+      {name:"Thyroglobulin Ab (TgAb)",unit:"IU/mL",optimalRange:"<1 (negative)",standardRange:"<0.9"},
+      {name:"Ferritin",unit:"ng/mL",optimalRange:"70-90 (thyroid conversion)",standardRange:"12-300"},
+      {name:"Vitamin D",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"},
+      {name:"Serum B12",unit:"pg/mL",optimalRange:"600-1000",standardRange:"200-900"}
+    ]
+  },
+  perimenopause: {
+    name:"Perimenopause / Menopause",fullName:"Perimenopause / Menopause",sex:"female",
+    desc:"The hormonal transition as estrogen and progesterone decline. The FDA removed the HRT black box warning in February 2026. The ROOTS protocol addresses vasomotor symptoms, bone, cardiovascular, and cognitive protection.",
+    symptoms:["Hot flashes","Night sweats","Irregular periods","Sleep disturbance","Mood changes / irritability","Vaginal dryness","Low libido","Brain fog","Fatigue","Joint pain","Weight gain (belly)","Heart palpitations","Anxiety","Hair thinning"],
+    labs:[
+      {name:"FSH",unit:"mIU/mL",optimalRange:"Peri: 10-40 / Meno: >40",standardRange:"<25 premenopause"},
+      {name:"Estradiol (E2)",unit:"pg/mL",optimalRange:"50-200 (premenopause day 3)",standardRange:"15-350"},
+      {name:"Progesterone",unit:"ng/mL",optimalRange:">10 (day 21)",standardRange:"1-25 (luteal)"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"40-120",standardRange:"20-200"},
+      {name:"Free Testosterone",unit:"pg/mL",optimalRange:"2-5 (optimal)",standardRange:"0-8.5"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"100-250",standardRange:"45-320"},
+      {name:"Vitamin D",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5",standardRange:"<25"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0",standardRange:"0.5-4.5"}
+    ]
+  },
+  endo: {
+    name:"Endometriosis",fullName:"Endometriosis",sex:"female",
+    desc:"Endometrial-like tissue outside the uterus causing chronic inflammation, pelvic pain, and potential infertility. The 2026 ACOG guideline prefers excision surgery over ablation. Average diagnosis delay is 4 to 11 years.",
+    symptoms:["Painful periods (dysmenorrhea)","Chronic pelvic pain","Pain with intercourse","Painful bowel movements (during period)","Painful urination (during period)","Heavy periods","Fatigue","Bloating / endo belly","Nausea (during period)","Infertility / difficulty conceiving","Back / leg pain (during period)","Spotting between periods"],
+    labs:[
+      {name:"CA-125",unit:"U/mL",optimalRange:"<35 (limited specificity)",standardRange:"<35"},
+      {name:"Estradiol (E2)",unit:"pg/mL",optimalRange:"50-200 (day 3)",standardRange:"15-350"},
+      {name:"Progesterone",unit:"ng/mL",optimalRange:">10 (day 21)",standardRange:"1-25 (luteal)"},
+      {name:"hs-CRP",unit:"mg/L",optimalRange:"<0.7 (functional)",standardRange:"<3.0"},
+      {name:"Ferritin",unit:"ng/mL",optimalRange:"60-90",standardRange:"12-300"},
+      {name:"AMH",unit:"ng/mL",optimalRange:"1.0-3.5",standardRange:"0.3-5.0"},
+      {name:"Vitamin D",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"}
+    ]
+  },
+  estrogendominance: {
+    name:"Estrogen Dominance",fullName:"Estrogen Dominance / Hormone Imbalance",sex:"female",
+    desc:"Relative excess of estrogen vs. progesterone, which can occur even with normal estrogen levels. Driven by poor liver detox, gut dysbiosis (estrobolome), xenoestrogens, stress (pregnenolone steal), and excess adipose tissue.",
+    symptoms:["Heavy / painful periods","Breast tenderness / fibrocystic","Water retention / bloating","Weight gain (hips / thighs)","PMS / mood swings","Decreased libido","Fatigue","Brain fog","Headaches (esp. hormonal)","Fibroids or cysts (diagnosed)","Anxiety","Insomnia (esp. before period)"],
+    labs:[
+      {name:"Estradiol (E2)",unit:"pg/mL",optimalRange:"50-200 (day 3)",standardRange:"15-350"},
+      {name:"Progesterone",unit:"ng/mL",optimalRange:">10 (day 21)",standardRange:"1-25 (luteal)"},
+      {name:"E2:Progesterone Ratio",unit:"ratio",optimalRange:"<200 (day 21)",standardRange:"See note"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"40-120",standardRange:"20-200"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"100-300",standardRange:"45-320"},
+      {name:"ALT",unit:"U/L",optimalRange:"<25 (functional)",standardRange:"7-56"},
+      {name:"AST",unit:"U/L",optimalRange:"<25 (functional)",standardRange:"10-40"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5",standardRange:"<25"}
+    ]
+  },
+  adrenal: {
+    name:"Adrenal / HPA Axis",fullName:"Adrenal / HPA Axis Dysregulation",sex:"female",
+    desc:"HPA axis dysregulation (not adrenal fatigue) occurs when the hypothalamic-pituitary-adrenal signaling loop becomes dysfunctional under chronic stress. Cortisol pattern testing (4-point salivary or DUTCH) is essential.",
+    symptoms:["Severe morning fatigue","Difficulty getting out of bed","Afternoon energy crash","Salt / salty food cravings","Low blood pressure / dizziness","Brain fog","Difficulty handling stress","Insomnia (wired-tired pattern)","Anxiety / nervousness","Low libido","Frequent illness (immune suppression)","Mood instability","Sweet cravings (blood sugar crashes)"],
+    labs:[
+      {name:"AM Serum Cortisol",unit:"mcg/dL",optimalRange:"15-20 (8 AM)",standardRange:"6-23"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"150-400 (women)",standardRange:"45-320"},
+      {name:"Salivary Cortisol (AM)",unit:"nM/L",optimalRange:"13-24 (waking)",standardRange:"6-42"},
+      {name:"Salivary Cortisol (PM)",unit:"nM/L",optimalRange:"<3 (bedtime)",standardRange:"<3.6"},
+      {name:"Fasting Glucose",unit:"mg/dL",optimalRange:"70-85",standardRange:"70-100"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0",standardRange:"0.5-4.5"},
+      {name:"Vitamin D",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"}
+    ]
+  },
+  hyperthyroid: {
+    name:"Hyperthyroidism / Graves'",fullName:"Hyperthyroidism / Graves' Disease",sex:"female",
+    desc:"Overactive thyroid producing excess T3/T4, most commonly autoimmune (Graves' disease, driven by TSI antibodies). Causes accelerated metabolism, light or absent periods, anxiety, heat intolerance, and palpitations. Avoid iodine supplementation.",
+    symptoms:["Heart palpitations / racing heart","Anxiety / nervousness","Tremors (hands)","Heat intolerance / excessive sweating","Unexplained weight loss","Increased appetite","Diarrhea / frequent bowel movements","Fatigue despite high energy expenditure","Insomnia","Light or absent periods","Eye bulging or irritation (Graves' ophthalmopathy)","Enlarged thyroid (goiter)","Muscle weakness","Brittle hair and nails"],
+    labs:[
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0 (functional)",standardRange:"0.5-4.5"},
+      {name:"Free T4 (fT4)",unit:"ng/dL",optimalRange:"1.0-1.5",standardRange:"0.7-1.8"},
+      {name:"Free T3 (fT3)",unit:"pg/mL",optimalRange:"3.0-4.0 (midrange)",standardRange:"2.3-4.2"},
+      {name:"TSI (Thyroid Stimulating Immunoglobulin)",unit:"%",optimalRange:"<140% (negative)",standardRange:"<140%"},
+      {name:"TSH Receptor Ab (TRAb)",unit:"IU/L",optimalRange:"<1.75 (negative)",standardRange:"<1.75"},
+      {name:"TPO Antibodies",unit:"IU/mL",optimalRange:"<9 (functional)",standardRange:"<34"},
+      {name:"Selenium (serum)",unit:"ug/L",optimalRange:"120-150",standardRange:"70-150"},
+      {name:"Calcium (serum)",unit:"mg/dL",optimalRange:"9.0-10.0",standardRange:"8.5-10.5"},
+      {name:"Vitamin D (25-OH)",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"},
+      {name:"Bone Density (DEXA)",unit:"T-score",optimalRange:"Above -1.0",standardRange:"Above -2.5"}
+    ]
+  },
+  fibroids: {
+    name:"Uterine Fibroids",fullName:"Uterine Fibroids (Leiomyomata Uteri)",sex:"female",
+    desc:"Benign smooth muscle tumors of the uterus driven by estrogen and progesterone. Affect up to 80% of Black women and 70% of white women by age 50. Heavy menstrual bleeding is the most common and disabling symptom. Functional protocol focuses on estrogen metabolism support and anti-proliferative intervention.",
+    symptoms:["Heavy menstrual bleeding (soaking pad/tampon in under 1 hour)","Menstrual clots (quarter-sized or larger)","Prolonged periods (more than 7 days)","Pelvic pressure or fullness","Pelvic pain / cramping","Bloating (fibroid belly)","Frequent urination","Constipation","Lower back pain","Fatigue (from anemia)","Painful intercourse (deep penetration pain)","Pre-menstrual spotting","Anemia symptoms: dizziness, shortness of breath"],
+    labs:[
+      {name:"CBC (Hemoglobin)",unit:"g/dL",optimalRange:"13.5-17.5 women",standardRange:"12.0-17.5"},
+      {name:"Ferritin",unit:"ng/mL",optimalRange:"70-100 (functional)",standardRange:"12-150"},
+      {name:"Estradiol (E2)",unit:"pg/mL",optimalRange:"Phase-appropriate",standardRange:"Phase-appropriate"},
+      {name:"Progesterone (Day 21)",unit:"ng/mL",optimalRange:">10 (ovulation confirmed)",standardRange:">3"},
+      {name:"Vitamin D (25-OH)",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0",standardRange:"0.5-4.5"},
+      {name:"2-OH Estrogen (DUTCH)",unit:"pg/mg Cr",optimalRange:"Higher is better (2-OH protective)",standardRange:"N/A - functional lab"},
+      {name:"16-OH Estrogen (DUTCH)",unit:"pg/mg Cr",optimalRange:"Lower is better",standardRange:"N/A - functional lab"},
+      {name:"2:16 Estrogen Ratio (DUTCH)",unit:"ratio",optimalRange:">2.0",standardRange:"N/A - functional lab"},
+      {name:"Beta-Glucuronidase (GI-MAP)",unit:"Relative Units",optimalRange:"Within range",standardRange:"< 363 RU"}
+    ]
+  },
+  fertility_f: {
+    name:"Female Fertility",fullName:"Female Fertility Optimization",sex:"female",
+    desc:"Comprehensive cycle-based approach to egg quality, ovulation, and implantation support. The follicle ovulating this cycle began developing 90 days ago, so fertility optimization is a 3-month minimum project. Tracks ovulatory function, egg quality markers, and pre-conception nutritional status.",
+    symptoms:["Irregular or absent ovulation (confirmed by OPK or BBT)","Short luteal phase (under 10 days)","Absent or scanty cervical mucus","Low Day 21 progesterone","Difficulty conceiving after 6 to 12 months of unprotected intercourse","Recurrent pregnancy loss (2 or more miscarriages)","Low AMH / diminished ovarian reserve","Poor egg quality (history of failed IVF cycles)","PMS or pre-menstrual spotting (luteal phase issue)","Hypothyroid symptoms (impairs follicular development)","Elevated FSH (diminished ovarian reserve indicator)","Irregular cycle length (anovulatory cycles)"],
+    labs:[
+      {name:"AMH (Anti-Mullerian Hormone)",unit:"ng/mL",optimalRange:"1.5-4.0 (age-appropriate)",standardRange:"0.3-5.0"},
+      {name:"FSH (Day 3)",unit:"mIU/mL",optimalRange:"<8 (good reserve)",standardRange:"<10 (adequate reserve)"},
+      {name:"Estradiol (Day 3)",unit:"pg/mL",optimalRange:"<50 (low Day 3 E2 = good reserve)",standardRange:"<80"},
+      {name:"Progesterone (Day 21)",unit:"ng/mL",optimalRange:">10 (confirms ovulation)",standardRange:">3"},
+      {name:"LH (surge day)",unit:"mIU/mL",optimalRange:"Positive OPK surge detected",standardRange:"Peak >20 mIU/mL"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0 (fertility target)",standardRange:"0.5-4.5"},
+      {name:"Free T3",unit:"pg/mL",optimalRange:"3.2-4.2 (upper third)",standardRange:"2.3-4.2"},
+      {name:"Vitamin D (25-OH)",unit:"ng/mL",optimalRange:"60-80 (implantation target)",standardRange:"30-100"},
+      {name:"Folate (RBC folate)",unit:"ng/mL",optimalRange:">400 (functional)",standardRange:">280"},
+      {name:"Homocysteine",unit:"umol/L",optimalRange:"<7 (fertility target)",standardRange:"<15"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"MTHFR Genotype",unit:"genotype",optimalRange:"Wild type or compound het managed with L-methylfolate",standardRange:"N/A - genetic test"}
+    ]
+  },
+  lowt: {
+    name:"Low Testosterone",fullName:"Low Testosterone / Male Hypogonadism",sex:"male",
+    desc:"Testosterone decline driven by aging, obesity, insulin resistance, sleep deprivation, or chronic stress. The FDA removed the TRT cardiovascular black box warning in February 2025 (TRAVERSE trial). Functional range: 500 to 900 ng/dL for clinical optimization.",
+    symptoms:["Low energy / fatigue","Low libido","Erectile dysfunction","Difficulty building muscle","Increased belly fat","Depression / low mood","Brain fog / poor focus","Reduced motivation","Sleep disturbances","Reduced body / facial hair","Mood changes / irritability","Reduced bone density (diagnosed)"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900 (functional)",standardRange:"300-1000"},
+      {name:"Free Testosterone",unit:"pg/mL",optimalRange:"100-180 (functional)",standardRange:"50-210"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"20-50 (men)",standardRange:"10-57"},
+      {name:"LH",unit:"mIU/mL",optimalRange:"3-8 (natural production)",standardRange:"2-12"},
+      {name:"FSH",unit:"mIU/mL",optimalRange:"2-8",standardRange:"1-12"},
+      {name:"Estradiol (E2) - sensitive",unit:"pg/mL",optimalRange:"20-30 (men)",standardRange:"10-40"},
+      {name:"PSA",unit:"ng/mL",optimalRange:"<1.5 <40yr; <2.5 <50yr",standardRange:"<4.0"},
+      {name:"Hematocrit",unit:"%",optimalRange:"<52% (on TRT <54%)",standardRange:"38-52"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"200-500 (men)",standardRange:"80-560"},
+      {name:"Vitamin D",unit:"ng/mL",optimalRange:"60-80",standardRange:"30-100"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5",standardRange:"<25"}
+    ]
+  },
+  highe: {
+    name:"High Estrogen / Gynecomastia",fullName:"High Estrogen in Men / Gynecomastia",sex:"male",
+    desc:"Estradiol excess relative to testosterone. Primary driver: obesity (adipose aromatase). Also caused by medications (spironolactone, SSRIs, alcohol, opioids), liver disease, and TRT without monitoring. Testosterone to Estradiol ratio is key.",
+    symptoms:["Breast tissue development (gynecomastia)","Nipple tenderness / sensitivity","Water retention / bloating","Belly fat accumulation","Fatigue","Low libido","Erectile dysfunction","Mood changes / emotional sensitivity","Reduced body hair","Reduced muscle mass","Low motivation"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900",standardRange:"300-1000"},
+      {name:"Estradiol (E2) - sensitive assay",unit:"pg/mL",optimalRange:"20-30 (men)",standardRange:"10-40"},
+      {name:"T:E2 Ratio",unit:"ratio",optimalRange:">15:1 (total T ng/dL : E2 pg/mL)",standardRange:"See note"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"20-50",standardRange:"10-57"},
+      {name:"LH",unit:"mIU/mL",optimalRange:"3-8",standardRange:"2-12"},
+      {name:"Prolactin",unit:"ng/mL",optimalRange:"<10 (men)",standardRange:"2-18"},
+      {name:"ALT",unit:"U/L",optimalRange:"<25 (functional)",standardRange:"7-56"},
+      {name:"AST",unit:"U/L",optimalRange:"<25",standardRange:"10-40"}
+    ]
+  },
+  dht: {
+    name:"DHT / BPH / Hair Loss",fullName:"DHT Excess - BPH / Male Pattern Baldness",sex:"male",
+    desc:"Dihydrotestosterone (DHT) drives prostate growth (BPH) and hair follicle miniaturization. 5-alpha reductase converts testosterone to DHT. Finasteride (65% DHT reduction) and dutasteride (98%) are the most effective pharmaceutical options.",
+    symptoms:["Receding hairline","Thinning crown / vertex","Diffuse hair thinning","Urinary hesitancy (slow start)","Weak urinary stream","Frequent nighttime urination (nocturia)","Incomplete bladder emptying","Urinary urgency","Dribbling after urination","Frequent daytime urination","Straining to urinate"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900",standardRange:"300-1000"},
+      {name:"DHT",unit:"ng/dL",optimalRange:"30-85 (functional)",standardRange:"16-79"},
+      {name:"PSA",unit:"ng/mL",optimalRange:"<1.5 <40yr; <2.5 <50yr",standardRange:"<4.0"},
+      {name:"Free PSA%",unit:"%",optimalRange:">25% (lower cancer risk)",standardRange:">15%"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"20-50",standardRange:"10-57"},
+      {name:"Estradiol (E2) - sensitive",unit:"pg/mL",optimalRange:"20-30",standardRange:"10-40"},
+      {name:"Zinc (serum)",unit:"ug/dL",optimalRange:"90-110",standardRange:"60-120"},
+      {name:"Ferritin",unit:"ng/mL",optimalRange:"60-90 (hair health)",standardRange:"12-300"}
+    ]
+  },
+  ed: {
+    name:"ED / Sexual Function",fullName:"Erectile Dysfunction / Male Sexual Health",sex:"male",
+    desc:"Erectile dysfunction affects an estimated 30 million men in the US and is increasingly recognized as a cardiovascular early warning sign. Vascular, hormonal, neurological, and psychological drivers overlap. Addressing blood sugar, testosterone, nitric oxide production, and cardiovascular risk factors together produces the best outcomes.",
+    symptoms:["Difficulty achieving or maintaining erection","Absent or rare morning erections","Low libido / reduced sexual desire","Premature ejaculation or delayed ejaculation","Reduced penile sensitivity","Performance anxiety","Fatigue affecting sexual function","High blood pressure (diagnosed)","Diabetes or prediabetes (diagnosed or suspected)","Sleep apnea (contributes to ED via testosterone suppression)","Depression or anxiety","Relationship or psychological stress"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900 (functional)",standardRange:"300-1000"},
+      {name:"Free Testosterone",unit:"pg/mL",optimalRange:"100-180 (functional)",standardRange:"50-210"},
+      {name:"Estradiol (E2) - sensitive",unit:"pg/mL",optimalRange:"20-30 (men)",standardRange:"10-40"},
+      {name:"Fasting Glucose",unit:"mg/dL",optimalRange:"70-85 (functional)",standardRange:"70-100"},
+      {name:"HbA1c",unit:"%",optimalRange:"<5.4% (functional)",standardRange:"<5.7%"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"LDL-C",unit:"mg/dL",optimalRange:"<100 (optimal)",standardRange:"<130"},
+      {name:"HDL-C",unit:"mg/dL",optimalRange:">60 (men)",standardRange:">40"},
+      {name:"Triglycerides",unit:"mg/dL",optimalRange:"<80 (functional)",standardRange:"<150"},
+      {name:"hs-CRP",unit:"mg/L",optimalRange:"<0.7 (functional)",standardRange:"<3.0"},
+      {name:"Blood Pressure",unit:"mmHg",optimalRange:"<120/80",standardRange:"<130/80"},
+      {name:"PSA",unit:"ng/mL",optimalRange:"<2.5 (under 50yr)",standardRange:"<4.0"}
+    ]
+  },
+  burnout: {
+    name:"High Cortisol / HPA Burnout",fullName:"HPA Axis Dysregulation / Burnout (Men)",sex:"male",
+    desc:"Chronic stress suppresses testosterone through the HPA-HPG axis conflict and drives visceral fat accumulation through cortisol-stimulated fat storage. Men with HPA dysregulation often present with low drive, poor sleep, flat morning energy, and emotional disconnection rather than the anxiety pattern more common in women.",
+    symptoms:["Waking unrefreshed with no energy on rising","Flat motivation and drive (not depression per se)","Difficulty recovering from workouts","Crashing afternoon energy (3 to 4 PM)","Irritability and short fuse","Poor stress tolerance","Insomnia (especially 2 to 4 AM waking)","Belly fat not responding to diet or exercise","Low libido","Brain fog / poor concentration","Frequent illness or slow recovery","Cravings for salty or high-fat foods","Loss of enjoyment in previously motivating activities"],
+    labs:[
+      {name:"AM Serum Cortisol (8 AM)",unit:"mcg/dL",optimalRange:"15-20 (8 AM draw)",standardRange:"6-23"},
+      {name:"4-Point Salivary Cortisol (AM)",unit:"nM/L",optimalRange:"13-24 (waking peak)",standardRange:"6-42"},
+      {name:"4-Point Salivary Cortisol (PM)",unit:"nM/L",optimalRange:"<3 (bedtime)",standardRange:"<3.6"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"200-500 (men)",standardRange:"80-560"},
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900 (functional)",standardRange:"300-1000"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0 (functional)",standardRange:"0.5-4.5"},
+      {name:"Fasting Glucose",unit:"mg/dL",optimalRange:"70-85 (functional)",standardRange:"70-100"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"Magnesium RBC",unit:"mg/dL",optimalRange:"5.2-6.5 (RBC, not serum)",standardRange:"4.0-6.4"},
+      {name:"hs-CRP",unit:"mg/L",optimalRange:"<0.7 (functional)",standardRange:"<3.0"}
+    ]
+  },
+  metabolic: {
+    name:"Metabolic Syndrome / Belly Fat",fullName:"Metabolic Syndrome / Central Obesity (Men)",sex:"male",
+    desc:"Metabolic syndrome is defined by the convergence of insulin resistance, central obesity, high blood pressure, elevated triglycerides, and low HDL. In men, visceral abdominal fat acts as an endocrine organ, producing aromatase that converts testosterone to estrogen and releasing inflammatory cytokines. Functional targets: waist below 35 inches, fasting insulin below 5, HOMA-IR below 1.5.",
+    symptoms:["Waist circumference above 40 inches","Belly fat not responding to diet and exercise","Carbohydrate and sugar cravings","Energy crashes after meals","Fatigue and sluggishness","High blood pressure (diagnosed or readings above 130/80)","Elevated triglycerides (diagnosed or suspected)","Low HDL cholesterol","Fasting blood sugar above 100 mg/dL","Difficulty losing weight despite consistent effort","Joint pain or inflammation","Frequent nighttime urination or sleep disruption"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900 (functional)",standardRange:"300-1000"},
+      {name:"SHBG",unit:"nmol/L",optimalRange:"20-50 (men)",standardRange:"10-57"},
+      {name:"Estradiol (E2) - sensitive",unit:"pg/mL",optimalRange:"20-30 (men)",standardRange:"10-40"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"HOMA-IR",unit:"index",optimalRange:"<1.5 (functional)",standardRange:"<2.5"},
+      {name:"HbA1c",unit:"%",optimalRange:"<5.4% (functional)",standardRange:"<5.7%"},
+      {name:"Fasting Glucose",unit:"mg/dL",optimalRange:"70-85 (functional)",standardRange:"70-100"},
+      {name:"Triglycerides",unit:"mg/dL",optimalRange:"<80 (functional)",standardRange:"<150"},
+      {name:"HDL-C",unit:"mg/dL",optimalRange:">60 (men)",standardRange:">40"},
+      {name:"hs-CRP",unit:"mg/L",optimalRange:"<0.7 (functional)",standardRange:"<3.0"},
+      {name:"Uric Acid",unit:"mg/dL",optimalRange:"<5.5 (functional)",standardRange:"<7.0"},
+      {name:"Blood Pressure",unit:"mmHg",optimalRange:"<120/80",standardRange:"<130/80"}
+    ]
+  },
+  sleep: {
+    name:"Sleep Apnea / Poor Sleep",fullName:"Sleep Apnea / Sleep-Disordered Breathing (Men)",sex:"male",
+    desc:"Obstructive sleep apnea affects an estimated 25% of men and is dramatically underdiagnosed. Each apnea episode triggers a cortisol spike and causes oxygen desaturation. Men with untreated sleep apnea lose 10 to 15% of testosterone per year and carry 3 times the cardiovascular risk of men without sleep apnea.",
+    symptoms:["Loud snoring (witnessed by partner or housemate)","Witnessed pauses in breathing during sleep","Waking with gasping or choking","Morning fatigue despite adequate hours in bed","Excessive daytime sleepiness (ESS score above 10)","Morning headaches","Difficulty concentrating / brain fog","Mood changes / irritability","Low libido or erectile dysfunction","Frequent nighttime urination (nocturia)","Neck circumference above 17 inches","BMI above 30 or significant central obesity","Dry mouth or sore throat on waking"],
+    labs:[
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900 (functional)",standardRange:"300-1000"},
+      {name:"Home Sleep Apnea Test (HSAT)",unit:"AHI events/hr",optimalRange:"<5 (normal)",standardRange:"<5 normal; 5-15 mild; 15-30 moderate; >30 severe"},
+      {name:"TSH",unit:"mIU/L",optimalRange:"0.5-2.0 (functional)",standardRange:"0.5-4.5"},
+      {name:"DHEA-S",unit:"ug/dL",optimalRange:"200-500 (men)",standardRange:"80-560"},
+      {name:"Ferritin",unit:"ng/mL",optimalRange:"60-90 (functional)",standardRange:"12-300"},
+      {name:"hs-CRP",unit:"mg/L",optimalRange:"<0.7 (functional)",standardRange:"<3.0"},
+      {name:"HbA1c",unit:"%",optimalRange:"<5.4% (functional)",standardRange:"<5.7%"},
+      {name:"Fasting Insulin",unit:"uIU/mL",optimalRange:"<5 (functional)",standardRange:"<25"},
+      {name:"Blood Pressure",unit:"mmHg",optimalRange:"<120/80",standardRange:"<130/80"},
+      {name:"CBC (Hematocrit)",unit:"%",optimalRange:"38-50%",standardRange:"38-52%"}
+    ]
+  },
+  fertility_m: {
+    name:"Male Fertility",fullName:"Male Fertility / Sperm Health Optimization",sex:"male",
+    desc:"Spermatogenesis takes 74 days, so any intervention takes a full 74 to 90 days to show its effect in a semen analysis. TRT (testosterone replacement therapy) completely suppresses sperm production and must NOT be used in men trying to conceive.",
+    symptoms:["Low sperm count (below 16 million/mL)","Poor sperm motility (below 42% progressive)","Abnormal sperm morphology (below 4% normal, Kruger strict)","Elevated sperm DNA fragmentation","Low testosterone (impairs spermatogenesis)","Varicocele (enlarged testicular veins, most common treatable cause)","History of undescended testicles (cryptorchidism)","History of testicular trauma or surgery","Low ejaculate volume","Difficulty with ejaculation","Scrotal discomfort or fullness","History of mumps orchitis","Exposure to heat (saunas, laptop, tight clothing)"],
+    labs:[
+      {name:"Semen Analysis - Count",unit:"million/mL",optimalRange:">20 million/mL (functional)",standardRange:">16 million/mL (WHO 2021)"},
+      {name:"Semen Analysis - Motility",unit:"% progressive",optimalRange:">50% progressive",standardRange:">42% progressive"},
+      {name:"Semen Analysis - Morphology",unit:"% normal",optimalRange:">5% normal (Kruger)",standardRange:">4% normal"},
+      {name:"Sperm DNA Fragmentation Index",unit:"%",optimalRange:"<15% (excellent)",standardRange:"<25%"},
+      {name:"Total Testosterone (AM)",unit:"ng/dL",optimalRange:"500-900",standardRange:"300-1000"},
+      {name:"LH",unit:"mIU/mL",optimalRange:"2-8",standardRange:"1.7-8.6"},
+      {name:"FSH",unit:"mIU/mL",optimalRange:"2-8",standardRange:"1.5-12.4"},
+      {name:"Estradiol (sensitive)",unit:"pg/mL",optimalRange:"20-30",standardRange:"10-40"},
+      {name:"Zinc (serum)",unit:"ug/dL",optimalRange:"90-110",standardRange:"60-120"},
+      {name:"CoQ10 (plasma)",unit:"ug/mL",optimalRange:">0.8 (functional)",standardRange:">0.4"},
+      {name:"Selenium (serum)",unit:"ug/L",optimalRange:"120-150",standardRange:"70-150"},
+      {name:"Scrotal Ultrasound",unit:"finding",optimalRange:"No varicocele, normal testicular volume",standardRange:"Radiologic read"}
+    ]
+  }
+};
+
+
+const EDUCATION = {
+  pcos: {
+    keyFacts: [
+      "PCOS affects 1 in 10 women of reproductive age and is the most common cause of female infertility.",
+      "Insulin resistance is present in up to 70% of women with PCOS, even those who are not overweight.",
+      "The LH:FSH ratio is often elevated in PCOS (above 2:1), signaling the hormonal driver of excess androgen production.",
+      "A Mediterranean-style, anti-inflammatory eating pattern is associated with improved insulin sensitivity, ovulation, and fertility outcomes in women with PCOS.",
+      "Losing just 5 to 10% of body weight can restore ovulation in women with weight-related PCOS.",
+      "Spearmint tea (2 cups daily) has two randomized controlled trials supporting its ability to reduce free testosterone levels.",
+      "Myo-inositol at a 40:1 ratio with D-chiro inositol is the best-studied natural insulin sensitizer for PCOS.",
+      "HIIT exercise 3 times per week is superior to steady-state cardio for reducing insulin resistance and androgens in PCOS."
+    ],
+    qa: [
+      {q:"Do I have to take birth control to manage my PCOS?",a:"No. Birth control suppresses PCOS symptoms by shutting down your hormone production entirely, but it does not address the root cause. Functional approaches target insulin resistance and androgen excess directly. Many women manage PCOS successfully without hormonal contraceptives using myo-inositol, berberine, dietary changes, and lifestyle modifications."},
+      {q:"Can I still get pregnant with PCOS?",a:"Yes. PCOS is a common cause of irregular ovulation but not permanent infertility. Restoring insulin sensitivity (with berberine or myo-inositol), optimizing Vitamin D, following a Mediterranean diet, and in some cases using ovulation induction medications, allows the majority of women with PCOS to conceive. Studies show 40:1 myo-inositol improved ovulation rates significantly."},
+      {q:"Is my weight causing my PCOS, or did PCOS cause my weight gain?",a:"Both can be true. Insulin resistance (a root feature of PCOS) causes the body to store fat more easily, especially around the abdomen. At the same time, excess body fat produces estrone and increases androgen production, worsening PCOS. Addressing insulin resistance first, not just calories, is the most effective approach."},
+      {q:"Why do I have acne and facial hair if I am a woman?",a:"PCOS causes elevated androgens (testosterone, DHEA-S) in women. These androgens stimulate oil glands (causing acne) and hair follicles on the face and body (causing unwanted hair growth) while simultaneously shrinking scalp hair follicles (causing thinning). Reducing androgens through insulin sensitization, zinc, and saw palmetto addresses the root of all three symptoms."},
+      {q:"Will myo-inositol help me even if I do not want to get pregnant?",a:"Yes. Myo-inositol improves insulin sensitivity, reduces androgens, regulates cycle timing, reduces acne and facial hair, and improves mood, regardless of fertility goals. It typically takes 3 to 6 months to see full benefit. The 40:1 myo-inositol to D-chiro inositol ratio is the most studied form."},
+      {q:"Is berberine as effective as metformin?",a:"In head-to-head trials to date, berberine has matched or slightly exceeded metformin for reducing insulin resistance, blood sugar, and androgen levels in PCOS (the evidence base is smaller than metformin's). Berberine also improves lipid profiles more effectively. Dose: 500mg 3 times daily with meals."},
+      {q:"What labs do I need to diagnose and monitor PCOS?",a:"At minimum: total and free testosterone, LH, FSH, DHEA-S, SHBG, fasting insulin, HbA1c, fasting glucose, and AMH. Also consider a pelvic ultrasound to assess ovarian morphology. Fasting insulin below 5 uIU/mL is the functional medicine target. Standard labs may report anything under 25 as normal, but that range includes insulin resistance."},
+      {q:"How long will it take to see improvement?",a:"Most women notice cycle changes (more regular periods) within 3 to 4 months of beginning a comprehensive protocol. Skin changes take 2 to 4 months. Androgen reduction confirmed by labs typically shows at the 4 to 6 month retest. Full metabolic improvement takes 6 to 12 months of consistent effort."}
+    ]
+  },
+  hypothyroid: {
+    keyFacts: [
+      "TSH alone misses significant thyroid dysfunction. Free T3, Free T4, Reverse T3, and TPO antibodies are all needed for a complete picture.",
+      "Roughly 13 to 15% of people carry the homozygous DIO2 (Thr92Ala) gene variant that impairs T4-to-T3 conversion, and some feel unwell despite normal TSH on levothyroxine alone.",
+      "Hashimoto's is the most common cause of hypothyroidism and is autoimmune: the immune system attacks thyroid tissue.",
+      "Selenium 200mcg/day has multiple meta-analyses confirming it reduces TPO antibody levels in Hashimoto's.",
+      "Ferritin levels below 70 ng/mL impair T4-to-T3 conversion. Iron deficiency is a hidden driver of hypothyroid symptoms.",
+      "The functional TSH range is 0.5 to 2.0 mIU/L. Many patients feel symptoms between 2.0 and 4.5, which is within the standard normal range.",
+      "A gluten-free diet may reduce TPO antibodies by 40 to 60% in some Hashimoto's patients due to molecular mimicry between gliadin and thyroid tissue.",
+      "Levothyroxine must be taken on an empty stomach with water. Calcium, iron, coffee, and high-fiber foods all reduce its absorption."
+    ],
+    qa: [
+      {q:"My doctor says my thyroid is normal but I still feel terrible. How is that possible?",a:"Standard TSH testing has a wide range (0.5 to 4.5 mIU/L). Many patients feel best in the lower half of that range (0.5 to 2.0). TSH alone does not show whether your body is actually converting T4 (the storage form) into active T3. Free T3 and Reverse T3 testing reveals conversion problems. Roughly 13 to 15% of people carry the homozygous DIO2 variant and convert T4 to T3 less efficiently."},
+      {q:"What is the difference between hypothyroidism and Hashimoto's?",a:"Hypothyroidism means your thyroid is underactive, producing too little thyroid hormone. Hashimoto's is the most common cause of hypothyroidism, but the cause is autoimmune: your immune system produces antibodies that attack your own thyroid gland. Treating Hashimoto's requires more than just thyroid hormone replacement. You must also address the autoimmune inflammation with selenium, Vitamin D, gut healing, and potentially a gluten-free diet."},
+      {q:"Will I have to take thyroid medication for the rest of my life?",a:"Not necessarily for Hashimoto's. By reducing the autoimmune attack (with selenium, Vitamin D, gluten elimination, gut healing), some patients see TPO antibody levels drop significantly and thyroid function improve over time. However, if significant thyroid tissue has already been destroyed, medication may be needed long-term. The goal is to slow or halt the autoimmune destruction while optimizing conversion of whatever hormone the thyroid does produce."},
+      {q:"I am taking levothyroxine but still feel exhausted. What is missing?",a:"Levothyroxine provides only T4, the inactive storage form of thyroid hormone. Your body must convert it to active T3. This conversion requires selenium, zinc, iron (ferritin 70 to 90), magnesium, and adequate cortisol levels. If any of these are deficient, conversion fails. Additionally, the homozygous DIO2 variant (present in roughly 13 to 15% of people) reduces this conversion. Ask your practitioner to check Free T3 and Reverse T3 alongside your TSH."},
+      {q:"Should I take iodine for my thyroid?",a:"This is complicated, especially for Hashimoto's. The thyroid needs iodine to make thyroid hormone, but high-dose iodine supplements can trigger an immune response and worsen Hashimoto's antibody levels. Food sources of iodine (seafood, seaweed in moderation, iodized salt) are generally fine. Avoid high-dose iodine supplements (1mg or more) without careful lab monitoring if you have Hashimoto's or elevated antibodies."},
+      {q:"Will a gluten-free diet really help my thyroid?",a:"For some patients with Hashimoto's, yes, significantly. Molecular mimicry describes how the immune system can confuse gliadin (the protein in gluten) with thyroid tissue, causing it to attack both. Studies show a strict gluten-free diet reduces TPO antibody levels by 40 to 60% in a subset of Hashimoto's patients. It is worth a 90-day strict trial to see if you respond. Gluten-free must mean truly strict."},
+      {q:"What is Reverse T3 and why does it matter?",a:"Reverse T3 (rT3) is an inactive form of thyroid hormone that your body produces under stress, inflammation, caloric restriction, or iron deficiency. High rT3 blocks T3 receptors, meaning even if your T4 and T3 look adequate, the rT3 may be blocking thyroid hormone from working at the cellular level. This pattern is called thyroid resistance and often explains persistent hypothyroid symptoms despite medication."},
+      {q:"How soon will I feel better on a thyroid protocol?",a:"With Hashimoto's specifically, selenium reduces antibody levels measurably within 3 to 6 months. Energy and cognitive symptoms often improve within 4 to 8 weeks of optimizing thyroid hormone levels and supporting conversion. Full antibody normalization can take 6 to 18 months. Monitor with labs at 3-month intervals and adjust the protocol based on results."}
+    ]
+  },
+  perimenopause: {
+    keyFacts: [
+      "The FDA removed the HRT black box warning in February 2026, citing the TRAVERSE trial and 25 years of data showing that hormone therapy does not increase cardiac risk in women who begin within 10 years of menopause.",
+      "Perimenopause can begin 8 to 12 years before the final menstrual period. FSH rising above 10 mIU/mL is an early marker of the transition.",
+      "Progesterone drops first, often starting in the mid-30s. Estrogen decline accelerates in the 3 to 5 years before menopause.",
+      "The menopause transition is a critical window for bone, cardiovascular, and cognitive protection. Estrogen loss is responsible for 50% of bone density loss in the first 5 years post-menopause.",
+      "Bioidentical progesterone (not synthetic progestins) reduces breast cancer risk, improves sleep, and reduces anxiety. The PROMISE trial confirmed breast safety.",
+      "DHEA-S naturally declines 2% per year from peak (around age 25). Low DHEA-S correlates with fatigue, low libido, and poor stress resilience.",
+      "Resistance training 3 to 4 times per week preserves bone density, improves insulin sensitivity, and maintains lean muscle mass through perimenopause, independent of hormone status.",
+      "Magnesium glycinate 400mg nightly reduces hot flash frequency, improves sleep quality, and supports bone mineral density in perimenopausal women."
+    ],
+    qa: [
+      {q:"What is the difference between perimenopause and menopause?",a:"Perimenopause is the transition phase, typically lasting 4 to 12 years, during which hormone levels fluctuate and decline. Menopause is defined as 12 consecutive months without a menstrual period. After that point, you are postmenopausal. The most dramatic hormonal swings, and many of the most disruptive symptoms, occur during perimenopause rather than after menopause itself."},
+      {q:"Is it safe to take hormone therapy?",a:"For most women under 60 who are within 10 years of menopause onset, hormone therapy has a favorable benefit-to-risk profile. The FDA removed the black box warning in February 2026. Bioidentical estradiol (patch, gel, or spray, not oral) carries the lowest cardiovascular and clot risk. Bioidentical progesterone (not synthetic progestins) has the most favorable breast safety profile. The decision should be individualized with your provider based on your personal risk factors."},
+      {q:"I am only 38. Can I already be in perimenopause?",a:"Yes. Perimenopause typically begins in the early-to-mid 40s but can start as early as the mid-30s in some women. Signs of early perimenopause include cycle length changes (shorter or longer cycles), new PMS or worsening mood symptoms, and sleep disruption. An FSH above 10 mIU/mL on day 2 to 3 of your cycle suggests the ovaries are beginning to work harder, an early sign of the transition."},
+      {q:"Why is my weight changing even though I eat the same way I always have?",a:"Estrogen decline changes body composition fundamentally. Estrogen supports insulin sensitivity and fat distribution around the hips and thighs. As estrogen drops, fat redistributes to the abdomen. Metabolic rate also declines as progesterone drops (progesterone is thermogenic and raises metabolic rate slightly). The same diet that maintained weight in your 30s may now produce fat gain. Resistance training is the single most effective intervention for reversing this shift."},
+      {q:"What supplements help the most in perimenopause?",a:"In order of evidence: 1) Magnesium glycinate 400mg nightly (sleep, anxiety, hot flashes, bone). 2) Vitamin D to 60 to 80 ng/mL (bone, immune, mood). 3) Omega-3 fatty acids 2 to 3 grams daily (cardiovascular, inflammation, mood). 4) Collagen peptides 15 to 20 grams daily (skin, joints, bone). 5) Creatine monohydrate 3 to 5 grams daily (muscle mass, cognitive function). These support hormone therapy, they do not replace it."},
+      {q:"How do I know if my hot flashes need hormone therapy or can be managed naturally?",a:"Hot flash severity is highly individual. Mild to moderate hot flashes (less than 7 per day, not significantly disrupting sleep) often respond to non-hormonal approaches: black cohosh, magnesium, mindfulness-based stress reduction, and dietary adjustments (reducing alcohol, caffeine, and spicy foods). Severe hot flashes (waking multiple times nightly, significantly impairing quality of life) typically require hormone therapy for meaningful relief. The NAMS 2023 position statement identifies hormone therapy as the most effective treatment for vasomotor symptoms."},
+      {q:"Will hormone therapy make me gain weight?",a:"No. This is the most persistent myth about hormone therapy. Properly dosed hormone therapy does not cause weight gain. In fact, estrogen therapy often reduces abdominal fat accumulation by improving insulin sensitivity. The weight gain associated with perimenopause comes from the hormonal changes themselves, not from treating them. Women on hormone therapy often find it easier to maintain or lose weight than untreated women of the same age."}
+    ]
+  },
+  endo: {
+    keyFacts: [
+      "Endometriosis affects an estimated 10% of women of reproductive age worldwide, yet the average time to diagnosis is 4 to 11 years.",
+      "The 2026 ACOG guideline recommends excision surgery (complete removal of lesions) over ablation (burning lesions) as the preferred surgical approach, with significantly lower recurrence rates.",
+      "Endo is an inflammatory disease, not just a gynecological one. IL-6, TNF-alpha, and prostaglandins drive both the pain and the progression.",
+      "Omega-3 fatty acids 3 to 4 grams daily reduce prostaglandin E2 production, the primary driver of period pain in endometriosis.",
+      "CA-125 is elevated in only 20 to 40% of endometriosis cases. A normal CA-125 does not rule out endometriosis. Laparoscopy remains the gold-standard diagnosis.",
+      "A low-FODMAP diet reduces GI symptoms (bloating, diarrhea, constipation) that overlap with endo, especially in women who also have bowel involvement.",
+      "Dienogest (a progestin) has the strongest evidence for reducing endo-associated pain without the side effects of GnRH agonists. Discussed as an alternative to surgery in mild to moderate disease.",
+      "Pelvic floor dysfunction commonly coexists with endometriosis, especially in those with deep infiltrating endo. Pelvic floor physical therapy often provides significant pain relief beyond what surgery alone achieves."
+    ],
+    qa: [
+      {q:"Can endometriosis be confirmed without surgery?",a:"Currently, the definitive diagnosis of endometriosis requires laparoscopic surgery with pathological confirmation of the tissue. However, deep infiltrating endometriosis can sometimes be identified on MRI by an experienced radiologist. New non-invasive biomarker tests are in clinical trials (uNK cells, micro-RNA panels) but none are yet FDA-cleared for diagnosis. A high degree of clinical suspicion based on symptoms, especially pain that begins 2 or more days before menstruation, is enough to warrant diagnostic laparoscopy."},
+      {q:"If I have a normal ultrasound, do I still have endometriosis?",a:"Yes. A standard transvaginal ultrasound can detect ovarian endometriomas (chocolate cysts) but misses superficial peritoneal lesions, which are the most common form of endometriosis. A normal ultrasound does NOT rule out endometriosis. A specialized endo ultrasound performed by a sonographer trained specifically in deep infiltrating endo (DiEM protocol) has higher sensitivity, but is not yet widely available."},
+      {q:"Can endometriosis be cured?",a:"No definitive cure exists, but the disease can be managed effectively. Excision surgery (removing lesions completely) has the lowest recurrence rates. Medical management with hormonal suppression (dienogest, combined oral contraceptives, GnRH agonists) reduces estrogen stimulation and pain. Functional medicine approaches (anti-inflammatory diet, omega-3s, magnesium, pelvic floor therapy) reduce inflammation and pain independently. Many women achieve significant quality-of-life improvement with a multi-modal approach."},
+      {q:"Does endometriosis affect fertility?",a:"Yes, though the mechanism varies by stage. Severe endometriosis (stage III to IV) can distort pelvic anatomy, block tubes, or cause adhesions that physically impair fertilization. Even mild endometriosis (stage I to II) creates a pro-inflammatory peritoneal environment hostile to embryo implantation. AMH is often lower in women with endo, especially after repeated ovarian surgery. Consulting a reproductive endocrinologist before surgery is important for any woman with endo who wants to preserve fertility."},
+      {q:"What foods make endometriosis worse?",a:"Red meat (increases prostaglandin production), trans fats, refined sugar, gluten (in women with coexisting sensitivity), alcohol, and excess caffeine are associated with worsening endo symptoms in observational studies. Anti-inflammatory foods that help: omega-3-rich fish, leafy greens, olive oil, turmeric, and berries. The most consistent finding: omega-3 supplementation at 3 to 4 grams daily significantly reduces period pain."},
+      {q:"My doctor wants me on birth control for endometriosis. Is that the right treatment?",a:"Hormonal suppression (birth control pills, progestins, or GnRH agonists) reduces estrogen-driven stimulation of endo lesions and can reduce pain. However, it does not remove lesions, prevent progression, or improve fertility. When you stop hormonal suppression, the disease often returns. The functional medicine perspective: hormonal suppression can be a valuable tool for symptom control while you address the underlying inflammatory environment with diet, supplements, and pelvic floor therapy."}
+    ]
+  },
+  estrogendominance: {
+    keyFacts: [
+      "Estrogen dominance is a relative state: it is the ratio of estrogen to progesterone that matters, not the absolute estrogen level. A woman can be estrogen dominant with low-normal estrogen if her progesterone is very low.",
+      "The estrobolome is the collection of gut bacteria that deactivate and excrete estrogen. Dysbiosis increases beta-glucuronidase enzyme activity, which reactivates estrogen in the colon for reabsorption.",
+      "DIM (diindolylmethane) 200mg daily shifts estrogen metabolism toward the protective 2-OH pathway and away from the inflammatory 16-OH pathway. Found naturally in cruciferous vegetables.",
+      "Excess adipose tissue (particularly visceral fat) produces the enzyme aromatase, which converts androgens to estrogen, creating a self-perpetuating cycle.",
+      "Alcohol, even moderate consumption, raises estradiol by impairing liver estrogen clearance. One drink per day raises estradiol by approximately 10 to 15%.",
+      "Liver support is essential for estrogen clearance. NAC 600mg, milk thistle, and adequate B-vitamins support Phase 1 and Phase 2 liver detoxification of estrogen.",
+      "DUTCH (Dried Urine Test for Comprehensive Hormones) measures estrogen metabolites (2-OH, 4-OH, 16-OH) and gives the most complete picture of estrogen metabolism available without a 24-hour urine collection.",
+      "Calcium D-glucarate 500mg twice daily inhibits beta-glucuronidase activity in the gut, reducing estrogen reabsorption and supporting clearance."
+    ],
+    qa: [
+      {q:"How can I have estrogen dominance if my estrogen levels test normal?",a:"Estrogen dominance is about the ratio of estrogen to progesterone, not the absolute estrogen level. If progesterone is low (common in perimenopause, under chronic stress, or with anovulatory cycles), estrogen can be dominant even if the number on the lab report looks normal. This is why testing progesterone on day 21 of your cycle (or 7 days after ovulation) is essential. A ratio of estradiol to progesterone above 200 on day 21 suggests estrogen dominance."},
+      {q:"Can stress cause estrogen dominance?",a:"Yes, through two mechanisms. First, pregnenolone steal: when the body prioritizes cortisol production under chronic stress, it diverts pregnenolone (the master hormone precursor) toward cortisol production and away from progesterone production. The result is low progesterone relative to estrogen. Second, cortisol impairs liver function over time, reducing the liver's capacity to clear estrogen efficiently. Both mechanisms make stress management a core component of treating estrogen dominance."},
+      {q:"What is the gut connection to estrogen dominance?",a:"The estrobolome (gut microbiome's role in estrogen metabolism) is a critical and often overlooked factor. The liver conjugates estrogen for excretion in bile. In the gut, the enzyme beta-glucuronidase (produced by certain bacteria) can break that conjugation and reactivate estrogen for reabsorption back into circulation. Women with dysbiosis often have elevated beta-glucuronidase, which raises circulating estrogen. Testing: GI-MAP includes beta-glucuronidase measurement. Treatment: calcium D-glucarate, probiotics, and dietary fiber."},
+      {q:"Do plastics really affect my estrogen?",a:"Yes. Bisphenol A (BPA), phthalates, and other endocrine-disrupting chemicals (EDCs) found in plastics, food packaging, personal care products, and receipts bind to estrogen receptors and mimic estrogen activity in the body. They are also additive to endogenous estrogen and are stored in adipose tissue. Practical reduction: glass or stainless steel water bottles, avoid heating food in plastic, use fragrance-free personal care products, and eat organic produce when possible for the high-pesticide items."},
+      {q:"What foods help clear excess estrogen?",a:"The highest-impact dietary changes: 1) Cruciferous vegetables (broccoli, cauliflower, kale, Brussels sprouts) contain DIM and indole-3-carbinol, which shift estrogen metabolism toward protective metabolites. Aim for 2 to 3 cups daily. 2) Ground flaxseed 2 tablespoons daily (lignans bind and escort estrogen out). 3) Adequate dietary fiber (25 to 35 grams daily) supports estrogen excretion via bile. 4) Reduce alcohol. 5) Reduce red meat and full-fat conventional dairy (they concentrate exogenous hormones)."},
+      {q:"What is the DUTCH test and do I need it?",a:"DUTCH (Dried Urine Test for Comprehensive Hormones) is a urine test that measures estrogen metabolites (the breakdown products), not just estrogen itself. This tells you HOW your body is processing estrogen: whether it is going through the protective 2-OH pathway (anti-proliferative) or the inflammatory 4-OH and 16-OH pathways (associated with breast and uterine tissue proliferation). Standard blood tests show your estrogen level but not your estrogen metabolism. DUTCH is most useful for women with fibroids, endometriosis, dense breasts, or strong family history of hormone-sensitive cancers."}
+    ]
+  },
+  adrenal: {
+    keyFacts: [
+      "True Addison's disease (complete adrenal failure) is rare. HPA axis dysregulation is common. The distinction matters because they require completely different treatments.",
+      "4-point salivary cortisol or DUTCH Complete testing is required to see the full cortisol pattern. A single morning serum cortisol shows only one data point of a dynamic 24-hour curve.",
+      "Chronic cortisol elevation drives belly fat accumulation, insulin resistance, and immune suppression simultaneously. HPA dysregulation is a metabolic disease, not just a stress disease.",
+      "The wired-tired pattern (exhausted but unable to sleep, anxious but fatigued) is the classic HPA dysregulation presentation. It differs from true adrenal insufficiency, which presents with severe fatigue, hypotension, and salt craving.",
+      "Phosphatidylserine 400mg has the strongest RCT evidence for blunting the cortisol response to stress in healthy adults. It is non-sedating and well-tolerated.",
+      "DHEA-S is the most reliable marker of long-term HPA function. DHEA-S below 150 ug/dL in a premenopausal woman with fatigue and low stress tolerance strongly suggests HPA dysregulation.",
+      "High-intensity exercise worsens HPA dysregulation. Zone 2 cardio (conversational pace, 45 to 60 minutes) and moderate resistance training are the appropriate exercise prescriptions during recovery.",
+      "Ashwagandha KSM-66 300 to 600mg/day has robust clinical evidence for reducing cortisol, improving sleep quality, and reducing perceived stress."
+    ],
+    qa: [
+      {q:"How do I know if I have adrenal fatigue or something else?",a:"Adrenal fatigue is not a medical diagnosis, but HPA axis dysregulation is a real and measurable phenomenon. The key tests: 4-point salivary cortisol (ideally DUTCH Complete) to see your cortisol pattern across the day, and DHEA-S to see the long-term status of your HPA axis. A flat cortisol curve (low in the morning when it should be highest), DHEA-S below 150, and the classic symptom pattern of morning exhaustion and afternoon energy crash points to HPA dysregulation. Rule out thyroid dysfunction, anemia, and iron deficiency first, as these mimic HPA symptoms."},
+      {q:"Can stress really cause this much physical damage?",a:"Yes. Chronic cortisol elevation is not a metaphor: it has direct physiological effects. Cortisol breaks down muscle tissue (catabolism), impairs insulin receptor signaling, increases visceral fat deposition, suppresses thyroid conversion, reduces progesterone production, and impairs immune function. The brain is also directly affected: high cortisol shrinks the hippocampus (memory and spatial navigation), which is why brain fog is so prominent in HPA dysregulation. These are measurable structural and functional changes, not mood symptoms."},
+      {q:"Will supplements fix my adrenal issues without lifestyle changes?",a:"No. Adaptogens and supplements support HPA recovery, but they cannot override the primary stressor driving the dysfunction. The correct sequence: 1) Identify and reduce or remove the primary stressor (work stress, relationship conflict, sleep deprivation, overtraining, dietary stress from blood sugar instability). 2) Restore sleep as the highest priority. 3) Stabilize blood sugar with consistent protein-first meals. 4) Add ashwagandha, phosphatidylserine, magnesium, and vitamin C. Supplements without these foundations produce modest improvement at best."},
+      {q:"What is the connection between HPA dysregulation and my thyroid?",a:"The cortisol-thyroid connection has two main mechanisms. First, high cortisol inhibits the conversion of T4 (inactive thyroid hormone) to T3 (active thyroid hormone) and promotes conversion to Reverse T3 (inactive blocker), causing thyroid hormone resistance even if your labs look normal. Second, chronic stress suppresses TSH production from the pituitary. Women with HPA dysregulation often have subclinical hypothyroid symptoms that clear when cortisol is normalized, without ever needing thyroid medication."},
+      {q:"How long does it take to recover from HPA dysregulation?",a:"Recovery from HPA dysregulation is gradual. Energy and mood typically begin improving within 4 to 8 weeks of implementing a comprehensive protocol. Sleep quality usually improves within 2 to 4 weeks of magnesium and sleep hygiene changes. DHEA-S and cortisol pattern normalization on salivary testing typically takes 3 to 6 months. Full restoration of resilience and vitality often takes 9 to 12 months in moderate cases. Retest cortisol and DHEA-S at 3 and 6 months to confirm progress."},
+      {q:"Should I take hydrocortisone or DHEA supplements?",a:"Low-dose hydrocortisone is used by some functional medicine physicians for documented cortisol deficiency (below range on morning serum cortisol and flat salivary curves), but it is a prescription medication with significant risks if dosed incorrectly or used without testing. DHEA supplementation at 5 to 25mg in women with confirmed low DHEA-S can improve energy, libido, and mood, but should be dosed carefully with follow-up lab monitoring to avoid androgenic side effects (acne, hair changes). Both require provider supervision."}
+    ]
+  },
+  hyperthyroid: {
+    keyFacts: [
+      "Graves' disease is the most common cause of hyperthyroidism, driven by TSI (Thyroid Stimulating Immunoglobulin) antibodies that chronically stimulate the thyroid to produce excess hormone.",
+      "Heart palpitations in hyperthyroidism are caused by excess thyroid hormone increasing sympathetic nervous system sensitivity. Atrial fibrillation (AFib) can develop in untreated or undertreated hyperthyroidism.",
+      "Bone density loss occurs rapidly in untreated hyperthyroidism. Cortical bone (forearm, hip) is most vulnerable. DEXA scan baseline is recommended before beginning treatment.",
+      "Selenium 200mcg daily reduces TRAb antibody levels in Graves' disease and is supported by a 2011 NEJM RCT. It also reduces the risk of Graves' ophthalmopathy progression.",
+      "The three treatment options for Graves' are: antithyroid medications (methimazole), radioactive iodine (RAI) ablation, and thyroidectomy. Each has different risk profiles and long-term implications for thyroid function.",
+      "After RAI or thyroidectomy, patients become permanently hypothyroid and require lifelong thyroid hormone replacement. Optimizing that replacement requires the same functional approach (Free T3, Reverse T3, nutrient cofactors) as primary hypothyroidism.",
+      "Hyperthyroidism increases calcium loss from bone and raises calcium in blood. Serum calcium should be monitored. Vitamin D and magnesium support bone remineralization during treatment.",
+      "Avoid high-dose iodine supplements, kelp, and iodine-containing contrast dyes (inform your radiologist). Excess iodine can worsen Graves' disease and trigger thyroid storm in severe cases."
+    ],
+    qa: [
+      {q:"What is the safest first treatment for Graves' disease?",a:"Antithyroid medications (methimazole in the US, carbimazole in Europe) are the safest first-line treatment because they are reversible. Approximately 30 to 40% of patients achieve remission after 12 to 18 months of antithyroid medication. Beta-blockers (propranolol) can be added in the short term to control palpitations and anxiety while the thyroid levels normalize. RAI and surgery are definitive but permanent. For women who may want to become pregnant within 6 months, surgery is generally preferred over RAI due to radiation considerations."},
+      {q:"Can Graves' disease go into remission on its own?",a:"Yes, in approximately 30 to 40% of cases. Remission is more likely in: mild disease at diagnosis, younger patients, smaller goiters, lower antibody levels, and in those who achieve selenium optimization and stress reduction. Remission is confirmed by persistent normal thyroid function after stopping antithyroid medication for at least 12 months. Stress, iodine excess, pregnancy, and illness are common triggers for relapse in people who have achieved remission."},
+      {q:"Why are my eyes involved in my Graves' disease?",a:"Graves' ophthalmopathy (also called thyroid eye disease or TED) is an autoimmune attack on the orbital tissue around the eyes, driven by the same TSI antibodies that stimulate the thyroid. It occurs in approximately 25 to 50% of Graves' patients. Severity ranges from mild (lid retraction, gritty eyes) to severe (proptosis, double vision, vision loss). Selenium 200mcg daily significantly reduces the progression from mild to moderate eye disease. Smoking dramatically worsens Graves' eye disease and must be stopped."},
+      {q:"Do I need to avoid all iodine if I have Graves' disease?",a:"You do not need to eliminate dietary iodine from normal food sources (seafood, dairy, eggs, iodized salt). You should avoid high-dose iodine supplements (Lugol's iodine, kelp tablets, iodine-containing multivitamins), which can worsen Graves' disease by stimulating excess thyroid hormone production. You should also inform your radiologist if you need imaging with iodine-containing contrast, as this can trigger thyroid storm in active, untreated hyperthyroidism."},
+      {q:"Will I always be hypothyroid after RAI or surgery?",a:"Yes, almost universally. RAI destroys functioning thyroid tissue intentionally, and the goal is to achieve hypothyroidism, which is then managed with thyroid hormone replacement. Thyroidectomy removes the gland entirely. In both cases, lifelong thyroid hormone replacement is the outcome. The quality of that replacement matters significantly. TSH within optimal functional range (0.5 to 2.0), with Free T3 in the upper third of range, and ruling out the DIO2 variant for conversion issues, determines how well you feel after treatment."},
+      {q:"Can I reduce my Graves' antibodies naturally?",a:"To a meaningful degree in some cases, yes. Strategies with evidence: selenium 200mcg daily (NEJM 2011 RCT showing antibody reduction), Vitamin D to 60 to 80 ng/mL (low Vitamin D correlates with higher TSI levels), eliminating gluten (case series data, not RCTs, but a reasonable 90-day trial given the autoimmune mechanism), and stress reduction (psychological stress is a documented trigger for Graves' flares). These approaches support medical treatment but should not replace it."}
+    ]
+  },
+  fibroids: {
+    keyFacts: [
+      "Uterine fibroids affect up to 80% of Black women and 70% of white women by age 50. Black women develop fibroids earlier, have larger fibroids, and experience more severe symptoms.",
+      "Heavy menstrual bleeding (HMB) from fibroids is the leading cause of iron deficiency anemia in premenopausal women. Ferritin below 30 ng/mL in a woman with HMB warrants iron repletion alongside fibroid management.",
+      "Relugolix (Myfembree) and elagolix (Oriahnn) are FDA-approved oral GnRH antagonists for fibroid-related HMB. They work within days (unlike GnRH agonists, which cause a flare first) and are the newest medical options.",
+      "Vitamin D deficiency is strongly associated with fibroid development. Black women have higher rates of Vitamin D deficiency, which may partly explain their higher fibroid burden. Target: 60 to 80 ng/mL.",
+      "Green tea extract (EGCG) 800mg daily was shown in a 2013 RCT to reduce fibroid volume by 32.6% and reduce menstrual blood loss over 4 months in women with symptomatic fibroids.",
+      "The 2:16 estrogen ratio (measured on DUTCH urine testing) reflects protective versus proliferative estrogen metabolism. A ratio below 2.0 is associated with higher fibroid and breast tissue proliferation risk.",
+      "Uterine fibroid embolization (UFE) is a non-surgical option that shrinks fibroids by cutting off their blood supply. It preserves the uterus, has a faster recovery than myomectomy, and is appropriate for most fibroid locations.",
+      "Progesterone receptor modulators (ulipristal acetate in Europe, though restricted due to liver concerns) and selective progesterone receptor modulators are in trials as non-surgical alternatives to GnRH therapy."
+    ],
+    qa: [
+      {q:"Do fibroids always need to be treated?",a:"No. Most fibroids are asymptomatic and require only monitoring. Treatment is indicated when fibroids cause: heavy menstrual bleeding leading to anemia, bulk symptoms (bladder pressure, frequent urination, pelvic fullness), pain (pelvic, back, or during intercourse), or fertility impairment. The location of the fibroid matters more than the size. Submucosal fibroids (inside the uterine cavity) cause heavy bleeding at smaller sizes than intramural (within the wall) or subserosal (on the outside) fibroids."},
+      {q:"Will losing weight shrink my fibroids?",a:"Weight loss reduces the production of estrone (a form of estrogen made by adipose tissue) and reduces aromatase activity, which lowers the hormonal stimulation of fibroid growth. While weight loss alone rarely produces dramatic fibroid shrinkage, it does reduce the rate of fibroid growth and progression of symptoms. A 10% reduction in body weight reduces estrone production meaningfully. More importantly for fibroids, reducing insulin resistance (even without significant weight loss) reduces the growth factor IGF-1, which directly stimulates fibroid cell proliferation."},
+      {q:"Can diet make my fibroids grow faster or slower?",a:"Evidence suggests yes. Diets high in red meat, alcohol, and refined sugars are associated with higher fibroid risk and faster growth in observational studies. Diets rich in green vegetables, citrus fruits, and dairy (calcium and Vitamin D) are associated with lower risk. Green tea EGCG (800mg daily) has one RCT showing 32.6% volume reduction. DIM (200mg daily) supports the protective 2-OH estrogen metabolite pathway. Ground flaxseed (2 tablespoons daily) provides lignans that modulate estrogen receptor activity."},
+      {q:"What are my non-surgical options for fibroid bleeding?",a:"Non-surgical options include: 1) GnRH antagonists (relugolix or elagolix with add-back hormone therapy), which reduce fibroids and bleeding dramatically within weeks but are FDA-limited to 24 months of use. 2) Progesterone IUD (Mirena), which reduces menstrual blood loss significantly in women with submucosal fibroids that do not distort the cavity. 3) Tranexamic acid (prescription), taken during the period only to reduce blood loss. 4) NSAIDs (prescription strength) during the period to reduce prostaglandin-driven bleeding. 5) Green tea EGCG and DIM for slower, natural fibroid volume reduction over months."},
+      {q:"I want to keep my uterus. What are my surgical options?",a:"Myomectomy (surgical removal of fibroids while preserving the uterus) is the definitive surgical option for women who want to maintain fertility or uterine preservation. Laparoscopic and robotic myomectomies are available for fibroids under 8 to 10cm. Hysteroscopic myomectomy removes submucosal fibroids through the cervix without abdominal incision. Uterine fibroid embolization (UFE) is an interventional radiology procedure that cuts off fibroid blood supply without surgery. UFE is not recommended for women who want to conceive, due to risk of impaired uterine blood flow."},
+      {q:"Why does my doctor want to just watch and wait?",a:"Watch and wait is appropriate when fibroids are small, asymptomatic, and not distorting the uterine cavity. Fibroids typically shrink at menopause when estrogen declines. If you are within 5 to 10 years of menopause with manageable symptoms, conservative management may be reasonable. However, if fibroids are causing anemia (check ferritin and CBC), significantly impairing your quality of life, or are located in the uterine cavity, active intervention is warranted."}
+    ]
+  },
+  fertility_f: {
+    keyFacts: [
+      "The follicle ovulating this cycle began developing 90 days ago. This means egg quality interventions take a minimum of 3 months (one full cycle of follicular development) to show their effect.",
+      "CoQ10 (ubiquinol form) 400 to 600mg daily is the most evidence-backed supplement for egg quality. Mitochondria power the egg's maturation and fertilization capacity, and CoQ10 is the primary mitochondrial energy carrier.",
+      "AMH (Anti-Mullerian Hormone) reflects ovarian reserve (quantity of remaining eggs) but NOT egg quality. Low AMH predicts a lower response to ovarian stimulation, not zero chance of conception.",
+      "TSH should be below 2.0 mIU/L for optimal fertility. Hypothyroidism (even subclinical) impairs ovulation, progesterone production, and implantation. Many reproductive endocrinologists target TSH below 2.5 for conception.",
+      "Adequate progesterone (Day 21 level above 10 ng/mL) confirms that ovulation occurred and the corpus luteum is producing enough progesterone to support implantation and early pregnancy.",
+      "Homocysteine above 10 umol/L doubles miscarriage risk. B12, folate (as L-methylfolate, not folic acid, for MTHFR carriers), and B6 lower homocysteine effectively within 3 to 4 months.",
+      "Vitamin D levels below 30 ng/mL are associated with lower IVF success rates, higher miscarriage rates, and impaired implantation. Target 60 to 80 ng/mL for fertility.",
+      "Inositol (myo-inositol 2 to 4 grams daily) improves oocyte quality in women with PCOS and in non-PCOS women in studies. It also reduces miscarriage rates in women with insulin resistance."
+    ],
+    qa: [
+      {q:"I am 36. Is it too late to improve my fertility naturally?",a:"No. Egg quality can be meaningfully improved with targeted supplementation and lifestyle changes regardless of age, though the baseline quality does decline with age. The key interventions (CoQ10 ubiquinol 400 to 600mg, Vitamin D to 60 to 80 ng/mL, omega-3 fatty acids, reduction of oxidative stress) work by improving mitochondrial function and reducing the DNA damage that accumulates in eggs over time. A 90-day intensive protocol before attempting conception or beginning IVF can meaningfully improve outcomes."},
+      {q:"My AMH is low. Does that mean I cannot get pregnant?",a:"AMH measures the quantity of eggs remaining, not their quality. Many women with low AMH conceive naturally or with IVF. Low AMH predicts a lower number of eggs retrieved in IVF (lower response to stimulation), but a single high-quality egg is all that is needed for conception. Strategies for low AMH: optimize egg quality aggressively (CoQ10 ubiquinol, DHEA 25 to 75mg, vitamin D, antioxidants), work with a reproductive endocrinologist experienced in low responders, and consider natural cycle IVF as an alternative to high-dose stimulation protocols."},
+      {q:"What is the MTHFR gene variant and should I worry about it?",a:"MTHFR (methylenetetrahydrofolate reductase) is an enzyme that converts folic acid into the active form (L-methylfolate) your cells can use. Common variants (C677T and A1298C) reduce this conversion efficiency by 30 to 70%. Compound heterozygous or homozygous MTHFR carriers may not benefit from standard folic acid supplementation and should use L-methylfolate (5-MTHF) directly. Elevated homocysteine (above 10 umol/L) is the functional consequence to look for."},
+      {q:"How do I know if I am actually ovulating?",a:"The most reliable method: urinary LH surge testing (OPK) plus serum progesterone on day 21 (or 7 days post-LH surge). A Day 21 progesterone above 10 ng/mL confirms ovulation occurred and the corpus luteum is functioning. OPK testing alone can be falsely positive (LH surges that do not result in ovulation occur in PCOS) or falsely negative (very brief LH surges are missed). Basal body temperature (BBT) charting provides additional confirmation: a sustained rise of 0.2 to 0.3 degrees Celsius after ovulation, persisting for 10 or more days."},
+      {q:"My luteal phase is short. What does that mean and what can I do?",a:"A luteal phase shorter than 10 days (from ovulation to the start of the next period) is called luteal phase defect. It typically means the corpus luteum is not producing adequate progesterone to maintain the uterine lining for implantation. Causes include low progesterone production (often correctable with vitamin B6, vitex, or progesterone supplementation), short-acting LH surge, or subclinical hypothyroidism. Practical intervention: confirm with Day 21 progesterone testing. If below 10 ng/mL, discuss progesterone supplementation with your provider in the luteal phase."},
+      {q:"What should I do differently in the 90 days before trying to conceive?",a:"The pre-conception window: 1) Start prenatal vitamin with L-methylfolate (not folic acid if MTHFR positive) at least 3 months before conception attempt. 2) Begin CoQ10 ubiquinol 400mg daily. 3) Optimize Vitamin D to 60 to 80 ng/mL. 4) Test and correct iron (ferritin to 60 to 90 ng/mL). 5) Reduce alcohol entirely. 6) Achieve healthy weight (BMI 20 to 30 for best outcomes). 7) Test thyroid (TSH below 2.0) and correct if elevated. 8) Test homocysteine and correct with B vitamins if above 10 umol/L."}
+    ]
+  },
+  lowt: {
+    keyFacts: [
+      "The FDA removed the cardiovascular black box warning from testosterone therapy in February 2025, citing the TRAVERSE trial (2022), which found no increased cardiovascular event risk in men on TRT versus placebo.",
+      "Testosterone is drawn before 10 AM because levels peak in the morning and decline by 20 to 35% through the day. An afternoon testosterone draw can appear falsely low.",
+      "SHBG (sex hormone-binding globulin) binds testosterone and makes it biologically unavailable. High SHBG (common in older men, thyroid disease, and liver disease) means less free testosterone even when total is normal.",
+      "Fasting insulin below 5 uIU/mL is one of the strongest modifiable predictors of testosterone. Insulin resistance directly suppresses testosterone through LH receptor downregulation in the testes.",
+      "Sleep is the primary driver of testosterone production. Approximately 70% of daily testosterone is released during slow-wave sleep. Men who sleep less than 6 hours have testosterone levels equivalent to men 10 years older.",
+      "Zinc is the most critical mineral cofactor for testosterone synthesis. Zinc deficiency reduces testosterone by 50 to 75% in studies, and supplementation in deficient men restores levels significantly.",
+      "Clomiphene citrate (Clomid) and enclomiphene stimulate the pituitary to produce more LH and FSH, which drives natural testosterone production without suppressing fertility, unlike TRT.",
+      "TRT completely suppresses spermatogenesis (within 3 to 6 months) through negative feedback on the HPG axis. Men who want to conceive should use clomiphene, HCG, or enclomiphene instead."
+    ],
+    qa: [
+      {q:"My doctor says my testosterone is normal but I have all the symptoms. What is happening?",a:"Standard lab normal ranges for testosterone are very wide (300 to 1000 ng/dL), derived from population averages that include men who are symptomatic and sedentary. A man at 310 ng/dL is technically within range but may feel significantly better at 700 ng/dL. More importantly, free testosterone (the biologically active fraction) may be low even when total testosterone is adequate, due to high SHBG. Always test free testosterone and SHBG alongside total testosterone. Symptoms in the presence of low-normal testosterone warrant a full functional evaluation."},
+      {q:"Will testosterone therapy make me permanently dependent on it?",a:"Yes, TRT shuts down natural testosterone production through negative feedback on the HPG axis. When you take exogenous testosterone, the brain stops signaling the testes to produce it (LH and FSH drop to near zero). If you stop TRT without a restart protocol, your testosterone will typically drop lower than your pre-TRT baseline for weeks to months while the HPG axis recovers. Restart protocols using HCG, clomiphene, or enclomiphene can accelerate recovery."},
+      {q:"What are the risks of testosterone therapy I should know about?",a:"Key risks: 1) Erythrocytosis (elevated red blood cell count): TRT increases red blood cell production. Hematocrit above 54% increases clot risk and requires dose reduction or therapeutic phlebotomy. Monitor hematocrit every 3 to 6 months. 2) Estrogen conversion: testosterone converts to estradiol via aromatase. If estradiol rises above 40 pg/mL, aromatase inhibitors (anastrozole) can be used. 3) Fertility suppression: complete within 3 to 6 months. 4) Testicular atrophy: HCG co-administration (500 to 1000 IU 2 to 3 times weekly) prevents testicular size reduction. 5) PSA increase: monitor annually."},
+      {q:"Are there natural ways to raise testosterone significantly?",a:"Yes, and they work best in men who have modifiable drivers of low testosterone. Most impactful: 1) Sleep 7 to 9 hours (each additional hour of quality sleep raises testosterone by 15%). 2) Resistance training 3 to 4 times weekly (compound movements: squat, deadlift, press). 3) Reduce body fat (visceral fat converts testosterone to estrogen via aromatase). 4) Correct insulin resistance (fasting insulin below 5). 5) Zinc 30 to 50mg if deficient. 6) Vitamin D to 60 to 80 ng/mL. 7) Ashwagandha KSM-66 600mg daily (15% testosterone increase in a 2019 RCT). 8) Reduce alcohol."},
+      {q:"What is the difference between primary and secondary low testosterone?",a:"Primary hypogonadism means the problem is in the testes themselves. The pituitary is sending strong signals (high LH and FSH) but the testes cannot respond. TRT is typically required. Secondary hypogonadism means the problem is in the signaling: the hypothalamus or pituitary is not sending adequate LH and FSH to the testes. Causes include obesity, insulin resistance, sleep apnea, opioid use, and stress. The testes can produce testosterone but are not being told to. This form often responds to lifestyle, clomiphene, or HCG and may not require TRT."},
+      {q:"How often should I get my labs checked on TRT?",a:"Recommended monitoring: 1) 6 to 8 weeks after starting or changing dose: total and free testosterone (trough), estradiol (sensitive assay), hematocrit. 2) At 6 months: add PSA, liver function, complete metabolic panel, lipids. 3) Annually thereafter if stable. PSA should be checked before starting TRT as a baseline, and any PSA rise above 1.4 ng/mL in a year or a total above 4.0 warrants urological consultation. Hematocrit above 54% requires dose adjustment or phlebotomy."}
+    ]
+  },
+  highe: {
+    keyFacts: [
+      "Visceral fat contains the highest concentration of aromatase enzyme outside the gonads. Men with waist circumference above 40 inches often have clinically significant testosterone-to-estrogen conversion.",
+      "The testosterone-to-estradiol ratio is more clinically meaningful than estradiol alone. A ratio below 10:1 (total testosterone ng/dL to estradiol pg/mL) is associated with symptomatic estrogen excess.",
+      "Alcohol impairs liver estrogen clearance significantly. Men who drink regularly have measurably higher estradiol levels than non-drinkers at the same testosterone level.",
+      "DIM (diindolylmethane) 200mg daily shifts estrogen metabolism toward the 2-OH protective pathway in men as in women. It is the most evidence-supported non-pharmaceutical aromatase modulator.",
+      "Anastrozole (an aromatase inhibitor) is used by endocrinologists to reduce estrogen conversion in men on TRT. It is not a first-line approach. Weight loss, alcohol reduction, and zinc are the non-pharmaceutical first steps.",
+      "Prolactin elevation (above 15 ng/mL in men) suppresses testosterone and libido independently of estrogen. Always include prolactin in the workup for gynecomastia, as a pituitary adenoma (prolactinoma) must be ruled out.",
+      "Zinc inhibits aromatase enzyme directly. Zinc supplementation (30 to 50mg daily) measurably reduces estrogen conversion in men with documented deficiency.",
+      "Men on SSRIs, spironolactone, cimetidine (Tagamet), and some antihypertensives have drug-induced gynecomastia and elevated estrogen. Medication review is essential before attributing estrogen excess to hormonal causes."
+    ],
+    qa: [
+      {q:"Do I need medication to lower my estrogen, or can I do it naturally?",a:"For most men with estrogen excess driven by obesity, insulin resistance, alcohol, or medication, lifestyle changes produce significant estrogen reduction without medication. The most powerful: 1) Reduce visceral fat (each 5% reduction in body fat lowers aromatase activity measurably). 2) Reduce or eliminate alcohol. 3) Address insulin resistance (fasting insulin below 5). 4) Add DIM 200mg daily and zinc 30 to 50mg. 5) Review medications with your provider. Anastrozole or similar pharmaceutical aromatase inhibitors are appropriate for men on TRT where lifestyle has not produced adequate reduction, or where estradiol is above 50 pg/mL with symptoms."},
+      {q:"Can high estrogen in men really cause breast tissue growth?",a:"Yes. Gynecomastia (true breast gland tissue, not just fat) results from estrogen stimulating breast gland development, unopposed by adequate testosterone. It is distinct from pseudogynecomastia (fatty tissue without gland development). True gynecomastia feels like a firm disk of tissue under the nipple. It can be tender, especially when developing. Once established for more than 12 months, the breast gland tissue becomes fibrous and does not fully regress with hormone normalization. Surgery (mastectomy) may be required for established gynecomastia that fails to regress."},
+      {q:"Why does my estrogen matter if my testosterone is normal?",a:"The testosterone-to-estradiol ratio determines the androgenic vs. estrogenic signal in your body. A man with testosterone of 500 ng/dL and estradiol of 60 pg/mL has a ratio of about 8:1, which is low enough to produce estrogenic symptoms (low libido, emotional sensitivity, water retention, gynecomastia) despite technically normal testosterone. The target ratio is above 15:1. Beyond symptoms, chronically elevated estrogen suppresses LH production from the pituitary through negative feedback, further reducing testosterone production in a self-reinforcing cycle."},
+      {q:"I am on TRT and my estrogen is high. What should I do?",a:"Estradiol elevation during TRT is expected but must be managed. First steps: confirm the result with a sensitive estradiol assay (standard estradiol assays are designed for women and over-report estrogen in men). If confirmed above 35 to 40 pg/mL with symptoms: 1) Evaluate dose and delivery method. Injections produce large peaks that drive aromatization. Daily topical application produces more stable, lower-peak levels. 2) Reduce injected dose or increase injection frequency. 3) Add DIM and zinc. 4) Work with your provider on anastrozole if lifestyle interventions are insufficient."},
+      {q:"What is prolactin and why does it matter for men?",a:"Prolactin is a pituitary hormone that in men, when elevated, suppresses GnRH and LH, directly reducing testosterone production. It also causes low libido, erectile dysfunction, and in significant elevation, gynecomastia. Causes of elevated prolactin in men: pituitary adenoma (prolactinoma), antipsychotic medications, antidepressants (especially SSRIs), opioids, hypothyroidism, and estrogen excess. Every man with gynecomastia or unexplained low testosterone should have a prolactin level checked before assuming the cause is estrogen-related."}
+    ]
+  },
+  dht: {
+    keyFacts: [
+      "5-alpha reductase (5AR) converts testosterone to DHT. There are two isoforms: Type 1 (skin, liver) and Type 2 (prostate, scalp, hair follicles). Finasteride inhibits Type 2 only. Dutasteride inhibits both Type 1 and Type 2.",
+      "DHT is approximately 3 times more potent than testosterone at androgen receptors. It does not convert to estrogen, unlike testosterone.",
+      "Saw palmetto (320mg liposterolic extract) inhibits 5-alpha reductase and alpha-1 adrenergic receptors in the prostate. Multiple meta-analyses show improvement in IPSS (International Prostate Symptom Score) comparable to tamsulosin for mild to moderate BPH.",
+      "Finasteride 1mg reduces DHT by 65 to 70% at the scalp and significantly slows hair loss. Dutasteride 0.5mg reduces DHT by 98% and has stronger evidence for both hair retention and BPH symptom relief.",
+      "Post-Finasteride Syndrome (PFS) is a controversial but documented phenomenon: some men report persistent sexual, neurological, and psychological symptoms after stopping finasteride. Incidence estimates vary widely. Informed consent matters.",
+      "Pumpkin seed oil 320mg daily has three RCTs supporting improvement in BPH symptoms. It inhibits 5-alpha reductase and has anti-inflammatory effects on the prostate.",
+      "Ferritin below 30 ng/mL is strongly associated with accelerated hair loss in men with genetic hair thinning. Iron repletion (targeting ferritin 60 to 90) often slows or stabilizes DHT-driven hair loss.",
+      "Zinc is a natural 5-alpha reductase inhibitor. Zinc deficiency is strongly associated with both hair loss and prostate enlargement. Serum zinc above 90 ug/dL is the functional target."
+    ],
+    qa: [
+      {q:"Is DHT actually bad, or does it serve a purpose?",a:"DHT serves important purposes: it is responsible for virilization at puberty (penis, scrotal development), adult prostate function, and the masculinizing effects of androgen signaling. The problem is excess DHT at androgen receptors in specific tissues: scalp hair follicles (DHT miniaturizes them progressively) and prostate cells (DHT drives growth). DHT does not cause prostate cancer, but it stimulates growth of existing cancer cells. The goal is not to eliminate DHT but to manage its excess effects at specific tissue sites."},
+      {q:"Should I use finasteride for hair loss?",a:"Finasteride 1mg daily is the most effective FDA-approved medication for male pattern hair loss, with studies showing it stabilizes or regresses hair loss in 80 to 90% of men who use it consistently. It requires at least 12 months of use to assess efficacy. The critical consideration: a small percentage of men experience sexual side effects (reduced libido, ED), and a smaller percentage report persistent symptoms after stopping (Post-Finasteride Syndrome). Informed discussion with your provider is essential before starting. Alternatives: dutasteride (stronger DHT reduction), topical minoxidil, low-level laser therapy, and platelet-rich plasma (PRP)."},
+      {q:"What is BPH and when does it need to be treated?",a:"Benign Prostatic Hyperplasia (BPH) is the non-cancerous enlargement of the prostate gland, driven primarily by DHT stimulation of prostate stromal cells. Symptoms are scored by the International Prostate Symptom Score (IPSS): mild (0 to 7), moderate (8 to 19), and severe (20 to 35). Treatment is indicated when symptoms significantly impact quality of life or when urinary retention, recurrent UTIs, or bladder damage occur. Treatment options by severity: mild to moderate (saw palmetto, pumpkin seed oil, lifestyle, alpha-1 blockers like tamsulosin), moderate to severe (5-alpha reductase inhibitors: finasteride, dutasteride), severe (surgical options: TURP, water vapor therapy, prostatic urethral lift)."},
+      {q:"Can my BPH become prostate cancer?",a:"BPH itself does not transform into prostate cancer. They are separate conditions that can coexist. Both are driven by DHT, but through different mechanisms. However, BPH symptoms can mask prostate cancer symptoms, which is why PSA monitoring is important. A PSA that rises rapidly (more than 0.75 ng/mL per year), reaches above 4.0 ng/mL, or rises above 1.4 ng/mL in a year warrants urological evaluation, including possible prostate biopsy."},
+      {q:"Do saw palmetto and pumpkin seed oil actually work?",a:"Yes, with realistic expectations. Saw palmetto 320mg (liposterolic extract, not generic) and pumpkin seed oil 320mg daily have meta-analyses showing improvement in IPSS scores of 3 to 5 points over 3 to 6 months, comparable to tamsulosin alpha-blocker therapy for mild to moderate BPH. They do not reduce prostate volume the way finasteride does. They work primarily through anti-inflammatory and 5AR inhibitory mechanisms. These are appropriate first-line natural options for mild to moderate BPH and for men who want to slow progression of DHT-driven hair loss with fewer side effects than pharmaceutical 5AR inhibitors."},
+      {q:"What nutrients help slow DHT-driven hair loss?",a:"In order of evidence: 1) Ferritin to 60 to 90 ng/mL (iron deficiency accelerates hair miniaturization significantly). 2) Zinc 30 to 50mg daily (direct 5AR inhibitor, often deficient in men with hair loss). 3) Vitamin D to 60 to 80 ng/mL. 4) Omega-3 fatty acids reduce scalp inflammation. 5) Saw palmetto 320mg. None of these regrow hair once the follicle is miniaturized. The goal is to slow the progression of hair loss by reducing DHT stimulation and optimizing the nutritional environment of remaining follicles."}
+    ]
+  },
+  ed: {
+    keyFacts: [
+      "ED affects an estimated 30 million men in the US. It is a cardiovascular early warning sign: men with ED are 3.5 times more likely to have a cardiac event in the next 10 years than men without ED.",
+      "The most common root cause in men under 60 is endothelial dysfunction (impaired nitric oxide production) driven by insulin resistance, oxidative stress, and poor vascular health.",
+      "Testosterone is necessary but not sufficient for erection. Men with adequate testosterone can still have ED from vascular causes. Both must be assessed together.",
+      "Absent morning erections are clinically significant. Men with intact vascular and neurological pathways typically experience morning erections. Absent morning erections suggest a physiological rather than psychological cause.",
+      "PDE5 inhibitors (sildenafil, tadalafil) enhance nitric oxide signaling but do not fix the underlying vascular or hormonal cause. Addressing root drivers allows many men to reduce or eliminate dependence on these medications.",
+      "L-citrulline 3 to 6 grams per day converts to L-arginine in the kidneys and supports nitric oxide production. A 2011 RCT showed significant improvement in erection hardness scores in mild ED.",
+      "Pycnogenol 100mg combined with L-arginine 3 grams produced significant improvement in sexual function in a double-blind study, working synergistically on the nitric oxide pathway.",
+      "CPAP therapy for sleep apnea alone restores morning testosterone by 15 to 20% and often resolves ED without additional intervention in men whose primary driver is sleep apnea."
+    ],
+    qa: [
+      {q:"Is ED just a psychological problem?",a:"For most men, especially over 40, ED has a predominantly physiological root cause. Vascular insufficiency, hormonal imbalance, neurological factors, and medication side effects are all common physical causes. Psychological factors (performance anxiety, depression, relationship stress) often overlay a physical problem and make it worse. The clinical test: if a man experiences morning erections sometimes but not reliably with a partner, a psychological overlay is more likely. Absent morning erections consistently suggest a physiological driver."},
+      {q:"What is the connection between ED and heart disease?",a:"ED is now considered a vascular disease of the penis before it becomes a vascular disease of the heart. The penile arteries are smaller than coronary arteries, so they develop endothelial dysfunction earlier. A man with new ED and no other symptoms may be 3 to 5 years ahead of a cardiac event. Every man presenting with new ED should have a full cardiovascular risk panel: lipids, hs-CRP, fasting glucose, HbA1c, blood pressure, and a coronary calcium score if over 40. Treating the vascular root cause addresses both ED and cardiovascular risk simultaneously."},
+      {q:"Can I fix ED without medication?",a:"Yes, for many men, particularly when ED is mild to moderate and the root cause is addressed. The most powerful interventions: 1) Restore testosterone to optimal range (500 to 900 ng/dL). 2) Control blood sugar and insulin resistance (fasting insulin below 5). 3) Achieve and maintain a healthy weight. 4) Prioritize sleep, especially sleep apnea treatment. 5) L-citrulline 3 to 6 grams daily for nitric oxide support. 6) Pycnogenol 100mg for endothelial function. 7) Eliminate alcohol excess. 8) Resistance training 3 to 4 times weekly."},
+      {q:"What labs should I get to evaluate ED?",a:"A comprehensive workup includes: total testosterone (drawn before 10 AM), free testosterone, SHBG, estradiol sensitive assay, LH and FSH (to determine if low T is central or primary), fasting glucose and insulin, HbA1c, full lipid panel including triglycerides and HDL, hs-CRP, PSA (before considering TRT), and a complete blood count. Blood pressure should be measured. If sleep apnea is suspected, a home sleep apnea test is essential."},
+      {q:"Will testosterone therapy fix my ED?",a:"Testosterone is necessary for erectile function but not sufficient on its own. Low testosterone reduces libido and impairs the neurological component of erection, but erection itself is predominantly a vascular event requiring intact blood flow. Testosterone therapy often improves libido and energy significantly, but ED from vascular or endothelial causes requires additional intervention. The best approach: optimize testosterone first and assess response. If libido returns but erection quality is still poor, the residual issue is likely vascular and requires nitric oxide support, blood sugar control, and cardiovascular risk reduction."},
+      {q:"Does alcohol cause ED?",a:"Yes, in several ways. Acutely: alcohol impairs the central nervous system signaling required for erection. Chronically: alcohol directly suppresses Leydig cell testosterone production, impairs liver estrogen clearance (raising estradiol), causes peripheral neuropathy, and promotes vascular inflammation. Men who drink regularly often have baseline testosterone 15 to 20% lower than non-drinkers at the same age. A 90-day alcohol-free period is both a therapeutic trial and a diagnostic tool: testosterone and erectile function typically improve measurably within 4 to 8 weeks."},
+      {q:"How does sleep apnea cause ED?",a:"Several mechanisms operate simultaneously. Each apnea episode drops blood oxygen saturation and triggers a cortisol spike that suppresses LH signaling to the testes. Men with untreated severe sleep apnea lose approximately 10 to 15% of testosterone per year. Chronic oxygen desaturation also damages endothelial cells throughout the body, including in penile vasculature. Additionally, sleep fragmentation prevents the deep sleep stages where 70% of testosterone is released. CPAP therapy reverses most of these effects within weeks to months."}
+    ]
+  },
+  burnout: {
+    keyFacts: [
+      "Cortisol and testosterone are physiological antagonists. Elevated cortisol directly suppresses GnRH pulsatility in the hypothalamus, reducing LH and FSH output, which in turn reduces testicular testosterone production. This is the HPA-HPG axis conflict.",
+      "Men in burnout often have low-normal testosterone (300 to 500 ng/dL) driven not by testicular failure but by central suppression from chronic HPA activation. This is secondary hypogonadism from stress, not primary hypogonadism.",
+      "Visceral fat in men with burnout is a dual problem: it increases aromatase (converting testosterone to estrogen) and releases pro-inflammatory cytokines that further suppress the HPG axis.",
+      "Cortisol patterns in male burnout are most accurately captured by 4-point salivary cortisol or DUTCH Complete testing. A single morning serum cortisol misses the dynamic pattern entirely.",
+      "Phosphatidylserine 400mg has the strongest RCT evidence for blunting the cortisol response to exercise and psychological stress in men. It is well-tolerated and non-sedating.",
+      "DHEA-S is the most reliable marker of long-standing HPA dysregulation in men. DHEA-S below 200 ug/dL alongside low testosterone in a stressed man is a classic burnout pattern.",
+      "High-intensity training worsens HPA dysregulation. The transition to zone 2 cardio (conversational pace, heart rate 60 to 70% maximum) and resistance training with longer rest periods is the correct exercise prescription for male burnout.",
+      "Ashwagandha KSM-66 600mg/day has the best clinical evidence for reducing cortisol and restoring testosterone in stressed men. A 2019 RCT showed 27% cortisol reduction and 15% testosterone increase over 8 weeks."
+    ],
+    qa: [
+      {q:"Is what I am experiencing burnout or depression?",a:"These overlap significantly but have distinct features. Burnout is characterized by emotional exhaustion related to work or sustained stress, cynicism and detachment, and reduced sense of personal accomplishment. Depression is characterized by persistent low mood, anhedonia (inability to feel pleasure), and often hopelessness. The key clinical distinction: men with HPA burnout often still feel motivated when removed from their stressor (weekends, vacations), while men with clinical depression lose motivation across all contexts. If morning cortisol is below 10 or testosterone below 400 alongside these symptoms, a physiological driver is likely contributing."},
+      {q:"Why is my testosterone low if nothing is wrong with my testes?",a:"Low testosterone from burnout is secondary hypogonadism: the problem is not in the testes but in the signaling. Chronic cortisol elevation suppresses GnRH from the hypothalamus, reducing LH and FSH from the pituitary, which reduces testosterone from the testes. The testes are functioning but underdriven. Lab pattern: low testosterone with low or low-normal LH and FSH (rather than the high LH seen in primary testicular failure). This pattern responds to stress reduction, sleep restoration, and cortisol management rather than testosterone replacement."},
+      {q:"Can intense exercise make burnout worse?",a:"Yes, significantly. High-intensity exercise is a physical stressor that requires a robust cortisol response for recovery. Men in HPA burnout often cannot mount adequate cortisol recovery responses, which means high-intensity training prolongs the HPA activation instead of resolving it. Signs that exercise is making burnout worse: feeling worse 48 to 72 hours after training rather than better, declining performance over weeks, persistent fatigue that does not improve with rest days. The prescription: transition to zone 2 cardio (conversational pace, 45 to 60 minutes) and resistance training with 90 to 120 second rest periods."},
+      {q:"How does poor sleep connect to burnout and low testosterone?",a:"Approximately 70% of daily testosterone is secreted during slow-wave (deep) sleep in the first half of the night. Cortisol elevation at night from HPA dysregulation suppresses slow-wave sleep, fragmenting the sleep architecture where testosterone release occurs. The result is a vicious cycle: stress raises nighttime cortisol, nighttime cortisol fragments sleep, fragmented sleep reduces testosterone, low testosterone worsens stress resilience and mood, which increases HPA reactivity. Breaking this cycle requires addressing sleep quality directly: magnesium glycinate 400mg at bedtime, avoiding screens after 9 PM, keeping bedroom temperature at 65 to 68 degrees Fahrenheit."},
+      {q:"Will taking testosterone fix burnout?",a:"No. Testosterone replacement in a man with HPA burnout treats a downstream effect while the upstream problem continues running. TRT will improve some symptoms (energy, libido, body composition) but will not resolve the HPA dysregulation that caused the testosterone suppression. Additionally, TRT shuts down the HPG axis feedback loop, making natural testosterone recovery less likely if the burnout is eventually addressed. The correct sequence: 1) Identify and reduce primary stressor. 2) Restore sleep architecture. 3) Support HPA with ashwagandha, phosphatidylserine, magnesium, adaptogens. 4) Retest testosterone at 6 months. 5) Consider TRT only if testosterone remains below 400 after addressing root causes."},
+      {q:"Is ashwagandha safe for men with burnout?",a:"Yes, at appropriate doses. Ashwagandha KSM-66 at 300 to 600mg/day is the most well-studied form and has the most consistent evidence for reducing cortisol, improving testosterone, reducing perceived stress, and improving sleep quality in men. A 2026 case report documented adrenal insufficiency with high-dose ashwagandha (above 600mg/day), so limit the dose. Start at 300mg with dinner (mild sedating effect helps sleep). Avoid during illness or acute immune challenge, where cortisol elevation is protective."},
+      {q:"How long will it take to recover from burnout?",a:"Recovery from HPA burnout in men is measured in months, not weeks. Energy and mood typically begin improving within 4 to 8 weeks of implementing a comprehensive protocol. Sleep quality usually improves within 2 to 4 weeks of magnesium and sleep hygiene changes. Testosterone levels, when suppressed by HPA dysregulation, typically normalize within 3 to 6 months after the root stress is addressed and sleep is restored. Cortisol pattern normalization on salivary testing typically takes 2 to 6 months. Full restoration of drive, motivation, and resilience often takes 9 to 12 months in moderate to severe cases."}
+    ]
+  },
+  metabolic: {
+    keyFacts: [
+      "Metabolic syndrome is diagnosed when 3 or more of the following are present: waist above 40 inches (men), fasting glucose above 100, blood pressure above 130/85, triglycerides above 150, HDL below 40. Each component independently multiplies cardiovascular risk.",
+      "Fasting insulin is the most important early marker of metabolic syndrome and is almost never ordered on standard labs. Fasting insulin above 10 uIU/mL indicates significant insulin resistance years before HbA1c or glucose become abnormal.",
+      "Visceral fat (intra-abdominal fat) is a metabolically active endocrine organ in men. It produces aromatase (converting testosterone to estrogen), inflammatory cytokines (TNF-alpha, IL-6, IL-1), and resistin, all of which worsen insulin resistance.",
+      "The testosterone-metabolic syndrome connection is bidirectional: low testosterone promotes visceral fat accumulation, and visceral fat suppresses testosterone through aromatase activity and inflammatory cytokine signaling.",
+      "HOMA-IR (homeostatic model assessment of insulin resistance) is calculated as (fasting insulin x fasting glucose) divided by 405. A HOMA-IR above 2.5 indicates insulin resistance. The functional target is below 1.5.",
+      "Berberine 500mg three times daily with meals has been shown in 16 or more RCTs to reduce fasting glucose, fasting insulin, HbA1c, triglycerides, and LDL while raising HDL. It also lowers SHBG, which increases free testosterone.",
+      "Mediterranean diet with caloric adjustment reduces visceral fat more effectively than standard low-fat diets. A 5 to 7% reduction in body weight measurably improves all metabolic syndrome markers within 12 weeks.",
+      "Uric acid above 6 mg/dL is an independent risk factor for gout, hypertension, and cardiovascular disease, and is commonly elevated in metabolic syndrome from both dietary purine sources and fructose metabolism in the liver."
+    ],
+    qa: [
+      {q:"What is the difference between metabolic syndrome and type 2 diabetes?",a:"Metabolic syndrome is a cluster of risk factors that precedes type 2 diabetes by years to decades. You can have metabolic syndrome with normal fasting glucose (below 100 mg/dL) if your fasting insulin is elevated (above 10 uIU/mL). The pancreas is compensating for insulin resistance by producing more insulin. Diabetes is diagnosed when the pancreas can no longer compensate and blood glucose rises above 126 mg/dL fasting or HbA1c above 6.5%. Addressing metabolic syndrome aggressively in the 10 to 20 years before diabetes develops completely prevents its onset in most cases."},
+      {q:"Why does my belly fat keep coming back even when I diet?",a:"Visceral fat is not just stored calories: it is a self-reinforcing metabolic disorder. Visceral fat produces inflammatory cytokines that impair insulin receptor signaling in muscle, promoting further fat storage. It increases cortisol sensitivity, driving further abdominal fat deposition. It suppresses testosterone through aromatase, reducing lean muscle mass and further lowering metabolic rate. Standard caloric restriction addresses the energy deficit but not the underlying hormonal and inflammatory environment. Effective strategies combine caloric reduction with insulin sensitization (berberine, magnesium, low-glycemic eating pattern), testosterone optimization, and resistance training."},
+      {q:"Why is my testosterone low when my belly fat is high?",a:"Visceral fat contains the highest concentration of aromatase enzyme outside the gonads. Aromatase converts testosterone to estradiol. In men with significant visceral obesity, this conversion is so active that testosterone levels can be meaningfully suppressed and estradiol elevated, even in relatively young men. Additionally, the inflammatory cytokines released by visceral fat directly suppress LH secretion from the pituitary, further reducing testosterone production. This is why weight loss alone often produces significant testosterone improvement without any TRT: each pound of visceral fat lost reduces aromatase activity, raises free testosterone, and reduces inflammatory suppression of the HPG axis."},
+      {q:"What is HOMA-IR and why is it better than HbA1c for catching metabolic syndrome early?",a:"HOMA-IR is calculated from your fasting glucose and fasting insulin: (fasting insulin x fasting glucose) divided by 405. It quantifies how much extra insulin your pancreas must produce to keep your blood sugar at its current level. A HOMA-IR above 2.5 indicates significant insulin resistance. The advantage over HbA1c: HbA1c reflects average blood sugar over 90 days and does not rise above the normal range until the pancreas begins to fail. HOMA-IR detects the compensation phase, which can be 10 to 20 years before HbA1c becomes abnormal."},
+      {q:"Is berberine safe and effective for metabolic syndrome?",a:"Yes. Berberine has more than 16 randomized controlled trials supporting its effects on the core metabolic syndrome markers: fasting glucose, fasting insulin, HbA1c, triglycerides, LDL-C, and HDL-C. It activates AMPK (the cellular energy sensor), improves insulin receptor sensitivity, and reduces hepatic glucose production. Standard dose: 500mg three times daily with meals. It also reduces SHBG, which increases free testosterone in insulin-resistant men. Important interaction: berberine should not be combined with Metformin or other blood-sugar medications without provider monitoring, as the combination can cause hypoglycemia."},
+      {q:"How much weight do I need to lose to see measurable improvement?",a:"Clinically meaningful improvement in all metabolic syndrome markers occurs with a 5 to 7% reduction in body weight. For a 220-pound man, that is 11 to 15 pounds. At that threshold: fasting insulin typically drops 20 to 30%, blood pressure often normalizes by 5 to 8 mmHg systolic, triglycerides often drop 20 to 30%, HDL typically rises 5 to 10%, and free testosterone often improves measurably from reduced aromatase activity. The first 5 to 7% is the highest return on investment."},
+      {q:"What supplements have the most evidence for metabolic syndrome?",a:"In order of evidence strength: 1) Berberine 500mg three times daily with meals (16 or more RCTs, comparable to metformin for glycemic control). 2) Magnesium glycinate 400mg nightly (magnesium deficiency is present in up to 68% of men with insulin resistance). 3) Omega-3 fatty acids 3 to 4 grams daily (reduces triglycerides by 20 to 30%, lowers hs-CRP). 4) Vitamin D to target 60 to 80 ng/mL. 5) Alpha-lipoic acid 600mg daily (reduces oxidative stress in adipose tissue, improves insulin sensitivity). None of these replace dietary and exercise intervention."}
+    ]
+  },
+  sleep: {
+    keyFacts: [
+      "Obstructive sleep apnea (OSA) is the most common sleep disorder in men, affecting an estimated 25 to 30% of middle-aged men. Most cases are undiagnosed because bed partners normalize snoring or men deny daytime sleepiness.",
+      "Each apnea episode triggers a cortisol spike and causes oxygen desaturation. Men with severe untreated OSA can have hundreds of these micro-arousals per night, each suppressing testosterone and fragmenting slow-wave sleep.",
+      "Men with untreated sleep apnea lose approximately 10 to 15% of total testosterone per year above the normal age-related decline. This is because 70% of testosterone is released during slow-wave sleep, which OSA fragments.",
+      "The Epworth Sleepiness Scale (ESS) is a free 8-question self-administered screening tool. A score above 10 indicates excessive daytime sleepiness and warrants a home sleep apnea test.",
+      "Home sleep apnea tests (HSAT) are FDA-cleared, insurance-covered, and can be done from home. They measure AHI (apnea-hypopnea index): below 5 is normal, 5 to 15 is mild, 15 to 30 is moderate, above 30 is severe.",
+      "CPAP therapy is the most effective treatment for OSA. When used consistently (at least 4 hours per night, 70% of nights), CPAP reverses testosterone suppression, improves insulin sensitivity, reduces blood pressure, and often resolves ED.",
+      "Hypothyroidism is a frequently missed cause of sleep apnea: thyroid hormone is required for upper airway muscle tone. Men with hypothyroidism have a 2 to 3 times higher rate of sleep apnea. Always check thyroid before diagnosing idiopathic OSA.",
+      "Positional therapy (sleeping on the side rather than back) reduces AHI by 50 to 60% in positional OSA. Positional devices or a tennis ball sewn into the back of a shirt are effective first-line interventions."
+    ],
+    qa: [
+      {q:"How do I know if I have sleep apnea if I live alone?",a:"Several indicators do not require a bed partner to observe. Daytime symptoms are the most reliable: excessive daytime sleepiness (falling asleep easily during reading, TV, or driving), morning headaches from overnight CO2 retention, waking with a dry mouth or sore throat, and unrefreshing sleep despite 7 to 9 hours in bed. You can complete the Epworth Sleepiness Scale (ESS): an 8-question questionnaire with a score above 10 indicating likely OSA. Wearable devices (Apple Watch, Fitbit, Oura Ring) can detect sleep disruption and oxygen desaturation patterns suggestive of OSA. A formal home sleep apnea test ordered by your provider is the definitive next step."},
+      {q:"Is CPAP the only treatment for sleep apnea?",a:"No. CPAP is the most effective and evidence-backed treatment, but alternatives exist. 1) Mandibular advancement device (MAD): a custom-fit oral appliance that holds the lower jaw forward, opening the airway. Preferred by many men who cannot tolerate CPAP. Effective for mild to moderate OSA. 2) Positional therapy: for positional OSA (AHI worse on back), sleeping on the side reduces events by 50 to 60%. 3) Weight loss: a 10% reduction in body weight reduces AHI by approximately 26% in overweight men. 4) Inspire therapy (upper airway stimulation): an implanted device delivering mild electrical stimulation to the hypoglossal nerve, FDA-approved for moderate to severe OSA in CPAP-intolerant patients. 5) Surgery: for anatomical causes (enlarged tonsils, deviated septum, retrognathia)."},
+      {q:"Will treating sleep apnea improve my testosterone?",a:"Yes, often significantly and without any additional intervention. Men with moderate to severe OSA who achieve consistent CPAP use (4 or more hours per night) typically see testosterone rise 15 to 20% within 3 to 6 months of treatment. This occurs because slow-wave sleep, where 70% of testosterone is released, is restored. For men with borderline low testosterone (350 to 500 ng/dL) who also have untreated sleep apnea, treating the sleep apnea first before considering TRT is the appropriate clinical sequence."},
+      {q:"My doctor says my sleep study was normal. Could I still have sleep apnea?",a:"Possibly. A few scenarios produce false-negative sleep studies. 1) The test was done in a position different from your typical sleep position: if you primarily sleep on your back but slept on your side during the test, AHI will be underestimated. 2) Home sleep apnea tests do not measure brain waves (EEG), so respiratory effort-related arousals (RERAs) can be missed. In-lab polysomnography is more sensitive. 3) If you did not sleep enough during the test, not enough REM or slow-wave sleep occurred. If symptoms remain strong despite a normal test, request an in-lab polysomnography study."},
+      {q:"What lifestyle changes reduce sleep apnea severity?",a:"The most impactful: 1) Weight loss: each 1% reduction in body weight reduces AHI by approximately 3%. A 10% weight loss typically reduces AHI by 25 to 30%, which can move moderate OSA into mild. 2) Alcohol elimination: alcohol relaxes upper airway muscles for 4 to 6 hours after consumption, worsening OSA severity that night by 25% or more. 3) Positional change: sleeping on the side with the head of bed elevated 30 to 45 degrees reduces OSA in most patients. 4) Myofunctional therapy (orofacial exercises): done daily for 3 months, shown in RCTs to reduce AHI by 39% in adults. 5) Nasal strips or nasal dilators to reduce nasal resistance."},
+      {q:"What is the connection between sleep apnea and cardiovascular disease?",a:"Sleep apnea is an independent cardiovascular risk factor, not just a symptom of obesity. Each apnea episode causes: acute blood pressure surges from sympathetic nervous system activation leading to sustained hypertension over time, intermittent hypoxia that damages endothelial cells and promotes atherosclerosis, oxidative stress from repeated oxygen desaturation-reoxygenation cycles, and systemic inflammation from cortisol and cytokine surges. Men with severe untreated sleep apnea have 3 times the cardiovascular event risk of men without OSA, independent of other risk factors including obesity and blood pressure."},
+      {q:"How does sleep apnea relate to erectile dysfunction and sexual health?",a:"Sleep apnea contributes to ED through at least three distinct pathways. First, testosterone suppression: 70% of testosterone is released during slow-wave sleep, which OSA fragments. Men with severe OSA lose 10 to 15% of testosterone annually above normal aging decline. Second, endothelial dysfunction: intermittent hypoxia from apnea events damages the penile endothelium and impairs nitric oxide synthesis, the primary mechanism of erection. Third, cortisol elevation: nocturnal cortisol spikes from apnea events suppress the HPG axis and impair the vascular response required for erection. In men presenting with both ED and OSA, CPAP therapy restores testosterone and endothelial function, frequently resolving ED without additional intervention."}
+    ]
+  },
+  fertility_m: {
+    keyFacts: [
+      "Spermatogenesis (sperm production) takes 74 days. Any supplement, lifestyle change, or treatment requires a full 74 to 90 days before its effect appears in a semen analysis.",
+      "TRT (testosterone replacement therapy) completely suppresses spermatogenesis through negative feedback on FSH within 3 to 6 months. Men trying to conceive must never use TRT without a fertility consultation.",
+      "Varicocele is the most common and most correctable structural cause of male infertility, found in 35 to 40% of men presenting with infertility. Varicocelectomy improves sperm parameters in 60 to 70% of cases.",
+      "CoQ10 (ubiquinol form) 400 to 600mg daily is the most evidence-backed supplement for sperm quality. It improves mitochondrial function in sperm, which powers motility. A 2012 meta-analysis showed significant improvement in concentration and motility.",
+      "Sperm DNA fragmentation index (DFI) above 25% is associated with significantly reduced fertilization rates, higher miscarriage rates, and failed IVF cycles, even when standard semen analysis looks normal.",
+      "Heat exposure to the testes (laptops on the lap, hot tubs above 102F, tight underwear, prolonged sitting) reduces sperm count and motility by raising scrotal temperature above the optimal 2 to 4 degrees below body temperature.",
+      "Selenium 100 to 200mcg daily improves sperm motility in selenium-deficient men. Selenoprotein P is specifically expressed in sperm cells and is essential for normal tail structure and motility.",
+      "Clomiphene (Clomid) and enclomiphene stimulate the pituitary to increase FSH and LH, driving natural sperm production. They are used off-label but are effective in men with secondary hypogonadism or borderline low testosterone who want to preserve fertility."
+    ],
+    qa: [
+      {q:"My testosterone is low but my doctor said not to take TRT because we are trying to conceive. Is that right?",a:"Yes, 100%. TRT works by feeding testosterone directly into your system. The brain detects this and shuts down the pituitary signals (LH and FSH) that tell your testes to produce both testosterone and sperm. Within 3 to 6 months of TRT, sperm production drops to near zero. For a man trying to conceive, the alternatives are: clomiphene (Clomid) or enclomiphene (which stimulate your pituitary to produce more LH and FSH naturally), HCG (which directly stimulates the testes), or lifestyle optimization to raise testosterone naturally."},
+      {q:"What does a semen analysis tell me and what are the important numbers?",a:"A semen analysis measures: 1) Volume (1.5 to 5 mL per ejaculate). 2) Concentration (sperm count per mL: WHO minimum 16 million/mL, functional target above 20 million/mL). 3) Total motility (percentage of sperm moving: above 42% WHO, functional target above 50% progressive motility). 4) Morphology (percentage with normal shape by Kruger strict criteria: above 4% WHO, functional target above 5%). A single abnormal semen analysis should always be confirmed with a second test 2 to 3 months later, since sperm quality fluctuates significantly with illness, stress, and heat exposure."},
+      {q:"What supplements have the best evidence for sperm health?",a:"In order of evidence: 1) CoQ10 ubiquinol 400 to 600mg daily (meta-analyses showing improved concentration and motility). 2) Selenium 100 to 200mcg daily (essential for sperm tail structure). 3) Zinc 30 to 50mg daily (required for testosterone synthesis and sperm maturation). 4) Vitamin D to 60 to 80 ng/mL (correlates with improved sperm motility and morphology). 5) Omega-3 fatty acids 2 to 3 grams daily (DHA is concentrated in sperm cell membranes and supports membrane fluidity). 6) L-carnitine 2 to 3 grams daily (mitochondrial energy transport in sperm, shown to improve motility). 7) NAC (N-acetylcysteine) 600mg twice daily (reduces sperm DNA fragmentation by reducing oxidative stress)."},
+      {q:"What is sperm DNA fragmentation and how do I know if I have it?",a:"Sperm DNA fragmentation refers to breaks or damage in the DNA within the sperm head. Unlike morphology and motility (measured on standard semen analysis), DNA fragmentation is not visible under a microscope. It is measured by a separate test (SCSA, SCD, TUNEL assay). Fragmentation above 25% significantly reduces fertilization rates, increases miscarriage risk, and reduces IVF success. It is particularly relevant in couples with unexplained infertility, recurrent miscarriage, or failed IVF cycles. Primary causes: oxidative stress, heat exposure, varicocele, smoking, and advancing age. Antioxidant supplementation (CoQ10, Vitamin C, Vitamin E, NAC) and varicocele repair reduce fragmentation."},
+      {q:"How does lifestyle affect sperm quality?",a:"Very significantly. The highest-impact lifestyle factors: 1) Heat: a single hot tub session at above 102F damages sperm that are currently developing. Laptops on the lap, long periods of sitting, tight underwear, and saunas all raise scrotal temperature. Switching to looser clothing and avoiding sustained heat measurably improves parameters within one spermatogenesis cycle (74 days). 2) Alcohol: even moderate alcohol consumption reduces sperm count, motility, and increases abnormal morphology. 3) Smoking: reduces count, motility, and significantly increases DNA fragmentation. 4) Sleep: below 6 hours per night reduces testosterone and FSH."},
+      {q:"We have been trying for 6 months. When should we see a fertility specialist?",a:"Guidelines recommend a fertility evaluation after 12 months of unprotected intercourse in couples where the female partner is under 35, and after 6 months if the female partner is 35 or older. However, male factor infertility accounts for 30 to 50% of all infertility cases, and a semen analysis is the single easiest and least invasive first test in the couple workup. You do not need to wait 12 months to get a semen analysis. If any of the following are present, see a urologist or reproductive urologist sooner: previous chemotherapy, radiation, undescended testicles, prior testicular injury, or known varicocele."}
+    ]
+  }
+};
+
+let currentKey = null;
+let checkedSymptoms = {};
+let labValues = {};
+
+function buildSidebar() {
+  const femaleList = document.getElementById('femaleList');
+  const maleList = document.getElementById('maleList');
+  Object.entries(CONDITIONS).forEach(([key, c]) => {
+    const div = document.createElement('div');
+    div.className = 'condition-item';
+    div.id = 'si-' + key;
+    div.onclick = () => showCondition(key);
+    const dot = c.sex === 'female' ? '<div class="condition-dot dot-female"></div>' : '<div class="condition-dot dot-male"></div>';
+    div.innerHTML = dot + '<span>' + c.name + '</span>';
+    if (c.sex === 'female') femaleList.appendChild(div);
+    else maleList.appendChild(div);
+  });
+}
+
+function filterConditions(val) {
+  const q = val.toLowerCase();
+  document.querySelectorAll('.condition-item').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function showCondition(key) {
+  currentKey = key;
+  if (!checkedSymptoms[key]) checkedSymptoms[key] = {};
+  if (!labValues[key]) labValues[key] = {};
+  document.querySelectorAll('.condition-item').forEach(el => el.classList.remove('active'));
+  const si = document.getElementById('si-' + key);
+  if (si) si.classList.add('active');
+  const c = CONDITIONS[key];
+  const titleEl = document.getElementById('conditionTitle');
+  if (titleEl) titleEl.textContent = c.fullName;
+  const typeEl = document.getElementById('conditionType');
+  if (typeEl) {
+    typeEl.textContent = c.sex === 'female' ? 'Female Condition' : 'Male Condition';
+    typeEl.className = 'condition-header-type ' + (c.sex === 'female' ? 'type-female' : 'type-male');
+  }
+  const descEl = document.getElementById('conditionDesc');
+  if (descEl) descEl.textContent = c.desc;
+  document.getElementById('conditionView').style.display = 'block';
+  const ws = document.getElementById('welcomeState');
+  if (ws) ws.style.display = 'none';
+  const firstBtn = document.querySelector('.tab');
+  showTab('symptoms', firstBtn);
+}
+
+function showTab(tabName, btn) {
+  ['symptoms','labs','education','prep'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + tabName);
+  if (tabEl) tabEl.style.display = 'block';
+  if (btn) btn.classList.add('active');
+  if (tabName === 'symptoms') renderSymptoms(currentKey);
+  else if (tabName === 'labs') renderLabs(currentKey);
+  else if (tabName === 'education') renderEducation(currentKey);
+  else if (tabName === 'prep') renderVisitBrief();
+}
+
+function renderSymptoms(key) {
+  if (!key) return;
+  const c = CONDITIONS[key];
+  const checked = checkedSymptoms[key] || {};
+  const count = Object.values(checked).filter(Boolean).length;
+  const grid = document.getElementById('symptomGrid');
+  const countEl = document.getElementById('symptomCount');
+  if (countEl) countEl.innerHTML = '<b>' + count + '</b> selected';
+  if (!grid) return;
+  grid.innerHTML = c.symptoms.map((s, i) => {
+    const chk = !!checked[i];
+    return '<div class="symptom-item" onclick="toggleSymptom(\'' + key + '\',' + i + ',this)">' +
+      '<div class="symptom-check' + (chk ? ' checked' : '') + '">' +
+      '<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '</div><span class="symptom-name">' + s + '</span></div>';
+  }).join('');
+}
+
+function toggleSymptom(key, idx, el) {
+  if (!checkedSymptoms[key]) checkedSymptoms[key] = {};
+  checkedSymptoms[key][idx] = !checkedSymptoms[key][idx];
+  const chkEl = el.querySelector('.symptom-check');
+  if (chkEl) chkEl.classList.toggle('checked', !!checkedSymptoms[key][idx]);
+  updateSymptomCount(key);
+}
+
+function updateSymptomCount(key) {
+  const checked = checkedSymptoms[key] || {};
+  const count = Object.values(checked).filter(Boolean).length;
+  const countEl = document.getElementById('symptomCount');
+  if (countEl) countEl.innerHTML = '<b>' + count + '</b> selected';
+}
+
+function renderLabs(key) {
+  if (!key) return;
+  const c = CONDITIONS[key];
+  const vals = labValues[key] || {};
+  const container = document.getElementById('labsContainer');
+  if (!container) return;
+  container.innerHTML = '<div class="labs-grid">' + c.labs.map((lab, i) => {
+    const safeOpt = lab.optimalRange.replace(/'/g, '&#39;');
+    const safeStd = lab.standardRange.replace(/'/g, '&#39;');
+    return '<div class="lab-item" id="lab-item-' + key + '-' + i + '">' +
+      '<div class="lab-name">' + lab.name + '</div>' +
+      '<div class="lab-ranges">Optimal: ' + lab.optimalRange + '<br>Standard: ' + lab.standardRange + '</div>' +
+      '<input type="text" class="lab-input" placeholder="' + lab.unit + '" value="' + (vals[i] || '') + '"' +
+      ' oninput="evalLab(\'' + key + '\',' + i + ',this.value,\'' + safeOpt + '\',\'' + safeStd + '\')" />' +
+      '<div class="lab-result" id="lab-result-' + key + '-' + i + '"></div>' +
+      '</div>';
+  }).join('') + '</div><div class="lab-ephemeral-note">Values are not stored. Close the page and everything disappears.</div>';
+  c.labs.forEach((lab, i) => {
+    if (vals[i]) evalLab(key, i, vals[i], lab.optimalRange, lab.standardRange);
+  });
+}
+
+function evalLab(key, idx, value, optimalRange, standardRange) {
+  if (!labValues[key]) labValues[key] = {};
+  labValues[key][idx] = value;
+  const resultEl = document.getElementById('lab-result-' + key + '-' + idx);
+  if (!resultEl) return;
+  const num = parseFloat(value);
+  if (isNaN(num) || value.trim() === '') { resultEl.className = 'lab-result'; resultEl.textContent = ''; return; }
+  const optStr = optimalRange.split('(')[0].trim().split(' ')[0].trim();
+  const stdStr = standardRange.split('(')[0].trim().split(' ')[0].trim();
+  const optRes = parseRange(num, optStr);
+  const stdRes = parseRange(num, stdStr);
+  let label = '', cls = '';
+  if (optRes === 'in') { label = 'Optimal range'; cls = 'optimal'; }
+  else if (stdRes === 'in') { label = 'Standard range, not optimal'; cls = 'borderline'; }
+  else if (optRes === 'low' || stdRes === 'low') { label = 'Low, flag for discussion'; cls = 'low'; }
+  else if (optRes === 'high' || stdRes === 'high') { label = 'Elevated, flag for discussion'; cls = 'high'; }
+  else { label = 'Outside standard range'; cls = 'borderline'; }
+  resultEl.className = 'lab-result show ' + cls;
+  resultEl.textContent = label;
+}
+
+function parseRange(num, rangeStr) {
+  if (!rangeStr) return 'unknown';
+  const s = rangeStr.trim();
+  if (s.startsWith('<')) { const max = parseFloat(s.slice(1)); return (!isNaN(max) && num < max) ? 'in' : 'high'; }
+  if (s.startsWith('>')) { const min = parseFloat(s.slice(1)); return (!isNaN(min) && num > min) ? 'in' : 'low'; }
+  if (s.includes('-')) {
+    const parts = s.split('-');
+    const lo = parseFloat(parts[0]), hi = parseFloat(parts[1]);
+    if (!isNaN(lo) && !isNaN(hi)) {
+      if (num < lo) return 'low';
+      if (num > hi) return 'high';
+      return 'in';
+    }
+  }
+  return 'unknown';
+}
+
+function renderEducation(key) {
+  if (!key) return;
+  const edu = EDUCATION[key];
+  const c = CONDITIONS[key];
+  const contentEl = document.getElementById('educationContent');
+  if (!contentEl) return;
+  if (!edu) { contentEl.innerHTML = '<p style="color:var(--gray-600)">Education content coming soon.</p>'; return; }
+  const factsHtml = edu.keyFacts.map(f => '<div class="key-fact-item">' + f + '</div>').join('');
+  const qaHtml = edu.qa.map((item, i) =>
+    '<div class="qa-item" id="qa-' + key + '-' + i + '">' +
+    '<div class="qa-q" onclick="toggleQA(\'qa-' + key + '-' + i + '\')">' + item.q + '</div>' +
+    '<div class="qa-a">' + item.a + '</div></div>'
+  ).join('');
+  contentEl.innerHTML =
+    '<div class="card"><div class="card-header">Key Clinical Facts: ' + c.name + '</div>' +
+    '<div class="card-body">' + factsHtml + '</div></div>' +
+    '<div class="card" style="margin-top:16px"><div class="card-header">Common Questions and Answers</div>' +
+    '<div class="card-body">' + qaHtml + '</div></div>';
+}
+
+function toggleQA(id) {
+  const item = document.getElementById(id);
+  if (!item) return;
+  item.querySelector('.qa-a').classList.toggle('open');
+}
+
+function renderVisitBrief() {
+  if (!currentKey) return;
+  const c = CONDITIONS[currentKey];
+  const checked = checkedSymptoms[currentKey] || {};
+  const vals = labValues[currentKey] || {};
+  const selectedSymptoms = c.symptoms.filter((_, i) => checked[i]);
+  const flaggedLabs = c.labs.filter((lab, i) => {
+    const val = vals[i]; if (!val) return false;
+    const num = parseFloat(val); if (isNaN(num)) return false;
+    const optStr = lab.optimalRange.split('(')[0].trim().split(' ')[0].trim();
+    return parseRange(num, optStr) !== 'in';
+  });
+  const sympHtml = selectedSymptoms.length > 0
+    ? '<ul>' + selectedSymptoms.map(s => '<li>' + s + '</li>').join('') + '</ul>'
+    : '<p class="brief-empty">No symptoms selected yet. Go to Symptom Check tab.</p>';
+  const labHtml = flaggedLabs.length > 0
+    ? '<ul>' + flaggedLabs.map(lab => {
+        const i = c.labs.indexOf(lab);
+        const optStr = lab.optimalRange.split('(')[0].trim().split(' ')[0].trim();
+        const res = parseRange(parseFloat(vals[i]), optStr);
+        const tagCls = (res === 'low' || res === 'high') ? 'off' : 'check';
+        const tagLabel = res === 'low' ? 'Low, FLAG' : res === 'high' ? 'High, FLAG' : 'Not optimal';
+        return '<li class="off"><span class="brief-lab-val">' + lab.name + ': ' + vals[i] + ' ' + lab.unit + '</span> <span class="brief-tag ' + tagCls + '">' + tagLabel + '</span><span class="brief-lab-note"> (Optimal: ' + lab.optimalRange + ')</span></li>';
+      }).join('') + '</ul>'
+    : '<p class="brief-empty">No labs entered yet. Go to Check Your Labs tab.</p>';
+  const edu = EDUCATION[currentKey];
+  const qHtml = (edu && edu.qa.length > 0)
+    ? '<ul>' + edu.qa.slice(0, 5).map(item => '<li>' + item.q + '</li>').join('') + '</ul>'
+    : '<p class="brief-empty">No questions available.</p>';
+  const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  const brief = document.getElementById('visitBrief');
+  if (!brief) return;
+  brief.innerHTML =
+    '<div class="brief"><div class="brief-head"><div class="brief-kicker">Doctor Visit Prep</div>' +
+    '<div class="brief-h1">' + c.fullName + '</div>' +
+    '<div class="brief-meta">Prepared ' + today + ' | Hunter\'s Holistic Health | Educational use only, not medical advice</div></div>' +
+    '<div class="brief-sec"><h2>Symptoms I Experience</h2>' + sympHtml + '</div>' +
+    '<div class="brief-sec"><h2>Lab Values Outside Optimal Range</h2>' + labHtml + '</div>' +
+    '<div class="brief-sec"><h2>Questions to Ask My Provider</h2>' + qHtml + '</div>' +
+    '<div class="brief-foot">For educational purposes only. Not a diagnosis or medical advice. Share with your licensed healthcare provider.</div>' +
+    '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', buildSidebar);
+</script>
+</body>
+</html>

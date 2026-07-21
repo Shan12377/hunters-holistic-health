@@ -11680,3 +11680,41 @@
   cursor: pointer;
   padding: 0.5rem 0 0;
 }
+
+/* Upgrade gate (plan-gated pages) */
+.upgradeGate {
+  margin-top: var(--space-6);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  max-width: 480px;
+}
+.upgradeGateIcon {
+  font-size: 36px;
+  margin-bottom: var(--space-4);
+}
+.upgradeGateTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+.upgradeGateDesc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-5);
+}
+.upgradeGateBtns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+.upgradeGateNote {
+  font-size: 12px;
+  color: var(--text-muted);
+}
