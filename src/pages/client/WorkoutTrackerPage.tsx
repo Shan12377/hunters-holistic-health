@@ -55,7 +55,6 @@ export default function WorkoutTrackerPage() {
   const [todaySets, setTodaySets] = useState<ExerciseSet[]>([])
   const [lastSets, setLastSets] = useState<Record<string, ExerciseSet[]>>({})
   const [history, setHistory] = useState<WorkoutSession[]>([])
-  const [expandedId, setExpandedId] = useState<string | null>(null)
   const [infoExercise, setInfoExercise] = useState<Exercise | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -161,42 +160,55 @@ export default function WorkoutTrackerPage() {
     setSaving(false)
   }
 
-  async function toggleComplete(exerciseId: string) {
+  async function toggleIsometricSet(exerciseId: string, setNum: number) {
     if (!session || saving) return
-    const done = todaySets.some(s => s.exercise_id === exerciseId && s.completed)
+    const existing = todaySets.find(s => s.exercise_id === exerciseId && s.set_number === setNum)
 
-    if (done) {
-      await supabase.from('exercise_sets').delete().eq('session_id', session.id).eq('exercise_id', exerciseId)
-      setTodaySets(prev => prev.filter(s => s.exercise_id !== exerciseId))
+    if (existing?.completed) {
+      await supabase.from('exercise_sets').delete().eq('id', existing.id)
+      setTodaySets(prev => prev.filter(s => s.id !== existing.id))
+    } else if (existing) {
+      await supabase.from('exercise_sets').update({ completed: true }).eq('id', existing.id)
+      setTodaySets(prev => prev.map(s => s.id === existing.id ? { ...s, completed: true } : s))
     } else {
-      const re = routineExercises.find(r => r.exercise.id === exerciseId)
       const { data } = await supabase
         .from('exercise_sets')
-        .insert({ session_id: session.id, exercise_id: exerciseId, set_number: 1, reps: re?.reps_default ?? null, completed: true })
+        .insert({ session_id: session.id, exercise_id: exerciseId, set_number: setNum, completed: true })
         .select()
         .single()
       if (data) setTodaySets(prev => [...prev, data])
     }
   }
 
-  async function updateSetField(exerciseId: string, field: 'reps' | 'weight_lbs', value: string) {
-    const existing = todaySets.find(s => s.exercise_id === exerciseId)
-    if (!existing) return
+  async function updateSetValue(exerciseId: string, setNum: number, field: 'reps' | 'weight_lbs', value: string) {
+    if (!session) return
     const num = value === '' ? null : Number(value)
-    await supabase.from('exercise_sets').update({ [field]: num }).eq('id', existing.id)
-    setTodaySets(prev => prev.map(s => s.id === existing.id ? { ...s, [field]: num } : s))
+    const existing = todaySets.find(s => s.exercise_id === exerciseId && s.set_number === setNum)
+
+    if (existing) {
+      await supabase.from('exercise_sets').update({ [field]: num }).eq('id', existing.id)
+      setTodaySets(prev => prev.map(s => s.id === existing.id ? { ...s, [field]: num } : s))
+    } else if (num !== null) {
+      const { data } = await supabase
+        .from('exercise_sets')
+        .insert({ session_id: session.id, exercise_id: exerciseId, set_number: setNum, [field]: num, completed: true })
+        .select()
+        .single()
+      if (data) setTodaySets(prev => [...prev, data])
+    }
   }
 
-  function lastLabel(exerciseId: string): string | null {
-    const sets = lastSets[exerciseId]?.filter(s => s.completed)
-    if (!sets?.length) return null
-    const s = sets[0]
-    if (s.reps && s.weight_lbs) return `Last: ${sets.length}x${s.reps} @ ${s.weight_lbs} lbs`
-    if (s.reps) return `Last: ${sets.length}x${s.reps}`
-    return 'Completed last session'
+  function lastSetLabel(exerciseId: string, setNum: number): string {
+    const s = lastSets[exerciseId]?.find(s => s.set_number === setNum)
+    if (!s) return '—'
+    if (s.reps && s.weight_lbs) return `${s.reps} @ ${s.weight_lbs}`
+    if (s.reps) return `${s.reps} reps`
+    if (s.completed) return 'done'
+    return '—'
   }
 
-  const isComplete = (exerciseId: string) => todaySets.some(s => s.exercise_id === exerciseId && s.completed)
+  const isComplete = (exerciseId: string) =>
+    todaySets.some(s => s.exercise_id === exerciseId && (s.completed || s.reps !== null))
 
   const displayedExercises = session?.energy_level && session.energy_level <= 2
     ? routineExercises.filter(re => LIGHT_EXERCISES.includes(re.exercise.name))
@@ -263,24 +275,17 @@ export default function WorkoutTrackerPage() {
                 {displayedExercises.map(re => {
                   const ex = re.exercise
                   const done = isComplete(ex.id)
-                  const label = lastLabel(ex.id)
-                  const isExpanded = expandedId === ex.id
-                  const setData = todaySets.find(s => s.exercise_id === ex.id)
                   const isIsometric = ex.tempo_default === 'isometric-2min'
 
                   return (
                     <div key={ex.id} className={`${styles.wkExCard} ${done ? styles.wkExCardDone : ''}`}>
                       <div className={styles.wkExRow}>
-                        <button
-                          className={styles.wkCheckBtn}
-                          onClick={() => toggleComplete(ex.id)}
-                          aria-label={done ? 'Mark incomplete' : 'Mark complete'}
-                        >
+                        <div className={styles.wkCheckBtn} aria-label={done ? 'Exercise logged' : 'Not started'}>
                           {done
                             ? <CheckCircle2 size={26} className={styles.wkCheckDone} />
                             : <Circle size={26} className={styles.wkCheckEmpty} />
                           }
-                        </button>
+                        </div>
 
                         <div className={styles.wkExBody}>
                           <span className={styles.wkExName}>{ex.name}</span>
@@ -289,7 +294,6 @@ export default function WorkoutTrackerPage() {
                             {isIsometric ? ' · 2 min hold' : re.reps_default ? ` · ${re.reps_default} reps` : ''}
                             {' · '}{ex.muscle_groups.join(', ')}
                           </span>
-                          {label && <span className={styles.wkLastLabel}>{label}</span>}
                           {ex.coach_cue && <span className={styles.wkCue}>"{ex.coach_cue}"</span>}
                         </div>
 
@@ -302,43 +306,66 @@ export default function WorkoutTrackerPage() {
                         </button>
                       </div>
 
-                      {done && (
-                        <div className={styles.wkOptional}>
-                          <button
-                            className={styles.wkExpandBtn}
-                            onClick={() => setExpandedId(isExpanded ? null : ex.id)}
-                          >
-                            {isExpanded ? 'Hide details' : '+ Log reps / weight (optional)'}
-                          </button>
-                          {isExpanded && (
-                            <div className={styles.wkInputRow}>
-                              <label className={styles.wkInputLabel}>
-                                Reps
-                                <input
-                                  type="number"
-                                  className={styles.wkInput}
-                                  defaultValue={setData?.reps ?? ''}
-                                  onBlur={e => updateSetField(ex.id, 'reps', e.target.value)}
-                                  placeholder="—"
-                                  min={1}
-                                />
-                              </label>
-                              <label className={styles.wkInputLabel}>
-                                Weight (lbs)
-                                <input
-                                  type="number"
-                                  className={styles.wkInput}
-                                  defaultValue={setData?.weight_lbs ?? ''}
-                                  onBlur={e => updateSetField(ex.id, 'weight_lbs', e.target.value)}
-                                  placeholder="—"
-                                  min={0}
-                                  step={2.5}
-                                />
-                              </label>
+                      {/* Per-set logging table */}
+                      <div className={styles.wkSetTable}>
+                        {isIsometric ? (
+                          <div className={styles.wkIsoSets}>
+                            {Array.from({ length: re.sets_default }, (_, i) => i + 1).map(setNum => {
+                              const setDone = todaySets.some(s => s.exercise_id === ex.id && s.set_number === setNum && s.completed)
+                              const lastDone = lastSets[ex.id]?.find(s => s.set_number === setNum)?.completed
+                              return (
+                                <div key={setNum} className={styles.wkIsoRow}>
+                                  <span className={styles.wkIsoLabel}>Set {setNum}</span>
+                                  {lastDone && <span className={styles.wkIsoLast}>done last time</span>}
+                                  <button
+                                    className={`${styles.wkIsoDoneBtn} ${setDone ? styles.wkIsoDoneBtnActive : ''}`}
+                                    onClick={() => toggleIsometricSet(ex.id, setNum)}
+                                  >
+                                    {setDone ? 'Done' : 'Mark done'}
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        ) : (
+                          <>
+                            <div className={styles.wkSetHeaderRow}>
+                              <span>Set</span>
+                              <span>Last session</span>
+                              <span>Reps</span>
+                              <span>Wt (lbs)</span>
                             </div>
-                          )}
-                        </div>
-                      )}
+                            {Array.from({ length: re.sets_default }, (_, i) => i + 1).map(setNum => {
+                              const currentSet = todaySets.find(s => s.exercise_id === ex.id && s.set_number === setNum)
+                              return (
+                                <div key={`${ex.id}-${setNum}-${currentSet?.id ?? 'new'}`} className={styles.wkSetRow}>
+                                  <span className={styles.wkSetNum}>{setNum}</span>
+                                  <span className={styles.wkSetLast}>{lastSetLabel(ex.id, setNum)}</span>
+                                  <input
+                                    type="number"
+                                    className={styles.wkSetInput}
+                                    defaultValue={currentSet?.reps ?? ''}
+                                    onBlur={e => updateSetValue(ex.id, setNum, 'reps', e.target.value)}
+                                    placeholder="—"
+                                    min={1}
+                                    inputMode="numeric"
+                                  />
+                                  <input
+                                    type="number"
+                                    className={styles.wkSetInput}
+                                    defaultValue={currentSet?.weight_lbs ?? ''}
+                                    onBlur={e => updateSetValue(ex.id, setNum, 'weight_lbs', e.target.value)}
+                                    placeholder="—"
+                                    min={0}
+                                    step={2.5}
+                                    inputMode="decimal"
+                                  />
+                                </div>
+                              )
+                            })}
+                          </>
+                        )}
+                      </div>
                     </div>
                   )
                 })}

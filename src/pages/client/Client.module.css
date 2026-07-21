@@ -11190,6 +11190,105 @@
   background: var(--bg-hover);
 }
 
+/* Per-set logging table */
+.wkSetTable {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+.wkSetHeaderRow {
+  display: grid;
+  grid-template-columns: 24px 1fr 60px 72px;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.wkSetRow {
+  display: grid;
+  grid-template-columns: 24px 1fr 60px 72px;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 5px 0;
+}
+.wkSetNum {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+.wkSetLast {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wkSetInput {
+  width: 100%;
+  padding: 5px var(--space-2);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  box-sizing: border-box;
+}
+.wkSetInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Isometric set rows */
+.wkIsoSets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.wkIsoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.wkIsoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 40px;
+  flex-shrink: 0;
+}
+.wkIsoLast {
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex: 1;
+}
+.wkIsoDoneBtn {
+  background: none;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 4px var(--space-3);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+.wkIsoDoneBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.wkIsoDoneBtnActive {
+  border-color: var(--success);
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 8%, transparent);
+}
+
 /* Optional reps/weight */
 .wkOptional {
   margin-top: var(--space-3);
