@@ -293,8 +293,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' })
 
-    const { action } = req.body as { action: string }
-
     // ── COMMS POLISH ────────────────────────────────────────────────────────
     if (action === 'comms_polish') {
       const { channel, draft, topic, audience } = req.body as {
