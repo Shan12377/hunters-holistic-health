@@ -21,19 +21,6 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
   componentDidCatch(error: unknown) {
     console.error('[app] render error:', error)
-    // Fire-and-forget report so crashes are visible in Vercel logs (Rule E).
-    try {
-      fetch('/api/log-error', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: error instanceof Error ? `${error.message}\n${error.stack ?? ''}` : String(error),
-          url: window.location.pathname,
-        }),
-      }).catch(() => undefined)
-    } catch {
-      // Reporting must never crash the crash screen.
-    }
   }
 
   render() {
