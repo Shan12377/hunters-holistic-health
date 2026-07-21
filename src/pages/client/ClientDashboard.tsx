@@ -130,121 +130,158 @@ export default function ClientDashboard() {
 
   // Labeled so the user can always see what counts toward the score (Rule C).
   const checklist = todayLog ? [
-    { label: 'Morning fast', done: !!todayLog.morning_fast_done },
+    { label: 'Fast', done: !!todayLog.morning_fast_done },
     { label: 'Meal 1', done: !!todayLog.meal1_logged },
     { label: 'Meal 2', done: !!todayLog.meal2_logged },
-    { label: 'AM supplements', done: !!todayLog.supplement_am_done },
-    { label: 'PM supplements', done: !!todayLog.supplement_pm_done },
-    { label: `${STEPS_GOAL.toLocaleString()} steps`, done: (todayLog.steps ?? 0) >= STEPS_GOAL },
-    { label: `${WATER_GOAL_OZ} oz water`, done: (todayLog.water_oz ?? 0) >= WATER_GOAL_OZ },
+    { label: 'AM supps', done: !!todayLog.supplement_am_done },
+    { label: 'PM supps', done: !!todayLog.supplement_pm_done },
+    { label: 'Steps', done: (todayLog.steps ?? 0) >= STEPS_GOAL },
+    { label: 'Water', done: (todayLog.water_oz ?? 0) >= WATER_GOAL_OZ },
   ] : []
   const completionPct = checklist.length > 0 ? Math.round((checklist.filter(c => c.done).length / checklist.length) * 100) : 0
-
   const bpZone = latestBP ? getBPZone(latestBP.systolic, latestBP.diastolic) : null
   const bsZone = latestBS ? getBSZone(latestBS.glucose_mg_dl, latestBS.reading_context) : null
+  const levelInfo = totalPoints !== null ? getLevelInfo(totalPoints) : null
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
-      <div className={styles.greeting}>
-        <h1 className={styles.greetingTitle}>
-          Good {hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'}, {profile?.display_name || profile?.first_name} 👋
-        </h1>
-        <p className={styles.greetingDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+      {/* Command Header */}
+      <div className={styles.commandHeader}>
+        <div>
+          <h1 className={styles.commandGreeting}>
+            Good {hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'}, {profile?.display_name || profile?.first_name}
+          </h1>
+          <p className={styles.commandDate}>{format(new Date(), 'EEEE, MMMM d')}</p>
+        </div>
+        {levelInfo && (
+          <div className={styles.commandLevelWrap}>
+            <span className={styles.commandLvlPill}>LVL {levelInfo.level}</span>
+            <span className={styles.commandLvlLabel}>{levelInfo.label}</span>
+          </div>
+        )}
       </div>
 
       {/* First-week onboarding (hides itself when complete or dismissed) */}
       <OnboardingChecklist todayLog={todayLog} latestBP={latestBP} latestBS={latestBS} />
-
-      {/* Level badge */}
-      {totalPoints !== null && (() => {
-        const info = getLevelInfo(totalPoints)
-        return (
-          <div className={styles.levelCard}>
-            <div className={styles.levelTop}>
-              <div className={styles.levelBadge}>LVL {info.level}</div>
-              <div className={styles.levelMeta}>
-                <div className={styles.levelLabel}>{info.label}</div>
-                <div className={styles.levelPts}>{info.totalPoints.toLocaleString()} pts</div>
-              </div>
-            </div>
-            <div className={styles.levelBarRow}>
-              <div className={styles.levelBarTrack}>
-                <div className={styles.levelBarFill} style={{ width: `${info.progress}%` }} />
-              </div>
-              {info.nextMin && (
-                <div className={styles.levelBarHint}>
-                  {(info.nextMin - info.totalPoints).toLocaleString()} pts to Level {info.nextLevel}
-                </div>
-              )}
-            </div>
-          </div>
-        )
-      })()}
-
-      {/* Weekly AI Pulse */}
-      <WeeklyPulseCard />
 
       {/* 24-hour session reminder */}
       {upcomingSession && (
         <div className={styles.sessionBanner}>
           <div className={styles.sessionBannerBody}>
             <div className={styles.sessionBannerLabel}>Session Today</div>
-            <div className={styles.sessionBannerTitle}>
-              {upcomingSession.session_type}
-            </div>
+            <div className={styles.sessionBannerTitle}>{upcomingSession.session_type}</div>
             <div className={styles.sessionBannerMeta}>
               {fmtDate(upcomingSession.session_date)} at {fmtTime(upcomingSession.session_time)}
             </div>
-            <a
-              href={DOXY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.sessionBannerLink}
-            >
+            <a href={DOXY_URL} target="_blank" rel="noopener noreferrer" className={styles.sessionBannerLink}>
               <ExternalLink size={13} /> Join Session Room
             </a>
           </div>
         </div>
       )}
 
-      {/* Progress Ring + Today's Score */}
-      <div className={styles.progressCard}>
-        <div className={styles.ringWrap}>
-          <svg width="80" height="80" className={styles.ringSvg}>
-            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--border)" strokeWidth="6" />
-            {/* Dash offset is computed from completion percentage, so it stays inline */}
-            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--gold)" strokeWidth="6"
-              strokeDasharray={`${2 * Math.PI * 34}`}
-              strokeDashoffset={`${2 * Math.PI * 34 * (1 - completionPct / 100)}`}
-              strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-            />
-          </svg>
-          <div className={styles.ringValue}>
-            {completionPct}%
-          </div>
-        </div>
-        <div>
-          <div className={styles.progressTitle}>Today's Progress</div>
-          <div className={styles.progressMessage}>
-            {completionPct === 100 ? '🌟 Perfect day! All goals complete.' :
-             completionPct >= 70 ? '💪 Great work, keep going!' :
-             completionPct >= 40 ? '📈 Good start, stay consistent.' :
-             '🌱 Your journey starts with one step.'}
-          </div>
-          {checklist.length > 0 && (
-            <div className={styles.progressChecklist}>
-              {checklist.map(item => (
-                <span key={item.label} className={item.done ? styles.progressItemDone : styles.progressItem}>
-                  {item.done ? '✓' : '○'} {item.label}
-                </span>
-              ))}
+      {/* Hero Metric Cards */}
+      <div className={styles.heroGrid}>
+        {/* Today's Progress */}
+        <Link to="/app/daily-log" className={styles.miniLink}>
+          <div className={styles.heroCard}>
+            <div className={styles.heroCardLabel}>Today's Progress</div>
+            <div className={styles.heroRingWrap}>
+              <svg width="100" height="100" className={styles.ringSvg}>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" strokeWidth="7" />
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--gold)" strokeWidth="7"
+                  strokeDasharray={`${2 * Math.PI * 42}`}
+                  strokeDashoffset={`${2 * Math.PI * 42 * (1 - completionPct / 100)}`}
+                  strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+                />
+              </svg>
+              <div className={styles.heroRingValue}>{completionPct}%</div>
             </div>
-          )}
-          <Link to="/app/daily-log" className={styles.progressLink}>
-            Update today's log →
-          </Link>
-        </div>
+            <div className={styles.heroCardGoalsCount}>
+              {checklist.filter(c => c.done).length} of {checklist.length || 7} goals done
+            </div>
+            {checklist.length > 0 && (
+              <div className={styles.heroProgressItems}>
+                {checklist.map(item => (
+                  <span
+                    key={item.label}
+                    className={item.done ? styles.heroProgressItemDone : styles.heroProgressItemPending}
+                    title={item.label}
+                  >
+                    {item.done ? '●' : '○'}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className={styles.heroCardCta}>Tap to log</div>
+          </div>
+        </Link>
+
+        {/* Blood Pressure */}
+        <Link to="/app/blood-pressure" className={styles.miniLink}>
+          {/* Border color from live BP zone, stays inline */}
+          <div className={styles.heroCard} style={bpZone ? { borderColor: BP_ZONE_COLORS[bpZone] + '40' } : undefined}>
+            <div className={styles.heroCardLabel}>Blood Pressure</div>
+            {latestBP ? (
+              <>
+                <div className={styles.heroBPValue} style={{ color: BP_ZONE_COLORS[bpZone!] }}>
+                  {latestBP.systolic}/{latestBP.diastolic}
+                </div>
+                <div className={styles.heroBPUnit}>mmHg</div>
+                <div
+                  className={styles.heroZonePill}
+                  style={{
+                    color: BP_ZONE_COLORS[bpZone!],
+                    borderColor: BP_ZONE_COLORS[bpZone!] + '50',
+                    background: BP_ZONE_COLORS[bpZone!] + '18',
+                  }}
+                >
+                  {BP_ZONE_LABELS[bpZone!]}
+                </div>
+              </>
+            ) : (
+              <div className={styles.heroEmpty}>
+                <Heart size={36} strokeWidth={1.2} />
+                <span>No readings yet</span>
+              </div>
+            )}
+            <div className={styles.heroCardCta}>Tap to log BP</div>
+          </div>
+        </Link>
+
+        {/* Activity: steps + water + energy */}
+        <Link to="/app/daily-log" className={styles.miniLink}>
+          <div className={styles.heroCard}>
+            <div className={styles.heroCardLabel}>Activity</div>
+            <div className={styles.heroActivityGrid}>
+              <div className={styles.heroActivityItem}>
+                <Activity size={20} color="var(--teal)" />
+                <div className={styles.heroActivityValue} style={{ color: 'var(--teal)' }}>
+                  {(todayLog?.steps ?? 0).toLocaleString()}
+                </div>
+                <div className={styles.heroActivitySub}>steps</div>
+                <div className={styles.heroActivityGoal}>Goal {STEPS_GOAL.toLocaleString()}</div>
+              </div>
+              <div className={styles.heroActivityDivider} />
+              <div className={styles.heroActivityItem}>
+                <Droplets size={20} color="#4b9ee0" />
+                <div className={styles.heroActivityValue} style={{ color: '#4b9ee0' }}>
+                  {todayLog?.water_oz ?? 0}
+                </div>
+                <div className={styles.heroActivitySub}>oz water</div>
+                <div className={styles.heroActivityGoal}>Goal {WATER_GOAL_OZ}</div>
+              </div>
+            </div>
+            {todayLog?.energy_level ? (
+              <div className={styles.heroEnergyRow}>
+                <Zap size={13} color="var(--gold)" />
+                <span>Energy:</span>
+                <span className={styles.heroEnergyVal}>{todayLog.energy_level}/10</span>
+              </div>
+            ) : null}
+            <div className={styles.heroCardCta}>Tap to log activity</div>
+          </div>
+        </Link>
       </div>
 
       {/* Midday Energy Check-In */}
@@ -276,74 +313,10 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      {/* Quick Stats Grid */}
-      <div className={styles.miniGrid}>
-        {/* Latest BP */}
-        <Link to="/app/blood-pressure" className={styles.miniLink}>
-          {/* Border and value color come from the live BP zone, so they stay inline */}
-          <div className={styles.miniCard} style={bpZone ? { borderColor: BP_ZONE_COLORS[bpZone] + '40' } : undefined}>
-            <div className={styles.miniHeader}>
-              <Heart size={16} color={bpZone ? BP_ZONE_COLORS[bpZone] : 'var(--text-secondary)'} />
-              <span className={styles.miniLabel}>Blood Pressure</span>
-            </div>
-            {latestBP ? (
-              <>
-                <div className={styles.miniValue} style={{ color: BP_ZONE_COLORS[bpZone!] }}>
-                  {latestBP.systolic}/{latestBP.diastolic}
-                </div>
-                <div className={styles.miniSub}>{BP_ZONE_LABELS[bpZone!]}</div>
-              </>
-            ) : (
-              <div className={styles.miniEmpty}>No readings yet</div>
-            )}
-          </div>
-        </Link>
-
-        {/* Steps */}
-        <Link to="/app/daily-log" className={styles.miniLink}>
-          <div className={styles.miniCard}>
-            <div className={styles.miniHeader}>
-              <Activity size={16} color="var(--teal)" />
-              <span className={styles.miniLabel}>Steps Today</span>
-            </div>
-            <div className={`${styles.miniValue} ${styles.miniValueTeal}`}>
-              {(todayLog?.steps ?? 0).toLocaleString()}
-            </div>
-            <div className={styles.miniSub}>Goal: {STEPS_GOAL.toLocaleString()}</div>
-          </div>
-        </Link>
-
-        {/* Water */}
-        <Link to="/app/daily-log" className={styles.miniLink}>
-          <div className={styles.miniCard}>
-            <div className={styles.miniHeader}>
-              <Droplets size={16} color="#4b9ee0" />
-              <span className={styles.miniLabel}>Water (oz)</span>
-            </div>
-            <div className={`${styles.miniValue} ${styles.miniValueBlue}`}>
-              {todayLog?.water_oz ?? 0}
-            </div>
-            <div className={styles.miniSub}>Goal: {WATER_GOAL_OZ} oz</div>
-          </div>
-        </Link>
-
-        {/* Energy */}
-        <Link to="/app/daily-log" className={styles.miniLink}>
-          <div className={styles.miniCard}>
-            <div className={styles.miniHeader}>
-              <Zap size={16} color="var(--gold)" />
-              <span className={styles.miniLabel}>Energy Level</span>
-            </div>
-            <div className={`${styles.miniValue} ${styles.miniValueGold}`}>
-              {todayLog?.energy_level ?? '-'}{todayLog?.energy_level ? '/10' : ''}
-            </div>
-            <div className={styles.miniSub}>Self-reported</div>
-          </div>
-        </Link>
-
-        {/* Blood Sugar */}
+      {/* Blood Sugar (secondary stat) */}
+      <div className={styles.secondaryGrid}>
         <Link to="/app/blood-sugar" className={styles.miniLink}>
-          {/* Border and value color come from the live BS zone, so they stay inline */}
+          {/* Border and value color from live BS zone, stays inline */}
           <div className={styles.miniCard} style={bsZone ? { borderColor: BS_ZONE_COLORS[bsZone] + '40' } : undefined}>
             <div className={styles.miniHeader}>
               <Droplet size={16} color={bsZone ? BS_ZONE_COLORS[bsZone] : 'var(--text-secondary)'} />
@@ -382,6 +355,9 @@ export default function ClientDashboard() {
           ))}
         </div>
       </div>
+
+      {/* AI Coach: Weekly Pulse */}
+      <WeeklyPulseCard />
 
       {/* Disclaimer */}
       <div className={styles.disclaimerBox}>

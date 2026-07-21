@@ -11718,3 +11718,261 @@
   font-size: 12px;
   color: var(--text-muted);
 }
+
+/* ============================================================
+   DASHBOARD COMMAND CENTER (redesign)
+   ============================================================ */
+
+.commandHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.commandGreeting {
+  font-family: var(--font-headline);
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 900;
+  margin-bottom: var(--space-1);
+  line-height: 1.1;
+}
+
+.commandDate {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.commandLevelWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.commandLvlPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(var(--gold-rgb), 0.15);
+  border: 1px solid rgba(var(--gold-rgb), 0.3);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  text-shadow: var(--gold-text-glow);
+}
+
+.commandLvlLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* Hero 3-column metric grid */
+.heroGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .heroGrid { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 641px) and (max-width: 880px) {
+  .heroGrid { grid-template-columns: 1fr 1fr; }
+}
+
+.heroCard {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.005) 55%),
+    var(--bg-card);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: border-color var(--transition-base), transform var(--transition-spring);
+  min-height: 220px;
+  justify-content: center;
+}
+
+.heroCard:hover {
+  border-color: rgba(var(--gold-rgb), 0.35);
+  transform: translateY(-2px);
+}
+
+.heroCardLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  align-self: flex-start;
+  margin-bottom: var(--space-1);
+}
+
+.heroCardCta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: auto;
+}
+
+/* Progress ring in hero card */
+.heroRingWrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.heroRingValue {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: var(--gold-text-glow);
+}
+
+.heroCardGoalsCount {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.heroProgressItems {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 140px;
+}
+
+.heroProgressItemDone {
+  font-size: 11px;
+  color: var(--gold);
+}
+
+.heroProgressItemPending {
+  font-size: 11px;
+  color: var(--border);
+}
+
+/* BP hero card */
+.heroBPValue {
+  font-family: var(--font-headline);
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.heroBPUnit {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: -2px;
+}
+
+.heroZonePill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+  letter-spacing: 0.3px;
+  margin-top: var(--space-1);
+}
+
+.heroEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: var(--space-3) 0;
+}
+
+/* Activity hero card */
+.heroActivityGrid {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  justify-content: center;
+  margin: var(--space-2) 0;
+}
+
+.heroActivityItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.heroActivityValue {
+  font-family: var(--font-headline);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.heroActivitySub {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.heroActivityGoal {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.heroActivityDivider {
+  width: 1px;
+  height: 52px;
+  background: var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.heroEnergyRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+
+.heroEnergyVal {
+  color: var(--gold);
+  font-weight: 700;
+  text-shadow: var(--gold-text-glow);
+}
+
+/* Secondary compact grid (blood sugar alone) */
+.secondaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 220px));
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
