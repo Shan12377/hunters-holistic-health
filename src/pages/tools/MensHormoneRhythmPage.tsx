@@ -3,7 +3,7 @@ export default function MensHormoneRhythmPage() {
     <iframe
       src="/tools/hhh-mens-hormone-rhythm.html"
       title="Men's Daily Hormone Rhythm"
-      style={{ display: 'block', width: '100%', height: '100vh', border: 'none' }}
+      style={{ display: 'block', width: '100%', height: 'calc(100vh - 64px)', border: 'none' }}
     />
   )
 }

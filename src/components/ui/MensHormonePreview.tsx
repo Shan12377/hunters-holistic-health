@@ -31,9 +31,9 @@ export default function MensHormonePreview() {
       </div>
 
       <div className={styles.conditions}>
-        <div className={styles.condLabel}>Tool also covers conditions:</div>
+        <div className={styles.condLabel}>Tool covers these focus areas:</div>
         <div className={styles.condList}>
-          {['Low Testosterone', 'High Cortisol', 'Adrenal Fatigue', 'Thyroid (Male)', 'Metabolic Syndrome', 'Andropause'].map(c => (
+          {['Low Testosterone', 'ED and Sexual Function', 'High Cortisol and Burnout', 'Metabolic Syndrome', 'High Estrogen', 'Sleep Apnea', 'Hair Loss and Prostate', 'Male Fertility'].map(c => (
             <span key={c} className={styles.condTag}>{c}</span>
           ))}
         </div>
