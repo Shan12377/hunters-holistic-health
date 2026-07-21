@@ -40,6 +40,12 @@ interface WorkoutSession {
   completed_at: string | null
 }
 
+interface ProgressEntry {
+  date: string
+  maxWeight: number | null
+  maxReps: number | null
+}
+
 const ENERGY_LABELS = ['', 'Exhausted', 'Low', 'Okay', 'Good', 'Great']
 const LIGHT_EXERCISES = ['Wall Sit', 'Calf Raises']
 
@@ -55,6 +61,7 @@ export default function WorkoutTrackerPage() {
   const [todaySets, setTodaySets] = useState<ExerciseSet[]>([])
   const [lastSets, setLastSets] = useState<Record<string, ExerciseSet[]>>({})
   const [history, setHistory] = useState<WorkoutSession[]>([])
+  const [progressData, setProgressData] = useState<Record<string, ProgressEntry[]>>({})
   const [infoExercise, setInfoExercise] = useState<Exercise | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -67,6 +74,10 @@ export default function WorkoutTrackerPage() {
       loadHistory()
     }
   }, [userId])
+
+  useEffect(() => {
+    if (userId && tab === 'history') loadProgress()
+  }, [userId, tab])
 
   async function loadRoutine() {
     const { data } = await supabase
@@ -140,6 +151,47 @@ export default function WorkoutTrackerPage() {
       .gte('session_date', since)
       .order('session_date', { ascending: false })
     setHistory(data ?? [])
+  }
+
+  async function loadProgress() {
+    if (!userId) return
+    const since = format(subDays(new Date(), 89), 'yyyy-MM-dd')
+
+    const { data: sessions } = await supabase
+      .from('workout_sessions')
+      .select('id, session_date')
+      .eq('user_id', userId)
+      .gte('session_date', since)
+      .order('session_date', { ascending: true })
+
+    if (!sessions?.length) return
+
+    const sessionDateMap: Record<string, string> = {}
+    sessions.forEach(s => { sessionDateMap[s.id] = s.session_date })
+
+    const { data: sets } = await supabase
+      .from('exercise_sets')
+      .select('exercise_id, session_id, reps, weight_lbs')
+      .in('session_id', sessions.map(s => s.id))
+
+    const byExAndDate: Record<string, Record<string, { maxWeight: number | null; maxReps: number | null }>> = {}
+    sets?.forEach(set => {
+      const date = sessionDateMap[set.session_id]
+      if (!date) return
+      if (!byExAndDate[set.exercise_id]) byExAndDate[set.exercise_id] = {}
+      if (!byExAndDate[set.exercise_id][date]) byExAndDate[set.exercise_id][date] = { maxWeight: null, maxReps: null }
+      const entry = byExAndDate[set.exercise_id][date]
+      if (set.weight_lbs !== null && (entry.maxWeight === null || set.weight_lbs > entry.maxWeight)) entry.maxWeight = set.weight_lbs
+      if (set.reps !== null && (entry.maxReps === null || set.reps > entry.maxReps)) entry.maxReps = set.reps
+    })
+
+    const result: Record<string, ProgressEntry[]> = {}
+    Object.entries(byExAndDate).forEach(([exerciseId, dateMap]) => {
+      result[exerciseId] = Object.entries(dateMap)
+        .map(([date, vals]) => ({ date, ...vals }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+    })
+    setProgressData(result)
   }
 
   async function selectEnergy(level: number) {
@@ -459,6 +511,51 @@ export default function WorkoutTrackerPage() {
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Exercise progress charts */}
+          {routineExercises.some(re => progressData[re.exercise.id]?.some(d => d.maxWeight !== null)) && (
+            <div className={styles.wkProgressSection}>
+              <h2 className={styles.wkProgressSectionTitle}>Exercise Progress</h2>
+              {routineExercises
+                .filter(re => {
+                  const entries = progressData[re.exercise.id] ?? []
+                  return !re.exercise.tempo_default.includes('isometric') && entries.some(d => d.maxWeight !== null)
+                })
+                .map(re => {
+                  const entries = (progressData[re.exercise.id] ?? []).filter(d => d.maxWeight !== null)
+                  const maxEver = Math.max(...entries.map(d => d.maxWeight!))
+                  const latest = entries[entries.length - 1]
+                  const isNewPR = entries.length > 1 && latest.maxWeight === maxEver
+                  const chartEntries = entries.slice(-15)
+
+                  return (
+                    <div key={re.exercise.id} className={styles.wkProgressCard}>
+                      <div className={styles.wkProgressHeader}>
+                        <span className={styles.wkProgressName}>{re.exercise.name}</span>
+                        {isNewPR && <span className={styles.wkPRBadge}>PR</span>}
+                        <span className={styles.wkProgressCurrent}>{latest.maxWeight} lbs</span>
+                      </div>
+                      <div className={styles.wkSparkline}>
+                        {chartEntries.map(entry => {
+                          const pct = Math.round((entry.maxWeight! / maxEver) * 100)
+                          return (
+                            <div
+                              key={entry.date}
+                              className={styles.wkSparkBar}
+                              style={{ height: `${pct}%` }}
+                              title={`${format(new Date(entry.date + 'T12:00:00'), 'MMM d')}: ${entry.maxWeight} lbs`}
+                            />
+                          )
+                        })}
+                      </div>
+                      <p className={styles.wkProgressMeta}>
+                        Best: {maxEver} lbs · {entries.length} session{entries.length !== 1 ? 's' : ''} logged
+                      </p>
+                    </div>
+                  )
+                })}
             </div>
           )}
         </div>

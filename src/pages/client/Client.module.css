@@ -11333,6 +11333,75 @@
   border-color: var(--accent);
 }
 
+/* Exercise progress charts (History tab) */
+.wkProgressSection {
+  margin-top: var(--space-5);
+}
+.wkProgressSectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+.wkProgressCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.wkProgressHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.wkProgressName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+.wkPRBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+.wkProgressCurrent {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--success);
+  flex-shrink: 0;
+}
+.wkSparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 48px;
+  margin-bottom: var(--space-2);
+}
+.wkSparkBar {
+  flex: 1;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+  min-height: 4px;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+.wkSparkBar:last-child {
+  opacity: 1;
+}
+.wkProgressMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
 /* All done banner */
 .wkAllDone {
   margin-top: var(--space-5);
