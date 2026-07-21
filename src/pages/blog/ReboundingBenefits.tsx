@@ -54,7 +54,7 @@ export default function ReboundingBenefits() {
         <img
           src="/images/ai/blog-rebounding.jpg"
           alt="Dr. Shallanda Hunter rebounding on a mini trampoline"
-          className={styles.blogImgCenter}
+          className={styles.blogImgPortrait}
         />
 
         <div className={styles.body}>

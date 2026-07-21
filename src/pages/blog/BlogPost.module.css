@@ -166,6 +166,18 @@
   object-position: center center;
 }
 
+/* Portrait/full-body photos: show the whole image, framed */
+.blogImgPortrait {
+  display: block;
+  max-width: 440px;
+  width: 100%;
+  height: auto;
+  margin: 2rem auto;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+}
+
 /* Sources */
 .sources {
   font-size: 0.8rem;
