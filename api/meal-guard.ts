@@ -10,7 +10,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import OpenAI from 'openai'
-import { requireUser } from './_guard'
+import { requireUser } from './_guard.js'
 
 function buildSystemPrompt(primaryGoal: string, dietaryPref: string): string {
   const goalLine = primaryGoal ? `The user's primary wellness goal is: ${primaryGoal}.` : 'The user has not specified a primary wellness goal.'

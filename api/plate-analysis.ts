@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Anthropic from '@anthropic-ai/sdk'
-import { requireUser } from './_guard'
+import { requireUser } from './_guard.js'
 
 const COMPLIANCE_SUFFIX =
   'This analysis is provided for educational purposes by a Certified Functional and Nutritional Medicine Practitioner and PharmD. It is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before making changes to your nutrition plan.'

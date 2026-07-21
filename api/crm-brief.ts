@@ -291,7 +291,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' }}
+    if (profile?.role !== 'educator') return res.status(403).json({ error: 'Forbidden' })
 
     const { action } = req.body as { action: string }
 

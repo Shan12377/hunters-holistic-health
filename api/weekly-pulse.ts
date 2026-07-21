@@ -11,7 +11,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Anthropic from '@anthropic-ai/sdk'
-import { requireUser } from './_guard'
+import { requireUser } from './_guard.js'
 
 const SYSTEM_PROMPT = `You are a functional medicine wellness educator assistant built for Hunter's Holistic Health.
 
