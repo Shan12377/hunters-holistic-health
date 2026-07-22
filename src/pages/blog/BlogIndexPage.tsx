@@ -100,6 +100,16 @@ const METABOLIC_POSTS = [
   },
 ]
 
+const HORMONE_POSTS = [
+  {
+    slug: '/blog/pcos-now-pmos',
+    tag: 'Hormone Health',
+    img: 'blog-metabolic-health.jpg',
+    title: 'PCOS Is Now PMOS: What the New Name Means for You',
+    desc: 'A 2026 global consensus renamed polycystic ovary syndrome to polyendocrine metabolic ovarian syndrome (PMOS). Dr. Hunter, PharmD, CFNMP, explains what changed, what did not, and why it matters for your care.',
+  },
+]
+
 const WELLNESS_POSTS = [
   {
     slug: '/blog/creatine-not-what-you-think',
@@ -166,6 +176,21 @@ export default function BlogIndexPage() {
         <p className={styles.sectionLabel} style={{ marginTop: '2rem' }}>Metabolic Health</p>
         <div className={styles.grid}>
           {METABOLIC_POSTS.map(p => (
+            <Link key={p.slug} to={p.slug} className={styles.card}>
+              <div className={styles.cardContent}>
+                <div className={styles.cardTag}>{p.tag}</div>
+                <div className={styles.cardTitle}>{p.title}</div>
+                <p className={styles.cardDesc}>{p.desc}</p>
+              </div>
+              <img src={`/images/ai/${p.img}`} alt={p.title} className={styles.cardThumb} />
+            </Link>
+          ))}
+        </div>
+
+        {/* Hormone Health */}
+        <p className={styles.sectionLabel} style={{ marginTop: '2rem' }}>Hormone Health</p>
+        <div className={styles.grid}>
+          {HORMONE_POSTS.map(p => (
             <Link key={p.slug} to={p.slug} className={styles.card}>
               <div className={styles.cardContent}>
                 <div className={styles.cardTag}>{p.tag}</div>

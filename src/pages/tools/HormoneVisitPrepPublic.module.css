@@ -662,6 +662,79 @@
   margin: 0.25rem 0;
 }
 
+/* === Supporting content section === */
+.contentSection {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  width: 100%;
+}
+
+.faqSection {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem 2.5rem;
+  width: 100%;
+}
+
+.contentH2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 1.25rem;
+}
+
+.contentH3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 2rem 0 0.625rem;
+}
+
+.contentP {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
+}
+
+.contentDisclaimer {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 1.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1rem 0;
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqQ {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+}
+
+.faqA {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 /* === Mobile === */
 @media (max-width: 720px) {
   .shell {

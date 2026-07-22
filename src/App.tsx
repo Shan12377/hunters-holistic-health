@@ -67,6 +67,7 @@ const MetabolicHealth = lazy(() => import('@/pages/blog/MetabolicHealth'))
 const Glp1FoodCulture = lazy(() => import('@/pages/blog/Glp1FoodCulture'))
 const Glp1Comparison = lazy(() => import('@/pages/blog/Glp1Comparison'))
 const WhyMealAppsFailAdvertorial = lazy(() => import('@/pages/blog/WhyMealAppsFailAdvertorial'))
+const PcosNowPmos = lazy(() => import('@/pages/blog/PcosNowPmos'))
 const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
 const ParasiteCleanseProtocol = lazy(() => import('@/pages/protocol/ParasiteCleanseProtocol'))
 const SupplementCatalog = lazy(() => import('@/pages/protocol/SupplementCatalog'))
@@ -212,6 +213,7 @@ export default function App() {
         <Route path="/blog/glp1-and-food-culture-navigating-your-heritage" element={<Glp1FoodCulture />} />
         <Route path="/blog/glp1-comparison-ozempic-wegovy-mounjaro-zepbound" element={<Glp1Comparison />} />
         <Route path="/blog/why-meal-planning-apps-fail" element={<WhyMealAppsFailAdvertorial />} />
+        <Route path="/blog/pcos-now-pmos" element={<PcosNowPmos />} />
         <Route path="/protocol/parasite-cleanse" element={<ParasiteCleanseProtocol />} />
         <Route path="/supplements" element={<SupplementCatalog />} />
         <Route path="/protocol/metal-detox" element={<MetalDetoxProtocol />} />

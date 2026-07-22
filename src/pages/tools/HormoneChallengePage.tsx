@@ -25,7 +25,7 @@ interface ProgressRow {
 
 const CONDITIONS: { value: ConditionKey; label: string }[] = [
   { value: '', label: 'None / Not sure' },
-  { value: 'pcos', label: 'PCOS / PMMOS (Polycystic Metabolic Ovarian Syndrome)' },
+  { value: 'pcos', label: 'PCOS / PMOS (Polyendocrine Metabolic Ovarian Syndrome)' },
   { value: 'hashimotos', label: "Hashimoto's / Hypothyroidism" },
   { value: 'perimenopause', label: 'Perimenopause / Menopause' },
   { value: 'endometriosis', label: 'Endometriosis' },
@@ -72,8 +72,8 @@ const PHASE_DATA: Record<PhaseKey, {
 
 const CONDITION_NOTES: Record<string, { title: string; text: string; warning?: string }> = {
   pcos: {
-    title: 'Your PCOS / PMMOS Add-On',
-    text: 'Myo-inositol 4g daily (40:1 ratio with D-chiro inositol, such as Ovasitol) is the single most studied daily intervention for PMMOS. Take every day of the cycle, not just certain phases. It improves insulin signaling, supports follicular development, and reduces androgen excess. Berberine 500mg three times daily with meals has strong evidence for insulin sensitization, comparable to metformin in several published trials.',
+    title: 'Your PCOS / PMOS Add-On',
+    text: 'Myo-inositol 4g daily (40:1 ratio with D-chiro inositol, such as Ovasitol) is the single most studied daily intervention for PMOS. Take every day of the cycle, not just certain phases. It improves insulin signaling, supports follicular development, and reduces androgen excess. Berberine 500mg three times daily with meals has strong evidence for insulin sensitization, comparable to metformin in several published trials.',
     warning: 'Drug interaction: do not combine Berberine with Metformin without provider monitoring (additive blood glucose lowering). Avoid Berberine during pregnancy or if taking cyclosporine.',
   },
   hashimotos: {

@@ -25,6 +25,72 @@ function MetaTags() {
   let can = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
   if (!can) { can = document.createElement('link'); can.setAttribute('rel', 'canonical'); document.head.appendChild(can) }
   can.href = 'https://www.huntersholistichealth.com/tools/hormone-visit-prep'
+  const ldId = 'hhh-hormone-visit-prep-ld'
+  if (!document.getElementById(ldId)) {
+    const s = document.createElement('script')
+    s.type = 'application/ld+json'
+    s.id = ldId
+    s.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebApplication',
+          '@id': 'https://www.huntersholistichealth.com/tools/hormone-visit-prep#app',
+          name: 'Hormone Visit Prep Tool',
+          url: 'https://www.huntersholistichealth.com/tools/hormone-visit-prep',
+          description: 'Symptom checklists, functional lab ranges, and a printable doctor brief for 17 hormone conditions.',
+          applicationCategory: 'HealthApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          creator: {
+            '@type': 'Person',
+            name: 'Dr. Shallanda Hunter',
+            jobTitle: 'PharmD, CFNMP',
+            worksFor: { '@type': 'Organization', name: "Hunter's Holistic Health", url: 'https://www.huntersholistichealth.com' },
+          },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What hormone conditions does this tool cover?',
+              acceptedAnswer: { '@type': 'Answer', text: "The tool covers 17 hormone conditions: 9 female (PCOS/PMOS, Hypothyroidism/Hashimoto's, Perimenopause/Menopause, Endometriosis, Estrogen Dominance, Adrenal/HPA Axis, Hyperthyroidism/Graves', Uterine Fibroids, Female Fertility) and 8 male (Low Testosterone, High Estrogen/Gynecomastia, DHT/BPH/Hair Loss, ED/Sexual Function, High Cortisol/HPA Burnout, Metabolic Syndrome/Belly Fat, Sleep Apnea/Poor Sleep, Male Fertility). Four conditions are free; members unlock all 17 plus a printable doctor brief." },
+            },
+            {
+              '@type': 'Question',
+              name: 'Is this tool free to use?',
+              acceptedAnswer: { '@type': 'Answer', text: "Yes, four conditions are free: PCOS/PMOS, Hypothyroidism/Hashimoto's, Perimenopause/Menopause, and Low Testosterone. Each includes a symptom checklist, functional lab ranges, and Q&A section. Members at any paid tier ($37/month and above) unlock all 17 conditions plus a printable doctor brief with the exact labs to request and the questions to ask at your appointment." },
+            },
+            {
+              '@type': 'Question',
+              name: 'What are functional lab ranges and how are they different from standard ranges?',
+              acceptedAnswer: { '@type': 'Answer', text: 'Standard lab ranges are based on population averages that include both healthy and symptomatic individuals. Functional ranges represent the narrower window associated with optimal wellness rather than the absence of diagnosed disease. For example, the standard TSH range is 0.5-4.5 mIU/L, while the functional range is 0.5-2.0 mIU/L. A result can fall within the standard range and still represent suboptimal function. Functional ranges are educational targets, not diagnostic thresholds, and should be interpreted with your clinician.' },
+            },
+            {
+              '@type': 'Question',
+              name: 'Who built this tool?',
+              acceptedAnswer: { '@type': 'Answer', text: "The tool was built by Dr. Shallanda Hunter, PharmD, CFNMP, a functional medicine educator and licensed pharmacist. It is part of the Hunter's Holistic Health platform, which provides education and accountability tools for clients implementing root-cause health protocols. All content is educational and not intended as medical advice." },
+            },
+            {
+              '@type': 'Question',
+              name: 'Can I print my results to bring to my doctor?',
+              acceptedAnswer: { '@type': 'Answer', text: 'Members at any paid tier ($37/month and above) unlock the Doctor Visit Prep tab for each condition. This tab generates a printable brief that includes your selected symptoms, the exact labs to request, and suggested questions for your appointment. Free users can view and check symptoms and lab ranges, but the printable brief requires a membership.' },
+            },
+          ],
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.huntersholistichealth.com' },
+            { '@type': 'ListItem', position: 2, name: 'Tools', item: 'https://www.huntersholistichealth.com/tools' },
+            { '@type': 'ListItem', position: 3, name: 'Hormone Visit Prep Tool', item: 'https://www.huntersholistichealth.com/tools/hormone-visit-prep' },
+          ],
+        },
+      ],
+    })
+    document.head.appendChild(s)
+  }
   return null
 }
 
@@ -37,7 +103,7 @@ interface QAItem { q: string; a: string }
 type TabId = 'symptoms' | 'labs' | 'education' | 'prep'
 
 const FEMALE = [
-  { key: 'pcos', name: 'PCOS / PMMOS' },
+  { key: 'pcos', name: 'PCOS / PMOS' },
   { key: 'hypothyroid', name: "Hypothyroidism / Hashimoto's" },
   { key: 'perimenopause', name: 'Perimenopause / Menopause' },
   { key: 'endo', name: 'Endometriosis' },
@@ -63,7 +129,7 @@ const FREE_KEYS = new Set(['pcos', 'hypothyroid', 'perimenopause', 'lowt'])
 
 const PREVIEW: Record<string, Condition> = {
   pcos: {
-    key: 'pcos', name: 'PCOS / PMMOS', fullName: 'Polycystic Metabolic Ovarian Syndrome (PCOS / PMMOS)', sex: 'female',
+    key: 'pcos', name: 'PCOS / PMOS', fullName: 'PCOS / Polyendocrine Metabolic Ovarian Syndrome (PMOS)', sex: 'female',
     desc: 'A metabolic-hormonal disorder causing irregular periods, elevated androgens, and polycystic ovaries. Closely linked to insulin resistance and metabolic dysfunction.',
     symptoms: [
       'Irregular or missing periods', 'Acne / oily skin', 'Excess facial / body hair',
@@ -216,7 +282,7 @@ function GateCard() {
   return (
     <div className={styles.gateCard}>
       <div className={styles.gateIcon}>🔒</div>
-      <h3 className={styles.gateTitle}>This tool covers 17 conditions. You are seeing 3 of them.</h3>
+      <h3 className={styles.gateTitle}>This tool covers 17 conditions. You are seeing 4 of them.</h3>
       <p className={styles.gateDesc}>
         Members unlock all 17 conditions plus a printable doctor brief with the exact labs to request and the questions to ask at your appointment. Plans start at $37/mo.
       </p>
@@ -453,6 +519,56 @@ export default function HormoneVisitPrepPublicPage() {
           )}
         </main>
       </div>
+
+      <section className={styles.contentSection}>
+        <h2 className={styles.contentH2}>Walk into your hormone appointment with a plan</h2>
+        <p className={styles.contentP}>Most people sit across from their doctor with a vague sense that something is wrong but no words for it. They leave with a lab order for the same TSH test they have already run three times, a prescription they did not ask about, and no more information than when they walked in.</p>
+        <p className={styles.contentP}>This tool changes that dynamic.</p>
+        <p className={styles.contentP}>Pick your hormone condition from the sidebar. Check every symptom that applies, compare your lab values against both standard and functional ranges, and read the education section before you walk into the room. By the time you sit down with your provider, you will know what questions to ask, what labs to request, and what the research actually says about your condition.</p>
+
+        <h3 className={styles.contentH3}>Built by a pharmacist, not a content farm</h3>
+        <p className={styles.contentP}>The functional lab ranges and education content here were built by Dr. Shallanda Hunter, PharmD, CFNMP, a licensed pharmacist and functional medicine educator. Not by a content team. Not by AI writing generic health copy.</p>
+        <p className={styles.contentP}>The functional ranges shown for each lab are derived from peer-reviewed literature on optimal wellness, not just the absence of diagnosed disease. The difference matters: a TSH of 3.8 mIU/L is within the standard range but above the functional target of 0.5 to 2.0. Knowing that before your appointment changes what you ask for.</p>
+
+        <h3 className={styles.contentH3}>17 hormone conditions covered</h3>
+        <p className={styles.contentP}>The free version of this tool includes four conditions: PCOS (now PMOS), Hypothyroidism and Hashimoto's, Perimenopause and Menopause, and Low Testosterone. Each includes a symptom checklist, functional lab ranges with side-by-side standard comparison, and a Q&A section with the most common questions Dr. Hunter hears from clients.</p>
+        <p className={styles.contentP}>Members at any paid tier ($37/month and above) unlock all 17 conditions, including Endometriosis, Estrogen Dominance, Adrenal and HPA Axis Dysregulation, Hyperthyroidism and Graves' Disease, Uterine Fibroids, Female Fertility, High Estrogen in Men, DHT and hair loss, ED and sexual function, High Cortisol and HPA Burnout, Metabolic Syndrome, Sleep Apnea, and Male Fertility.</p>
+
+        <h3 className={styles.contentH3}>What lands on your printable doctor brief</h3>
+        <p className={styles.contentP}>The Doctor Visit Prep tab (unlocked with any membership) generates a printable brief with three sections: the symptoms you selected during your session, the specific labs to request and the ranges to ask your provider to interpret, and a set of condition-specific questions drawn from the most common gaps Dr. Hunter sees between what patients ask and what they should ask.</p>
+        <p className={styles.contentP}>Membership also includes access to the full Hunter's Holistic Health platform: daily accountability tools, a ROOTS Framework educational protocol, the AI Meal Guard, supplement education, and connection to a community of people working through the same issues.</p>
+
+        <p className={styles.contentDisclaimer}>This tool is for educational purposes only. It does not constitute medical advice and does not create a patient-provider relationship. All lab ranges are educational targets. Discuss all values with your healthcare provider. Supplement-related content: these statements have not been evaluated by the Food and Drug Administration. This tool is not intended to diagnose, treat, cure, or prevent any disease.</p>
+      </section>
+
+      <section className={styles.faqSection}>
+        <h2 className={styles.contentH2}>Frequently asked questions</h2>
+
+        <div className={styles.faqItem}>
+          <p className={styles.faqQ}>What hormone conditions does this tool cover?</p>
+          <p className={styles.faqA}>The tool covers 17 hormone conditions: 9 female (PCOS/PMOS, Hypothyroidism/Hashimoto's, Perimenopause/Menopause, Endometriosis, Estrogen Dominance, Adrenal/HPA Axis, Hyperthyroidism/Graves', Uterine Fibroids, Female Fertility) and 8 male (Low Testosterone, High Estrogen/Gynecomastia, DHT/BPH/Hair Loss, ED/Sexual Function, High Cortisol/HPA Burnout, Metabolic Syndrome/Belly Fat, Sleep Apnea/Poor Sleep, Male Fertility). Four conditions are free; members unlock all 17 plus a printable doctor brief.</p>
+        </div>
+
+        <div className={styles.faqItem}>
+          <p className={styles.faqQ}>Is this tool free to use?</p>
+          <p className={styles.faqA}>Yes, four conditions are free: PCOS/PMOS, Hypothyroidism/Hashimoto's, Perimenopause/Menopause, and Low Testosterone. Each includes a symptom checklist, functional lab ranges, and Q&A section. Members at any paid tier ($37/month and above) unlock all 17 conditions plus a printable doctor brief with the exact labs to request and the questions to ask at your appointment.</p>
+        </div>
+
+        <div className={styles.faqItem}>
+          <p className={styles.faqQ}>What are functional lab ranges and how are they different from standard ranges?</p>
+          <p className={styles.faqA}>Standard lab ranges are based on population averages that include both healthy and symptomatic individuals. Functional ranges represent the narrower window associated with optimal wellness rather than the absence of diagnosed disease. For example, the standard TSH range is 0.5-4.5 mIU/L, while the functional range is 0.5-2.0 mIU/L. A result can fall within the standard range and still represent suboptimal function. Functional ranges are educational targets, not diagnostic thresholds, and should be interpreted with your clinician.</p>
+        </div>
+
+        <div className={styles.faqItem}>
+          <p className={styles.faqQ}>Who built this tool?</p>
+          <p className={styles.faqA}>The tool was built by Dr. Shallanda Hunter, PharmD, CFNMP, a functional medicine educator and licensed pharmacist. It is part of the Hunter's Holistic Health platform, which provides education and accountability tools for clients implementing root-cause health protocols. All content is educational and not intended as medical advice.</p>
+        </div>
+
+        <div className={styles.faqItem}>
+          <p className={styles.faqQ}>Can I print my results to bring to my doctor?</p>
+          <p className={styles.faqA}>Members at any paid tier ($37/month and above) unlock the Doctor Visit Prep tab for each condition. This tab generates a printable brief that includes your selected symptoms, the exact labs to request, and suggested questions for your appointment. Free users can view and check symptoms and lab ranges, but the printable brief requires a membership.</p>
+        </div>
+      </section>
 
       <footer className={styles.footer}>
         <p>For educational use only, not medical advice. Nothing you enter is stored, sent, or shared. Always consult your healthcare provider before making changes to your health regimen.</p>
