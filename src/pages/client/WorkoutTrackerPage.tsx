@@ -46,6 +46,12 @@ interface ProgressEntry {
   maxReps: number | null
 }
 
+interface CustomExercise {
+  id: string
+  name: string
+  sets_default: number
+}
+
 const ENERGY_LABELS = ['', 'Exhausted', 'Low', 'Okay', 'Good', 'Great']
 const LIGHT_EXERCISES = ['Wall Sit', 'Calf Raises']
 
@@ -63,6 +69,10 @@ export default function WorkoutTrackerPage() {
   const [history, setHistory] = useState<WorkoutSession[]>([])
   const [progressData, setProgressData] = useState<Record<string, ProgressEntry[]>>({})
   const [infoExercise, setInfoExercise] = useState<Exercise | null>(null)
+  const [customExercises, setCustomExercises] = useState<CustomExercise[]>([])
+  const [addingCustom, setAddingCustom] = useState(false)
+  const [newExName, setNewExName] = useState('')
+  const [newExSets, setNewExSets] = useState(3)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -72,6 +82,7 @@ export default function WorkoutTrackerPage() {
     if (userId) {
       loadTodaySession()
       loadHistory()
+      loadCustomExercises()
     }
   }, [userId])
 
@@ -192,6 +203,36 @@ export default function WorkoutTrackerPage() {
         .sort((a, b) => a.date.localeCompare(b.date))
     })
     setProgressData(result)
+  }
+
+  async function loadCustomExercises() {
+    if (!userId) return
+    const { data } = await supabase
+      .from('exercises')
+      .select('id, name, sets_default')
+      .eq('created_by_user_id', userId)
+      .order('created_at', { ascending: true })
+    setCustomExercises(data ?? [])
+  }
+
+  async function addCustomExercise() {
+    if (!newExName.trim() || !userId) return
+    const { data } = await supabase
+      .from('exercises')
+      .insert({ name: newExName.trim(), sets_default: newExSets, created_by_user_id: userId, muscle_groups: [] })
+      .select('id, name, sets_default')
+      .single()
+    if (data) {
+      setCustomExercises(prev => [...prev, data])
+      setNewExName('')
+      setNewExSets(3)
+      setAddingCustom(false)
+    }
+  }
+
+  async function removeCustomExercise(id: string) {
+    await supabase.from('exercises').delete().eq('id', id).eq('created_by_user_id', userId!)
+    setCustomExercises(prev => prev.filter(e => e.id !== id))
   }
 
   async function selectEnergy(level: number) {
@@ -428,6 +469,113 @@ export default function WorkoutTrackerPage() {
                   Session complete. {completedCount} exercises logged. Good work.
                 </div>
               )}
+
+              {/* Custom exercises */}
+              <div className={styles.wkCustomSection}>
+                <div className={styles.wkCustomHeader}>
+                  <span className={styles.wkCustomLabel}>Your exercises</span>
+                  {!addingCustom && (
+                    <button className={styles.wkAddExBtn} onClick={() => setAddingCustom(true)}>+ Add</button>
+                  )}
+                </div>
+
+                {addingCustom && (
+                  <div className={styles.wkAddExForm}>
+                    <input
+                      type="text"
+                      className={styles.wkAddExInput}
+                      placeholder="Exercise name (e.g. Push-ups)"
+                      value={newExName}
+                      onChange={e => setNewExName(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && addCustomExercise()}
+                      autoFocus
+                    />
+                    <div className={styles.wkAddExControls}>
+                      <label className={styles.wkAddExSetsLabel}>Sets:</label>
+                      <input
+                        type="number"
+                        className={styles.wkAddExSets}
+                        min={1}
+                        max={10}
+                        value={newExSets}
+                        onChange={e => setNewExSets(Number(e.target.value))}
+                        inputMode="numeric"
+                      />
+                      <button className={styles.wkAddExSave} onClick={addCustomExercise}>Save</button>
+                      <button className={styles.wkAddExCancel} onClick={() => { setAddingCustom(false); setNewExName('') }}>Cancel</button>
+                    </div>
+                  </div>
+                )}
+
+                {customExercises.length === 0 && !addingCustom && (
+                  <p className={styles.wkCustomEmpty}>Add any exercise you like. Push-ups, pull-ups, whatever you are working on.</p>
+                )}
+
+                {customExercises.map(ex => {
+                  const done = isComplete(ex.id)
+                  const sets = ex.sets_default ?? 3
+                  return (
+                    <div key={ex.id} className={`${styles.wkExCard} ${done ? styles.wkExCardDone : ''}`}>
+                      <div className={styles.wkExRow}>
+                        <div className={styles.wkCheckBtn}>
+                          {done
+                            ? <CheckCircle2 size={26} className={styles.wkCheckDone} />
+                            : <Circle size={26} className={styles.wkCheckEmpty} />
+                          }
+                        </div>
+                        <div className={styles.wkExBody}>
+                          <span className={styles.wkExName}>{ex.name}</span>
+                          <span className={styles.wkExMeta}>{sets} sets</span>
+                        </div>
+                        <button
+                          className={styles.wkExDeleteBtn}
+                          onClick={() => removeCustomExercise(ex.id)}
+                          aria-label="Remove exercise"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+
+                      <div className={styles.wkSetTable}>
+                        <div className={styles.wkSetHeaderRow}>
+                          <span>Set</span>
+                          <span>Last session</span>
+                          <span>Reps</span>
+                          <span>Wt (lbs)</span>
+                        </div>
+                        {Array.from({ length: sets }, (_, i) => i + 1).map(setNum => {
+                          const currentSet = todaySets.find(s => s.exercise_id === ex.id && s.set_number === setNum)
+                          return (
+                            <div key={`${ex.id}-${setNum}-${currentSet?.id ?? 'new'}`} className={styles.wkSetRow}>
+                              <span className={styles.wkSetNum}>{setNum}</span>
+                              <span className={styles.wkSetLast}>{lastSetLabel(ex.id, setNum)}</span>
+                              <input
+                                type="number"
+                                className={styles.wkSetInput}
+                                defaultValue={currentSet?.reps ?? ''}
+                                onBlur={e => updateSetValue(ex.id, setNum, 'reps', e.target.value)}
+                                placeholder="—"
+                                min={1}
+                                inputMode="numeric"
+                              />
+                              <input
+                                type="number"
+                                className={styles.wkSetInput}
+                                defaultValue={currentSet?.weight_lbs ?? ''}
+                                onBlur={e => updateSetValue(ex.id, setNum, 'weight_lbs', e.target.value)}
+                                placeholder="—"
+                                min={0}
+                                step={2.5}
+                                inputMode="decimal"
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </>
           )}
         </div>
@@ -534,6 +682,47 @@ export default function WorkoutTrackerPage() {
                     <div key={re.exercise.id} className={styles.wkProgressCard}>
                       <div className={styles.wkProgressHeader}>
                         <span className={styles.wkProgressName}>{re.exercise.name}</span>
+                        {isNewPR && <span className={styles.wkPRBadge}>PR</span>}
+                        <span className={styles.wkProgressCurrent}>{latest.maxWeight} lbs</span>
+                      </div>
+                      <div className={styles.wkSparkline}>
+                        {chartEntries.map(entry => {
+                          const pct = Math.round((entry.maxWeight! / maxEver) * 100)
+                          return (
+                            <div
+                              key={entry.date}
+                              className={styles.wkSparkBar}
+                              style={{ height: `${pct}%` }}
+                              title={`${format(new Date(entry.date + 'T12:00:00'), 'MMM d')}: ${entry.maxWeight} lbs`}
+                            />
+                          )
+                        })}
+                      </div>
+                      <p className={styles.wkProgressMeta}>
+                        Best: {maxEver} lbs · {entries.length} session{entries.length !== 1 ? 's' : ''} logged
+                      </p>
+                    </div>
+                  )
+                })}
+            </div>
+          )}
+
+          {/* Custom exercise progress charts */}
+          {customExercises.some(ex => progressData[ex.id]?.some(d => d.maxWeight !== null)) && (
+            <div className={styles.wkProgressSection}>
+              <h2 className={styles.wkProgressSectionTitle}>Your Exercise Progress</h2>
+              {customExercises
+                .filter(ex => (progressData[ex.id] ?? []).some(d => d.maxWeight !== null))
+                .map(ex => {
+                  const entries = (progressData[ex.id] ?? []).filter(d => d.maxWeight !== null)
+                  const maxEver = Math.max(...entries.map(d => d.maxWeight!))
+                  const latest = entries[entries.length - 1]
+                  const isNewPR = entries.length > 1 && latest.maxWeight === maxEver
+                  const chartEntries = entries.slice(-15)
+                  return (
+                    <div key={ex.id} className={styles.wkProgressCard}>
+                      <div className={styles.wkProgressHeader}>
+                        <span className={styles.wkProgressName}>{ex.name}</span>
                         {isNewPR && <span className={styles.wkPRBadge}>PR</span>}
                         <span className={styles.wkProgressCurrent}>{latest.maxWeight} lbs</span>
                       </div>

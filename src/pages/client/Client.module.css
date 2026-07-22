@@ -10351,6 +10351,112 @@
   flex-shrink: 0;
 }
 
+/* Custom exercises section */
+.wkCustomSection { margin-top: 28px; }
+.wkCustomHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.wkCustomLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+.wkAddExBtn {
+  background: var(--teal);
+  color: #0e1c1b;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wkAddExBtn:hover { opacity: 0.85; }
+.wkAddExForm {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.wkAddExInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.wkAddExInput:focus { outline: 2px solid var(--teal); border-color: transparent; }
+.wkAddExControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.wkAddExSetsLabel {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.wkAddExSets {
+  width: 52px;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: center;
+}
+.wkAddExSave {
+  background: var(--teal);
+  color: #0e1c1b;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wkAddExSave:hover { opacity: 0.85; }
+.wkAddExCancel {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.wkAddExCancel:hover { color: var(--text-primary); }
+.wkExDeleteBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 0;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.wkExDeleteBtn:hover { color: #e07b5a; background: rgba(224,123,90,0.1); }
+.wkCustomEmpty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 4px 0;
+}
+
 /* Hero row — 3 large score cards */
 .snapshotHeroRow {
   display: grid;
