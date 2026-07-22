@@ -59,7 +59,7 @@ const MALE = [
   { key: 'fertility_m', name: 'Male Fertility' },
 ]
 
-const FREE_KEYS = new Set(['pcos', 'hypothyroid', 'perimenopause'])
+const FREE_KEYS = new Set(['pcos', 'hypothyroid', 'perimenopause', 'lowt'])
 
 const PREVIEW: Record<string, Condition> = {
   pcos: {
@@ -128,6 +128,29 @@ const PREVIEW: Record<string, Condition> = {
       { name: 'TSH', unit: 'mIU/L', optimalRange: '0.5-2.0', standardRange: '0.5-4.5' },
     ],
   },
+  lowt: {
+    key: 'lowt', name: 'Low Testosterone', fullName: 'Low Testosterone / Male Hypogonadism', sex: 'male',
+    desc: 'Testosterone decline driven by aging, obesity, insulin resistance, sleep deprivation, or chronic stress. The FDA removed the TRT cardiovascular black box warning in February 2025 (TRAVERSE trial). Functional range: 500 to 900 ng/dL for clinical optimization.',
+    symptoms: [
+      'Low energy / fatigue', 'Low libido', 'Erectile dysfunction',
+      'Difficulty building muscle', 'Increased belly fat', 'Depression / low mood',
+      'Brain fog / poor focus', 'Reduced motivation', 'Sleep disturbances',
+      'Reduced body / facial hair', 'Mood changes / irritability', 'Reduced bone density (diagnosed)',
+    ],
+    labs: [
+      { name: 'Total Testosterone (AM)', unit: 'ng/dL', optimalRange: '500-900 (functional)', standardRange: '300-1000' },
+      { name: 'Free Testosterone', unit: 'pg/mL', optimalRange: '100-180 (functional)', standardRange: '50-210' },
+      { name: 'SHBG', unit: 'nmol/L', optimalRange: '20-50 (men)', standardRange: '10-57' },
+      { name: 'LH', unit: 'mIU/mL', optimalRange: '3-8 (natural production)', standardRange: '2-12' },
+      { name: 'FSH', unit: 'mIU/mL', optimalRange: '2-8', standardRange: '1-12' },
+      { name: 'Estradiol (E2) - sensitive', unit: 'pg/mL', optimalRange: '20-30 (men)', standardRange: '10-40' },
+      { name: 'PSA', unit: 'ng/mL', optimalRange: '<1.5 <40yr; <2.5 <50yr', standardRange: '<4.0' },
+      { name: 'Hematocrit', unit: '%', optimalRange: '<52% (on TRT <54%)', standardRange: '38-52' },
+      { name: 'DHEA-S', unit: 'ug/dL', optimalRange: '200-500 (men)', standardRange: '80-560' },
+      { name: 'Vitamin D', unit: 'ng/mL', optimalRange: '60-80', standardRange: '30-100' },
+      { name: 'Fasting Insulin', unit: 'uIU/mL', optimalRange: '<5', standardRange: '<25' },
+    ],
+  },
 }
 
 const EDUCATION: Record<string, { keyFacts: string[]; qa: QAItem[] }> = {
@@ -171,6 +194,20 @@ const EDUCATION: Record<string, { keyFacts: string[]; qa: QAItem[] }> = {
       { q: 'Is it safe to take hormone therapy?', a: 'For most women under 60 who are within 10 years of menopause onset, hormone therapy has a favorable benefit-to-risk profile. The FDA removed the black box warning in February 2026. Bioidentical estradiol (patch, gel, or spray) carries the lowest cardiovascular and clot risk. The decision should be individualized with your provider based on your personal risk factors.' },
       { q: 'I am only 38. Can I already be in perimenopause?', a: 'Yes. Perimenopause typically begins in the early-to-mid 40s but can start as early as the mid-30s in some women. Signs include cycle length changes, new PMS or worsening mood symptoms, and sleep disruption. An FSH above 10 mIU/mL on day 2 to 3 of your cycle is an early sign of the transition.' },
       { q: 'What supplements help the most in perimenopause?', a: 'In order of evidence: magnesium glycinate 400mg nightly (sleep, anxiety, hot flashes, bone), Vitamin D to 60 to 80 ng/mL (bone, immune, mood), omega-3 fatty acids 2 to 3 grams daily (cardiovascular, mood), and creatine monohydrate 3 to 5 grams daily (muscle mass, cognitive function). These statements have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease.' },
+    ],
+  },
+  lowt: {
+    keyFacts: [
+      'The FDA removed the cardiovascular black box warning from testosterone therapy in February 2025, citing the TRAVERSE trial, which found no increased cardiovascular event risk in men on TRT versus placebo.',
+      'Testosterone is drawn before 10 AM because levels peak in the morning and decline by 20 to 35% through the day. An afternoon draw can appear falsely low.',
+      'SHBG binds testosterone and makes it biologically unavailable. High SHBG (common in older men, thyroid disease, and liver disease) means less free testosterone even when total is normal.',
+      'Sleep is the primary driver of testosterone production. Approximately 70% of daily testosterone is released during slow-wave sleep. Men who sleep less than 6 hours have testosterone levels equivalent to men 10 years older.',
+      'Fasting insulin below 5 uIU/mL is one of the strongest modifiable predictors of testosterone. Insulin resistance directly suppresses testosterone through LH receptor downregulation in the testes.',
+    ],
+    qa: [
+      { q: 'My doctor says my testosterone is normal but I have all the symptoms. What is happening?', a: 'Standard lab normal ranges for testosterone are very wide (300 to 1000 ng/dL), derived from population averages that include men who are symptomatic and sedentary. A man at 310 ng/dL is technically within range but may feel significantly better at 700 ng/dL. Free testosterone (the biologically active fraction) may also be low even when total testosterone is adequate, due to high SHBG. Always test free testosterone and SHBG alongside total testosterone.' },
+      { q: 'Are there natural ways to raise testosterone significantly?', a: 'Yes, and they work best in men who have modifiable drivers of low testosterone. Most impactful: sleep 7 to 9 hours (each additional hour of quality sleep raises testosterone by 15%), resistance training 3 to 4 times weekly (compound movements), reduce body fat (visceral fat converts testosterone to estrogen via aromatase), correct insulin resistance (fasting insulin below 5), zinc 30 to 50mg if deficient, Vitamin D to 60 to 80 ng/mL, and Ashwagandha KSM-66 600mg daily (15% testosterone increase in a 2019 RCT).' },
+      { q: 'What is the difference between primary and secondary low testosterone?', a: 'Primary hypogonadism means the problem is in the testes. The pituitary is sending strong signals (high LH and FSH) but the testes cannot respond. TRT is typically required. Secondary hypogonadism means the signaling is inadequate: the hypothalamus or pituitary is not sending enough LH and FSH to the testes. Causes include obesity, insulin resistance, sleep apnea, and chronic stress. This form often responds to lifestyle, clomiphene, or HCG and may not require TRT.' },
     ],
   },
 }
