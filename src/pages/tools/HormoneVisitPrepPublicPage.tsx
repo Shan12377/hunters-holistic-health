@@ -181,10 +181,10 @@ function GateCard() {
       <div className={styles.gateIcon}>🔒</div>
       <h3 className={styles.gateTitle}>This tool covers 17 conditions. You are seeing 3 of them.</h3>
       <p className={styles.gateDesc}>
-        Create a free account to unlock all 17 conditions, including your printable doctor brief with the exact labs to request and questions to ask at your appointment.
+        Members unlock all 17 conditions plus a printable doctor brief with the exact labs to request and the questions to ask at your appointment. Plans start at $37/mo.
       </p>
       <div className={styles.gateBtns}>
-        <Link to="/signup" className={styles.gatePrimary}>Create Free Account</Link>
+        <Link to="/join" className={styles.gatePrimary}>See Plans</Link>
         <Link to="/login" className={styles.gateSecondary}>Sign In</Link>
       </div>
     </div>
@@ -251,7 +251,7 @@ export default function HormoneVisitPrepPublicPage() {
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
         <div className={styles.navRight}>
           <Link to="/login" className={styles.navSignIn}>Sign In</Link>
-          <Link to="/signup" className={styles.navCta}>Free Account</Link>
+          <Link to="/join" className={styles.navCta}>See Plans</Link>
         </div>
       </nav>
 
