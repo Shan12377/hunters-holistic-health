@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Server configuration error' })
     }
 
-    const { email, firstName } = req.body ?? {}
+    const { email, firstName, source } = req.body ?? {}
 
     if (!email || typeof email !== 'string') {
       return res.status(400).json({ error: 'email is required' })
@@ -64,7 +64,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           first_name: safeFirstName,
           reactivate_existing: false,
           send_welcome_email: false,
-          utm_source: 'app_signup',
+          utm_source: typeof source === 'string' && source.trim() ? source.trim().slice(0, 50) : 'app_signup',
           utm_medium: 'organic',
         }),
       }

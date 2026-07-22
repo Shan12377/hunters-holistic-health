@@ -231,6 +231,24 @@ const PHASE_DATA: Record<ConditionKey, PhaseSet> = {
   },
 }
 
+// ─── Gate helpers ────────────────────────────────────────────────────────────────
+
+const GATE_KEY = 'hhh_hcprev_unlocked'
+const GATE_DAYS = 30
+
+function checkGate(): boolean {
+  try {
+    const raw = localStorage.getItem(GATE_KEY)
+    if (!raw) return false
+    const { ts } = JSON.parse(raw) as { ts: number }
+    return Date.now() - ts < GATE_DAYS * 24 * 60 * 60 * 1000
+  } catch { return false }
+}
+
+function saveGate(): void {
+  try { localStorage.setItem(GATE_KEY, JSON.stringify({ ts: Date.now() })) } catch {}
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function HormoneCyclePreview() {
@@ -238,6 +256,31 @@ export default function HormoneCyclePreview() {
   const [condition, setCondition] = useState<ConditionKey>('healthy')
   const [lastPeriod, setLastPeriod] = useState(today)
   const [cycleLength, setCycleLength] = useState(28)
+  const [unlocked, setUnlocked] = useState(() => checkGate())
+  const [gateName, setGateName] = useState('')
+  const [gateEmail, setGateEmail] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+
+  async function handleGate(e: React.FormEvent) {
+    e.preventDefault()
+    if (!gateEmail) return
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await fetch('/api/beehiiv-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: gateEmail, firstName: gateName.trim() || undefined, source: 'hormone_cycle_tool' }),
+      })
+      saveGate()
+      setUnlocked(true)
+    } catch {
+      setSubmitError('Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const cycleDay = useMemo(() => getCycleDay(lastPeriod, cycleLength), [lastPeriod, cycleLength])
   const phase = useMemo(() => getPhase(cycleDay, cycleLength), [cycleDay, cycleLength])
@@ -373,67 +416,88 @@ export default function HormoneCyclePreview() {
             </div>
           </div>
 
-          {/* Brain + Skin insight cards */}
-          <div style={s.insightRow}>
-            {[
-              { emoji: '🧠', label: 'Brain Mode', mode: data.what[3]?.split(': ')[0] || phase.name, desc: data.what[3]?.split(': ')[1] || data.mood.split('.')[0] },
-              { emoji: '✨', label: 'Skin Forecast', mode: phase.key === 'menstrual' ? 'Monthly Reset' : phase.key === 'follicular' ? 'Clearing + Brightening' : phase.key === 'ovulatory' ? 'Most Radiant' : 'Oil + Breakout Risk', desc: phase.key === 'menstrual' ? 'Skin shedding old cells alongside the lining. Keep routine minimal.' : phase.key === 'follicular' ? 'Estrogen clears inflammation. Best phase for actives like retinol or exfoliation.' : phase.key === 'ovulatory' ? 'Peak collagen production. Natural radiance is highest.' : 'Progesterone stimulates sebum. Hormonal breakouts most likely now.' },
-            ].map(card => (
-              <div key={card.label} style={{ background: '#1c5253', border: '1px solid #1b4e4f', borderRadius: 10, padding: '10px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                  <span style={{ fontSize: 16 }}>{card.emoji}</span>
-                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: 'hsl(181,15%,48%)' }}>{card.label}</span>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 3 }}>{card.mode}</div>
-                <div style={{ fontSize: 11, color: 'hsl(181,20%,68%)', lineHeight: 1.4 }}>{card.desc}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Eat / Move / Supp / Self-care */}
-          {[
-            { icon: '🥗', label: 'Eat Today', color: '#0B9E8E', items: data.eat },
-            { icon: '🏃', label: 'Move Today', color: '#0891b2', items: data.move },
-            { icon: '💊', label: 'Supplement Focus', color: '#7c3aed', items: data.supp.slice(0, 3) },
-            { icon: '✨', label: 'Self-Care Focus', color: '#c8a74b', items: data.selfCare.slice(0, 3) },
-          ].map(sec => (
-            <div key={sec.label} style={s.card}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                <span style={{ fontSize: 15 }}>{sec.icon}</span>
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: sec.color }}>{sec.label}</span>
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {sec.items.map((item, i) => (
-                  <li key={i} style={s.listItem}>
-                    <span style={{ position: 'absolute' as const, left: 0, top: 5, width: 5, height: 5, borderRadius: '50%', background: sec.color, opacity: .5 }} />
-                    {item}
-                  </li>
+          {unlocked ? (
+            <>
+              {/* Brain + Skin insight cards */}
+              <div style={s.insightRow}>
+                {[
+                  { emoji: '🧠', label: 'Brain Mode', mode: data.what[3]?.split(': ')[0] || phase.name, desc: data.what[3]?.split(': ')[1] || data.mood.split('.')[0] },
+                  { emoji: '✨', label: 'Skin Forecast', mode: phase.key === 'menstrual' ? 'Monthly Reset' : phase.key === 'follicular' ? 'Clearing + Brightening' : phase.key === 'ovulatory' ? 'Most Radiant' : 'Oil + Breakout Risk', desc: phase.key === 'menstrual' ? 'Skin shedding old cells alongside the lining. Keep routine minimal.' : phase.key === 'follicular' ? 'Estrogen clears inflammation. Best phase for actives like retinol or exfoliation.' : phase.key === 'ovulatory' ? 'Peak collagen production. Natural radiance is highest.' : 'Progesterone stimulates sebum. Hormonal breakouts most likely now.' },
+                ].map(card => (
+                  <div key={card.label} style={{ background: '#1c5253', border: '1px solid #1b4e4f', borderRadius: 10, padding: '10px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                      <span style={{ fontSize: 16 }}>{card.emoji}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: 'hsl(181,15%,48%)' }}>{card.label}</span>
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', marginBottom: 3 }}>{card.mode}</div>
+                    <div style={{ fontSize: 11, color: 'hsl(181,20%,68%)', lineHeight: 1.4 }}>{card.desc}</div>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
+              {/* Eat / Move / Supp / Self-care */}
+              {[
+                { icon: '🥗', label: 'Eat Today', color: '#0B9E8E', items: data.eat },
+                { icon: '🏃', label: 'Move Today', color: '#0891b2', items: data.move },
+                { icon: '💊', label: 'Supplement Focus', color: '#7c3aed', items: data.supp.slice(0, 3) },
+                { icon: '✨', label: 'Self-Care Focus', color: '#c8a74b', items: data.selfCare.slice(0, 3) },
+              ].map(sec => (
+                <div key={sec.label} style={s.card}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+                    <span style={{ fontSize: 15 }}>{sec.icon}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: sec.color }}>{sec.label}</span>
+                  </div>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {sec.items.map((item, i) => (
+                      <li key={i} style={s.listItem}>
+                        <span style={{ position: 'absolute' as const, left: 0, top: 5, width: 5, height: 5, borderRadius: '50%', background: sec.color, opacity: .5 }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div style={{ background: 'rgba(139,92,246,.08)', border: '1.5px solid rgba(139,92,246,.3)', borderRadius: 14, padding: '20px 18px', marginBottom: 10 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#c4b5fd', marginBottom: 6 }}>
+                Enter your email to see your full {phase.name} Phase snapshot
+              </div>
+              <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55, marginBottom: 14 }}>
+                Unlock your food recommendations, movement plan, supplement focus, and the hormone curve for the {phase.name} Phase, personalized by condition.
+              </div>
+              <form onSubmit={handleGate} style={{ display: 'flex', flexDirection: 'column' as const, gap: 8 }}>
+                <input
+                  type="text"
+                  placeholder="Your first name (optional)"
+                  value={gateName}
+                  onChange={e => setGateName(e.target.value)}
+                  style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '1.5px solid #2a6d6f', borderRadius: 8, fontSize: 13, color: '#fff', outline: 'none' }}
+                />
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  required
+                  value={gateEmail}
+                  onChange={e => setGateEmail(e.target.value)}
+                  style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '1.5px solid #2a6d6f', borderRadius: 8, fontSize: 13, color: '#fff', outline: 'none' }}
+                />
+                {submitError && <div style={{ fontSize: 12, color: '#e05c5c' }}>{submitError}</div>}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  style={{ padding: '10px 16px', background: 'linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%)', color: '#fff', fontWeight: 700, fontSize: 13, borderRadius: 10, border: 'none', cursor: submitting ? 'default' : 'pointer', opacity: submitting ? 0.7 : 1 }}
+                >
+                  {submitting ? 'One moment...' : 'See My Plan'}
+                </button>
+              </form>
             </div>
-          ))}
+          )}
         </div>
 
         {/* RIGHT */}
         <div>
-          {/* Hormone curve */}
-          <div style={s.chartCard}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>Ovarian Hormone Curve: Day {cycleDay}</div>
-              <div style={s.legend}>
-                {[{ color: '#8b5cf6', label: 'Estrogen' }, { color: '#f59e0b', label: 'Progesterone' }, { color: '#06b6d4', label: 'LH' }].map(l => (
-                  <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'hsl(181,15%,48%)' }}>
-                    <div style={{ ...s.legendDot, background: l.color }} />{l.label}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div style={s.chartWrap}>
-              <Line data={chartData} options={chartOptions as never} />
-            </div>
-          </div>
-
-          {/* Phase timeline */}
+          {/* Phase timeline — always free (shows day range visually) */}
           <div style={s.tlCard}>
             <div style={s.sectionLbl}>Cycle Phase Timeline</div>
             <div style={s.tlBar}>
@@ -458,33 +522,62 @@ export default function HormoneCyclePreview() {
             </div>
           </div>
 
-          {/* What's happening today */}
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 10 }}>What's Happening Today</div>
-          <div style={s.whatGrid}>
-            {data.what.slice(0, 4).map((item, i) => {
-              const icons = ['🔬', '🧬', '🌡️', '💡']
-              return (
-                <div key={i} style={s.whatItem}>
-                  <div style={s.whatIcon}>{icons[i] || '🔬'}</div>
-                  <div style={s.whatText}>{item}</div>
+          {unlocked ? (
+            <>
+              {/* Hormone curve */}
+              <div style={s.chartCard}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>Ovarian Hormone Curve: Day {cycleDay}</div>
+                  <div style={s.legend}>
+                    {[{ color: '#8b5cf6', label: 'Estrogen' }, { color: '#f59e0b', label: 'Progesterone' }, { color: '#06b6d4', label: 'LH' }].map(l => (
+                      <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'hsl(181,15%,48%)' }}>
+                        <div style={{ ...s.legendDot, background: l.color }} />{l.label}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              )
-            })}
-          </div>
+                <div style={s.chartWrap}>
+                  <Line data={chartData} options={chartOptions as never} />
+                </div>
+              </div>
 
-          {/* Educator note */}
-          <div style={{ background: 'rgba(200,167,75,.08)', border: '1px solid rgba(200,167,75,.2)', borderRadius: 10, padding: '10px 12px', marginBottom: 12 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: '#c8a74b', marginBottom: 5 }}>Educator Note</div>
-            <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55 }}>{data.note}</div>
-          </div>
+              {/* What's happening today */}
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 10 }}>What's Happening Today</div>
+              <div style={s.whatGrid}>
+                {data.what.slice(0, 4).map((item, i) => {
+                  const icons = ['🔬', '🧬', '🌡️', '💡']
+                  return (
+                    <div key={i} style={s.whatItem}>
+                      <div style={s.whatIcon}>{icons[i] || '🔬'}</div>
+                      <div style={s.whatText}>{item}</div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Educator note */}
+              <div style={{ background: 'rgba(200,167,75,.08)', border: '1px solid rgba(200,167,75,.2)', borderRadius: 10, padding: '10px 12px', marginBottom: 12 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '.7px', color: '#c8a74b', marginBottom: 5 }}>Educator Note</div>
+                <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55 }}>{data.note}</div>
+              </div>
+            </>
+          ) : (
+            <div style={{ background: 'rgba(15,51,52,.6)', border: '1px dashed rgba(42,109,111,.5)', borderRadius: 12, padding: '28px 20px', textAlign: 'center' as const, marginBottom: 12 }}>
+              <div style={{ fontSize: 24, marginBottom: 10 }}>📊</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#c4b5fd', marginBottom: 6 }}>Hormone Curve + Biology Explanation</div>
+              <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55 }}>
+                Enter your email on the left to unlock your personalized hormone curve for Day {cycleDay} and what's happening in your body during the {phase.name} Phase.
+              </div>
+            </div>
+          )}
 
           {/* CTA */}
           <div style={s.ctaCard}>
-            <div style={s.ctaTitle}>Track this over time. See the pattern.</div>
+            <div style={s.ctaTitle}>Ready to track your cycle, log your symptoms, and get a personalized protocol?</div>
             <div style={s.ctaText}>
-              This is today's snapshot. Members log their cycle daily and see how their BP, energy, sleep, and protocol connect to each phase. Foundation members get the full cycle tracker, history, and weekly pattern analysis.
+              Foundation members track their cycle daily, see how their BP, energy, and sleep connect to each phase, and work through the ROOTS Framework with their educator. Full cycle history and weekly pattern analysis included.
             </div>
-            <Link to="/signup" style={s.ctaBtn}>Join Foundation ($37/mo)</Link>
+            <Link to="/join" style={s.ctaBtn}>Join Foundation at $37/month</Link>
           </div>
 
           <div style={s.disclaimer}>
