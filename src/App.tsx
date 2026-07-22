@@ -102,6 +102,7 @@ const HormoneChallengePage = lazy(() => import('@/pages/tools/HormoneChallengePa
 const FlatBellyChallengePage = lazy(() => import('@/pages/tools/FlatBellyChallengePage'))
 const NervousSystemResetPage = lazy(() => import('@/pages/tools/NervousSystemResetPage'))
 const MensHormoneRhythmPage = lazy(() => import('@/pages/tools/MensHormoneRhythmPage'))
+const HormoneVisitPrepPublicPage = lazy(() => import('@/pages/tools/HormoneVisitPrepPublicPage'))
 const HormoneVisitPrepPage = lazy(() => import('@/pages/client/HormoneVisitPrepPage'))
 const MorningProtocolPage = lazy(() => import('@/pages/client/MorningProtocolPage'))
 const KpiDashboardPage = lazy(() => import('@/pages/coach/KpiDashboardPage'))
@@ -228,6 +229,7 @@ export default function App() {
         <Route path="/tools/flat-belly-reset" element={<FlatBellyChallengePage />} />
         <Route path="/tools/nervous-system-reset" element={<NervousSystemResetPage />} />
         <Route path="/tools/mens-hormone-rhythm" element={<MensHormoneRhythmPage />} />
+        <Route path="/tools/hormone-visit-prep" element={<HormoneVisitPrepPublicPage />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

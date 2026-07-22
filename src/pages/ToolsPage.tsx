@@ -560,6 +560,12 @@ export default function ToolsPage() {
             <div className={styles.moreCardDesc}>7 days of HPA axis dysregulation education with daily breathing practices, vagal tone exercises, and the adaptogenic supplement stack for cortisol recovery.</div>
             <span className={styles.moreCardCta}>Start Day 1 →</span>
           </Link>
+          <Link to="/tools/hormone-visit-prep" className={styles.moreCard}>
+            <div className={styles.moreCardEyebrow}>17-Condition Visit Prep</div>
+            <div className={styles.moreCardName}>Hormone Visit Prep Tool</div>
+            <div className={styles.moreCardDesc}>Symptom checklists, functional lab ranges, and a printable doctor brief for 17 hormone conditions including PCOS, hypothyroidism, perimenopause, and more. Built by a PharmD.</div>
+            <span className={styles.moreCardCta}>Use the Tool →</span>
+          </Link>
         </div>
       </section>
 
