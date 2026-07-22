@@ -49,7 +49,7 @@ export default function WhyMealAppsFailAdvertorial() {
 
       <nav className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
-        <Link to="/join" className={styles.navCta}>Start Free</Link>
+        <Link to="/join" className={styles.navCta}>See Plans</Link>
       </nav>
 
       <article className={styles.article}>

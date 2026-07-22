@@ -124,7 +124,7 @@ export default function BlogIndexPage() {
 
       <nav className={styles.nav}>
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
-        <Link to="/join" className={styles.navCta}>Join Free</Link>
+        <Link to="/join" className={styles.navCta}>See Plans</Link>
       </nav>
 
       <div className={styles.hero}>

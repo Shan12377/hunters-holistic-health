@@ -214,7 +214,7 @@ export default function ToolsPage() {
         <Link to="/" className={styles.navLogo}>Hunter's Holistic Health</Link>
         <div className={styles.navRight}>
           <Link to="/login" className={styles.navLink}>Sign In</Link>
-          <Link to="/join" className={shared.btnPrimary}>Join Free</Link>
+          <Link to="/join" className={shared.btnPrimary}>See Plans</Link>
         </div>
       </header>
 
