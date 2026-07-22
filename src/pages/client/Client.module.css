@@ -10226,7 +10226,16 @@
   padding: 6px;
 }
 
-/* ── Pattern Snapshot ─────────────────────────────────────── */
+/* ── Pattern Snapshot (upgraded dashboard layout) ─────────── */
+.snapshotShell { padding-bottom: 2rem; }
+
+.snapshotPageHeader { margin-bottom: 1.5rem; }
+.snapshotTitle {
+  font-size: clamp(1.3rem, 3vw, 1.75rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
 .snapshotSub {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -10340,6 +10349,252 @@
   white-space: nowrap;
   align-self: center;
   flex-shrink: 0;
+}
+
+/* Hero row — 3 large score cards */
+.snapshotHeroRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.snapshotHeroCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 220px;
+}
+.snapshotHeroSkeleton {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  height: 220px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.snapshotHeroTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.snapshotHeroEyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+.snapshotHeroCaption {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.snapshotBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.snapshotRingRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+.snapshotRingWrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+}
+.snapshotRingCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+.snapshotRingNum {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.snapshotRingUnit {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+.snapshotHeroStats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.snapshotHeroStat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.snapshotHeroStatNum {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.snapshotHeroStatLabel {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* BP sparkline */
+.snapshotBpBig {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.snapshotBpNum {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.snapshotBpSep { color: var(--text-muted); }
+.snapshotBpUnit {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.snapshotSparkCaption {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.snapshotSparkRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+  flex: 1;
+}
+.snapshotSparkBarWrap {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.snapshotSparkBar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: height 0.3s;
+}
+
+/* Empty state in hero card */
+.snapshotEmptyHero {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+.snapshotEmptyMsg {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.snapshotEmptyLink {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+}
+.snapshotEmptyLink:hover { text-decoration: underline; }
+
+/* Mid row — 3 smaller stat cards */
+.snapshotMidRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.snapshotMidCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.snapshotMidHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.snapshotMidEyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-secondary);
+}
+.snapshotMidCount {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+.snapshotMidBig {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+.snapshotMidUnit {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.snapshotMidMeta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.snapshotMidEmpty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.snapshotTrendDown { font-size: 0.85rem; color: #0B9E8E; font-weight: 700; }
+.snapshotTrendUp   { font-size: 0.85rem; color: #e07b5a; font-weight: 700; }
+
+/* Weight mini sparkline */
+.snapshotWeightBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 36px;
+  margin: 4px 0;
+}
+.snapshotWeightBar {
+  flex: 1;
+  background: color-mix(in srgb, var(--teal) 50%, transparent);
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .snapshotHeroRow { grid-template-columns: 1fr; }
+  .snapshotMidRow  { grid-template-columns: 1fr; }
 }
 
 /* ── Vault / Level Gates ──────────────────────────────────────────────────── */
