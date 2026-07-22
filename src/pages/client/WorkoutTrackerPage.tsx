@@ -35,9 +35,17 @@ interface ExerciseSet {
 
 interface WorkoutSession {
   id: string
+  routine_id?: string | null
   session_date: string
   energy_level: number | null
   completed_at: string | null
+}
+
+interface Routine {
+  id: string
+  name: string
+  description: string
+  exercises: RoutineExercise[]
 }
 
 interface ProgressEntry {
@@ -61,6 +69,10 @@ export default function WorkoutTrackerPage() {
   const today = format(new Date(), 'yyyy-MM-dd')
 
   const [tab, setTab] = useState<'today' | 'routines' | 'history'>('today')
+  const [allRoutines, setAllRoutines] = useState<Routine[]>([])
+  const [selectedRoutineIdx, setSelectedRoutineIdx] = useState<number>(
+    () => Number(localStorage.getItem('wk_routine_idx') ?? '0')
+  )
   const [routineId, setRoutineId] = useState<string | null>(null)
   const [routineExercises, setRoutineExercises] = useState<RoutineExercise[]>([])
   const [session, setSession] = useState<WorkoutSession | null>(null)
@@ -76,38 +88,58 @@ export default function WorkoutTrackerPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => { loadRoutine() }, [])
-
   useEffect(() => {
-    if (userId) {
-      loadTodaySession()
-      loadHistory()
-      loadCustomExercises()
-    }
+    loadRoutines().then(routines => {
+      if (userId && routines) {
+        loadTodaySessionWithRoutines(routines)
+        loadHistory()
+        loadCustomExercises()
+      }
+    })
   }, [userId])
 
   useEffect(() => {
     if (userId && tab === 'history') loadProgress()
   }, [userId, tab])
 
-  async function loadRoutine() {
+  async function loadRoutines(): Promise<Routine[] | null> {
     const { data } = await supabase
       .from('workout_routines')
-      .select('id, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(id, name, coach_cue, condition_notes, muscle_groups, tempo_default))')
-      .eq('is_default', true)
-      .single()
+      .select('id, name, description, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(id, name, coach_cue, condition_notes, muscle_groups, tempo_default))')
+      .order('name', { ascending: true })
 
-    if (data) {
-      setRoutineId(data.id)
-      const sorted = [...(data.routine_exercises as unknown as RoutineExercise[])].sort(
+    if (!data?.length) { setLoading(false); return null }
+
+    const routines: Routine[] = data.map(r => ({
+      id: r.id,
+      name: r.name,
+      description: r.description,
+      exercises: [...(r.routine_exercises as unknown as RoutineExercise[])].sort(
         (a, b) => a.order_position - b.order_position
       )
-      setRoutineExercises(sorted)
-    }
+    }))
+
+    setAllRoutines(routines)
+    const savedIdx = Number(localStorage.getItem('wk_routine_idx') ?? '0')
+    const idx = savedIdx < routines.length ? savedIdx : 0
+    applyRoutine(routines[idx])
     setLoading(false)
+    return routines
   }
 
-  async function loadTodaySession() {
+  function applyRoutine(routine: Routine) {
+    setRoutineId(routine.id)
+    setRoutineExercises(routine.exercises)
+  }
+
+  function switchRoutine(idx: number) {
+    if (session) return // locked once a session exists today
+    setSelectedRoutineIdx(idx)
+    localStorage.setItem('wk_routine_idx', String(idx))
+    applyRoutine(allRoutines[idx])
+  }
+
+  async function loadTodaySessionWithRoutines(routines: Routine[]) {
     if (!userId) return
     const { data } = await supabase
       .from('workout_sessions')
@@ -123,6 +155,14 @@ export default function WorkoutTrackerPage() {
         .select('*')
         .eq('session_id', data.id)
       setTodaySets(sets ?? [])
+      // sync the displayed routine to match the session's logged routine
+      if (data.routine_id) {
+        const idx = routines.findIndex(r => r.id === data.routine_id)
+        if (idx >= 0) {
+          setSelectedRoutineIdx(idx)
+          applyRoutine(routines[idx])
+        }
+      }
     }
     loadLastSession()
   }
@@ -336,6 +376,28 @@ export default function WorkoutTrackerPage() {
       {/* TODAY TAB */}
       {tab === 'today' && (
         <div>
+          {allRoutines.length > 1 && (
+            <div className={styles.wkRoutinePicker}>
+              <span className={styles.wkRoutinePickerLabel}>Today's routine:</span>
+              <div className={styles.wkRoutinePickerBtns}>
+                {allRoutines.map((r, i) => (
+                  <button
+                    key={r.id}
+                    className={`${styles.wkRoutinePickerBtn} ${selectedRoutineIdx === i ? styles.wkRoutinePickerBtnActive : ''}`}
+                    onClick={() => switchRoutine(i)}
+                    disabled={!!session}
+                    title={session ? 'Locked after session starts' : r.description}
+                  >
+                    {r.name}
+                  </button>
+                ))}
+              </div>
+              {session && (
+                <p className={styles.wkRoutinePickerLocked}>Locked to {allRoutines[selectedRoutineIdx]?.name ?? 'current routine'} for today.</p>
+              )}
+            </div>
+          )}
+
           <div className={styles.wkEnergyCard}>
             <p className={styles.wkEnergyPrompt}>How do you feel today?</p>
             <div className={styles.wkEnergyRow}>
@@ -583,42 +645,42 @@ export default function WorkoutTrackerPage() {
 
       {/* MY ROUTINES TAB */}
       {tab === 'routines' && (
-        <div className={styles.wkRoutineCard}>
-          <h2 className={styles.wkRoutineTitle}>Routine A</h2>
-          <p className={styles.wkRoutineDesc}>
-            Full-body resistance training. Compound movements first, isolation last.
-            If blood pressure management is a goal, the Wall Sit comes first.
-            When energy is low (1 or 2), the app shows Wall Sit and Calf Raises only.
-          </p>
-          <div className={styles.wkRoutineList}>
-            {routineExercises.map((re, i) => {
-              const ex = re.exercise
-              const isIsometric = ex.tempo_default === 'isometric-2min'
-              return (
-                <div key={re.id} className={styles.wkRoutineRow}>
-                  <span className={styles.wkRoutineNum}>{i + 1}</span>
-                  <div className={styles.wkRoutineDetail}>
-                    <span className={styles.wkRoutineName}>{ex.name}</span>
-                    <span className={styles.wkRoutineMeta}>
-                      {re.sets_default} sets
-                      {isIsometric ? ' · 2 min hold' : re.reps_default ? ` · ${re.reps_default} reps` : ''}
-                      {' · '}{ex.muscle_groups.join(', ')}
-                    </span>
-                    <span className={styles.wkRoutineTempo}>
-                      Tempo: {isIsometric ? '2-minute isometric hold' : `${ex.tempo_default} (lower - pause - lift)`}
-                    </span>
-                  </div>
-                  <button
-                    className={styles.wkInfoBtn}
-                    onClick={() => setInfoExercise(ex)}
-                    aria-label="View modification notes"
-                  >
-                    <Info size={15} />
-                  </button>
-                </div>
-              )
-            })}
-          </div>
+        <div>
+          {allRoutines.map(routine => (
+            <div key={routine.id} className={styles.wkRoutineCard}>
+              <h2 className={styles.wkRoutineTitle}>{routine.name}</h2>
+              <p className={styles.wkRoutineDesc}>{routine.description}</p>
+              <div className={styles.wkRoutineList}>
+                {routine.exercises.map((re, i) => {
+                  const ex = re.exercise
+                  const isIsometric = ex.tempo_default === 'isometric-2min'
+                  return (
+                    <div key={re.id} className={styles.wkRoutineRow}>
+                      <span className={styles.wkRoutineNum}>{i + 1}</span>
+                      <div className={styles.wkRoutineDetail}>
+                        <span className={styles.wkRoutineName}>{ex.name}</span>
+                        <span className={styles.wkRoutineMeta}>
+                          {re.sets_default} sets
+                          {isIsometric ? ' · 2 min hold' : re.reps_default ? ` · ${re.reps_default} reps` : ''}
+                          {' · '}{ex.muscle_groups.join(', ')}
+                        </span>
+                        <span className={styles.wkRoutineTempo}>
+                          Tempo: {isIsometric ? '2-minute isometric hold' : `${ex.tempo_default} (lower - pause - lift)`}
+                        </span>
+                      </div>
+                      <button
+                        className={styles.wkInfoBtn}
+                        onClick={() => setInfoExercise(ex)}
+                        aria-label="View modification notes"
+                      >
+                        <Info size={15} />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -663,10 +725,14 @@ export default function WorkoutTrackerPage() {
           )}
 
           {/* Exercise progress charts */}
-          {routineExercises.some(re => progressData[re.exercise.id]?.some(d => d.maxWeight !== null)) && (
-            <div className={styles.wkProgressSection}>
+          {(() => {
+            const allRE = allRoutines.flatMap(r => r.exercises)
+              .filter((re, idx, arr) => arr.findIndex(x => x.exercise.id === re.exercise.id) === idx)
+            const hasData = allRE.some(re => progressData[re.exercise.id]?.some(d => d.maxWeight !== null))
+            return hasData ? (
+              <div className={styles.wkProgressSection}>
               <h2 className={styles.wkProgressSectionTitle}>Exercise Progress</h2>
-              {routineExercises
+              {allRE
                 .filter(re => {
                   const entries = progressData[re.exercise.id] ?? []
                   return !re.exercise.tempo_default.includes('isometric') && entries.some(d => d.maxWeight !== null)
@@ -705,7 +771,8 @@ export default function WorkoutTrackerPage() {
                   )
                 })}
             </div>
-          )}
+            ) : null
+          })()}
 
           {/* Custom exercise progress charts */}
           {customExercises.some(ex => progressData[ex.id]?.some(d => d.maxWeight !== null)) && (

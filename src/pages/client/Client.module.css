@@ -10457,6 +10457,60 @@
   padding: 4px 0;
 }
 
+/* Routine picker — A / B switcher above Today's session */
+.wkRoutinePicker {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wkRoutinePickerLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.wkRoutinePickerBtns {
+  display: flex;
+  gap: 8px;
+}
+.wkRoutinePickerBtn {
+  background: transparent;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.wkRoutinePickerBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.wkRoutinePickerBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.wkRoutinePickerBtnActive {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.wkRoutinePickerLocked {
+  width: 100%;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  padding-top: 2px;
+}
+
 /* Hero row — 3 large score cards */
 .snapshotHeroRow {
   display: grid;
