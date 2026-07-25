@@ -4,6 +4,7 @@ import {
   FOOD_DATABASE, CATEGORY_LABELS, MEAL_SLOT_LABELS, CATEGORY_ORDER,
   type MealSlot, type FoodItem,
 } from '@/data/foodDatabase'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 const SLOTS: Array<MealSlot | 'all'> = ['all', 'breakfast', 'lunch', 'dinner', 'snack']
@@ -35,6 +36,7 @@ export default function FoodSearchPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <Search size={22} color="var(--gold)" /> Food Search

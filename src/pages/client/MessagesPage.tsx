@@ -6,6 +6,7 @@ import { looksClinical } from '@/lib/clinicalNudge'
 import PlanGate from '@/components/ui/PlanGate'
 import { parseISO, format } from 'date-fns'
 import toast from 'react-hot-toast'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 

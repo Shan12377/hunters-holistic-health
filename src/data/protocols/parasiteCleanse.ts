@@ -279,6 +279,17 @@ export const PARASITE_CLEANSE_TEMPLATE: ProtocolData = {
               checked: true,
               shared: true,
             },
+            {
+              id: 'o2-p1-7',
+              text: 'NOW Foods Black Walnut Hulls 500mg',
+              dose: '1 cap 3x/day (1,500mg total)',
+              timing: 'With meals',
+              subtext: 'Juglone, the active compound in black walnut hull, disrupts parasite cell membranes and is particularly effective against intestinal worms and protozoa. Works synergistically with wormwood and cloves to cover multiple parasite life stages.',
+              link: 'https://amzn.to/4wZVCE3',
+              linkLabel: 'Order on Amazon',
+              checked: true,
+              shared: true,
+            },
           ],
         },
         {

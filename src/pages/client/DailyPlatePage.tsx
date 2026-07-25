@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Coffee, Sun, Moon, Apple, Plus, X, Zap, ChevronDown, ChevronUp, Search, Sparkles, Loader2, Target, TrendingUp, ShieldCheck } from 'lucide-react'
 import { FOOD_DATABASE, MEAL_SLOT_LABELS, type MealSlot, type FoodItem } from '@/data/foodDatabase'
 import { detectSynergies, type FoodSynergy } from '@/data/synergies'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import { usePlan } from '@/hooks/usePlan'
 import { useAuthStore } from '@/store/authStore'
@@ -13,6 +14,8 @@ const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack']
 const EMPTY_PLATE: Plate = { breakfast: [], lunch: [], dinner: [], snack: [] }
 const PROTEIN_GOAL = 80
 const CALORIE_GOAL = 1800
+const FIBER_GOAL = 25
+const SODIUM_LIMIT = 1500
 
 const SLOT_ICONS: Record<MealSlot, React.ReactNode> = {
   breakfast: <Coffee size={15} />,
@@ -101,12 +104,28 @@ export default function DailyPlatePage() {
   const synergies = useMemo(() => detectSynergies(allFoodIds), [allFoodIds])
   const vitaScore = useMemo(() => calcVitaScore(plate, synergies), [plate, synergies])
 
-  const dayTotals = useMemo(() => ({
-    calories: allFoods.reduce((s, f) => s + f.calories, 0),
-    protein:  allFoods.reduce((s, f) => s + f.proteinGrams, 0),
-    fat:      allFoods.reduce((s, f) => s + f.fatGrams, 0),
-    carbs:    allFoods.reduce((s, f) => s + f.carbGrams, 0),
-  }), [allFoods])
+  const dayTotals = useMemo(() => {
+    const carbs = allFoods.reduce((s, f) => s + f.carbGrams, 0)
+    const fiber = allFoods.reduce((s, f) => s + f.fiberGrams, 0)
+    return {
+      calories: allFoods.reduce((s, f) => s + f.calories, 0),
+      protein:  allFoods.reduce((s, f) => s + f.proteinGrams, 0),
+      fat:      allFoods.reduce((s, f) => s + f.fatGrams, 0),
+      carbs,
+      fiber,
+      sodium:   allFoods.reduce((s, f) => s + f.sodiumMg, 0),
+      sugar:    allFoods.reduce((s, f) => s + f.sugarGrams, 0),
+      netCarbs: Math.max(0, carbs - fiber),
+    }
+  }, [allFoods])
+
+  const sodiumColor = dayTotals.sodium >= SODIUM_LIMIT
+    ? '#e05c5c'
+    : dayTotals.sodium >= SODIUM_LIMIT * 0.8
+    ? '#f97316'
+    : dayTotals.sodium >= SODIUM_LIMIT * 0.5
+    ? '#c8a74b'
+    : '#22c55e'
 
   const slotCandidates = useMemo(() => {
     if (!addingTo) return []
@@ -162,6 +181,7 @@ export default function DailyPlatePage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <Target size={22} color="var(--gold)" /> Daily Plate Builder
@@ -175,11 +195,24 @@ export default function DailyPlatePage() {
       <div className={styles.dpHeader}>
         <div className={styles.dpHeaderLeft}>
           <div className={styles.dpMacroBars}>
-            <MacroBar label="Protein"  value={dayTotals.protein}  goal={80}   color="#22c55e" />
-            <MacroBar label="Calories" value={dayTotals.calories} goal={1800} color="#818cf8" />
-            <MacroBar label="Fat"      value={dayTotals.fat}      goal={65}   color="#c8a74b" />
-            <MacroBar label="Carbs"    value={dayTotals.carbs}    goal={200}  color="#3b82f6" />
+            <MacroBar label="Protein"   value={dayTotals.protein}  goal={PROTEIN_GOAL}  color="#22c55e" />
+            <MacroBar label="Calories"  value={dayTotals.calories} goal={CALORIE_GOAL}  color="#818cf8" />
+            <MacroBar label="Fat"       value={dayTotals.fat}      goal={65}            color="#c8a74b" />
+            <MacroBar label="Net Carbs" value={dayTotals.netCarbs} goal={200}           color="#3b82f6" />
+            <MacroBar label="Fiber"     value={dayTotals.fiber}    goal={FIBER_GOAL}    color="#2dd4bf" />
+            <MacroBar label="Sodium"    value={dayTotals.sodium}   goal={SODIUM_LIMIT}  color={sodiumColor} />
           </div>
+          {dayTotals.sugar > 0 && (
+            <div className={styles.dpSugarStat}>
+              Natural sugars: <strong>{Math.round(dayTotals.sugar)}g</strong>
+              <span className={styles.dpSugarNote}> from whole foods</span>
+            </div>
+          )}
+          {dayTotals.carbs > 0 && (
+            <div className={styles.dpNetCarbsNote}>
+              Total carbs {Math.round(dayTotals.carbs)}g minus {Math.round(dayTotals.fiber)}g fiber = {Math.round(dayTotals.netCarbs)}g net carbs
+            </div>
+          )}
         </div>
         <div className={styles.dpHeaderRight}>
           <div className={styles.dpVitaLabel}>VitaScore</div>

@@ -80,6 +80,11 @@ const phases = [
         dose: '1 capsule daily with food throughout the kill phase. Saccharomyces boulardii is a probiotic yeast. Antiparasitic herbs cannot kill it. Bridges gut protection while the kill herbs clear everything else out.',
         link: 'https://amzn.to/44nNZLx',
       },
+      {
+        name: 'NOW Foods Black Walnut Hulls 500mg',
+        dose: '1 capsule 3 times daily (1,500mg total), taken with meals. Juglone, the active compound in black walnut hull, disrupts parasite cell membranes and is particularly effective against intestinal worms and protozoa. Works synergistically with wormwood and cloves to cover multiple parasite life stages.',
+        link: 'https://amzn.to/4wZVCE3',
+      },
     ],
   },
   {

@@ -9,6 +9,7 @@ import { TRENDING_MEALS, PLATFORM_LABELS, PLATFORM_COLORS, getTrendScore, type T
 import PlanGate from '@/components/ui/PlanGate'
 import { useAuthStore } from '@/store/authStore'
 import { authHeaders } from '@/lib/authHeaders'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -251,6 +252,7 @@ export default function RecipesPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <BookOpen size={22} color="var(--gold)" /> Recipes

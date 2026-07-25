@@ -5,6 +5,7 @@ import { format, subDays } from 'date-fns'
 import { calcSupplementAdherence } from '@/lib/adherence'
 import { useAuthStore } from '@/store/authStore'
 import toast from 'react-hot-toast'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -165,6 +166,7 @@ export default function SupplementLogPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>

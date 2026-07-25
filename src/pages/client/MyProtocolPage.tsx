@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { supabase } from '@/lib/supabase'
 import type { ProtocolData, ProtocolItem, ProtocolSection } from '@/data/protocols/types'
+import BackButton from '@/components/BackButton'
 import styles from './ProtocolPage.module.css'
 
 const PILLAR_ORDER = ['R', 'O1', 'O2', 'T', 'S']
@@ -161,6 +162,7 @@ export default function MyProtocolPage() {
   return (
     <div className={styles.root}>
 
+      <BackButton />
       {/* Header */}
       <div className={styles.header}>
         <p className={styles.protocolBadge}>ROOTS Framework</p>

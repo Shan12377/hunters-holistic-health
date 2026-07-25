@@ -11,6 +11,7 @@ import {
   type ProtocolSynergy,
   type SynergyTag,
 } from '@/data/protocolPlan'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 type Tab = 'guide' | 'planner' | 'science' | 'grocery'
@@ -271,6 +272,7 @@ export default function ProtocolPlanPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <Utensils size={20} color="var(--gold)" /> 30-Day Metabolic Protocol

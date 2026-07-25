@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import BackButton from '@/components/BackButton'
 import shared from '@/styles/shared.module.css'
 import styles from './Client.module.css'
 
@@ -10,6 +11,7 @@ export default function HormoneVisitPrepPage() {
   if (isFree) {
     return (
       <div className={shared.pageContainer}>
+        <BackButton />
         <div className={shared.pageHeader}>
           <h1 className={shared.pageTitle}>Hormone Health Visit Prep</h1>
           <p className={shared.pageSubtitle}>

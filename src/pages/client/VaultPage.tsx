@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Lock, ChevronRight } from 'lucide-react'
 import { useUserLevel } from '@/hooks/useUserLevel'
 import { usePlan } from '@/hooks/usePlan'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 // ── Gate 1 content (Level 2) ──────────────────────────────────────────────────

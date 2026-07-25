@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ClipboardList, Save } from 'lucide-react'
+import { ClipboardList, Save, Moon } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { enqueueLog } from '@/lib/offlineQueue'
@@ -9,10 +9,12 @@ import { format, subDays } from 'date-fns'
 import type { DailyLog } from '@/types'
 import { awardPoints } from '@/lib/points'
 import toast from 'react-hot-toast'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 const ENERGY_LABELS = ['', '😴 Exhausted', '😓 Very Low', '😔 Low', '😐 Below Average', '😶 Average', '🙂 Decent', '😊 Good', '💪 Great', '🔥 Excellent', '⚡ Peak Energy']
+const SLEEP_QUALITY_LABELS = ['', '😣 Restless', '😴 Poor', '😐 Fair', '😊 Good', '🌟 Refreshed']
 
 export default function DailyLogPage() {
   const { user } = useAuthStore()
@@ -27,7 +29,10 @@ export default function DailyLogPage() {
     meal2_logged: false,
     snack_logged: false,
     supplement_am_done: false,
+    supplement_noon_done: false,
     supplement_pm_done: false,
+    sleep_hours: null,
+    sleep_quality: null,
     late_slip_reason: null,
   })
   const [saving, setSaving] = useState(false)
@@ -113,6 +118,8 @@ export default function DailyLogPage() {
   const toggle = (field: keyof DailyLog) => setLog(l => ({ ...l, [field]: !l[field as keyof typeof l] }))
   const setNum = (field: keyof DailyLog) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setLog(l => ({ ...l, [field]: parseInt(e.target.value) || 0 }))
+  const setFloat = (field: keyof DailyLog) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setLog(l => ({ ...l, [field]: parseFloat(e.target.value) || null }))
 
   const CheckItem = ({ field, label, sublabel }: { field: keyof DailyLog; label: string; sublabel?: string }) => {
     const checked = Boolean(log[field])
@@ -135,6 +142,7 @@ export default function DailyLogPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>
@@ -162,8 +170,46 @@ export default function DailyLogPage() {
       <div className={styles.card}>
         <h3 className={styles.cardLabel}>Supplements</h3>
         <div className={styles.checklist}>
-          <CheckItem field="supplement_am_done" label="AM Supplements Taken" sublabel="Morning supplement protocol" />
-          <CheckItem field="supplement_pm_done" label="PM Supplements Taken" sublabel="Evening supplement protocol" />
+          <CheckItem field="supplement_am_done"   label="AM Supplements Taken"        sublabel="Morning protocol — with breakfast or first meal" />
+          <CheckItem field="supplement_noon_done" label="Afternoon Supplements Taken" sublabel="Midday protocol — with lunch or a light snack" />
+          <CheckItem field="supplement_pm_done"   label="PM Supplements Taken"        sublabel="Evening protocol — with dinner or before bed" />
+        </div>
+      </div>
+
+      {/* Sleep */}
+      <div className={styles.card}>
+        <h3 className={styles.cardLabel}><Moon size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />Sleep (Last Night)</h3>
+        <div className={styles.inputRow}>
+          <div className={styles.field}>
+            <label className={styles.label}>Hours Slept</label>
+            <input
+              className={styles.input}
+              type="number"
+              value={log.sleep_hours ?? ''}
+              onChange={setFloat('sleep_hours')}
+              min={0} max={14} step={0.5}
+              placeholder="e.g. 7.5"
+            />
+            {log.sleep_hours != null && (
+              <div className={log.sleep_hours >= 7 ? styles.goalHintMet : styles.goalHint}>
+                {log.sleep_hours >= 9 ? 'Well rested' : log.sleep_hours >= 7 ? '✓ Goal met (7-9 hrs)' : `${(7 - log.sleep_hours).toFixed(1)} hrs short of goal`}
+              </div>
+            )}
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>Sleep Quality</label>
+            <input
+              type="range" min={1} max={5}
+              value={log.sleep_quality ?? 3}
+              onChange={e => setLog(l => ({ ...l, sleep_quality: parseInt(e.target.value) }))}
+              className={styles.slider}
+            />
+            <div className={styles.sliderValueWrap}>
+              <span className={styles.sliderValue}>{log.sleep_quality ?? '—'}</span>
+              <span className={styles.sliderMax}>/5</span>
+              <div className={styles.sliderLabel}>{log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : 'Tap to rate'}</div>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { CalendarDays, ExternalLink, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 // ponytail: toast/X/ExternalLink kept for cancel + join session room below
@@ -67,6 +68,7 @@ export default function SessionsPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>

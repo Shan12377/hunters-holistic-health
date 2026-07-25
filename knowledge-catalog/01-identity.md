@@ -39,7 +39,7 @@ FOCUS: Hunter's Holistic Health, LLC (the platform at huntersholistichealth.com 
 | I Can Teach You AI | icanteachyouai.com (NOT icanteachyou.com) | AI building course for healthcare pros, especially women | Identity level only |
 | GLPRoot | (app) | Metabolic tracking app for GLP-1 users, in development | Identity level only |
 | GLPulse | (co-founded) | FTC founder disclosure REQUIRED on every mention | Disclosure rule in 05-policies |
-| myglp1cost.com, glp1checker.com | owned tools | Founder disclosure required, not affiliate language | Disclosure rule in 05-policies |
+owned tools | Founder disclosure required, not affiliate language | Disclosure rule in 05-policies |
 
 ## Official profiles (sameAs set for schema)
 LinkedIn: [verify URL] | Instagram: @SugarFunctionalPharmD | Facebook: [verify] | Pinterest: [verify] | YouTube: [verify]

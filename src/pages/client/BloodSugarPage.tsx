@@ -10,6 +10,7 @@ import type { BSReading } from '@/types'
 import { getBSZone, BS_ZONE_LABELS, BS_ZONE_COLORS } from '@/types'
 import toast from 'react-hot-toast'
 import { Droplet, Plus, Info, ChevronDown } from 'lucide-react'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -359,6 +360,7 @@ export default function BloodSugarPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>

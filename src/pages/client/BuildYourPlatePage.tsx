@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Zap, FlaskConical, ChefHat, AlertTriangle, Sparkles } from 'lucide-react'
 import { SYNERGIES } from '@/data/recipes'
 import { useAuthStore } from '@/store/authStore'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 interface PlateFood {
@@ -195,6 +196,7 @@ export default function BuildYourPlatePage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <FlaskConical size={22} color="var(--gold)" /> Build Your Plate

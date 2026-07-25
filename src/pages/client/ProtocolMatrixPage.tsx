@@ -1,4 +1,5 @@
 import { LayoutGrid, CheckCircle2, AlertTriangle, XCircle, Info } from 'lucide-react'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 type Compat = 'ok' | 'caution' | 'no'
@@ -39,6 +40,7 @@ const COMPAT_META: Record<Compat, { label: string; icon: React.ReactNode; bgColo
 export default function ProtocolMatrixPage() {
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <LayoutGrid size={22} color="var(--gold)" /> Protocol Compatibility Matrix

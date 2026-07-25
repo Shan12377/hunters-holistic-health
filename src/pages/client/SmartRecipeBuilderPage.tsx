@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Flame, Send, Loader2, Info, CheckCircle2, AlertTriangle, BadgeCheck } from 'lucide-react'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import PlanGate from '@/components/ui/PlanGate'
 import { useAuthStore } from '@/store/authStore'
@@ -104,6 +105,7 @@ export default function SmartRecipeBuilderPage() {
   return (
     <PlanGate requiredPlan="program" label="The Smart Recipe Builder is available on The Program and above.">
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <Flame size={22} color="var(--gold)" /> Smart Recipe Builder

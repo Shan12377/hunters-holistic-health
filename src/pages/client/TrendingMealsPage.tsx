@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { TrendingUp, ChevronDown, ChevronUp, Zap, ArrowRight } from 'lucide-react'
 import { TRENDING_MEALS, PLATFORM_LABELS, PLATFORM_COLORS, getTrendScore, type TrendingMeal } from '@/data/trendingMeals'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 function HeatBar({ score }: { score: number }) {
@@ -114,6 +115,7 @@ export default function TrendingMealsPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <h1 className={styles.pageTopTitle}>
           <TrendingUp size={22} color="#f97316" /> Trending Meals

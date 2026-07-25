@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import type { PrivacySettings } from '@/types'
 import { awardPoints, getLevelInfo } from '@/lib/points'
 import MemberCard from '@/components/ui/MemberCard'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 

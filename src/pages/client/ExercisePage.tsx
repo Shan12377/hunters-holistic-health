@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import { awardPoints } from '@/lib/points'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -235,6 +236,7 @@ export default function ExercisePage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>

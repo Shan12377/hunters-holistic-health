@@ -10,6 +10,7 @@ import type { WeightLog } from '@/types'
 import toast from 'react-hot-toast'
 import { Scale, Plus, Info, ChevronDown, ChevronUp, Activity, Zap, Moon, Leaf } from 'lucide-react'
 import PlanGate from '@/components/ui/PlanGate'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -329,6 +330,7 @@ export default function WeightTrackerPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>

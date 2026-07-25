@@ -3,6 +3,7 @@ import { CheckCircle2, Circle, Info, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { format, subDays } from 'date-fns'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -356,6 +357,7 @@ export default function WorkoutTrackerPage() {
 
   return (
     <div className={shared.pageContainer}>
+      <BackButton />
       <div className={shared.pageHeader}>
         <h1 className={shared.pageTitle}>Workout Tracker</h1>
         <p className={shared.pageSubtitle}>Built for the people every other fitness app left out.</p>

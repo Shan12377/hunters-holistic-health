@@ -20,7 +20,10 @@ export interface DailyLog {
   meal2_logged: boolean
   snack_logged: boolean
   supplement_am_done: boolean
+  supplement_noon_done: boolean
   supplement_pm_done: boolean
+  sleep_hours: number | null
+  sleep_quality: number | null
   late_slip_reason: string | null
 }
 

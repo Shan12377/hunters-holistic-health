@@ -5,6 +5,7 @@ import { format, subDays, startOfWeek, endOfWeek } from 'date-fns'
 import type { DailyLog } from '@/types'
 import type { WeekBreakdown } from '@/lib/grading'
 import { calcGradeFromData, scoreWeek } from '@/lib/grading'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
 interface WeekScore {

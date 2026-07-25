@@ -5,6 +5,7 @@ import { format, subDays, startOfWeek, parseISO, formatDistanceToNow } from 'dat
 import type { DailyLog } from '@/types'
 import { scoreWeek } from '@/lib/grading'
 import toast from 'react-hot-toast'
+import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
@@ -199,7 +200,8 @@ export default function CohortPage() {
   if (!cohort) {
     return (
       <div className="animate-fade-in">
-        <div className={styles.pageTop}>
+        <BackButton />
+      <div className={styles.pageTop}>
           <div>
             <h1 className={styles.pageTopTitle}>
               <Users size={22} color="var(--teal)" /> My Cohort
@@ -225,6 +227,7 @@ export default function CohortPage() {
 
   return (
     <div className="animate-fade-in">
+      <BackButton />
       <div className={styles.pageTop}>
         <div>
           <h1 className={styles.pageTopTitle}>
