@@ -195,7 +195,7 @@ export default function MetalDetoxProtocol() {
         <div className={styles.footer}>
           <p><strong>Medical Disclaimer:</strong> The information on this page is for educational purposes only and does not constitute medical advice. Dr. Shallanda Hunter, PharmD, CFNMP, operates as a Functional Medicine Educator, not as your prescribing physician or pharmacist. The supplement brands and forms listed here represent the highest-quality options based on independent research; specific dosing, timing, and sequencing are highly individual and should always be discussed with your licensed physician or qualified healthcare professional before starting. This is especially important if you have a diagnosed condition, take prescription medications, or are managing a complex health history.</p>
           <p>These statements have not been evaluated by the FDA. These products are not intended to diagnose, treat, cure, or prevent any disease.</p>
-          <p>Hunter's Holistic Health LLC | 30 N Gould St, Ste R, Sheridan, WY 82801 | <a href="mailto:info@huntersholistichealth.com">info@huntersholistichealth.com</a></p>
+          <p>Hunter's Holistic Health LLC | <a href="mailto:info@huntersholistichealth.com">info@huntersholistichealth.com</a></p>
         </div>
 
       </div>

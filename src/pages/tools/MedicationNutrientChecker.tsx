@@ -600,7 +600,7 @@ export default function MedicationNutrientChecker() {
       <div className={styles.footer}>
         <p><strong>About the author.</strong> Dr. Shallanda Hunter is a Doctor of Pharmacy (PharmD, RPh) and Certified Functional Nutritional Medicine Practitioner (CFNMP) operating as a Functional Medicine Educator. This page is educational and is not a substitute for individualized medical advice. Content reviewed July 2026.</p>
         <p>These statements have not been evaluated by the Food and Drug Administration. This information is not intended to diagnose, treat, cure, or prevent any disease.</p>
-        <p>Hunter's Holistic Health LLC | 30 N Gould St, Ste R, Sheridan, WY 82801 | <a href="mailto:info@huntersholistichealth.com">info@huntersholistichealth.com</a></p>
+        <p>Hunter's Holistic Health LLC | <a href="mailto:info@huntersholistichealth.com">info@huntersholistichealth.com</a></p>
       </div>
     </div>
   )
