@@ -51,9 +51,14 @@ const phases = [
     note: 'Two 3-week kill cycles with rest weeks at Week 6 and Week 10. During rest weeks, stop Biocidin, Wormwood, Cloves, and Mimosa Pudica. Continue G.I. Detox+, S. boulardii, Milk Thistle, and NAC.',
     products: [
       {
-        name: 'Biocidin Liquid',
-        dose: 'Start with 1 drop twice daily. Increase by 1 drop every 2 days as tolerated, working toward the full dose recommended on the label. Take 30 minutes before meals.',
-        link: 'https://amzn.to/4f09k3C',
+        name: 'NOW Foods Black Walnut Hulls 500mg',
+        dose: '1 capsule 3 times daily (1,500mg total), taken with meals. Juglone, the active compound in black walnut hull, disrupts parasite cell membranes and is particularly effective against intestinal worms and protozoa. Works synergistically with wormwood and cloves to cover multiple parasite life stages.',
+        link: 'https://amzn.to/4wZVCE3',
+      },
+      {
+        name: "Oregon's Wild Harvest Cloves",
+        dose: '3 capsules daily (1,500mg total), taken with meals. Eugenol in cloves destroys parasite eggs and larvae, the stage wormwood does not reach as effectively. These two work as a team.',
+        link: 'https://amzn.to/3QmOGkW',
       },
       {
         name: "Oregon's Wild Harvest Wormwood",
@@ -61,9 +66,9 @@ const phases = [
         link: 'https://amzn.to/4eKOvbd',
       },
       {
-        name: "Oregon's Wild Harvest Cloves",
-        dose: '3 capsules daily (1,500mg total), taken with meals. Eugenol in cloves destroys parasite eggs and larvae, the stage wormwood does not reach as effectively. These two work as a team.',
-        link: 'https://amzn.to/3QmOGkW',
+        name: 'Biocidin Liquid',
+        dose: 'Start with 1 drop twice daily. Increase by 1 drop every 2 days as tolerated, working toward the full dose recommended on the label. Take 30 minutes before meals.',
+        link: 'https://amzn.to/4f09k3C',
       },
       {
         name: 'Double Wood Mimosa Pudica',
@@ -79,11 +84,6 @@ const phases = [
         name: 'Jarrow S. boulardii',
         dose: '1 capsule daily with food throughout the kill phase. Saccharomyces boulardii is a probiotic yeast. Antiparasitic herbs cannot kill it. Bridges gut protection while the kill herbs clear everything else out.',
         link: 'https://amzn.to/44nNZLx',
-      },
-      {
-        name: 'NOW Foods Black Walnut Hulls 500mg',
-        dose: '1 capsule 3 times daily (1,500mg total), taken with meals. Juglone, the active compound in black walnut hull, disrupts parasite cell membranes and is particularly effective against intestinal worms and protozoa. Works synergistically with wormwood and cloves to cover multiple parasite life stages.',
-        link: 'https://amzn.to/4wZVCE3',
       },
     ],
   },
