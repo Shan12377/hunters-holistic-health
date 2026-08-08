@@ -90,6 +90,13 @@ export default function FlatBellyChallengeLanding() {
             Join the free 14-Day Flat Belly Challenge and learn exactly why your middle holds on,
             and what to do about it starting Monday.
           </p>
+          <img
+            className={s.heroImage}
+            src="/images/ai/flat-belly-hero.jpg"
+            alt="Two women laughing together over breakfast in a sunlit kitchen"
+            width={1536}
+            height={1024}
+          />
         </header>
 
         <section className={s.formSection} id="join">
