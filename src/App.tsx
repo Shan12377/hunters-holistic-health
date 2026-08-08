@@ -101,6 +101,7 @@ const SnapshotPage = lazy(() => import('@/pages/client/SnapshotPage'))
 const VaultPage = lazy(() => import('@/pages/client/VaultPage'))
 const HormoneChallengePage = lazy(() => import('@/pages/tools/HormoneChallengePage'))
 const FlatBellyChallengePage = lazy(() => import('@/pages/tools/FlatBellyChallengePage'))
+const FlatBellyChallengeLanding = lazy(() => import('@/pages/FlatBellyChallengeLanding'))
 const NervousSystemResetPage = lazy(() => import('@/pages/tools/NervousSystemResetPage'))
 const MensHormoneRhythmPage = lazy(() => import('@/pages/tools/MensHormoneRhythmPage'))
 const HormoneVisitPrepPublicPage = lazy(() => import('@/pages/tools/HormoneVisitPrepPublicPage'))
@@ -232,6 +233,9 @@ export default function App() {
         <Route path="/tools/nervous-system-reset" element={<NervousSystemResetPage />} />
         <Route path="/tools/mens-hormone-rhythm" element={<MensHormoneRhythmPage />} />
         <Route path="/tools/hormone-visit-prep" element={<HormoneVisitPrepPublicPage />} />
+
+        {/* Public challenge opt-in (QR code target, no auth) */}
+        <Route path="/flat-belly-challenge" element={<FlatBellyChallengeLanding />} />
 
         {/* Client app routes */}
         <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

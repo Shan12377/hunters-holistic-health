@@ -1,0 +1,348 @@
+/* FlatBellyChallengeLanding.module.css
+   Public opt-in landing page for the 14-Day Flat Belly Challenge.
+   Reachable by QR code, no auth. */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg-page, #144445);
+  color: #f2f7f6;
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.wrap,
+.confirmWrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  text-align: center;
+  padding: 1rem 0 2.5rem;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold, #c8a74b);
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+.headline {
+  font-family: var(--font-headline, 'Outfit', sans-serif);
+  font-size: clamp(1.9rem, 6vw, 2.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  font-weight: 700;
+}
+
+.headlineAccent {
+  display: block;
+  margin-top: 0.6rem;
+  background: var(--gradient-gold-text, linear-gradient(120deg, #f3e3b0, #c8a74b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sub {
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  line-height: 1.6;
+  color: rgba(242, 247, 246, 0.82);
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+/* ---------- form ---------- */
+
+.formSection {
+  margin: 0 0 3rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.form {
+  background: var(--bg-card, #1c5253);
+  border: 1px solid var(--border, #2a6d6f);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.75rem 1.5rem;
+  box-shadow: var(--shadow-lg, 0 18px 48px rgba(0, 20, 19, 0.45));
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+  color: rgba(242, 247, 246, 0.9);
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  margin: 0 0 1.1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #f2f7f6;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--border, #2a6d6f);
+  border-radius: var(--radius-md, 10px);
+}
+
+.input::placeholder {
+  color: rgba(242, 247, 246, 0.42);
+}
+
+.input:focus {
+  outline: 2px solid var(--gold, #c8a74b);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.cta,
+.ctaLink {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-headline, 'Outfit', sans-serif);
+  font-size: 1.02rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  color: #14312f;
+  background: var(--gradient-gold, linear-gradient(135deg, #dcbd6a, #c8a74b 45%, #a8893a));
+  border: none;
+  border-radius: var(--radius-md, 10px);
+  cursor: pointer;
+  transition: transform 0.18s var(--ease-primary, ease), box-shadow 0.18s ease;
+}
+
+.cta:hover:not(:disabled),
+.ctaLink:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--gold-glow, 0 0 12px rgba(200, 167, 75, 0.35));
+}
+
+.cta:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--error, #e05c5c);
+  font-size: 0.9rem;
+  margin: 0 0 0.9rem;
+}
+
+.finePrint {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: rgba(242, 247, 246, 0.6);
+  margin: 1.1rem 0 0;
+}
+
+/* ---------- content ---------- */
+
+.section {
+  margin: 0 0 3rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-headline, 'Outfit', sans-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: var(--gold, #c8a74b);
+}
+
+.lead {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0 0 0.35rem;
+  color: rgba(242, 247, 246, 0.9);
+}
+
+.leadStrong {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 1.1rem 0;
+}
+
+.body {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 0 1.1rem;
+  color: rgba(242, 247, 246, 0.85);
+}
+
+.bodyMuted {
+  composes: body;
+  color: rgba(242, 247, 246, 0.62);
+  margin-bottom: 0.5rem;
+}
+
+.list {
+  margin: 0 0 1.1rem;
+  padding-left: 1.2rem;
+  line-height: 1.7;
+  color: rgba(242, 247, 246, 0.85);
+}
+
+.list li {
+  margin-bottom: 0.5rem;
+}
+
+.reasons {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.reason {
+  background: var(--bg-card, #1c5253);
+  border: 1px solid var(--border-subtle, #1b4e4f);
+  border-left: 3px solid var(--gold, #c8a74b);
+  border-radius: var(--radius-md, 10px);
+  padding: 1.1rem 1.25rem;
+}
+
+.reasonTitle {
+  font-family: var(--font-headline, 'Outfit', sans-serif);
+  font-size: 1.08rem;
+  margin: 0 0 0.4rem;
+  color: var(--gold, #c8a74b);
+}
+
+.reasonText {
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: rgba(242, 247, 246, 0.85);
+}
+
+.twoUp {
+  display: grid;
+  gap: 1rem;
+  margin: 0 0 3rem;
+}
+
+.forCard,
+.notForCard {
+  background: var(--bg-card, #1c5253);
+  border: 1px solid var(--border-subtle, #1b4e4f);
+  border-radius: var(--radius-md, 10px);
+  padding: 1.25rem 1.4rem;
+}
+
+.aboutSection {
+  background: var(--bg-card, #1c5253);
+  border: 1px solid var(--border-subtle, #1b4e4f);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.6rem 1.5rem;
+  margin: 0 0 3rem;
+}
+
+.credential {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 1.12rem;
+  line-height: 1.5;
+  color: var(--gold, #c8a74b);
+  margin: 0 0 1.1rem;
+}
+
+.closer {
+  margin: 0 0 2.5rem;
+}
+
+/* ---------- confirmation ---------- */
+
+.confirmWrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.confirmCard {
+  background: var(--bg-card, #1c5253);
+  border: 1px solid var(--border, #2a6d6f);
+  border-radius: var(--radius-lg, 16px);
+  padding: 2.25rem 1.75rem;
+  text-align: center;
+  box-shadow: var(--shadow-lg, 0 18px 48px rgba(0, 20, 19, 0.45));
+}
+
+.confirmTitle {
+  font-family: var(--font-headline, 'Outfit', sans-serif);
+  font-size: clamp(2rem, 7vw, 2.6rem);
+  margin: 0 0 1rem;
+  background: var(--gradient-gold-text, linear-gradient(120deg, #f3e3b0, #c8a74b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.confirmLead {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+}
+
+.confirmBody {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(242, 247, 246, 0.85);
+  margin: 0 0 1.25rem;
+}
+
+.waLink {
+  display: inline-block;
+  padding: 0.8rem 1.4rem;
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+  color: #14312f;
+  text-decoration: none;
+  background: var(--gradient-gold, linear-gradient(135deg, #dcbd6a, #c8a74b));
+  border-radius: var(--radius-md, 10px);
+}
+
+.confirmSignoff {
+  font-family: var(--font-serif, 'Cormorant Garamond', serif);
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: rgba(242, 247, 246, 0.9);
+  margin: 0;
+}
+
+/* ---------- disclaimer ---------- */
+
+.disclaimer {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  text-align: center;
+  color: rgba(242, 247, 246, 0.55);
+  border-top: 1px solid var(--border-subtle, #1b4e4f);
+  padding-top: 1.5rem;
+  margin: 2rem 0 0;
+}
+
+@media (min-width: 700px) {
+  .reasons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .twoUp {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cta,
+  .ctaLink {
+    width: auto;
+    min-width: 22rem;
+    margin: 0 auto;
+  }
+}
