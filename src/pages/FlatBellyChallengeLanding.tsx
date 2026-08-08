@@ -3,7 +3,9 @@ import s from './FlatBellyChallengeLanding.module.css'
 
 // Dr. Hunter's WhatsApp accountability group. Clearing this hides the line
 // on the confirmation screen rather than showing a broken link.
-const WHATSAPP_LINK = 'https://wa.me/15619457540'
+// Bare invite code only: the ?s=cl&p=i&... params WhatsApp appends when you copy
+// a link are share-tracking for that one send, not part of the invite.
+const WHATSAPP_LINK = 'https://chat.whatsapp.com/GDuUyAkklKtLCdqaLjiYiS'
 const WHATSAPP_DISPLAY = '(561) 945-7540'
 
 const DISCLAIMER =
