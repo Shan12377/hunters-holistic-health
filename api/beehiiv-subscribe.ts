@@ -77,7 +77,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await beehiivRes.json()
-    return res.status(200).json({ ok: true, id: data.data?.id })
+    const subscriptionId = data.data?.id
+
+    // Flat Belly Challenge signups go straight into the 14-day automation.
+    // Only this source is enrolled, so regular newsletter subscribers are never
+    // pulled into the challenge sequence.
+    let enrolled = false
+    const automationId = process.env.BEEHIIV_FLAT_BELLY_AUTOMATION_ID
+    if (source === 'flat_belly_challenge' && automationId && subscriptionId) {
+      try {
+        const journeyRes = await fetch(
+          `https://api.beehiiv.com/v2/publications/${pubId}/automations/${automationId}/journeys`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subscription_id: subscriptionId }),
+          }
+        )
+        if (journeyRes.ok) {
+          enrolled = true
+        } else {
+          // The person IS subscribed, so we still return success to them.
+          // This is logged loudly because a silent failure here means someone
+          // signed up and will never receive the sequence.
+          console.error(
+            '[beehiiv-subscribe] Automation enrollment failed:',
+            journeyRes.status,
+            await journeyRes.text()
+          )
+        }
+      } catch (enrollErr) {
+        console.error('[beehiiv-subscribe] Automation enrollment threw:', enrollErr)
+      }
+    } else if (source === 'flat_belly_challenge' && !automationId) {
+      console.error(
+        '[beehiiv-subscribe] BEEHIIV_FLAT_BELLY_AUTOMATION_ID is not set. ' +
+          'Challenge signup was subscribed but NOT enrolled in the 14-day sequence.'
+      )
+    }
+
+    return res.status(200).json({ ok: true, id: subscriptionId, enrolled })
   } catch (err) {
     console.error('[beehiiv-subscribe] Unexpected error:', err)
     return res.status(500).json({ error: 'Internal server error' })
