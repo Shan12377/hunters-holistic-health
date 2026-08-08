@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import s from './FlatBellyChallengeLanding.module.css'
 
-// Fill this in and the WhatsApp line appears on the confirmation screen.
-// Leave it empty and the line is hidden rather than showing a broken placeholder.
-const WHATSAPP_LINK = ''
+// Dr. Hunter's WhatsApp accountability group. Clearing this hides the line
+// on the confirmation screen rather than showing a broken link.
+const WHATSAPP_LINK = 'https://wa.me/15619457540'
+const WHATSAPP_DISPLAY = '(561) 945-7540'
 
 const DISCLAIMER =
   'For educational purposes only. Not medical advice. Always consult your licensed healthcare provider before making changes to your health routine.'
@@ -53,7 +54,8 @@ export default function FlatBellyChallengeLanding() {
             <h1 className={s.confirmTitle}>You are in.</h1>
             <p className={s.confirmLead}>Your first email arrives Monday morning at 7 AM.</p>
             <p className={s.confirmBody}>
-              In the meantime, save this number in your phone as &ldquo;Dr. Hunter HHH&rdquo;
+              In the meantime, save {WHATSAPP_DISPLAY} in your phone as &ldquo;Dr. Hunter
+              HHH&rdquo;
               {WHATSAPP_LINK ? ' and join the WhatsApp accountability group:' : '.'}
             </p>
             {WHATSAPP_LINK && (
