@@ -154,25 +154,45 @@ export default function FlatBellyChallengePage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
-      const { data } = await supabase
-        .from('flat_belly_challenge')
-        .select('challenge_day, habits_completed')
-        .eq('user_id', user.id)
-        .order('challenge_day')
-      if (data && data.length > 0) {
-        const rows = data as DayRow[]
-        setCompleted(new Set(rows.map(r => r.challenge_day)))
-        const nextDay = Math.min(rows.length + 1, 5)
-        setCurrentDay(nextDay)
-        const today = rows.find(r => r.challenge_day === nextDay - (rows.length < nextDay ? 0 : 1))
-        if (today && rows.length >= nextDay) {
-          setTodayLogged(true)
-          setTodayHabits(new Set(today.habits_completed as string[]))
+      try {
+        // getSession reads the local session without a network round trip.
+        // getUser calls the auth server, which is what used to hang this page
+        // for signed-out visitors and leave it stuck on "Loading your progress".
+        const { data: { session } } = await supabase.auth.getSession()
+        const user = session?.user
+        if (!user) return
+
+        const { data, error } = await supabase
+          .from('flat_belly_challenge')
+          .select('challenge_day, habits_completed')
+          .eq('user_id', user.id)
+          .order('challenge_day')
+
+        if (error) {
+          toast.error('Could not load your saved progress. You can still follow along.')
+          return
         }
+
+        const rows = (data ?? []) as DayRow[]
+        if (rows.length === 0) return
+
+        const logged = new Set(rows.map(r => r.challenge_day))
+        setCompleted(logged)
+
+        const nextDay = Math.min(rows.length + 1, DAYS.length)
+        setCurrentDay(nextDay)
+
+        const todayRow = rows.find(r => r.challenge_day === nextDay)
+        if (todayRow) {
+          setTodayLogged(true)
+          setTodayHabits(new Set(todayRow.habits_completed ?? []))
+        }
+      } catch {
+        toast.error('Could not load your saved progress. You can still follow along.')
+      } finally {
+        // Always runs, so the page can never hang on the loading state.
+        setLoading(false)
       }
-      setLoading(false)
     }
     load()
   }, [])
