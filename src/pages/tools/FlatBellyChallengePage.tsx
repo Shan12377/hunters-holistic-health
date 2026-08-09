@@ -53,7 +53,79 @@ const DAYS: DayContent[] = [
     subtitle: 'Stack the habits that will stick',
     lesson: "The behaviors that reverse cortisol belly are not complicated. They are: protein first at every meal, consistent sleep timing, daily movement that does not spike cortisol unnecessarily, and the right supplement support. The challenge is the system that makes those behaviors automatic. Today you build your stack: identify the two meals where you most often skip protein. Identify the one sleep habit you can remove tonight. Commit to your dead bug practice as a non-negotiable 5-minute morning anchor for the next 30 days. The supplement stack takes 4-8 weeks to show its full effect.",
     movement: 'Full dead bug circuit: 4 sets of 10 reps. Add a 10-15 minute post-lunch walk. Finish with 5 minutes of 4-7-8 breathing (inhale 4 counts, hold 7, exhale 8) to activate the parasympathetic nervous system and lower afternoon cortisol. This breathing pattern has the most consistent evidence for acute cortisol reduction of any single technique.',
-    supplement: 'Your 5-Day Stack: KSM-66 Ashwagandha 300mg twice daily, Magnesium Glycinate 400mg at night, Lemon Balm 500mg in the afternoon. Continue for 30 days minimum before evaluating results. These supplements are not intended to diagnose, treat, cure, or prevent any disease.',
+    supplement: 'Your Core Stack: KSM-66 Ashwagandha 300mg twice daily, Magnesium Glycinate 400mg at night, Lemon Balm 500mg in the afternoon. Continue for 30 days minimum before evaluating results. These supplements are not intended to diagnose, treat, cure, or prevent any disease.',
+  },
+  {
+    day: 6,
+    title: 'Gut Motility',
+    subtitle: 'Bloating is often a movement problem, not a food problem',
+    lesson: 'Your gut moves waste through a wave of muscular contractions. Those muscles need fiber for bulk and magnesium to contract properly. When either is short, transit slows and waste backs up. That is the distension most women blame on the last thing they ate. Chronic cortisol makes this worse by diverting blood flow away from digestion, which is why stress and bloating travel together.',
+    movement: 'Add a 10-minute walk after dinner on top of your post-lunch walk. Walking stimulates the migrating motor complex, the wave that sweeps your small intestine between meals. Two short walks beat one long one for motility.',
+    supplement: 'Same stack. Add one probiotic-rich food today: plain kefir, plain Greek yogurt with live cultures, refrigerated kimchi, or refrigerated sauerkraut. Food-based sources arrive with their own feeding environment, which is why they often outperform capsules.',
+  },
+  {
+    day: 7,
+    title: 'Week One Review',
+    subtitle: 'Read the signals before adding anything new',
+    lesson: 'Cortisol takes 5 to 7 days to respond to a protocol change, so today is the first honest read. Three signals to assess. Morning bloating: less means motility is improving. Energy after meals: steadier means your blood sugar response is flattening. Sleep quality: deeper means the magnesium and the evening routine are working. You do not need all three. One real shift is a data point worth trusting.',
+    movement: 'Full dead bug circuit: 4 sets of 10. No new movement today. Consistency is the variable that matters this week, not intensity.',
+    supplement: 'No new supplement. Stay on the core stack and let it build. Most of the cortisol research shows meaningful change between weeks 4 and 8, so you are early by design.',
+  },
+  {
+    day: 8,
+    title: 'The Flat Belly Plate',
+    subtitle: 'Structure beats tracking',
+    lesson: 'How you build a plate determines the insulin and cortisol response of that meal. Half the plate non-starchy vegetables for fiber and gut bacteria. One quarter quality protein, the anchor. One quarter complex carbohydrate such as sweet potato, quinoa, or lentils. One tablespoon of healthy fat to make the fat-soluble nutrients in those vegetables absorbable. Build it this way and you will not need to count anything.',
+    movement: 'Same movement pattern. Keep both walks and your dead bug schedule.',
+    supplement: 'Same stack. Focus today is the plate, not the bottle.',
+  },
+  {
+    day: 9,
+    title: 'Hydration and Electrolytes',
+    subtitle: 'Water without minerals passes straight through',
+    lesson: 'Water alone does not hydrate cells. Moving water into a cell requires sodium, potassium, and magnesium. Without them, water passes through without being absorbed, the gut stays dry, and motility slows. This is why bloating can persist at eight glasses a day. The fix is a mineral, not more volume.',
+    movement: 'Same movement pattern. Notice whether your afternoon energy holds better on days you start with minerals.',
+    supplement: 'Morning protocol, within 10 minutes of waking and before coffee: 16 oz water, a small pinch of Himalayan or Celtic sea salt, and the juice of half a lemon. Keep the core stack unchanged.',
+  },
+  {
+    day: 10,
+    title: 'Liver and Estrogen Clearance',
+    subtitle: 'Where lower belly and hip storage comes from',
+    lesson: 'Your liver clears excess estrogen through two phases of detoxification. When that pathway is sluggish, estrogen recirculates, and estrogen dominance drives fat storage specifically at the lower belly and hips. Cruciferous vegetables supply the compounds that support phase II clearance, which is why they show up in nearly every hormone protocol.',
+    movement: 'Same movement pattern. Keep your walks consistent.',
+    supplement: 'Same stack. Add one serving of cruciferous vegetables daily: broccoli, cauliflower, Brussels sprouts, cabbage, or kale.',
+  },
+  {
+    day: 11,
+    title: 'Sleep Architecture',
+    subtitle: 'Two hormones decide how hungry you wake up',
+    lesson: 'Leptin signals fullness. Ghrelin signals hunger. Under 7 hours of sleep, leptin drops and ghrelin rises, so you wake up hungrier with stronger carbohydrate cravings before you have made a single choice. Chronic short sleep also shifts gut bacteria toward strains associated with fat storage. This is a metabolic instruction, not a sleep hygiene tip.',
+    movement: 'Restorative only: 20 minutes of yoga or a slow walk. Nothing high intensity within 4 hours of bed, because the cortisol from training needs time to clear before sleep can be restorative.',
+    supplement: 'Same stack. Magnesium 30 to 45 minutes before bed matters more tonight than any other night this week.',
+  },
+  {
+    day: 12,
+    title: 'Find Your Cortisol Trigger',
+    subtitle: 'The stack lowers the baseline, you handle the spike',
+    lesson: 'The supplement stack lowers your baseline cortisol. It cannot touch the thing that spikes it. That trigger is personal: a person, a notification, a time of day, a recurring conversation, a specific situation. Naming it is the only way to stop feeding the loop, because you cannot interrupt a pattern you have not identified.',
+    movement: '4-7-8 breathing for 5 minutes in the mid-afternoon, when the secondary cortisol rise happens. Inhale for 4, hold for 7, exhale for 8. Keep your walks and dead bug schedule.',
+    supplement: 'Same stack. No additions.',
+  },
+  {
+    day: 13,
+    title: 'Reading Your Own Signals',
+    subtitle: 'Four markers that tell you what to work on next',
+    lesson: 'Bowel movement frequency: one to two comfortable movements daily is the target, and less than once a day means transit is still slow. Bloating timing: first thing in the morning points to bacteria and overnight motility, while bloating after specific meals points to a sensitivity or portion size. Energy after meals: a crash is a blood sugar signal. Belly softness compared to Day 1: softer, not flat, is inflammation coming down and it is real progress.',
+    movement: 'Same movement pattern. You are building the baseline you will carry past Day 14.',
+    supplement: 'Same stack.',
+  },
+  {
+    day: 14,
+    title: 'What You Built',
+    subtitle: 'Five habits that changed your hormonal environment',
+    lesson: 'Fourteen days ago your cortisol environment looked different than it does today. Five habits did that: cortisol support, protein timing, a protected sleep window, anti-inflammatory eating, and movement that does not spike cortisol. None of them require perfection to keep working. The supplement stack takes about 30 days for full effect, so you are halfway through its curve. Keep going.',
+    movement: 'Full circuit: 4 sets of 10 dead bugs, both walks, and 5 minutes of 4-7-8 breathing. This is your maintenance pattern.',
+    supplement: 'Continue all three for at least 30 days before evaluating results. These statements have not been evaluated by the Food and Drug Administration. These supplements are not intended to diagnose, treat, cure, or prevent any disease. Always consult your licensed healthcare provider before starting any new supplement.',
   },
 ]
 
@@ -146,10 +218,10 @@ export default function FlatBellyChallengePage() {
     return (
       <div className={styles.gateOverlay}>
         <div className={styles.gateBox}>
-          <p className={styles.gateBadge}>5-Day Challenge</p>
+          <p className={styles.gateBadge}>14-Day Challenge</p>
           <h1 className={styles.gateTitle}>Flat Belly Reset</h1>
           <p className={styles.gateBody}>
-            This 5-day educational program teaches the cortisol-belly connection and introduces the movement, nutrition, and supplement habits that support abdominal fat reduction through hormonal balance.
+            This 14-day educational program teaches the cortisol-belly connection and introduces the movement, nutrition, and supplement habits that support abdominal fat reduction through hormonal balance.
           </p>
           <div className={styles.gateDisclaimer}>
             <strong>Educational use only.</strong> This is not medical advice and is not intended to diagnose, treat, cure, or prevent any disease or health condition. These statements have not been evaluated by the Food and Drug Administration. Supplement information is for educational purposes only. Always consult your healthcare provider before starting any new supplement or exercise program.
@@ -168,8 +240,8 @@ export default function FlatBellyChallengePage() {
     <div className={styles.page}>
 
       <div className={styles.header}>
-        <p className={styles.badge}>5-Day Flat Belly Reset</p>
-        <h1 className={styles.title}>Day {currentDay} of 5</h1>
+        <p className={styles.badge}>14-Day Flat Belly Challenge</p>
+        <h1 className={styles.title}>Day {currentDay} of 14</h1>
         <p className={styles.subtitle}>The cortisol-belly connection. Not willpower.</p>
       </div>
 
@@ -191,7 +263,7 @@ export default function FlatBellyChallengePage() {
       </div>
 
       <div className={styles.dayCard}>
-        <div className={styles.dayMeta}>Day {dayContent.day} of 5</div>
+        <div className={styles.dayMeta}>Day {dayContent.day} of 14</div>
         <h2 className={styles.dayTitle}>{dayContent.title}</h2>
         <p className={styles.daySubtitle}>{dayContent.subtitle}</p>
       </div>
@@ -246,7 +318,7 @@ export default function FlatBellyChallengePage() {
 
       {currentDay >= 5 && todayLogged && (
         <div className={styles.ctaCard}>
-          <h2 className={styles.ctaTitle}>You finished the 5-Day Flat Belly Reset.</h2>
+          <h2 className={styles.ctaTitle}>You finished the 14-Day Flat Belly Challenge.</h2>
           <p className={styles.ctaText}>
             You now understand the cortisol-belly connection and have the three core supplements in your stack. The Foundation membership gives you the full 90-day metabolic protocol built around your specific pattern, including lab context, the complete ROOTS Framework, and direct access to Dr. Hunter's educator dashboard.
           </p>
