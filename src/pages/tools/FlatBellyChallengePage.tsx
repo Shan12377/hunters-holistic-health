@@ -59,7 +59,7 @@ const DAYS: DayContent[] = [
     action: "Set a 9:30 PM alarm. Phone face down, in bed by 10:15.",
     lesson: "Cortisol follows a daily rhythm: highest about 30 to 45 minutes after waking, lowest around midnight. Poor sleep keeps it elevated in the evening when it should be falling, and that evening elevation drives overnight storage and worsens insulin resistance. Two nights of short sleep is enough to produce measurable insulin resistance in otherwise healthy adults. You cannot out-exercise chronic sleep loss.",
     movement: "Restorative only today: a 20-minute slow walk, or stretching. Nothing high intensity within 4 hours of sleep, because training raises core body temperature and falling asleep requires it to drop.",
-    supplement: "Add Doctor's Best High Absorption Magnesium 400mg, two 200mg capsules, around 9:30 PM and 30 to 45 minutes before sleep. If it loosens your stools in the first few days, split it: 200mg with dinner and 200mg at bedtime.",
+    supplement: "If you want the optional supplement support, order it today so it arrives in time. We start taking it on Day 7, not before, because these take a few days to ship and the habits matter more than the bottles. Morning with breakfast: Jarrow Formulas KSM-66 Ashwagandha 300mg. Afternoon 2 to 3 PM: Swanson Full Spectrum Lemon Balm 500mg. With dinner: a second Ashwagandha 300mg plus Thorne D3/K2 Liquid, 2 drops. Bedtime: Doctor's Best High Absorption Magnesium 400mg, two 200mg capsules. IMPORTANT: vitamin K2 works against warfarin and other blood thinners, so do not start the D3/K2 until your prescriber clears it. Ashwagandha is not for use in pregnancy, and clear it first if you take thyroid medication, sedatives, or immunosuppressants. None of this is required to do the challenge. These statements have not been evaluated by the Food and Drug Administration. These supplements are not intended to diagnose, treat, cure, or prevent any disease.",
   },
   {
     day: 4,
@@ -68,7 +68,7 @@ const DAYS: DayContent[] = [
     action: "Swap one ingredient today. One, not your whole kitchen.",
     lesson: "Ultra-processed foods, industrial seed oils, refined sugar, and alcohol activate the same inflammatory pathways cortisol does. That creates a loop: stress raises cortisol, cortisol weakens the gut barrier, a leakier barrier raises systemic inflammation, and inflammation raises cortisol again. Removing seed oils and added sugars for even five days is enough for most people to notice less bloating and steadier afternoon energy.",
     movement: "Your 10-minute post-meal walk, plus NEAT through the day: stand while working, walk between tasks, pace on calls. NEAT burns more daily energy than structured exercise for most people and it does not spike cortisol.",
-    supplement: "Add Swanson Full Spectrum Lemon Balm 500mg between 2 and 3 PM with water. That window targets the secondary cortisol rise most women feel as the afternoon crash. Taken much later it can cause mild evening drowsiness.",
+    supplement: "No supplement today. Your focus is the one ingredient swap. If you ordered the stack yesterday, it is on its way and we start it on Day 7.",
   },
   {
     day: 5,
@@ -77,7 +77,7 @@ const DAYS: DayContent[] = [
     action: "Do one set of dead bugs. Just one, to feel the movement.",
     lesson: "Crunches and sit-ups recruit the psoas, your hip flexors. Do enough of them and you tighten the muscles that tilt your pelvis forward, which pushes your lower belly out and strains your lower back. You feel like you worked and the shape gets worse. The dead bug does the opposite: it trains the deep transverse abdominis, the layer that wraps your middle like a built-in corset. Long cardio sessions raise cortisol, so more is not better. This one does not.",
     movement: "Dead bug, full form. On your back, arms straight up, knees bent to 90 degrees with shins parallel to the floor. Lower your right arm behind your head while lowering your left leg. Stop an inch above the floor. Return, switch sides. 10 per side, 2 sets. Keep your lower back flat against the floor the entire time. If it arches, make the movement smaller.",
-    supplement: "Your full stack, four products across five doses. Morning with breakfast: Jarrow KSM-66 Ashwagandha 300mg. Afternoon 2 to 3 PM: Swanson Full Spectrum Lemon Balm 500mg. With dinner: the second Ashwagandha 300mg plus Thorne D3/K2 Liquid, 2 drops, which needs the fat in your meal to absorb. Bedtime 9:30 PM: Doctor's Best High Absorption Magnesium 400mg. IMPORTANT: vitamin K2 works against warfarin and other blood thinners. If you take one, do not start the D3/K2 until your prescriber clears it. These statements have not been evaluated by the Food and Drug Administration. These supplements are not intended to diagnose, treat, cure, or prevent any disease.",
+    supplement: "Still no stack today, that starts Day 7. Today is about the movement. If you ordered your supplements on Day 3, check that they are arriving in time.",
   },
   {
     day: 6,
@@ -86,7 +86,7 @@ const DAYS: DayContent[] = [
     action: "Morning minerals before coffee: 16oz water, a pinch of sea salt, half a lemon.",
     lesson: "Water alone does not hydrate cells. Moving water into a cell requires sodium, potassium, and magnesium, and without them water passes through without being absorbed. Your gut stays dry and transit slows. Magnesium matters twice over: it is what your gut muscles need to contract, and an estimated 68 percent of American women take in less than their body needs. Chronic stress depletes it further. That is why stress and bloating travel together.",
     movement: "Add a 10-minute walk after dinner on top of your post-lunch walk. Walking stimulates the migrating motor complex, the wave that sweeps your small intestine between meals.",
-    supplement: "Same stack. Add magnesium-rich foods: pumpkin seeds, dark leafy greens, black beans, lentils, avocado, almonds, or 70 percent dark chocolate.",
+    supplement: "Food sources today, nothing to buy: pumpkin seeds, dark leafy greens, black beans, lentils, avocado, almonds, or an ounce of 70 percent dark chocolate. The stack starts tomorrow if yours has arrived.",
   },
   {
     day: 7,
@@ -95,7 +95,7 @@ const DAYS: DayContent[] = [
     action: "Write down the one thing that shifted this week, even if it is small.",
     lesson: "Cortisol takes 5 to 7 days to respond to a protocol change, so today is your first honest read. Three signals: morning bloating, less means transit is improving. Energy after meals, steadier means your blood sugar response is flattening. Sleep quality, deeper means the magnesium and the evening routine are working. You do not need all three. One real shift is a data point worth trusting.",
     movement: "Full dead bug circuit: 4 sets of 10. No new movement today. Consistency is the variable this week, not intensity.",
-    supplement: "No new supplement. Stay on the stack and let it build. Most cortisol research shows meaningful change between weeks 4 and 8, so you are early by design.",
+    supplement: "If you ordered the stack and it has arrived, today is when you start. Morning with breakfast: Ashwagandha 300mg. Afternoon 2 to 3 PM: Lemon Balm 500mg. With dinner: the second Ashwagandha 300mg plus 2 drops of D3/K2, which needs the fat in your meal to absorb. Bedtime around 9:30 PM: Magnesium 400mg, 30 to 45 minutes before sleep. If the magnesium loosens your stools in the first few days, split it: 200mg with dinner and 200mg at bedtime. If your order has not come yet, start the day it does. Nothing is lost. These statements have not been evaluated by the Food and Drug Administration. These supplements are not intended to diagnose, treat, cure, or prevent any disease.",
   },
   {
     day: 8,
