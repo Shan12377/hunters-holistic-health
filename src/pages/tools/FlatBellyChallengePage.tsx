@@ -40,8 +40,8 @@ const DAYS: DayContent[] = [
     subtitle: "Why willpower is not the problem",
     action: "Take 3 slow breaths before every meal. In for 4, hold 4, out for 6.",
     lesson: "Cortisol, the primary stress hormone, directly triggers fat storage in the abdominal region. Glucocorticoid receptors are more densely packed in visceral fat than anywhere else in the body, so every cortisol spike signals those receptors to store. Cortisol also raises blood glucose, which raises insulin, and insulin is the switch that decides whether fat is stored or released. This is not a calorie problem. It is a hormonal environment problem.",
-    movement: "Dead Bug: lie on your back, extend the opposite arm and leg toward the floor without letting your lower back arch. Hold 3 seconds, switch sides. 3 sets of 8. This activates deep core stabilizers without spiking cortisol.",
-    supplement: "Start Jarrow Formulas KSM-66 Ashwagandha 300mg twice daily, morning with breakfast and evening with dinner, always with food. KSM-66 is the most-studied full-spectrum root extract for cortisol reduction, with randomized controlled trial evidence for reducing morning cortisol by 27-30%. Do not use during pregnancy. If you take thyroid medication, sedatives, or immunosuppressants, clear it with your prescriber first.",
+    movement: "Walk for 10 minutes after any meal today, ideally your biggest one. That is the whole movement ask this week. Post-meal walking clears blood glucose and lowers the insulin and cortisol response to eating, and it is achievable at every fitness level.",
+    supplement: "Nothing to buy today. The breathing is free and it is doing real work. Supplement education is introduced later in the challenge, once the daily habits are in place. Start with what costs nothing.",
   },
   {
     day: 2,
@@ -49,8 +49,8 @@ const DAYS: DayContent[] = [
     subtitle: "The macro that controls your hunger hormones",
     action: "Eat 30 grams of protein at your first meal, before anything else.",
     lesson: "Protein directly suppresses ghrelin, the hunger hormone, and stimulates the satiety hormones PYY and GLP-1. Eating protein first changes the hormonal conversation before you touch a carbohydrate. It also blunts the blood sugar rise of the rest of the meal, which means a smaller insulin response and less of the reactive crash that triggers an afternoon cortisol spike.",
-    movement: "Dead Bug progression: complete your 3 sets, then add a 5-minute walk immediately after your largest meal. Post-meal movement clears blood glucose and lowers the insulin response to eating.",
-    supplement: "Continue Ashwagandha 300mg twice daily. If you cannot reach 30g at breakfast from whole foods, add a quality whey or pea protein to your morning.",
+    movement: "Same 10-minute walk after your largest meal. Consistency is the only variable this week. Even 5 minutes matters more than nothing.",
+    supplement: "Still nothing to buy. Get your 30 grams from food first: eggs, Greek yogurt, cottage cheese, fish, or leftover chicken. If mornings are genuinely impossible, a quality protein powder is a reasonable bridge, but food first.",
   },
   {
     day: 3,
@@ -58,7 +58,7 @@ const DAYS: DayContent[] = [
     subtitle: "The cortisol rhythm starts at night",
     action: "Set a 9:30 PM alarm. Phone face down, in bed by 10:15.",
     lesson: "Cortisol follows a daily rhythm: highest about 30 to 45 minutes after waking, lowest around midnight. Poor sleep keeps it elevated in the evening when it should be falling, and that evening elevation drives overnight storage and worsens insulin resistance. Two nights of short sleep is enough to produce measurable insulin resistance in otherwise healthy adults. You cannot out-exercise chronic sleep loss.",
-    movement: "Restorative only: 20 minutes of yoga, stretching, or a slow walk. Nothing high intensity within 4 hours of sleep, because that cortisol needs time to clear before sleep can be restorative.",
+    movement: "Restorative only today: a 20-minute slow walk, or stretching. Nothing high intensity within 4 hours of sleep, because training raises core body temperature and falling asleep requires it to drop.",
     supplement: "Add Doctor's Best High Absorption Magnesium 400mg, two 200mg capsules, around 9:30 PM and 30 to 45 minutes before sleep. If it loosens your stools in the first few days, split it: 200mg with dinner and 200mg at bedtime.",
   },
   {
@@ -67,7 +67,7 @@ const DAYS: DayContent[] = [
     subtitle: "Foods that keep cortisol quietly elevated",
     action: "Swap one ingredient today. One, not your whole kitchen.",
     lesson: "Ultra-processed foods, industrial seed oils, refined sugar, and alcohol activate the same inflammatory pathways cortisol does. That creates a loop: stress raises cortisol, cortisol weakens the gut barrier, a leakier barrier raises systemic inflammation, and inflammation raises cortisol again. Removing seed oils and added sugars for even five days is enough for most people to notice less bloating and steadier afternoon energy.",
-    movement: "Dead bug, then add NEAT through the day: stand while working, walk between tasks, pace on calls. NEAT burns more daily energy than structured exercise for most people and does not spike cortisol.",
+    movement: "Your 10-minute post-meal walk, plus NEAT through the day: stand while working, walk between tasks, pace on calls. NEAT burns more daily energy than structured exercise for most people and it does not spike cortisol.",
     supplement: "Add Swanson Full Spectrum Lemon Balm 500mg between 2 and 3 PM with water. That window targets the secondary cortisol rise most women feel as the afternoon crash. Taken much later it can cause mild evening drowsiness.",
   },
   {
