@@ -431,7 +431,14 @@ export default function FlatBellyChallengePage() {
                 </span>
                 {/* Titles only. Showing each day's action here let people read
                     all 14 instructions at once and skip the daily rhythm. */}
-                <span className={styles.roadmapTitle}>{d.title}</span>
+                <span className={styles.roadmapTitle}>
+                  {d.title}
+                  {/* Days already open show their action. Locked days show the
+                      title only, so nobody can read ahead. */}
+                  {!isLocked(d.day) && (
+                    <span className={styles.roadmapAction}>{d.action}</span>
+                  )}
+                </span>
               </li>
             ))}
           </ol>
