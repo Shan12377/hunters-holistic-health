@@ -5,6 +5,22 @@ import styles from './FlatBellyChallengePage.module.css'
 
 const GATE_KEY = 'flat_belly_acknowledged'
 
+// Cohort 1 starts Monday 10 August 2026. Days unlock on the calendar, one per
+// day, so the tracker stays in step with the 7 AM email. Completing a day does
+// NOT unlock the next one, otherwise someone could read all 14 in one sitting
+// and the daily rhythm the whole challenge depends on disappears.
+const CHALLENGE_START = new Date(2026, 7, 10) // month is 0-indexed: 7 = August
+
+/** How many days are open today. Day 1 on the start date, Day 2 the next day. */
+function unlockedThroughToday(totalDays: number): number {
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const msPerDay = 24 * 60 * 60 * 1000
+  const elapsed = Math.floor(
+    (startOfDay(new Date()).getTime() - startOfDay(CHALLENGE_START).getTime()) / msPerDay
+  )
+  return Math.min(Math.max(elapsed + 1, 1), totalDays)
+}
+
 interface DayContent {
   day: number
   title: string
@@ -251,9 +267,9 @@ export default function FlatBellyChallengePage() {
 
   const dayContent = DAYS[currentDay - 1]
 
-  // One day at a time. Everything already logged stays open so people can go
-  // back and reread, but the next unlogged day is as far forward as they get.
-  const maxUnlocked = Math.min(completed.size + 1, DAYS.length)
+  // Unlocked by the calendar, not by how fast someone clicks. Missed days stay
+  // open so anyone who falls behind can catch up.
+  const maxUnlocked = unlockedThroughToday(DAYS.length)
   const isLocked = (day: number) => day > maxUnlocked
 
   if (!acknowledged) {
@@ -295,7 +311,7 @@ export default function FlatBellyChallengePage() {
               key={d.day}
               className={styles.dayBtn}
               disabled={locked}
-              title={locked ? `Day ${d.day} unlocks once you log Day ${maxUnlocked}` : `Day ${d.day}`}
+              title={locked ? `Day ${d.day} opens in ${d.day - maxUnlocked} day${d.day - maxUnlocked === 1 ? '' : 's'}` : `Day ${d.day}`}
               aria-label={locked ? `Day ${d.day}, locked` : `Day ${d.day}`}
               style={locked
                 ? { opacity: 0.35, cursor: 'not-allowed' }
@@ -420,8 +436,8 @@ export default function FlatBellyChallengePage() {
             ))}
           </ol>
           <p className={styles.contentText}>
-            One day unlocks at a time. Log today and tomorrow opens. You can always go back and
-            reread a day you have finished.
+            One day opens each morning, in step with your email. You cannot skip ahead, and you do
+            not need to. If you miss a day it stays open, so you can always go back and catch up.
           </p>
         </div>
       </div>
