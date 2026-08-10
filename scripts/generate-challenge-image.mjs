@@ -27,6 +27,38 @@ const SHARED_STYLE = [
 
 const IMAGES = [
   {
+    // AD HOOK OPTION A: shock contrast. Perfect food, visible stress.
+    // Sells "cortisol, not calories" in one glance without a word of text.
+    file: 'ad-hook-a.jpg',
+    size: '1024x1536',
+    prompt: `Editorial documentary photograph, Canon EOS R5, 85mm f/1.4 at f/2.0, ISO 500.
+An African American woman in her late forties sits at a bright kitchen table in the morning
+with a genuinely healthy breakfast in front of her: eggs, avocado, berries, a glass of water.
+She is not eating. Her elbow is on the table and her fingertips press against her temple,
+eyes closed for a second, jaw tight. Beside her plate a phone screen glows with notifications.
+The tension is in her shoulders and her brow. Everything about the food is right and
+everything about her body language says she is running on empty.
+She wears a simple charcoal top, natural hair pulled back. Clean morning light from a window
+on the left. Her face and hand fill the upper half of the frame. Uncluttered background so
+headline text can be added over the top edge later. Muted, slightly cool palette.
+${SHARED_STYLE}`,
+  },
+  {
+    // AD HOOK OPTION B: the 3 PM cortisol spike. Same idea, different moment.
+    file: 'ad-hook-b.jpg',
+    size: '1024x1536',
+    prompt: `Editorial documentary photograph, Sony A7R V, 50mm f/1.8 at f/2.0, ISO 640.
+An African American woman in her late forties stands in her kitchen in the mid afternoon,
+one hand flat on the counter, the other holding the bridge of her nose, eyes closed,
+shoulders drawn up. Late day light comes in low and warm through the window behind her.
+On the counter: a half finished glass of water and a closed laptop. The mood is the
+2 to 3 PM wall, the moment the day catches up with her body.
+She wears a soft olive blouse, natural hair loosely tied. Her face and upper body fill the
+upper two thirds of the frame, with clean uncluttered wall above her head for headline text.
+Warm but tired palette, shallow depth of field.
+${SHARED_STYLE}`,
+  },
+  {
     // 4:6 portrait, for Instagram, flyers, and the QR handout.
     // Emotional beat: shared resolve. Two people who have decided to stop guessing.
     file: 'flat-belly-social.jpg',

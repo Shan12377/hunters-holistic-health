@@ -31,6 +31,38 @@ W, H = 2550, 3300  # US Letter at 300 dpi
 M = 210            # margin, roughly 10 percent safe zone
 
 
+
+LOGO_SRC = os.path.join(os.path.dirname(__file__), '..', 'public', 'logo.png')
+
+
+def keyed_logo(height):
+    """
+    logo.png sits on a solid white plate, which shows as a box on linen.
+    Flatten onto white so transparent pixels become white, then flood fill inward
+    from the four corners. Only the outer plate touches the edges, so the light
+    areas inside the emblem survive.
+    """
+    im = Image.open(LOGO_SRC).convert('RGBA')
+    flat = Image.new('RGB', im.size, (255, 255, 255))
+    flat.paste(im, (0, 0), im)
+    w, h = flat.size
+    marker = (255, 0, 255)
+    probe = flat.copy()
+    for corner in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        ImageDraw.floodfill(probe, corner, marker, thresh=18)
+
+    out = flat.convert('RGBA')
+    pp, po = probe.load(), out.load()
+    for y in range(h):
+        for x in range(w):
+            if pp[x, y] == marker:
+                po[x, y] = (0, 0, 0, 0)
+
+    out = out.crop(out.getbbox())
+    ratio = height / out.height
+    return out.resize((int(out.width * ratio), height), Image.LANCZOS)
+
+
 def font(weight, size):
     return ImageFont.truetype(AVENIR, size, index=IDX[weight])
 
@@ -82,7 +114,11 @@ def main():
     d = ImageDraw.Draw(img)
     y = M
 
-    # ---- Title ----
+    # ---- Title, with the logo sitting top right ----
+    if os.path.exists(LOGO_SRC):
+        logo = keyed_logo(200)
+        img.paste(logo, (W - M - logo.width, y - 16), logo)
+
     d.text((M, y), '14-DAY FLAT BELLY CHALLENGE', font=font('bold', 78), fill=TEAL_PRIMARY)
     y += 108
     d.text((M, y), 'Daily Checklist', font=font('regular', 50), fill=TEAL_SECOND)
