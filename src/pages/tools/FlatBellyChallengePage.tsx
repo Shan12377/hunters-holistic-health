@@ -413,10 +413,9 @@ export default function FlatBellyChallengePage() {
                 <span className={styles.roadmapDay}>
                   {completed.has(d.day) ? '✓' : isLocked(d.day) ? '🔒' : '▸'} Day {d.day}
                 </span>
-                <span className={styles.roadmapTitle}>
-                  {d.title}
-                  <span className={styles.roadmapAction}>{d.action}</span>
-                </span>
+                {/* Titles only. Showing each day's action here let people read
+                    all 14 instructions at once and skip the daily rhythm. */}
+                <span className={styles.roadmapTitle}>{d.title}</span>
               </li>
             ))}
           </ol>
