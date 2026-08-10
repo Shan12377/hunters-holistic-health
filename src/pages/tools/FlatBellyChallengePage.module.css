@@ -362,3 +362,12 @@
 .roadmapTitle {
   color: rgba(242, 247, 246, 0.85);
 }
+
+/* The one action for each day, shown under its title in the roadmap so
+   people can see the whole commitment up front. */
+.roadmapAction {
+  display: block;
+  font-size: 0.82rem;
+  color: rgba(242, 247, 246, 0.55);
+  margin-top: 0.15rem;
+}
