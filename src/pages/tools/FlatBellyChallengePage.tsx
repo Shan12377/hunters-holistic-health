@@ -50,7 +50,7 @@ const DAYS: DayContent[] = [
     action: "Eat 30 grams of protein at your first meal, before anything else.",
     lesson: "Protein directly suppresses ghrelin, the hunger hormone, and stimulates the satiety hormones PYY and GLP-1. Eating protein first changes the hormonal conversation before you touch a carbohydrate. It also blunts the blood sugar rise of the rest of the meal, which means a smaller insulin response and less of the reactive crash that triggers an afternoon cortisol spike.",
     movement: "Same 10-minute walk after your largest meal. Consistency is the only variable this week. Even 5 minutes matters more than nothing.",
-    supplement: "Still nothing to buy. Get your 30 grams from food first: eggs, Greek yogurt, cottage cheese, fish, or leftover chicken. If mornings are genuinely impossible, a quality protein powder is a reasonable bridge, but food first.",
+    supplement: "Still nothing to buy. Get your 30 grams from food first: eggs, Greek yogurt, cottage cheese, fish, or leftover chicken. Dr. Hunter's own default, since people always ask, is canned tuna with egg whites and a side of beans. It varies, but it takes four minutes and clears 30 grams before the day starts. If mornings are genuinely impossible, a quality protein powder is a reasonable bridge, but food first.",
   },
   {
     day: 3,
