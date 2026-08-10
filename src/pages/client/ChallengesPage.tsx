@@ -18,8 +18,8 @@ const CHALLENGE_TOOLS = [
   {
     to: '/tools/flat-belly-reset',
     icon: '◉',
-    title: 'Flat Belly Reset',
-    desc: 'A cortisol-focused reset — not willpower. Combines ashwagandha, magnesium, and targeted movement to reduce belly inflammation.',
+    title: '14-Day Flat Belly Challenge',
+    desc: 'Learn the cortisol and insulin connection behind stubborn belly weight, with one action a day. 14 daily lessons covering nutrition, sleep, movement, and supplement education.',
   },
   {
     to: '/tools/nervous-system-reset',
@@ -301,7 +301,7 @@ export default function ChallengesPage() {
         <p className={styles.challengesSub}>Group challenges set by your educator. Check in daily to build your streak.</p>
       </div>
 
-      {/* Challenge program tools — always visible */}
+      {/* Challenge program tools, always visible */}
       <section>
         <div className={styles.challengesSectionLabel}>Challenge Programs</div>
         <div className={styles.challengesList}>
