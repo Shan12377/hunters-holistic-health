@@ -332,3 +332,33 @@
   .twoCol { grid-template-columns: 1fr; }
   .title { font-size: 1.25rem; }
 }
+
+/* Roadmap: shows all 14 day titles so people know what is coming, without
+   unlocking the content. Locked days show a lock instead of a day number. */
+.roadmap {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.roadmapItem {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border-subtle, #1b4e4f);
+  font-size: 0.92rem;
+}
+
+.roadmapDay {
+  color: var(--gold, #c8a74b);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.roadmapTitle {
+  color: rgba(242, 247, 246, 0.85);
+}

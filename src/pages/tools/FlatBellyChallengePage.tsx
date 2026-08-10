@@ -234,6 +234,11 @@ export default function FlatBellyChallengePage() {
 
   const dayContent = DAYS[currentDay - 1]
 
+  // One day at a time. Everything already logged stays open so people can go
+  // back and reread, but the next unlogged day is as far forward as they get.
+  const maxUnlocked = Math.min(completed.size + 1, DAYS.length)
+  const isLocked = (day: number) => day > maxUnlocked
+
   if (!acknowledged) {
     return (
       <div className={styles.gateOverlay}>
@@ -266,20 +271,32 @@ export default function FlatBellyChallengePage() {
       </div>
 
       <div className={styles.dayNav}>
-        {DAYS.map(d => (
-          <button
-            key={d.day}
-            className={styles.dayBtn}
-            style={d.day === currentDay
-              ? { borderColor: '#0B9E8E', background: '#0B9E8E', color: '#fff' }
-              : completed.has(d.day)
-              ? { borderColor: '#4be08a', color: '#4be08a' }
-              : {}}
-            onClick={() => { setCurrentDay(d.day); setTodayLogged(completed.has(d.day)) }}
-          >
-            {completed.has(d.day) ? '✓' : d.day}
-          </button>
-        ))}
+        {DAYS.map(d => {
+          const locked = isLocked(d.day)
+          return (
+            <button
+              key={d.day}
+              className={styles.dayBtn}
+              disabled={locked}
+              title={locked ? `Day ${d.day} unlocks once you log Day ${maxUnlocked}` : `Day ${d.day}`}
+              aria-label={locked ? `Day ${d.day}, locked` : `Day ${d.day}`}
+              style={locked
+                ? { opacity: 0.35, cursor: 'not-allowed' }
+                : d.day === currentDay
+                ? { borderColor: '#0B9E8E', background: '#0B9E8E', color: '#fff' }
+                : completed.has(d.day)
+                ? { borderColor: '#4be08a', color: '#4be08a' }
+                : {}}
+              onClick={() => {
+                if (locked) return
+                setCurrentDay(d.day)
+                setTodayLogged(completed.has(d.day))
+              }}
+            >
+              {locked ? '🔒' : completed.has(d.day) ? '✓' : d.day}
+            </button>
+          )
+        })}
       </div>
 
       <div className={styles.dayCard}>
@@ -330,17 +347,59 @@ export default function FlatBellyChallengePage() {
           {todayLogged && (
             <p className={styles.loggedNote}>
               Day {currentDay} complete.
-              {currentDay < 5 ? ` Come back tomorrow for Day ${currentDay + 1}.` : ''}
+              {currentDay < DAYS.length ? ` Come back tomorrow for Day ${currentDay + 1}.` : ''}
             </p>
           )}
         </form>
       </div>
 
-      {currentDay >= 5 && todayLogged && (
+      <div className={styles.contentCard}>
+        <div className={styles.contentSection}>
+          <div className={styles.contentLabel}>How To Videos</div>
+          <p className={styles.contentText}>
+            <strong>Measuring your waist</strong> (NHS, 1 minute):{' '}
+            <a href="https://www.youtube.com/watch?v=dwk8sVCKuio" target="_blank" rel="noopener noreferrer">
+              youtube.com/watch?v=dwk8sVCKuio
+            </a>
+            <br />
+            <strong>The dead bug, proper form</strong> (NASM):{' '}
+            <a href="https://www.youtube.com/watch?v=bxn9FBrt4-A" target="_blank" rel="noopener noreferrer">
+              youtube.com/watch?v=bxn9FBrt4-A
+            </a>
+            <br />
+            <strong>Dead bug for beginners</strong>, if the full version is too much:{' '}
+            <a href="https://www.youtube.com/watch?v=psOZS-sVDww" target="_blank" rel="noopener noreferrer">
+              youtube.com/watch?v=psOZS-sVDww
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.contentCard}>
+        <div className={styles.contentSection}>
+          <div className={styles.contentLabel}>The Next 14 Days</div>
+          <ol className={styles.roadmap}>
+            {DAYS.map(d => (
+              <li key={d.day} className={styles.roadmapItem}>
+                <span className={styles.roadmapDay}>
+                  {completed.has(d.day) ? '✓' : isLocked(d.day) ? '🔒' : '▸'} Day {d.day}
+                </span>
+                <span className={styles.roadmapTitle}>{d.title}</span>
+              </li>
+            ))}
+          </ol>
+          <p className={styles.contentText}>
+            One day unlocks at a time. Log today and tomorrow opens. You can always go back and
+            reread a day you have finished.
+          </p>
+        </div>
+      </div>
+
+      {currentDay >= DAYS.length && todayLogged && (
         <div className={styles.ctaCard}>
           <h2 className={styles.ctaTitle}>You finished the 14-Day Flat Belly Challenge.</h2>
           <p className={styles.ctaText}>
-            You now understand the cortisol-belly connection and have the three core supplements in your stack. The Foundation membership gives you the full 90-day metabolic protocol built around your specific pattern, including lab context, the complete ROOTS Framework, and direct access to Dr. Hunter's educator dashboard.
+            You now understand the cortisol-belly connection and have your full supplement stack. The Foundation membership gives you the full 90-day metabolic protocol built around your specific pattern, including lab context, the complete ROOTS Framework, and direct access to Dr. Hunter's educator dashboard.
           </p>
           <a
             href="https://www.huntersholistichealth.com/join"
