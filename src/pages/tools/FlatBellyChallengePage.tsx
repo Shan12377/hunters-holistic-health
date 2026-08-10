@@ -144,12 +144,12 @@ const DAYS: DayContent[] = [
   },
   {
     day: 13,
-    title: "The Hormone Everyone Is Injecting",
-    subtitle: "You already make GLP-1. Here is how to make more",
-    action: "Fiber or protein before the starch at every meal. Add one high-fiber food.",
-    lesson: "GLP-1 is the hormone the injectable medications work on. Your gut already makes it. It slows how fast food leaves your stomach, signals your brain that you are satisfied, and steadies your blood sugar. Three things raise your own, and you have been doing two of them for almost two weeks. First, fiber and the order you eat in. Fiber forms a mesh in your gut that slows everything behind it, so eating it before the starch means the whole meal enters your bloodstream more gently. That is why Day 2 was protein first: fiber and protein do the same job from different angles, and the rule underneath both is that starch goes last. Second, the 10 minute walk after your largest meal from Day 12. Third, apple cider vinegar before a meal. Most American women eat 12 to 15 grams of fiber a day. The target is 25 to 30.",
-    movement: "Same movement pattern. The post-meal walk from Day 12 is one of the three levers here, so keep it.",
-    supplement: "Not a supplement today, a habit. Vegetables or protein before the starch at every meal, then add one high-fiber food you are not already eating: lentils, black beans, raspberries, avocado, chia, artichoke, broccoli, or oats. Add it slowly, because going from 12 grams to 30 overnight will bloat you, which is the opposite of the point. Optional: one tablespoon of apple cider vinegar in a glass of water 10 to 15 minutes before your largest meal blunts the glucose rise that follows. Skip it if you have reflux or take a medication for it, and always dilute it.",
+    title: "Natural Weight Loss Hacks to Boost GLP-1",
+    subtitle: "The hormone your gut already makes",
+    action: "Vegetables or protein before the starch at every meal. Add one high-fiber food.",
+    lesson: "GLP-1 is a hormone your gut already makes. It slows how fast food leaves your stomach, signals your brain that you are satisfied, and steadies your blood sugar. Three everyday things raise your own, and you have been doing two of them for almost two weeks. First, fiber and the order you eat in. Fiber forms a mesh that slows everything behind it, so when vegetables or protein land first, the starch that follows enters your bloodstream gently instead of all at once. A smaller glucose rise means a smaller insulin response, and insulin is the switch from Day 8. This is why Day 2 was protein first: fiber and protein do the same job from different angles, and the rule underneath both is that starch goes last. Second, the 10 minute walk after your largest meal from Day 12. Third, diluted apple cider vinegar before a meal. Most American women eat 12 to 15 grams of fiber a day. The target is 25 to 30.",
+    movement: "Same movement pattern. The 10 minute walk after your largest meal from Day 12 works on the same mechanism, so keep it.",
+    supplement: "Not a supplement today, a habit. Vegetables or protein before the starch at every meal, then add one high-fiber food you are not already eating: lentils, black beans, raspberries, avocado, chia, artichoke, broccoli, or oats. Add it slowly, because going from 12 grams to 30 overnight will bloat you, which is the opposite of the point. Optional: one tablespoon of apple cider vinegar in a full glass of water 10 to 15 minutes before your largest meal blunts the glucose rise that follows. Always dilute it, and skip it if you have reflux or take a medication for it.",
   },
   {
     day: 14,

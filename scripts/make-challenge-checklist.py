@@ -72,7 +72,7 @@ DAYS = [
     'Why It Changed After 40',
     'Why You Wake Up Hungry',
     'The Post-Meal Walk and Your Trigger',
-    'The Hormone Everyone Is Injecting',
+    'Natural Weight Loss Hacks to Boost GLP-1',
     'What You Built',
 ]
 
