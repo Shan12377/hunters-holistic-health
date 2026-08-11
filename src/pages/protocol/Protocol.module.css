@@ -73,6 +73,18 @@
   margin: 0 0 1rem;
 }
 
+.productWarning {
+  background: rgba(224, 92, 92, 0.09);
+  border-left: 3px solid var(--error);
+  border-radius: 6px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0 0 1rem;
+}
+
 .productLink {
   display: inline-block;
   background: var(--teal);

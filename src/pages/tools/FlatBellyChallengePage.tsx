@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from './FlatBellyChallengePage.module.css'
@@ -356,6 +357,11 @@ export default function FlatBellyChallengePage() {
           <div className={styles.contentSection}>
             <div className={styles.contentLabel}>Supplement Focus</div>
             <p className={styles.contentText}>{dayContent.supplement}</p>
+            <p className={styles.contentText}>
+              <Link to="/flat-belly-supplements">
+                See the full stack, doses, and safety notes
+              </Link>
+            </p>
           </div>
         </div>
       </div>

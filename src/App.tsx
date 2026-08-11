@@ -72,6 +72,7 @@ const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
 const ParasiteCleanseProtocol = lazy(() => import('@/pages/protocol/ParasiteCleanseProtocol'))
 const SupplementCatalog = lazy(() => import('@/pages/protocol/SupplementCatalog'))
 const MetalDetoxProtocol = lazy(() => import('@/pages/protocol/MetalDetoxProtocol'))
+const FlatBellySupplements = lazy(() => import('@/pages/protocol/FlatBellySupplements'))
 const ProtocolPlanPage = lazy(() => import('@/pages/client/ProtocolPlanPage'))
 const ProtocolMatrixPage = lazy(() => import('@/pages/client/ProtocolMatrixPage'))
 const MetabolicToolsPage = lazy(() => import('@/pages/client/MetabolicToolsPage'))
@@ -218,6 +219,7 @@ export default function App() {
         <Route path="/protocol/parasite-cleanse" element={<ParasiteCleanseProtocol />} />
         <Route path="/supplements" element={<SupplementCatalog />} />
         <Route path="/protocol/metal-detox" element={<MetalDetoxProtocol />} />
+        <Route path="/flat-belly-supplements" element={<FlatBellySupplements />} />
         <Route path="/tools" element={<ToolsPage />} />
         <Route path="/bp-simulator" element={<BPSimulatorPage />} />
         <Route path="/tools/medication-nutrient-checker" element={<MedicationNutrientChecker />} />
