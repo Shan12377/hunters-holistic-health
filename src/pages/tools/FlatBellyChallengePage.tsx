@@ -6,6 +6,10 @@ import styles from './FlatBellyChallengePage.module.css'
 
 const GATE_KEY = 'flat_belly_acknowledged'
 
+// Used for the ?next= redirect so signing in returns here rather than dropping
+// people on the dashboard to find their own way back.
+const TRACKER_PATH = '/tools/flat-belly-reset'
+
 // Cohort 1 starts Monday 10 August 2026. Days unlock on the calendar, one per
 // day, so the tracker stays in step with the 7 AM email. Completing a day does
 // NOT unlock the next one, otherwise someone could read all 14 in one sitting
@@ -185,6 +189,10 @@ export default function FlatBellyChallengePage() {
   const [saving, setSaving] = useState(false)
   const [todayLogged, setTodayLogged] = useState(false)
   const [loading, setLoading] = useState(true)
+  // Drives the back link and the sign-in notice. This page is a public route
+  // outside the app layout, so it has no sidebar and, in the installed app, no
+  // browser back button either.
+  const [isSignedIn, setIsSignedIn] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -194,6 +202,7 @@ export default function FlatBellyChallengePage() {
         // for signed-out visitors and leave it stuck on "Loading your progress".
         const { data: { session } } = await supabase.auth.getSession()
         const user = session?.user
+        setIsSignedIn(!!user)
         if (!user) return
 
         const { data, error } = await supabase
@@ -297,6 +306,25 @@ export default function FlatBellyChallengePage() {
 
   return (
     <div className={styles.page}>
+
+      <Link to={isSignedIn ? '/app/dashboard' : '/'} className={styles.backLink}>
+        {isSignedIn ? 'Back to app' : 'Back to home'}
+      </Link>
+
+      {!isSignedIn && (
+        <div className={styles.signInNotice}>
+          <strong>Sign in to save your progress.</strong> You can read every day
+          without an account, but ticking the boxes only sticks if you are signed in.
+          <div className={styles.signInActions}>
+            <Link to={`/login?next=${encodeURIComponent(TRACKER_PATH)}`} className={styles.signInBtn}>
+              Sign in
+            </Link>
+            <Link to={`/signup?next=${encodeURIComponent(TRACKER_PATH)}`} className={styles.signInLink}>
+              Create a free account
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className={styles.header}>
         <p className={styles.badge}>14-Day Flat Belly Challenge</p>

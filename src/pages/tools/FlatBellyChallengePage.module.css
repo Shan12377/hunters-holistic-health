@@ -89,6 +89,64 @@
   margin: 0 auto;
 }
 
+/* This page sits outside the app layout, so it has no sidebar and, in the
+   installed PWA, no browser back button. Without this it is a dead end. */
+.backLink {
+  align-self: flex-start;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0.25rem 0;
+}
+
+.backLink:hover {
+  color: var(--gold);
+}
+
+/* Shown before anyone fills anything in, rather than a toast after they have
+   already lost a day's ticks. */
+.signInNotice {
+  background: rgba(200, 167, 75, 0.08);
+  border: 1px solid rgba(200, 167, 75, 0.28);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.signInNotice strong {
+  color: var(--text);
+}
+
+.signInActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.signInBtn {
+  background: var(--gold);
+  color: #0e1c1b;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 7px;
+  text-decoration: none;
+}
+
+.signInLink {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.signInLink:hover {
+  color: var(--gold);
+}
+
 .header {
   display: flex;
   flex-direction: column;

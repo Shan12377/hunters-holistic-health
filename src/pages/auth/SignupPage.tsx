@@ -1,12 +1,14 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { resolveNextPath } from '@/lib/authRedirect'
 import toast from 'react-hot-toast'
 import styles from './Auth.module.css'
 import shared from '../../styles/shared.module.css'
 
 export default function SignupPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [loading, setLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [form, setForm] = useState({
@@ -70,7 +72,7 @@ export default function SignupPage() {
       }).catch(() => {})
 
       toast.success("Account created! Welcome to Hunter's Holistic Health.")
-      navigate('/app/dashboard')
+      navigate(resolveNextPath(location.search))
     }
     setLoading(false)
   }
@@ -78,7 +80,7 @@ export default function SignupPage() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <Link to="/login" className={styles.backLink}>Back to sign in</Link>
+        <Link to={`/login${location.search}`} className={styles.backLink}>Back to sign in</Link>
         <div className={styles.logo}>
           <img src="/logo-mark.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
         </div>
@@ -153,7 +155,7 @@ export default function SignupPage() {
 
         <p className={styles.footer}>
           Already have an account?{' '}
-          <Link to="/login" className={styles.footerLink}>Sign In</Link>
+          <Link to={`/login${location.search}`} className={styles.footerLink}>Sign In</Link>
         </p>
       </div>
     </div>
