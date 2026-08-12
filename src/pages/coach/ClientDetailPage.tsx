@@ -664,7 +664,7 @@ function LabZoneEditor({ clientId }: { clientId: string }) {
 
         <div style={{ marginBottom: 10 }}>
           <label className={styles.cohortsFormLabel}>Functional Target (e.g. &gt;70 ng/mL)</label>
-          <input className={styles.cohortsInput} style={{ width: '100%' }} placeholder="Optional — shows under the zone bar" value={form.functional_target} onChange={e => setForm(f => ({ ...f, functional_target: e.target.value }))} />
+          <input className={styles.cohortsInput} style={{ width: '100%' }} placeholder="Optional, shows under the zone bar" value={form.functional_target} onChange={e => setForm(f => ({ ...f, functional_target: e.target.value }))} />
         </div>
 
         <div style={{ marginBottom: 10 }}>

@@ -170,9 +170,9 @@ export default function DailyLogPage() {
       <div className={styles.card}>
         <h3 className={styles.cardLabel}>Supplements</h3>
         <div className={styles.checklist}>
-          <CheckItem field="supplement_am_done"   label="AM Supplements Taken"        sublabel="Morning protocol — with breakfast or first meal" />
-          <CheckItem field="supplement_noon_done" label="Afternoon Supplements Taken" sublabel="Midday protocol — with lunch or a light snack" />
-          <CheckItem field="supplement_pm_done"   label="PM Supplements Taken"        sublabel="Evening protocol — with dinner or before bed" />
+          <CheckItem field="supplement_am_done"   label="AM Supplements Taken"        sublabel="Morning protocol, with breakfast or first meal" />
+          <CheckItem field="supplement_noon_done" label="Afternoon Supplements Taken" sublabel="Midday protocol, with lunch or a light snack" />
+          <CheckItem field="supplement_pm_done"   label="PM Supplements Taken"        sublabel="Evening protocol, with dinner or before bed" />
         </div>
       </div>
 
@@ -205,7 +205,7 @@ export default function DailyLogPage() {
               className={styles.slider}
             />
             <div className={styles.sliderValueWrap}>
-              <span className={styles.sliderValue}>{log.sleep_quality ?? '—'}</span>
+              <span className={styles.sliderValue}>{log.sleep_quality ?? ', '}</span>
               <span className={styles.sliderMax}>/5</span>
               <div className={styles.sliderLabel}>{log.sleep_quality ? SLEEP_QUALITY_LABELS[log.sleep_quality] : 'Tap to rate'}</div>
             </div>

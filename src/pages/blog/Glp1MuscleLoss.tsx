@@ -123,10 +123,10 @@ export default function Glp1MuscleLoss() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989–1002.</li>
-              <li>Linge J, Birkenfeld AL, Neeland IJ. Muscle mass and glucagon-like peptide-1 receptor agonists. <em>Circulation.</em> 2024;150(16):1288–1298.</li>
-              <li>Aronne LJ et al. Continued treatment with tirzepatide for maintenance of weight reduction (SURMOUNT-4). <em>JAMA.</em> 2024;331(1):38–48.</li>
-              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795–810.</li>
+              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989-1002.</li>
+              <li>Linge J, Birkenfeld AL, Neeland IJ. Muscle mass and glucagon-like peptide-1 receptor agonists. <em>Circulation.</em> 2024;150(16):1288-1298.</li>
+              <li>Aronne LJ et al. Continued treatment with tirzepatide for maintenance of weight reduction (SURMOUNT-4). <em>JAMA.</em> 2024;331(1):38-48.</li>
+              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795-810.</li>
               <li>Antonio J et al. Common questions and misconceptions about creatine supplementation. <em>J Int Soc Sports Nutr.</em> 2021;18(1):13.</li>
             </ol>
           </div>

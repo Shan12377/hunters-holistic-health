@@ -215,23 +215,23 @@ export default function SupplementTiming() {
               <div className={`${s.tbAccent} ${s.accWake}`} />
               <div className={s.tbIcon}>🌅</div>
               <div>
-                <div className={s.tbTitle}>Wake — Before Food (Empty Stomach)</div>
-                <div className={s.tbSub}>30–60 min before breakfast. Requires nothing in your stomach.</div>
+                <div className={s.tbTitle}>Wake, Before Food (Empty Stomach)</div>
+                <div className={s.tbSub}>30 to 60 min before breakfast. Requires nothing in your stomach.</div>
               </div>
             </div>
             <div>
               <div className={s.tbRow}>
                 <div>
                   <div className={s.tbName}>Thyroid Medication (Levothyroxine / Synthroid / Armour)</div>
-                  <div className={s.tbNote}>Empty stomach, 30–60 min before food or coffee. Calcium, iron, magnesium, zinc, fiber, and antacids all block absorption. Separate by 4 hours.</div>
-                  <div className={s.tbWhy}>Absorption drops roughly 10–20% with food; specific interactions like calcium, iron, and PPIs can reduce it 20–40%.</div>
+                  <div className={s.tbNote}>Empty stomach, 30 to 60 min before food or coffee. Calcium, iron, magnesium, zinc, fiber, and antacids all block absorption. Separate by 4 hours.</div>
+                  <div className={s.tbWhy}>Absorption drops roughly 10 to 20% with food; specific interactions like calcium, iron, and PPIs can reduce it 20 to 40%.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pCritical}`}>Critical</div>
               </div>
               <div className={s.tbRow}>
                 <div>
                   <div className={s.tbName}>Iron (standard ferrous forms)</div>
-                  <div className={s.tbNote}>Empty stomach + Vitamin C. Pair with 250–500mg Vitamin C to increase non-heme iron absorption. If nausea is a problem, switch to ferrous bisglycinate (can be taken with food).</div>
+                  <div className={s.tbNote}>Empty stomach + Vitamin C. Pair with 250 to 500mg Vitamin C to increase non-heme iron absorption. If nausea is a problem, switch to ferrous bisglycinate (can be taken with food).</div>
                   <div className={s.tbWhy}>Acid environment + Vitamin C converts Fe3+ to the more absorbable Fe2+ form. Food and calcium block this conversion.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pImportant}`}>Important</div>
@@ -252,7 +252,7 @@ export default function SupplementTiming() {
               <div className={`${s.tbAccent} ${s.accMorning}`} />
               <div className={s.tbIcon}>☕</div>
               <div>
-                <div className={s.tbTitle}>Breakfast — Morning With Food</div>
+                <div className={s.tbTitle}>Breakfast, Morning With Food</div>
                 <div className={s.tbSub}>Take with food to buffer absorption. Energizing nutrients belong in the morning.</div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function SupplementTiming() {
             <div>
               <div className={s.tbRow}>
                 <div>
-                  <div className={s.tbName}>Vitamin D3 + K2 (MK-7) — Take Together</div>
+                  <div className={s.tbName}>Vitamin D3 + K2 (MK-7), Take Together</div>
                   <div className={s.tbNote}>Always paired. D3 without K2 increases calcium absorption without ensuring it goes to bone. Take with meal containing eggs, avocado, olive oil, salmon, or nuts.</div>
                   <div className={s.tbWhy}>Vitamin D3 requires fat for micelle formation and lymphatic absorption. Studies show D3 absorption increases up to 32% with a fatty meal versus a fat-free meal.</div>
                 </div>
@@ -344,7 +344,7 @@ export default function SupplementTiming() {
               </div>
               <div className={s.tbRow}>
                 <div>
-                  <div className={s.tbName}>Vitamin E (Full Spectrum — all tocopherols + tocotrienols)</div>
+                  <div className={s.tbName}>Vitamin E (Full Spectrum, all tocopherols + tocotrienols)</div>
                   <div className={s.tbNote}>With fat-containing meal. Must be full-spectrum. Isolated alpha-tocopherol blocks absorption of the other 7 Vitamin E forms. The SELECT trial found synthetic alpha-tocopherol supplementation associated with increased prostate cancer risk in men.</div>
                   <div className={s.tbWhy}>Alpha-tocopherol competes with and displaces gamma-tocopherol. Gamma and delta-tocopherol have important independent anti-inflammatory roles.</div>
                 </div>
@@ -374,7 +374,7 @@ export default function SupplementTiming() {
               <div className={`${s.tbAccent} ${s.accEvening}`} />
               <div className={s.tbIcon}>🌙</div>
               <div>
-                <div className={s.tbTitle}>Evening — Before Bed</div>
+                <div className={s.tbTitle}>Evening, Before Bed</div>
                 <div className={s.tbSub}>Calming, parasympathetic nutrients. Let the body downshift for sleep and recovery.</div>
               </div>
             </div>
@@ -382,14 +382,14 @@ export default function SupplementTiming() {
               <div className={s.tbRow}>
                 <div>
                   <div className={s.tbName}>Magnesium Glycinate or L-Threonate</div>
-                  <div className={s.tbNote}>1–2 hours before bed. Glycinate for sleep and muscle relaxation. L-threonate for cognitive support and brain magnesium levels. Do not pair with caffeine at any point in the day.</div>
+                  <div className={s.tbNote}>1 to 2 hours before bed. Glycinate for sleep and muscle relaxation. L-threonate for cognitive support and brain magnesium levels. Do not pair with caffeine at any point in the day.</div>
                   <div className={s.tbWhy}>Magnesium activates GABA receptors. It also regulates melatonin synthesis. Taking it in the morning with stimulants works directly against what the mineral does.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pCritical}`}>Critical</div>
               </div>
               <div className={s.tbRow}>
                 <div>
-                  <div className={s.tbName}>Calcium (if supplementing — use food first)</div>
+                  <div className={s.tbName}>Calcium (if supplementing. Use food first)</div>
                   <div className={s.tbNote}>With dinner, if taking. Split total calcium dose across 2 meals. Absorption maxes out at ~500mg per sitting. Separate from iron by 2+ hours, from levothyroxine by 4+ hours. K2 must be present (with D3).</div>
                   <div className={s.tbWhy}>Some evidence supports calcium absorption being higher in the evening. Splitting doses also reduces the cardiovascular concerns raised in meta-analyses of large single calcium doses.</div>
                 </div>
@@ -397,16 +397,16 @@ export default function SupplementTiming() {
               </div>
               <div className={s.tbRow}>
                 <div>
-                  <div className={s.tbName}>Melatonin (0.5–1mg, not 5–10mg)</div>
-                  <div className={s.tbNote}>30–60 min before target sleep time, in a darkened room. Most people dramatically overdose melatonin. Pharmacological doses (5–10mg) can disrupt sleep architecture. 0.5–1mg is typically as effective or more effective.</div>
+                  <div className={s.tbName}>Melatonin (0.5 to 1mg, not 5 to 10mg)</div>
+                  <div className={s.tbNote}>30 to 60 min before target sleep time, in a darkened room. Most people dramatically overdose melatonin. Pharmacological doses (5 to 10mg) can disrupt sleep architecture. 0.5 to 1mg is typically as effective or more effective.</div>
                   <div className={s.tbWhy}>Melatonin is a circadian signal, not a sedative. More melatonin past the signaling threshold does not produce proportionally more sleep. It produces longer grogginess the next morning.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pImportant}`}>Important</div>
               </div>
               <div className={s.tbRow}>
                 <div>
-                  <div className={s.tbName}>L-Theanine (100–200mg)</div>
-                  <div className={s.tbNote}>Evening or 30–60 min before a stressful event. Can be combined with magnesium glycinate for a calming evening protocol. Does not cause drowsiness on its own.</div>
+                  <div className={s.tbName}>L-Theanine (100 to 200mg)</div>
+                  <div className={s.tbNote}>Evening or 30 to 60 min before a stressful event. Can be combined with magnesium glycinate for a calming evening protocol. Does not cause drowsiness on its own.</div>
                   <div className={s.tbWhy}>L-theanine promotes alpha brain wave activity by increasing GABA, serotonin, and dopamine while reducing cortisol response. Synergistic with magnesium's GABA-modulatory effects.</div>
                 </div>
                 <div className={`${s.tbPriority} ${s.pOptional}`}>Optional</div>
@@ -427,7 +427,7 @@ export default function SupplementTiming() {
               <div className={`${s.tbAccent} ${s.accSpecial}`} />
               <div className={s.tbIcon}>🔄</div>
               <div>
-                <div className={s.tbTitle}>Any Time With Food — Flexible</div>
+                <div className={s.tbTitle}>Any Time With Food, Flexible</div>
                 <div className={s.tbSub}>Consistency matters more than specific timing for these. Pick one time and stick to it.</div>
               </div>
             </div>
@@ -481,7 +481,7 @@ export default function SupplementTiming() {
             <tbody>
               <tr>
                 <td className={s.pair}>Iron + Calcium</td>
-                <td>Calcium competes with iron at the DMT1 intestinal transporter, reducing iron absorption by 50–60% at supplemental doses</td>
+                <td>Calcium competes with iron at the DMT1 intestinal transporter, reducing iron absorption by 50 to 60% at supplemental doses</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>Separate by 2+ hours minimum. Take iron with Vitamin C instead.</td>
               </tr>
@@ -489,11 +489,11 @@ export default function SupplementTiming() {
                 <td className={s.pair}>Iron + Coffee or Tea</td>
                 <td>Polyphenols (chlorogenic acid in coffee, tannins in tea) bind iron and prevent absorption. Effect begins within minutes.</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
-                <td className={s.solution}>Separate by 1–2 hours. Iron before coffee is fine; coffee before iron is not.</td>
+                <td className={s.solution}>Separate by 1 to 2 hours. Iron before coffee is fine; coffee before iron is not.</td>
               </tr>
               <tr>
                 <td className={s.pair}>Iron + Thyroid Medication</td>
-                <td>Iron chelates levothyroxine and substantially reduces thyroid hormone absorption, documented to reduce T4 by 20–40%</td>
+                <td>Iron chelates levothyroxine and substantially reduces thyroid hormone absorption, documented to reduce T4 by 20 to 40%</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>Separate thyroid medication and iron by at least 4 hours.</td>
               </tr>
@@ -523,7 +523,7 @@ export default function SupplementTiming() {
               </tr>
               <tr>
                 <td className={s.pair}>Calcium + Thyroid Medication</td>
-                <td>Calcium directly binds levothyroxine in the GI tract, reducing absorption by 20–40%</td>
+                <td>Calcium directly binds levothyroxine in the GI tract, reducing absorption by 20 to 40%</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
                 <td className={s.solution}>4+ hours between thyroid medication and any calcium supplement or calcium-rich food.</td>
               </tr>
@@ -536,14 +536,14 @@ export default function SupplementTiming() {
               <tr>
                 <td className={s.pair}>B Vitamins (evening)</td>
                 <td>In sensitive individuals, B vitamins stimulate neurotransmitter and energy production that delays sleep onset and affects dream intensity</td>
-                <td><span className={`${s.severity} ${s.sevLow}`}>Low–Moderate</span></td>
+                <td><span className={`${s.severity} ${s.sevLow}`}>Low, Moderate</span></td>
                 <td className={s.solution}>Move B complex to morning with breakfast. P5P (B6) specifically causes vivid dreams when taken at night in some people.</td>
               </tr>
               <tr>
                 <td className={s.pair}>Probiotics + Antibiotics (together)</td>
                 <td>Antibiotics kill most probiotic strains before they can colonize. Most strains taken simultaneously with an antibiotic won't survive the exposure. Spore-based strains (Saccharomyces boulardii) have better antibiotic resistance.</td>
                 <td><span className={`${s.severity} ${s.sevHigh}`}>Critical</span></td>
-                <td className={s.solution}>Separate probiotics and antibiotics by at least 2–3 hours. Take probiotics at midday if antibiotic is morning and evening.</td>
+                <td className={s.solution}>Separate probiotics and antibiotics by at least 2 to 3 hours. Take probiotics at midday if antibiotic is morning and evening.</td>
               </tr>
               <tr>
                 <td className={s.pair}>Isolated Alpha-Tocopherol (synthetic Vitamin E)</td>
@@ -571,13 +571,13 @@ export default function SupplementTiming() {
         <hr className={s.hr} />
         <div id="boosters" />
         <div className={s.sLabel}>What Helps What</div>
-        <div className={s.secTitle}>Absorption Boosters — Strategic Pairings</div>
+        <div className={s.secTitle}>Absorption Boosters, Strategic Pairings</div>
         <p className={s.secSub}>These combinations actively improve each other's absorption or function. Build them into your routine deliberately.</p>
 
         <div className={s.boosterGrid}>
           <div className={s.boosterCard}>
             <div className={s.bcCombo}>Iron <span className={s.bcPlus}>+</span> Vitamin C</div>
-            <div className={s.bcResult}>↑ Absorption 2–3x</div>
+            <div className={s.bcResult}>↑ Absorption 2 to 3x</div>
             <div className={s.bcWhy}>Vitamin C reduces Fe3+ to the more absorbable Fe2+ form and keeps it soluble in the small intestine. Take together, not separately.</div>
           </div>
           <div className={s.boosterCard}>
@@ -625,23 +625,23 @@ export default function SupplementTiming() {
           <p className={s.specialNote}>Levothyroxine is one of the most absorption-sensitive medications prescribed. More supplements block it than almost any other drug. If you take thyroid medication, this schedule is not optional. It is clinical management.</p>
           <div className={s.schedTimeline}>
             <div className={s.schedRow}>
-              <div className={s.schedTime}>Wake-up<br />6:00–7:00am</div>
+              <div className={s.schedTime}>Wake-up<br />6:00 to 7:00am</div>
               <div>
                 <div className={s.schedItem}><strong>Thyroid medication, empty stomach, with water only</strong></div>
-                <div className={s.schedWarn}>No coffee, no supplements, no food for 30–60 minutes minimum</div>
+                <div className={s.schedWarn}>No coffee, no supplements, no food for 30 to 60 minutes minimum</div>
               </div>
             </div>
             <div className={s.schedRow}>
-              <div className={s.schedTime}>Breakfast<br />7:00–8:00am</div>
+              <div className={s.schedTime}>Breakfast<br />7:00 to 8:00am</div>
               <div>
-                <div className={s.schedItem}><strong>B vitamins, Vitamin C, methylfolate, collagen</strong> — these are safe with thyroid medication at 4+ hours apart</div>
+                <div className={s.schedItem}><strong>B vitamins, Vitamin C, methylfolate, collagen</strong>. These are safe with thyroid medication at 4+ hours apart</div>
                 <div className={s.schedWarn}>No calcium, iron, magnesium, or zinc yet</div>
               </div>
             </div>
             <div className={s.schedRow}>
-              <div className={s.schedTime}>Lunch<br />12:00–1:00pm</div>
+              <div className={s.schedTime}>Lunch<br />12:00 to 1:00pm</div>
               <div>
-                <div className={s.schedItem}><strong>Zinc, CoQ10, Vitamin D3 + K2, fish oil, selenium</strong> — 4+ hours after thyroid medication, safely separated</div>
+                <div className={s.schedItem}><strong>Zinc, CoQ10, Vitamin D3 + K2, fish oil, selenium</strong>, 4+ hours after thyroid medication, safely separated</div>
               </div>
             </div>
             <div className={s.schedRow}>
@@ -671,30 +671,30 @@ export default function SupplementTiming() {
         <hr className={s.hr} />
         <div id="doses" />
         <div className={s.doseNote}>
-          <h3 className={s.doseNoteH3}>Common Starting Doses — General Reference Only</h3>
+          <h3 className={s.doseNoteH3}>Common Starting Doses, General Reference Only</h3>
           <p className={s.doseNoteIntro}>These are population-level starting reference points, not individualized prescriptions. Lab testing before supplementing is the only way to dose accurately. Always discuss with your prescriber or pharmacist before starting or adjusting supplements.</p>
           <div className={s.doseGrid}>
             <div className={s.doseCard}>
               <div className={s.doseName}>Vitamin D3</div>
-              <div className={s.doseAmount}>1,000–4,000</div>
+              <div className={s.doseAmount}>1,000 to 4,000</div>
               <div className={s.doseUnit}>IU/day for maintenance</div>
-              <div className={s.doseCardNote}>Test first. Higher doses only for confirmed deficiency under clinical guidance. Endocrine Society considers &gt;30 ng/mL sufficient; target varies by clinician. Always with K2 MK-7 (100–200mcg).</div>
+              <div className={s.doseCardNote}>Test first. Higher doses only for confirmed deficiency under clinical guidance. Endocrine Society considers &gt;30 ng/mL sufficient; target varies by clinician. Always with K2 MK-7 (100 to 200mcg).</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Magnesium Glycinate</div>
-              <div className={s.doseAmount}>200–400</div>
+              <div className={s.doseAmount}>200 to 400</div>
               <div className={s.doseUnit}>mg/day elemental magnesium</div>
               <div className={s.doseCardNote}>Evening. Start low. Loose stool indicates too much.</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>CoQ10 (Ubiquinol)</div>
-              <div className={s.doseAmount}>100–300</div>
+              <div className={s.doseAmount}>100 to 300</div>
               <div className={s.doseUnit}>mg/day</div>
               <div className={s.doseCardNote}>200mg for statin users. With largest fatty meal. Split 2x for higher doses.</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Omega-3 Fish Oil</div>
-              <div className={s.doseAmount}>2–4</div>
+              <div className={s.doseAmount}>2 to 4</div>
               <div className={s.doseUnit}>g EPA+DHA/day (not total oil)</div>
               <div className={s.doseCardNote}>Read the EPA+DHA content on the label, not the total fish oil amount. Most 1g capsules contain only 300mg EPA+DHA.</div>
             </div>
@@ -706,19 +706,19 @@ export default function SupplementTiming() {
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Zinc Bisglycinate</div>
-              <div className={s.doseAmount}>15–30</div>
+              <div className={s.doseAmount}>15 to 30</div>
               <div className={s.doseUnit}>mg/day elemental zinc</div>
               <div className={s.doseCardNote}>Do not exceed 40mg/day long-term without monitoring copper. Test both together.</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Melatonin</div>
-              <div className={s.doseAmount}>0.5–1</div>
-              <div className={s.doseUnit}>mg, 30–60 min before sleep</div>
-              <div className={s.doseCardNote}>Most people overdose at 5–10mg. Physiological dose is 0.1–0.3mg. Start at 0.5mg.</div>
+              <div className={s.doseAmount}>0.5 to 1</div>
+              <div className={s.doseUnit}>mg, 30 to 60 min before sleep</div>
+              <div className={s.doseCardNote}>Most people overdose at 5 to 10mg. Physiological dose is 0.1 to 0.3mg. Start at 0.5mg.</div>
             </div>
             <div className={s.doseCard}>
               <div className={s.doseName}>Methylfolate</div>
-              <div className={s.doseAmount}>400–1,000</div>
+              <div className={s.doseAmount}>400 to 1,000</div>
               <div className={s.doseUnit}>mcg/day</div>
               <div className={s.doseCardNote}>400mcg standard. Higher doses (up to 1mg) sometimes used with confirmed homozygous MTHFR variants under clinical guidance. Routine MTHFR screening is not recommended as standard of care.</div>
             </div>

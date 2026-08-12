@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import styles from './MensHormonePreview.module.css'
 
 const TIME_BLOCKS = [
-  { time: '6–9 AM', label: 'Peak Testosterone', color: '#1D5FA0', note: 'Highest drive, strength, and focus. Best window for hard training and big decisions.' },
-  { time: '9 AM–12 PM', label: 'Cortisol Plateau', color: '#0E6060', note: 'Cortisol supports alertness and problem-solving. Ideal for complex work and meetings.' },
-  { time: '12–3 PM', label: 'Transition Zone', color: '#2A6E45', note: 'Both hormones begin their afternoon decline. Lighter activity, meals, and learning work well here.' },
-  { time: '3–8 PM', label: 'Second Wind', color: '#8B5F0A', note: 'Body temperature peaks. Coordination and reaction time are at their best. Evening training window.' },
-  { time: '8 PM–6 AM', label: 'Recovery Mode', color: '#3E2E8E', note: 'Testosterone rebuilds during deep sleep. Late cortisol spikes from screens or stress block this process.' },
+  { time: '6 to 9 AM', label: 'Peak Testosterone', color: '#1D5FA0', note: 'Highest drive, strength, and focus. Best window for hard training and big decisions.' },
+  { time: '9 AM to 12 PM', label: 'Cortisol Plateau', color: '#0E6060', note: 'Cortisol supports alertness and problem-solving. Ideal for complex work and meetings.' },
+  { time: '12 to 3 PM', label: 'Transition Zone', color: '#2A6E45', note: 'Both hormones begin their afternoon decline. Lighter activity, meals, and learning work well here.' },
+  { time: '3 to 8 PM', label: 'Second Wind', color: '#8B5F0A', note: 'Body temperature peaks. Coordination and reaction time are at their best. Evening training window.' },
+  { time: '8 PM to 6 AM', label: 'Recovery Mode', color: '#3E2E8E', note: 'Testosterone rebuilds during deep sleep. Late cortisol spikes from screens or stress block this process.' },
 ]
 
 export default function MensHormonePreview() {

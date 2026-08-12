@@ -30,7 +30,7 @@ interface ClientSummary {
   projected_score: number
   last_week_grade: string
   at_risk: boolean
-  supp_adherence: number    // 0–100, or -1 if no active supplements
+  supp_adherence: number    // 0 to 100, or -1 if no active supplements
   low_adherence: boolean
 }
 

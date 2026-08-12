@@ -259,7 +259,7 @@ export default function CommunicationsStudioPage() {
             </div>
           )}
 
-          {/* Channel selector, hint, email type — hidden in objection mode */}
+          {/* Channel selector, hint, email type, hidden in objection mode */}
           {mode !== 'objection' && (
             <>
               <div className={s.channelRow}>
@@ -286,7 +286,7 @@ export default function CommunicationsStudioPage() {
                     onChange={e => setEmailType(e.target.value)}
                   >
                     {EMAIL_TYPES.map(t => (
-                      <option key={t.id} value={t.id}>{t.label} — {t.desc}</option>
+                      <option key={t.id} value={t.id}>{t.label}, {t.desc}</option>
                     ))}
                   </select>
                 </div>
@@ -308,7 +308,7 @@ export default function CommunicationsStudioPage() {
             </div>
           )}
 
-          {/* Topic, audience, contact — hidden in objection mode */}
+          {/* Topic, audience, contact, hidden in objection mode */}
           {mode !== 'objection' && (
             <>
               <div className={s.field}>

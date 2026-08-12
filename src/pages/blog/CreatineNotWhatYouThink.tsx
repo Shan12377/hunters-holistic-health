@@ -5,7 +5,7 @@ import NewsletterEmbed from '@/components/ui/NewsletterEmbed'
 const META_TITLE = 'Creatine: Not What You Think It Is | Hunter\'s Holistic Health'
 const META_DESC = 'Creatine is not a gym supplement. It is a cellular energy supplement. Here is what the research actually shows, and what I now recommend.'
 
-// ponytail: injecting meta tags directly — no react-helmet installed, this is the only blog post
+// ponytail: injecting meta tags directly, no react-helmet installed. This is the only blog post
 function MetaTags() {
   if (typeof document === 'undefined') return null
   document.title = META_TITLE

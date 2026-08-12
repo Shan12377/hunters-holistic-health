@@ -102,7 +102,7 @@ export default function VaultPage() {
           <div className={styles.vaultEarnedBody}>
             <strong>You earned Level 2.</strong> The Quick Wins Vault is your key. Join Foundation and your level and all your points carry over the moment you do.
           </div>
-          <a href="/#pricing" className={styles.snapshotUpgradeCta}>Start Foundation — $37/mo</a>
+          <a href="/#pricing" className={styles.snapshotUpgradeCta}>Start Foundation, $37/mo</a>
         </div>
       )}
 
@@ -173,7 +173,7 @@ export default function VaultPage() {
               <div className={styles.vaultModuleTitle}>{mod.title}</div>
               <div className={styles.vaultModuleHook}>{mod.hook}</div>
               {gate2Open && (
-                <div className={styles.vaultModuleComingSoon}>Pending clinical review — releasing soon</div>
+                <div className={styles.vaultModuleComingSoon}>Pending clinical review, releasing soon</div>
               )}
             </div>
           ))}

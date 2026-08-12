@@ -239,7 +239,7 @@ export const HORMONE_BALANCE_TEMPLATE: ProtocolData = {
             { id: 't-s1', text: 'Morning sunlight exposure within 30 min of waking (anchors cortisol and circadian rhythm)', dose: '5-10 min outside', timing: 'Daily AM', checked: false, shared: false },
             { id: 't-s2', text: 'Daily breathwork or meditation (10 min minimum)', timing: 'Daily', checked: false, shared: false },
             { id: 't-s3', text: 'Caffeine cutoff by noon (cortisol and adenosine interaction)', timing: 'Daily', checked: false, shared: false },
-            { id: 't-s4', text: 'Identify and reduce or remove primary stressors (relationship, work, financial) — this is non-negotiable for HPA axis recovery', timing: 'Ongoing', checked: false, shared: false },
+            { id: 't-s4', text: 'Identify and reduce or remove primary stressors (relationship, work, financial). This is non-negotiable for HPA axis recovery', timing: 'Ongoing', checked: false, shared: false },
           ],
         },
       ],

@@ -44,7 +44,7 @@ export default function MealGuardPage() {
   const [result, setResult] = useState<Awaited<ReturnType<typeof checkMealGuard>> | null>(null)
   const [logs, setLogs] = useState<MealLog[]>([])
   const [saving, setSaving] = useState(false)
-  // Photo lives in component memory only — never uploaded or stored.
+  // Photo lives in component memory only, never uploaded or stored.
   const [photo, setPhoto] = useState<string | null>(null)
   const [nutrition, setNutrition] = useState<NutritionData | null>(null)
   const [lookingUp, setLookingUp] = useState(false)
@@ -438,7 +438,7 @@ export default function MealGuardPage() {
               <div className={styles.nutritionPanel}>
                 <div className={styles.nutritionPanelLabel}>
                   <Flame size={13} color="var(--gold)" />
-                  Nutritional data ({nutrition.source === 'local' ? 'curated database' : 'USDA FoodData Central'}) — estimates only
+                  Nutritional data ({nutrition.source === 'local' ? 'curated database' : 'USDA FoodData Central'}), estimates only
                 </div>
                 <div className={styles.nutritionMacros}>
                   <div className={styles.nutritionMacro}>

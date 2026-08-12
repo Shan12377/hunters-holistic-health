@@ -82,7 +82,7 @@ export default function CrmCalendarPage() {
                 <div className={s.apptCardContact}>{contactName(a)}</div>
                 <div className={s.apptCardTime}>
                   {format(new Date(a.start_at), 'EEEE, MMM d · h:mm a')}
-                  {' – '}
+                  {', '}
                   {format(new Date(a.end_at), 'h:mm a')}
                 </div>
                 <span className={`${s.apptStatus} ${STATUS_CLASS[a.status] ?? ''}`}>{a.status.replace('_', ' ')}</span>

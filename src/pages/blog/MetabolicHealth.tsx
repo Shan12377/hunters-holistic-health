@@ -123,10 +123,10 @@ export default function MetabolicHealth() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Araújo J et al. Prevalence of optimal metabolic health in American adults: NHANES 2009–2016. <em>Metab Syndr Relat Disord.</em> 2019;17(1):46–52.</li>
-              <li>Matthews DR et al. Homeostasis model assessment: insulin resistance and beta-cell function. <em>Diabetologia.</em> 1985;28(7):412–419.</li>
-              <li>Shan Z et al. Sleep duration and risk of type 2 diabetes: a meta-analysis of prospective studies. <em>Diabetes Care.</em> 2015;38(3):529–537.</li>
-              <li>Richter EA, Hargreaves M. Exercise, GLUT4, and skeletal muscle glucose uptake. <em>Physiol Rev.</em> 2013;93(3):993–1017.</li>
+              <li>Araújo J et al. Prevalence of optimal metabolic health in American adults: NHANES 2009 to 2016. <em>Metab Syndr Relat Disord.</em> 2019;17(1):46-52.</li>
+              <li>Matthews DR et al. Homeostasis model assessment: insulin resistance and beta-cell function. <em>Diabetologia.</em> 1985;28(7):412-419.</li>
+              <li>Shan Z et al. Sleep duration and risk of type 2 diabetes: a meta-analysis of prospective studies. <em>Diabetes Care.</em> 2015;38(3):529-537.</li>
+              <li>Richter EA, Hargreaves M. Exercise, GLUT4, and skeletal muscle glucose uptake. <em>Physiol Rev.</em> 2013;93(3):993-1017.</li>
             </ol>
           </div>
 

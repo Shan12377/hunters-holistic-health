@@ -7,7 +7,7 @@ export interface SupplementBreakdown {
 }
 
 export interface SupplementAdherenceResult {
-  overall: number    // 0–100
+  overall: number    // 0 to 100
   streak: number     // consecutive days with at least one supplement taken
   breakdown: SupplementBreakdown[]
 }

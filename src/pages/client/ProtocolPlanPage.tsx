@@ -250,7 +250,7 @@ export default function ProtocolPlanPage() {
   }
 
   function handleDownloadGrocery() {
-    const lines: string[] = ["Hunter's Holistic Health — Shopping List", new Date().toLocaleDateString(), '']
+    const lines: string[] = ["Hunter's Holistic Health, Shopping List", new Date().toLocaleDateString(), '']
     CATEGORY_ORDER.filter(cat => groceryListByCategory[cat]?.length > 0).forEach(cat => {
       lines.push(cat.toUpperCase())
       groceryListByCategory[cat].forEach(item => lines.push(`  [ ]  ${item}`))

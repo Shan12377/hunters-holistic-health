@@ -871,7 +871,7 @@ export default function RootCauseQuiz() {
                 href="https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003"
                 className={s.ctaBtn}
               >
-                Start Foundation Plan — $37/mo →
+                Start Foundation Plan, $37/mo →
               </a>
               <div className={s.ctaSub}>
                 Cancel anytime. &nbsp;·&nbsp; <Link to="/join" style={{ color: 'inherit', textDecoration: 'underline' }}>Have questions first?</Link>

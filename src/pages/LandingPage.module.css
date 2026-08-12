@@ -1345,7 +1345,7 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Who This Is For — Persona Cards */
+/* Who This Is For, Persona Cards */
 .personaGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2444,7 +2444,7 @@
 }
 
 /* ============================================================
-   START HERE — CONDITION NAVIGATOR
+   START HERE, CONDITION NAVIGATOR
    ============================================================ */
 
 .startHereSection {

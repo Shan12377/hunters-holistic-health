@@ -377,7 +377,7 @@ export default function HealthHubPage() {
       <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#0B9E8E', flexShrink: 0 }} />
       <div style={{ flex: 1, fontSize: 12, color: 'hsl(181,20%,68%)' }}>
         <div style={{ color: '#fff', fontSize: 13, fontWeight: 600, marginBottom: 1 }}>
-          Next: Dr. Hunter — {fmtDate(nextSession.session_date)} at {fmtTime(nextSession.session_time)}
+          Next: Dr. Hunter, {fmtDate(nextSession.session_date)} at {fmtTime(nextSession.session_time)}
         </div>
         {nextSession.session_type}
       </div>
@@ -499,7 +499,7 @@ export default function HealthHubPage() {
                   <div style={CSS.sl}>Blood pressure trend</div>
                   <div style={{ ...CSS.card, padding: '13px 14px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontSize: 12, color: 'hsl(181,15%,48%)' }}>Systolic — last {bpHistory.length} readings</span>
+                      <span style={{ fontSize: 12, color: 'hsl(181,15%,48%)' }}>Systolic, last {bpHistory.length} readings</span>
                       {bpTrend && <span style={{ fontSize: 12, color: bpTrend === 'Improving' ? '#4caf7d' : bpTrend === 'Stable' ? '#f59e0b' : '#e05c5c' }}>{bpTrend}</span>}
                     </div>
                     <BPSparkline readings={bpHistory} />
@@ -547,7 +547,7 @@ export default function HealthHubPage() {
                     {tealAccent()}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, fontWeight: 700, color: '#0B9E8E', textTransform: 'uppercase', letterSpacing: '.7px', marginBottom: 7 }}>
                       <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#0B9E8E' }} />
-                      Pattern — last 7 days
+                      Pattern, last 7 days
                     </div>
                     <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 700, marginBottom: 6, color: '#fff' }}>Most frequent: {pattern}</div>
                     <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55 }}>Dr. Hunter will see this pattern in your session prep report.</div>
@@ -604,7 +604,7 @@ export default function HealthHubPage() {
                 {tealAccent()}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 7 }}>
                   <span style={{ fontSize: 18 }}>🔬</span>
-                  <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#fff' }}>Lab Insights — Dr. Hunter's Interpretation</div>
+                  <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 700, color: '#fff' }}>Lab Insights, Dr. Hunter's Interpretation</div>
                 </div>
                 <div style={{ fontSize: 12, color: 'hsl(181,20%,68%)', lineHeight: 1.55, marginBottom: 10 }}>
                   Raw lab values stay in the secure clinical workspace. What you see here is Dr. Hunter's zone assessment: where each marker sits and what it means for your wellness.
@@ -662,7 +662,7 @@ export default function HealthHubPage() {
                       <div key={z.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px 0', borderBottom: i < priorities.length - 1 ? '1px solid #1b4e4f' : 'none' }}>
                         <div style={{ width: 22, height: 22, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 800, background: z.priority === 1 ? 'rgba(224,92,92,.2)' : 'rgba(245,158,11,.18)', color: z.priority === 1 ? '#f08080' : '#f59e0b', marginTop: 1 }}>{z.priority}</div>
                         <div>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 2 }}>{z.marker_label} — {zoneLabel(z.zone)}</div>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 2 }}>{z.marker_label}, {zoneLabel(z.zone)}</div>
                           <div style={{ fontSize: 11, color: 'hsl(181,15%,48%)', lineHeight: 1.45 }}>{z.educator_note ? z.educator_note.split('.')[0] + '.' : ''}</div>
                         </div>
                       </div>
@@ -797,8 +797,8 @@ export default function HealthHubPage() {
               <div style={{ ...CSS.card, padding: '13px 14px' }}>
                 <div style={{ ...CSS.lbl, marginBottom: 9 }}>When do you need this reviewed?</div>
                 {[
-                  { value: 'standard', label: nextSession ? `Before my next session (${fmtDate(nextSession.session_date)})` : 'Before my next session', sub: 'Standard — reviewed within 3 business days' },
-                  { value: 'urgent',   label: 'As soon as possible', sub: 'Urgent — Dr. Hunter will reach out within 1 business day' },
+                  { value: 'standard', label: nextSession ? `Before my next session (${fmtDate(nextSession.session_date)})` : 'Before my next session', sub: 'Standard, reviewed within 3 business days' },
+                  { value: 'urgent',   label: 'As soon as possible', sub: 'Urgent, Dr. Hunter will reach out within 1 business day' },
                 ].map(opt => (
                   <div key={opt.value} onClick={() => setReviewForm(f => ({ ...f, urgency: opt.value }))} style={radioOpt(reviewForm.urgency === opt.value)}>
                     {radioDot(reviewForm.urgency === opt.value)}

@@ -99,7 +99,7 @@ export default function Glp1Supplements() {
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHsupplementtrackingtemplate" target="_blank" rel="noopener noreferrer">Supplement Tracking Template</a>
-            {' '}— a simple log to track what you take, when you take it, and how you feel. Works for any supplement protocol.
+            {' '}, a simple log to track what you take, when you take it, and how you feel. Works for any supplement protocol.
           </div>
 
           <hr className={styles.rule} />
@@ -113,9 +113,9 @@ export default function Glp1Supplements() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Yin J et al. Efficacy of berberine in patients with type 2 diabetes mellitus. <em>Metabolism.</em> 2008;57(5):712–717.</li>
+              <li>Yin J et al. Efficacy of berberine in patients with type 2 diabetes mellitus. <em>Metabolism.</em> 2008;57(5):712-717.</li>
               <li>Antonio J et al. Common questions and misconceptions about creatine supplementation. <em>J Int Soc Sports Nutr.</em> 2021;18(1):13.</li>
-              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass and function. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795–810.</li>
+              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass and function. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795-810.</li>
               <li>NIH Office of Dietary Supplements. Chromium and Vitamin B12 Fact Sheets. ods.od.nih.gov.</li>
             </ol>
           </div>

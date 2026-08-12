@@ -102,7 +102,7 @@ export default function Glp1Comparison() {
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHProviderAppointmentScripts" target="_blank" rel="noopener noreferrer">Provider Appointment Scripts</a>
-            {' '}— use these to walk into your appointment prepared to discuss which option fits your profile, history, and goals.
+            {' '}. Use these to walk into your appointment prepared to discuss which option fits your profile, history, and goals.
           </div>
 
           <hr className={styles.rule} />
@@ -116,9 +116,9 @@ export default function Glp1Comparison() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989–1002.</li>
-              <li>Jastreboff AM et al. Tirzepatide once weekly for the treatment of obesity (SURMOUNT-1). <em>N Engl J Med.</em> 2022;387(3):205–216.</li>
-              <li>Aronne LJ et al. Tirzepatide as compared with semaglutide for the treatment of obesity (SURMOUNT-5). <em>N Engl J Med.</em> 2025;393(1):26–36.</li>
+              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989-1002.</li>
+              <li>Jastreboff AM et al. Tirzepatide once weekly for the treatment of obesity (SURMOUNT-1). <em>N Engl J Med.</em> 2022;387(3):205-216.</li>
+              <li>Aronne LJ et al. Tirzepatide as compared with semaglutide for the treatment of obesity (SURMOUNT-5). <em>N Engl J Med.</em> 2025;393(1):26-36.</li>
               <li>FDA. Approves first treatment for obstructive sleep apnea (Zepbound). December 20, 2024.</li>
               <li>Novo Nordisk. FDA approves Wegovy HD (semaglutide 7.2 mg). March 19, 2026.</li>
               <li>Novo Nordisk. FDA approves Wegovy pill (oral semaglutide 25 mg). December 22, 2025.</li>

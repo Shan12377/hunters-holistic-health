@@ -135,7 +135,7 @@ const TIERS: Tier[] = [
         description: 'Keep full Program access for 6 months after your Overhaul completes.',
       },
     ],
-    timeToWin: 'Week 1 — you leave your first session with the plan in hand',
+    timeToWin: 'Week 1. You leave your first session with the plan in hand',
     cta: 'Apply for the Overhaul',
     scarcity: 'Limited to 3 active clients. A real waitlist forms when full.',
     oneTime: true,
@@ -163,7 +163,7 @@ const TIERS: Tier[] = [
         description: 'Your first session builds your complete educational roadmap. You leave session one with the plan.',
       },
     ],
-    timeToWin: 'Session 1 — your roadmap is complete before you leave',
+    timeToWin: 'Session 1. Your roadmap is complete before you leave',
     valueAnchor: 'A single 1-on-1 functional medicine session elsewhere runs $250. You get two per month here, plus everything in The Program.',
     cta: 'Apply for VIP',
     scarcity: 'By application only.',
@@ -242,7 +242,7 @@ const TIERS: Tier[] = [
         description: 'Your tool results map to the exact ROOTS lessons to begin with.',
       },
     ],
-    timeToWin: 'Day 1 — the Pattern Map tells you exactly where to start',
+    timeToWin: 'Day 1. The Pattern Map tells you exactly where to start',
     cta: 'Start My Foundation',
     riskReversal: 'Cancel in two clicks from Settings. No emails, no phone calls, no guilt.',
   },
@@ -513,7 +513,7 @@ export default function LandingPage() {
             <span className={styles.heroRing3} aria-hidden="true" />
             <img
               src="/S.HProfessionalBusinessPic.jpg"
-              alt="Dr. Shallanda Hunter, CFNMP, PharmD — Functional Medicine Educator"
+              alt="Dr. Shallanda Hunter, CFNMP, PharmD, Functional Medicine Educator"
               className={styles.heroDrPhoto}
             />
           </div>
@@ -559,7 +559,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Start Here — condition navigator */}
+      {/* Start Here, condition navigator */}
       <section className={styles.startHereSection}>
         <div className={styles.sectionKicker}>Start Here</div>
         <h2 className={styles.startHereTitle}>What brought you here today?</h2>
@@ -633,7 +633,7 @@ export default function LandingPage() {
           ))}
         </div>
 
-        {/* BP Zone Check — simple landing version; full simulator at /bp-simulator */}
+        {/* BP Zone Check, simple landing version; full simulator at /bp-simulator */}
         {toolTab === 'bp' && (
           <div className={styles.toolPanel}>
             <p className={styles.toolDesc}>Enter your resting blood pressure numbers for an educational zone reading based on AHA/ACC 2017 guidelines. Not a diagnosis.</p>

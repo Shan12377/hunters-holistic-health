@@ -108,9 +108,9 @@ export default function Glp1FoodCulture() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989–1002.</li>
-              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795–810.</li>
-              <li>Araújo J et al. Prevalence of optimal metabolic health in American adults: NHANES 2009–2016. <em>Metab Syndr Relat Disord.</em> 2019;17(1):46–52.</li>
+              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989-1002.</li>
+              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795-810.</li>
+              <li>Araújo J et al. Prevalence of optimal metabolic health in American adults: NHANES 2009 to 2016. <em>Metab Syndr Relat Disord.</em> 2019;17(1):46-52.</li>
             </ol>
           </div>
 

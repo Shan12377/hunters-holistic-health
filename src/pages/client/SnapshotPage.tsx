@@ -133,7 +133,7 @@ export default function SnapshotPage() {
         <p className={styles.snapshotSub}>Everything you have been tracking, in one place.</p>
       </div>
 
-      {/* HERO ROW — 3 score cards */}
+      {/* HERO ROW, 3 score cards */}
       <div className={styles.snapshotHeroRow}>
 
         {/* Consistency Score */}
@@ -240,7 +240,7 @@ export default function SnapshotPage() {
                 <div className={styles.snapshotHeroStats}>
                   <div className={styles.snapshotHeroStat}>
                     <span className={styles.snapshotHeroStatLabel}>Last workout</span>
-                    <span className={styles.snapshotHeroStatNum} style={{ fontSize: '0.9rem' }}>{lastWorkout ? fmtDate(lastWorkout) : '—'}</span>
+                    <span className={styles.snapshotHeroStatNum} style={{ fontSize: '0.9rem' }}>{lastWorkout ? fmtDate(lastWorkout) : ', '}</span>
                   </div>
                   <div className={styles.snapshotHeroStat}>
                     <span className={styles.snapshotHeroStatLabel}>Goal</span>
@@ -259,7 +259,7 @@ export default function SnapshotPage() {
         </div>
       </div>
 
-      {/* SECOND ROW — Blood Sugar + Weight + Supplements */}
+      {/* SECOND ROW, Blood Sugar + Weight + Supplements */}
       <div className={styles.snapshotMidRow}>
 
         {/* Blood Sugar */}
@@ -345,7 +345,7 @@ export default function SnapshotPage() {
           <div className={styles.snapshotUpgradeBody}>
             <strong>You are building your picture.</strong> Foundation membership unlocks trend charts, the Weekly Grade report, and the full ROOTS curriculum so you can understand what your numbers are telling you.
           </div>
-          <a href="/#pricing" className={styles.snapshotUpgradeCta}>See Foundation — $37/mo</a>
+          <a href="/#pricing" className={styles.snapshotUpgradeCta}>See Foundation, $37/mo</a>
         </div>
       )}
 

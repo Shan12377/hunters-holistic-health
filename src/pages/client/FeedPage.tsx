@@ -324,7 +324,7 @@ export default function FeedPage() {
     } else {
       const { error } = await supabase.from('feed_likes').insert({ post_id: post.id, user_id: userId })
       if (error) {
-        // Unique violation — already liked; revert optimistic update
+        // Unique violation, already liked; revert optimistic update
         setPosts(p => p.map(x => x.id === post.id ? { ...x, likes: post.likes, user_liked: true } : x))
       } else {
         await supabase.from('feed_posts').update({ likes: post.likes + 1 }).eq('id', post.id)
@@ -807,7 +807,7 @@ export default function FeedPage() {
               <li>✓ Full ROOTS curriculum, tracking suite, and Report Card</li>
             </ul>
             <a href="https://huntersholistichealth.com/#pricing" className={styles.lobbyModalCta}>
-              Start My Foundation — $37/mo
+              Start My Foundation, $37/mo
             </a>
             <button className={styles.lobbyModalDismiss} onClick={() => setLobbyModalOpen(false)}>
               Stay in the Lobby

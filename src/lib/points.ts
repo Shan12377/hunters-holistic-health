@@ -45,7 +45,7 @@ export function getLevelInfo(totalPoints: number): LevelInfo {
 }
 
 // Returns true if points were newly awarded, false if already awarded or on error.
-// Points are awarded server-side via /api/award-points — the server verifies the
+// Points are awarded server-side via /api/award-points, the server verifies the
 // event is real and derives the user id from the JWT, ignoring the passed userId.
 export async function awardPoints(
   _userId: string,

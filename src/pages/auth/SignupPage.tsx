@@ -64,7 +64,7 @@ export default function SignupPage() {
     }
 
     if (data.user) {
-      // Fire-and-forget: enroll in Beehiiv 7-day email course (silent fail — never block signup)
+      // Fire-and-forget: enroll in Beehiiv 7-day email course (silent fail, never block signup)
       fetch('/api/beehiiv-subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

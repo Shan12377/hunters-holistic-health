@@ -30,12 +30,12 @@ function ParasiteMetaTags() {
 const phases = [
   {
     phase: 'Phase 0: Open Drainage',
-    weeks: 'Weeks 1–2',
+    weeks: 'Weeks 1 to 2',
     note: 'Start these two weeks before any antiparasitic herbs begin. The liver and glutathione system must be primed before die-off toxins start moving.',
     products: [
       {
         name: 'Thorne Milk Thistle Phytosome',
-        dose: '1 capsule daily with food. The phytosome form delivers silymarin at 4–10x better absorption than standard milk thistle. Protects and pre-loads the liver before parasite die-off begins.',
+        dose: '1 capsule daily with food. The phytosome form delivers silymarin at 4 to 10x better absorption than standard milk thistle. Protects and pre-loads the liver before parasite die-off begins.',
         link: 'https://amzn.to/4vrgov0',
       },
       {
@@ -47,7 +47,7 @@ const phases = [
   },
   {
     phase: 'Phase 1: Kill Phase',
-    weeks: 'Weeks 3–10',
+    weeks: 'Weeks 3 to 10',
     note: 'Two 3-week kill cycles with rest weeks at Week 6 and Week 10. During rest weeks, stop Biocidin, Wormwood, Cloves, and Mimosa Pudica. Continue G.I. Detox+, S. boulardii, Milk Thistle, and NAC.',
     products: [
       {
@@ -89,12 +89,12 @@ const phases = [
   },
   {
     phase: 'Phase 2: Gut Healing (Optional Additions)',
-    weeks: 'Weeks 11–14',
+    weeks: 'Weeks 11 to 14',
     note: 'Stop all antiparasitics. The kill phase is done. These three products repair the intestinal damage parasites left behind and recolonize the terrain.',
     products: [
       {
         name: 'Thorne L-Glutamine Powder',
-        dose: '5–10g powder on an empty stomach each morning. Mix in water or a smoothie. L-Glutamine is the primary fuel for enterocytes, the cells that line and rebuild the intestinal wall. Parasites punch holes in tight junctions as they die; this is what closes them.',
+        dose: '5 to 10g powder on an empty stomach each morning. Mix in water or a smoothie. L-Glutamine is the primary fuel for enterocytes, the cells that line and rebuild the intestinal wall. Parasites punch holes in tight junctions as they die; this is what closes them.',
         link: 'https://amzn.to/450hwLr',
       },
       {

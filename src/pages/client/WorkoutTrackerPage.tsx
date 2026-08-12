@@ -334,11 +334,11 @@ export default function WorkoutTrackerPage() {
 
   function lastSetLabel(exerciseId: string, setNum: number): string {
     const s = lastSets[exerciseId]?.find(s => s.set_number === setNum)
-    if (!s) return '—'
+    if (!s) return ', '
     if (s.reps && s.weight_lbs) return `${s.reps} @ ${s.weight_lbs}`
     if (s.reps) return `${s.reps} reps`
     if (s.completed) return 'done'
-    return '—'
+    return ', '
   }
 
   const isComplete = (exerciseId: string) =>
@@ -503,7 +503,7 @@ export default function WorkoutTrackerPage() {
                                     className={styles.wkSetInput}
                                     defaultValue={currentSet?.reps ?? ''}
                                     onBlur={e => updateSetValue(ex.id, setNum, 'reps', e.target.value)}
-                                    placeholder="—"
+                                    placeholder=", "
                                     min={1}
                                     inputMode="numeric"
                                   />
@@ -512,7 +512,7 @@ export default function WorkoutTrackerPage() {
                                     className={styles.wkSetInput}
                                     defaultValue={currentSet?.weight_lbs ?? ''}
                                     onBlur={e => updateSetValue(ex.id, setNum, 'weight_lbs', e.target.value)}
-                                    placeholder="—"
+                                    placeholder=", "
                                     min={0}
                                     step={2.5}
                                     inputMode="decimal"
@@ -618,7 +618,7 @@ export default function WorkoutTrackerPage() {
                                 className={styles.wkSetInput}
                                 defaultValue={currentSet?.reps ?? ''}
                                 onBlur={e => updateSetValue(ex.id, setNum, 'reps', e.target.value)}
-                                placeholder="—"
+                                placeholder=", "
                                 min={1}
                                 inputMode="numeric"
                               />
@@ -627,7 +627,7 @@ export default function WorkoutTrackerPage() {
                                 className={styles.wkSetInput}
                                 defaultValue={currentSet?.weight_lbs ?? ''}
                                 onBlur={e => updateSetValue(ex.id, setNum, 'weight_lbs', e.target.value)}
-                                placeholder="—"
+                                placeholder=", "
                                 min={0}
                                 step={2.5}
                                 inputMode="decimal"

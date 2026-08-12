@@ -134,7 +134,7 @@ export default function ProtocolBuilder({ clientId, protocolType: initialType, s
           {pillar && (
             <div className={styles.content}>
               <div className={styles.pillarHeader}>
-                <h3 className={styles.pillarTitle}>{pillar.letter} — {pillar.title}</h3>
+                <h3 className={styles.pillarTitle}>{pillar.letter}, {pillar.title}</h3>
                 <p className={styles.pillarSubtitle}>{pillar.subtitle}</p>
               </div>
 

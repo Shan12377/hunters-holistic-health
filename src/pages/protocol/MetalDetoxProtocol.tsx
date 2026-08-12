@@ -15,7 +15,7 @@ type Phase = { phase: string; subtitle: string; products: Product[] }
 
 const PHASES: Phase[] = [
   {
-    phase: 'Phase 1 — Halt and Drain',
+    phase: 'Phase 1, Halt and Drain',
     subtitle: 'Mineral saturation and foundational support.',
     products: [
       {
@@ -65,7 +65,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    phase: 'Phase 2 — Catch and Trap',
+    phase: 'Phase 2, Catch and Trap',
     subtitle: 'Gut-based binding to intercept metals before reabsorption.',
     products: [
       {
@@ -85,7 +85,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    phase: 'Phase 3 — Excrete',
+    phase: 'Phase 3, Excrete',
     subtitle: 'Mobilization support once the foundational work is in place.',
     products: [
       {
@@ -103,7 +103,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    phase: 'Advanced Support — Deep Tissue',
+    phase: 'Advanced Support, Deep Tissue',
     subtitle: 'Used at a specific stage within a structured protocol. Not a standalone supplement. Sequencing matters.',
     products: [
       {
@@ -116,7 +116,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    phase: 'Cardiovascular Support — Ongoing',
+    phase: 'Cardiovascular Support, Ongoing',
     subtitle: 'Foundational support for healthy blood flow and vascular health throughout the protocol and beyond.',
     products: [
       {

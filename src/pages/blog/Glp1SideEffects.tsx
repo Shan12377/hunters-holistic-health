@@ -119,12 +119,12 @@ export default function Glp1SideEffects() {
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHProviderAppointmentScripts" target="_blank" rel="noopener noreferrer">Provider Appointment Scripts</a>
-            {' '}— word-for-word prompts for talking to your provider about side effects, dose adjustments, and what to monitor.
+            {' '}, word-for-word prompts for talking to your provider about side effects, dose adjustments, and what to monitor.
           </div>
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHlabrequestsheet" target="_blank" rel="noopener noreferrer">Lab Request Reference Sheet</a>
-            {' '}— the functional markers to track while on a GLP-1 medication, beyond the standard panel.
+            {' '}, the functional markers to track while on a GLP-1 medication, beyond the standard panel.
           </div>
 
           <hr className={styles.rule} />
@@ -139,8 +139,8 @@ export default function Glp1SideEffects() {
             <p><strong>References:</strong></p>
             <ol>
               <li>Wegovy (semaglutide) prescribing information. Novo Nordisk. Updated 2026.</li>
-              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989–1002.</li>
-              <li>Wharton S et al. Managing the gastrointestinal side effects of GLP-1 receptor agonists in obesity. <em>Postgrad Med.</em> 2022;134(1):14–19.</li>
+              <li>Wilding JPH et al. Once-weekly semaglutide in adults with overweight or obesity (STEP 1). <em>N Engl J Med.</em> 2021;384(11):989-1002.</li>
+              <li>Wharton S et al. Managing the gastrointestinal side effects of GLP-1 receptor agonists in obesity. <em>Postgrad Med.</em> 2022;134(1):14-19.</li>
             </ol>
           </div>
 

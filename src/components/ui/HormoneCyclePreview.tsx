@@ -497,7 +497,7 @@ export default function HormoneCyclePreview() {
 
         {/* RIGHT */}
         <div>
-          {/* Phase timeline — always free (shows day range visually) */}
+          {/* Phase timeline, always free (shows day range visually) */}
           <div style={s.tlCard}>
             <div style={s.sectionLbl}>Cycle Phase Timeline</div>
             <div style={s.tlBar}>

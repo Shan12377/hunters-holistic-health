@@ -23,7 +23,7 @@
  *     - Wellness goal text ONLY if no clinical language is present (see sanitizeGoalText)
  *
  * Each function transforms raw data into a de-identified string summary.
- * Pass the returned strings — never raw numbers or names — to any AI API call.
+ * Pass the returned strings, never raw numbers or names, to any AI API call.
  */
 
 import {
@@ -129,7 +129,7 @@ export function sanitizeBPReadings(
 
 /**
  * Returns trend direction from a sequence of BP readings (oldest first).
- * "improving", "worsening", or "stable" — no numbers involved.
+ * "improving", "worsening", or "stable", no numbers involved.
  */
 export function sanitizeBPTrend(
   readings: { systolic: number; diastolic: number; logged_at: string }[]
@@ -212,7 +212,7 @@ export function sanitizeBSTrend(
 
 /**
  * Converts supplement data into a de-identified educational summary.
- * Supplement names are kept (they are not PHI on their own — "Vitamin D"
+ * Supplement names are kept (they are not PHI on their own, "Vitamin D"
  * does not identify a person). But adherence percentages replace raw log counts.
  */
 export function sanitizeSupplementSummary(
@@ -256,7 +256,7 @@ interface DailyLogSlice {
 
 /**
  * Converts a set of daily log entries into a de-identified behavioral summary.
- * Steps, water, and energy remain as averages — these are lifestyle metrics,
+ * Steps, water, and energy remain as averages. These are lifestyle metrics,
  * not clinical measurements, and contain no identifying information.
  */
 export function sanitizeDailyLogSummary(
@@ -310,7 +310,7 @@ export function sanitizeDailyLogSummary(
  * Food names, wellness goal text, and dietary preferences are safe to send
  * as long as no name, user_id, email, or clinical measurement is included.
  *
- * This is a guard, not a transformer — it returns the cleaned payload
+ * This is a guard, not a transformer. It returns the cleaned payload
  * and a `safe` flag. If `safe` is false, block the API call.
  */
 export function sanitizeMealGuardPayload(payload: {

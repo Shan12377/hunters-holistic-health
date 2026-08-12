@@ -129,11 +129,11 @@ export default function Glp1WeightRegain() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Wilding JPH et al. Weight regain and cardiometabolic effects after withdrawal of semaglutide: the STEP 1 trial extension. <em>Diabetes Obes Metab.</em> 2022;24(8):1553–1564.</li>
-              <li>Rubino D et al. Effect of continued weekly subcutaneous semaglutide vs placebo on weight loss maintenance (STEP 4). <em>JAMA.</em> 2021;325(14):1414–1425.</li>
-              <li>Aronne LJ et al. Continued treatment with tirzepatide for maintenance of weight reduction (SURMOUNT-4). <em>JAMA.</em> 2024;331(1):38–48.</li>
-              <li>Müller MJ, Bosy-Westphal A. Adaptive thermogenesis with weight loss in humans. <em>Obesity.</em> 2013;21(2):218–228.</li>
-              <li>Sumithran P et al. Long-term persistence of hormonal adaptations to weight loss. <em>N Engl J Med.</em> 2011;365(17):1597–1604.</li>
+              <li>Wilding JPH et al. Weight regain and cardiometabolic effects after withdrawal of semaglutide: the STEP 1 trial extension. <em>Diabetes Obes Metab.</em> 2022;24(8):1553-1564.</li>
+              <li>Rubino D et al. Effect of continued weekly subcutaneous semaglutide vs placebo on weight loss maintenance (STEP 4). <em>JAMA.</em> 2021;325(14):1414-1425.</li>
+              <li>Aronne LJ et al. Continued treatment with tirzepatide for maintenance of weight reduction (SURMOUNT-4). <em>JAMA.</em> 2024;331(1):38-48.</li>
+              <li>Müller MJ, Bosy-Westphal A. Adaptive thermogenesis with weight loss in humans. <em>Obesity.</em> 2013;21(2):218-228.</li>
+              <li>Sumithran P et al. Long-term persistence of hormonal adaptations to weight loss. <em>N Engl J Med.</em> 2011;365(17):1597-1604.</li>
             </ol>
           </div>
 

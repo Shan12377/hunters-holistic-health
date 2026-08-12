@@ -33,7 +33,7 @@ function MetaTags() {
 
 const GROCERY = [
   { cat: 'Protein', items: 'Wild salmon, sardines, pasture-raised eggs', why: 'Omega-3s + complete amino acids for metabolic repair' },
-  { cat: 'Leafy Green', items: 'Spinach, kale', why: 'Folate, magnesium, and non-heme iron — pair with citrus to boost absorption 300%' },
+  { cat: 'Leafy Green', items: 'Spinach, kale', why: 'Folate, magnesium, and non-heme iron. Pair with citrus to boost absorption 300%' },
   { cat: 'Cruciferous', items: 'Broccoli, cauliflower', why: 'Sulforaphane supports detox pathways and insulin sensitivity' },
   { cat: 'Healthy Fat', items: 'Avocado, olive oil (EVOO)', why: 'Monounsaturated fats support cardiovascular and hormone function' },
   { cat: 'Spice', items: 'Turmeric, black pepper, ginger', why: 'Curcumin bioavailability increases 2000% when combined with piperine' },

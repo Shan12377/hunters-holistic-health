@@ -3045,7 +3045,7 @@
 }
 
 /* ============================================================
-   ROOTS PROTOCOL PAGE — rebuilt with Dr. Hunter's real framework
+   ROOTS PROTOCOL PAGE, rebuilt with Dr. Hunter's real framework
    ============================================================ */
 
 .rootsPage {
@@ -10473,7 +10473,7 @@
   padding: 4px 0;
 }
 
-/* Routine picker — A / B switcher above Today's session */
+/* Routine picker, A / B switcher above Today's session */
 .wkRoutinePicker {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -10527,7 +10527,7 @@
   padding-top: 2px;
 }
 
-/* Hero row — 3 large score cards */
+/* Hero row, 3 large score cards */
 .snapshotHeroRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -10696,7 +10696,7 @@
 }
 .snapshotEmptyLink:hover { text-decoration: underline; }
 
-/* Mid row — 3 smaller stat cards */
+/* Mid row, 3 smaller stat cards */
 .snapshotMidRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -113,12 +113,12 @@ export default function Glp1FunctionalLabs() {
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHlabrequestsheet" target="_blank" rel="noopener noreferrer">Lab Request Reference Sheet</a>
-            {' '}— a printable guide to the functional labs discussed above. Bring it to your next appointment.
+            {' '}, a printable guide to the functional labs discussed above. Bring it to your next appointment.
           </div>
           <div className={styles.freeResource}>
             <strong>Free resource:</strong>{' '}
             <a href="https://go.fliplink.me/view/HHHProviderAppointmentScripts" target="_blank" rel="noopener noreferrer">Provider Appointment Scripts</a>
-            {' '}— word-for-word prompts for asking your provider about these labs and getting the conversation started.
+            {' '}, word-for-word prompts for asking your provider about these labs and getting the conversation started.
           </div>
 
           <hr className={styles.rule} />
@@ -132,9 +132,9 @@ export default function Glp1FunctionalLabs() {
           <div className={styles.sources}>
             <p><strong>References:</strong></p>
             <ol>
-              <li>Matthews DR et al. Homeostasis model assessment: insulin resistance and beta-cell function. <em>Diabetologia.</em> 1985;28(7):412–419.</li>
-              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795–810.</li>
-              <li>Richter EA, Hargreaves M. Exercise, GLUT4, and skeletal muscle glucose uptake. <em>Physiol Rev.</em> 2013;93(3):993–1017.</li>
+              <li>Matthews DR et al. Homeostasis model assessment: insulin resistance and beta-cell function. <em>Diabetologia.</em> 1985;28(7):412-419.</li>
+              <li>Nunes EA et al. Systematic review and meta-analysis of protein intake to support muscle mass. <em>J Cachexia Sarcopenia Muscle.</em> 2022;13(2):795-810.</li>
+              <li>Richter EA, Hargreaves M. Exercise, GLUT4, and skeletal muscle glucose uptake. <em>Physiol Rev.</em> 2013;93(3):993-1017.</li>
             </ol>
           </div>
 

@@ -125,7 +125,7 @@ const BP_LEVERS = [
   },
 ]
 
-// Quick-select BP categories — pre-fill form with representative midpoint values per AHA/ACC zone
+// Quick-select BP categories, pre-fill form with representative midpoint values per AHA/ACC zone
 const BP_QUICK_CATEGORIES = [
   { label: 'Normal',     systolic: 115, diastolic: 75,  color: '#4be08a' },
   { label: 'Elevated',   systolic: 125, diastolic: 75,  color: '#e0b84b' },
@@ -627,7 +627,7 @@ export default function BPTrackerPage() {
         </p>
       </div>
 
-      {/* 3 Levers Section — Program+ only */}
+      {/* 3 Levers Section, Program+ only */}
       <PlanGate requiredPlan="program" label="Your Optimization Protocol is available on The Program and above.">
       <div className={styles.bpLeversSection}>
         <div className={styles.bpLeversSectionHead}>

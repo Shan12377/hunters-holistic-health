@@ -119,7 +119,7 @@ export default function KpiDashboardPage() {
       <div className={styles.header}>
         <div>
           <h1 className={styles.title}>Business KPIs</h1>
-          <p className={styles.sub}>Live data from Supabase{lastUpdated ? ` — updated ${lastUpdated}` : ''}</p>
+          <p className={styles.sub}>Live data from Supabase{lastUpdated ? `, updated ${lastUpdated}` : ''}</p>
         </div>
         <button className={styles.refreshBtn} onClick={() => void fetchKpis()} disabled={loading}>
           {loading ? 'Loading...' : 'Refresh'}
@@ -186,7 +186,7 @@ export default function KpiDashboardPage() {
 
           {Object.keys(data.appsByStatus).length > 0 && (
             <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>Applications Pipeline — Last 90 Days</h2>
+              <h2 className={styles.sectionTitle}>Applications Pipeline, Last 90 Days</h2>
               <div className={styles.statusGrid}>
                 {Object.entries(data.appsByStatus)
                   .sort(([a], [b]) => {

@@ -314,7 +314,7 @@ function ResultA({
           href="https://buy.stripe.com/eVqaEW59Sdjwa5O8P600003"
           className={s.ctaBtn}
         >
-          Start Foundation Plan — $37/mo →
+          Start Foundation Plan, $37/mo →
         </a>
         <div className={s.ctaSub}>
           Cancel anytime. &nbsp;·&nbsp; <Link to="/join" style={{ color: 'inherit', textDecoration: 'underline' }}>Have questions first?</Link>
@@ -383,7 +383,7 @@ function ResultC({
   return (
     <>
       <div className={s.section}>
-        <div className={s.sectionTitle}>This is not a "no" — it is "not yet, without the right workup"</div>
+        <div className={s.sectionTitle}>This is not a "no". It is "not yet, without the right workup"</div>
         <div className={s.sectionBody}>
           GLP-1s are powerful, well-studied medications with a strong safety profile in appropriate candidates. The factors flagged below are exactly the ones rushed telehealth intakes tend to miss. Addressing them first protects your safety and improves the odds the therapy works.
         </div>
@@ -490,7 +490,7 @@ const RESULT_HEADS = {
   B: {
     badge: 'Functional-First Candidate',
     badgeClass: s.badgeFunc,
-    heading: 'GLP-1 may be ahead of you — but starting there now is a setup for regain.',
+    heading: 'GLP-1 may be ahead of you, but starting there now is a setup for regain.',
     subhead: 'Your assessment shows real, significant weight-loss resistance, and signals pointing toward underlying drivers that GLP-1 alone will not resolve.',
   },
   C: {

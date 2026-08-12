@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './BlogIndex.module.css'
 
-const META_TITLE = 'Blog | Hunter\'s Holistic Health — Functional Medicine Education'
+const META_TITLE = 'Blog | Hunter\'s Holistic Health, Functional Medicine Education'
 const META_DESC = 'Evidence-informed articles on metabolic health, GLP-1 medications, nutrition, and functional medicine from Dr. Shallanda Hunter, PharmD, CFNMP.'
 
 function MetaTags() {

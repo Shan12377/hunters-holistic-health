@@ -140,7 +140,7 @@ const EDU_OTHER = [
     title: 'The Muscle Loss Loop: Why Building Muscle Is Therapeutic, Not Optional',
     sub: 'Insulin resistance causes muscle loss, and muscle loss worsens insulin resistance',
     body: [
-      'Sarcopenia (progressive muscle loss) and insulin resistance perpetuate each other through a bidirectional inflammatory loop. Direction 1: insulin resistance reduces the rate of muscle protein synthesis. Elevated TNF-alpha and IL-6 from inflamed adipose tissue directly suppress muscle protein production while accelerating protein degradation. Muscles become anabolically resistant — they do not respond normally to protein intake or exercise.',
+      'Sarcopenia (progressive muscle loss) and insulin resistance perpetuate each other through a bidirectional inflammatory loop. Direction 1: insulin resistance reduces the rate of muscle protein synthesis. Elevated TNF-alpha and IL-6 from inflamed adipose tissue directly suppress muscle protein production while accelerating protein degradation. Muscles become anabolically resistant. They do not respond normally to protein intake or exercise.',
       'Direction 2: muscle loss worsens insulin resistance. Skeletal muscle accounts for 70 to 80% of glucose uptake after a meal. Less muscle mass means less glucose disposal capacity, which means glucose stays in your bloodstream longer after every meal. This is why weight loss through caloric restriction alone can make insulin resistance worse if it causes muscle loss.',
       'The prescription: resistance training 3 to 4 days per week, 1.6 to 2.2g protein per kg of body weight daily, and creatine monohydrate 3 to 5g daily (improves insulin sensitivity and preserves muscle mass in multiple RCTs).',
     ],

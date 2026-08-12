@@ -587,7 +587,7 @@ export default function ToolsPage() {
           <Link to="/blog/glp1-side-effects-pharmacist-guide" className={styles.moreCard}>
             <div className={styles.moreCardEyebrow}>GLP-1 Education</div>
             <div className={styles.moreCardName}>GLP-1 Side Effects: Dr. Hunter's Complete Guide</div>
-            <div className={styles.moreCardDesc}>Nausea, muscle loss, rebound weight — what the prescribing data actually shows and how to reduce each risk with a root-cause protocol running alongside.</div>
+            <div className={styles.moreCardDesc}>Nausea, muscle loss, rebound weight, what the prescribing data actually shows and how to reduce each risk with a root-cause protocol running alongside.</div>
             <span className={styles.moreCardCta}>Read →</span>
           </Link>
           <Link to="/blog/glp1-muscle-loss-what-nobody-tells-you" className={styles.moreCard}>

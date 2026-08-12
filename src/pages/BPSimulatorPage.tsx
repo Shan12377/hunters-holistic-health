@@ -334,7 +334,7 @@ export function BPSimulatorWidget({ initialSys = 128, initialDia = 82, showFoote
             </p>
           </div>
 
-          {/* Newsletter + Upgrade CTA — page only */}
+          {/* Newsletter + Upgrade CTA, page only */}
           {showFooter && <>
           <NewsletterEmbed />
 

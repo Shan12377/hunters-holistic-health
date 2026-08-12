@@ -259,7 +259,7 @@ const TIMING_SLOTS: Record<NutId, { slot:'morning'|'food'|'evening'; note:string
   magnesium: { slot:'evening', note:'Evening, away from caffeine' },
 }
 
-// Drug interaction alerts — reviewed for clinical accuracy per CLAUDE.md compliance rules
+// Drug interaction alerts, reviewed for clinical accuracy per CLAUDE.md compliance rules
 function getAlerts(meds: Set<MedId>, herbs: Set<HerbId>): Alert[] {
   const alerts: Alert[] = []
   if (meds.has('thyroid')) alerts.push({
@@ -515,11 +515,11 @@ export default function MedicationNutrientChecker() {
               {sorted.length === 0 && (
                 <p className={styles.noResults}>No common depletions are mapped for your current selection. A full PharmD review can assess your complete picture.</p>
               )}
-              {high.length > 0 && <div className={styles.sectionLabel} data-priority="high">High Priority — Discuss First</div>}
+              {high.length > 0 && <div className={styles.sectionLabel} data-priority="high">High Priority, Discuss First</div>}
               {high.map(([id, data]) => <NutrientCard key={id} nutId={id} data={data} selSx={selSx} priority="high" open={openCards.has(id)} onToggle={() => toggleCard(id)} />)}
-              {mod.length > 0  && <div className={styles.sectionLabel} data-priority="mod">Moderate — Worth Monitoring</div>}
+              {mod.length > 0  && <div className={styles.sectionLabel} data-priority="mod">Moderate, Worth Monitoring</div>}
               {mod.map(([id, data])  => <NutrientCard key={id} nutId={id} data={data} selSx={selSx} priority="mod"  open={openCards.has(id)} onToggle={() => toggleCard(id)} />)}
-              {mon.length > 0  && <div className={styles.sectionLabel} data-priority="mon">Monitor — Lower Risk</div>}
+              {mon.length > 0  && <div className={styles.sectionLabel} data-priority="mon">Monitor, Lower Risk</div>}
               {mon.map(([id, data])  => <NutrientCard key={id} nutId={id} data={data} selSx={selSx} priority="mon"  open={openCards.has(id)} onToggle={() => toggleCard(id)} />)}
             </div>
 
@@ -533,7 +533,7 @@ export default function MedicationNutrientChecker() {
                   <SchedCol label="With Food (any meal)" emoji="🍽️" items={schedItems.food} />
                   <SchedCol label="Evening" emoji="🌙" items={schedItems.evening} />
                 </div>
-                <p className={styles.schedNote}>⚠️ <strong>Key spacing rules:</strong> Iron and calcium block each other — separate by 2+ hours. Both block thyroid medication — separate by 4+ hours. Keep magnesium away from caffeine. Fat-soluble nutrients (D, E, K, CoQ10) need fat in the same meal to absorb.</p>
+                <p className={styles.schedNote}>⚠️ <strong>Key spacing rules:</strong> Iron and calcium block each other. Separate them by 2+ hours. Both block thyroid medication, separate by 4+ hours. Keep magnesium away from caffeine. Fat-soluble nutrients (D, E, K, CoQ10) need fat in the same meal to absorb.</p>
               </div>
             )}
 
