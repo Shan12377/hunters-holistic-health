@@ -21,7 +21,23 @@ const CM_PER_INCH = 2.54
 const INCHES_PER_FOOT = 12
 const KG_PER_POUND = 0.45359237
 
+// Mifflin-St Jeor sex constants. The form previously used -78, the midpoint of the
+// two, because it never asked. For a client base that is mostly women over 40 that
+// overestimated BMR by about 83 kcal before the activity multiplier.
+const BMR_CONSTANT_FEMALE = -161
+const BMR_CONSTANT_MALE = 5
+
+// Protein floor in grams per kg of body weight, approved by Dr. Hunter 2026-08-12.
+// A percentage-of-calories split alone undershoots protein for anyone eating on the
+// lower end, so the target is whichever of the two is greater.
+const PROTEIN_G_PER_KG = 1.6
+
+const CALORIES_PER_G_PROTEIN = 4
+const CALORIES_PER_G_FAT = 9
+const CALORIES_PER_G_CARB = 4
+
 type UnitSystem = 'imperial' | 'metric'
+type Sex = 'female' | 'male'
 
 const ACTIVITY_LEVELS = [
   { value: 'sedentary', label: 'Sedentary (desk job, little exercise)', multiplier: 1.2 },
@@ -35,6 +51,8 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
   // Imperial is the default because the client base is US based. The estimate
   // itself is always computed in metric, so only the inputs change.
   const [units, setUnits] = useState<UnitSystem>('imperial')
+  // Defaults to female because that is who this platform serves.
+  const [sex, setSex] = useState<Sex>('female')
   const [heightFt, setHeightFt] = useState('')
   const [heightIn, setHeightIn] = useState('')
   const [height, setHeight] = useState('')
@@ -84,17 +102,31 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
       toast.error(`Please enter your height in ${heightUnit}, weight in ${weightUnit}, and age`)
       return
     }
-    // Mifflin-St Jeor averaged across sexes: an educational estimate
-    const bmr = 10 * w + 6.25 * h - 5 * a - 78
+    // Mifflin-St Jeor, using the constant for the selected sex.
+    const sexConstant = sex === 'female' ? BMR_CONSTANT_FEMALE : BMR_CONSTANT_MALE
+    const bmr = 10 * w + 6.25 * h - 5 * a + sexConstant
     const multiplier = ACTIVITY_LEVELS.find(l => l.value === activity)?.multiplier ?? 1.55
     const tdee = Math.round(bmr * multiplier)
     setTdeeResult(tdee)
-    // Pre-fill goals with 30/30/40 protein/fat/carbs split
+
+    // Protein is the greater of a 30% split and the per-kg floor, so it never drops
+    // too low when calories are modest. Fat holds at 30%, carbs take what is left.
+    const proteinFromSplit = (tdee * 0.30) / CALORIES_PER_G_PROTEIN
+    const proteinFromBodyWeight = w * PROTEIN_G_PER_KG
+    const protein = Math.round(Math.max(proteinFromSplit, proteinFromBodyWeight))
+    const fat = Math.round((tdee * 0.30) / CALORIES_PER_G_FAT)
+    const remainingCalories = tdee - protein * CALORIES_PER_G_PROTEIN - fat * CALORIES_PER_G_FAT
+    const carbs = Math.max(0, Math.round(remainingCalories / CALORIES_PER_G_CARB))
+
     setCaloriesGoal(String(tdee))
-    setProteinGoal(String(Math.round((tdee * 0.30) / 4)))
-    setFatGoal(String(Math.round((tdee * 0.30) / 9)))
-    setCarbsGoal(String(Math.round((tdee * 0.40) / 4)))
+    setProteinGoal(String(protein))
+    setFatGoal(String(fat))
+    setCarbsGoal(String(carbs))
   }
+
+  // Ties the protein number back to the Day 2 rule people already know: get most of
+  // it in early, spread across meals, rather than one large dinner.
+  const proteinPerMeal = Math.max(1, Math.round((parseInt(proteinGoal) || 0) / 3))
 
   const handleSave = async () => {
     const goals: NutritionGoals = {
@@ -122,7 +154,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
       <div className={styles.card}>
         <h3 className={styles.cardTitleSolo}>Calorie Estimator</h3>
         <p className={styles.goalsHint}>
-          Enter your stats for an educational estimate of your daily calorie need. This is not medical advice. Adjust your actual targets below.
+          This is here so you know roughly where you sit, not so you count every day. Enter your stats for an educational estimate. Not medical advice, and not a personalized nutrition plan. For targets built around your own health picture, work with a registered dietitian.
         </p>
         <div className={styles.unitToggle}>
           <button
@@ -196,6 +228,17 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
               onChange={e => setAge(e.target.value)}
             />
           </div>
+          <div className={styles.goalsField}>
+            <label className={styles.goalsLabel}>Sex</label>
+            <select
+              className={styles.mealTypeSelect}
+              value={sex}
+              onChange={e => { setSex(e.target.value as Sex); setTdeeResult(null) }}
+            >
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </div>
         </div>
         <div className={styles.goalsField}>
           <label className={styles.goalsLabel}>Activity Level</label>
@@ -216,7 +259,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
         </div>
         {tdeeResult && (
           <div className={styles.tdeeResult}>
-            Estimated daily need: <strong>{tdeeResult} kcal</strong>. Goals below have been pre-filled with a standard 30/30/40 protein/fat/carbs split. Adjust to match your actual targets.
+            Estimated daily need: <strong>{tdeeResult} kcal</strong>. The targets below have been filled in for you. Change any of them if you already know your own numbers.
           </div>
         )}
       </div>
@@ -227,18 +270,24 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
           <div className={styles.goalsField}>
             <label className={styles.goalsLabel}>Calories</label>
             <input className={styles.input} type="number" value={caloriesGoal} onChange={e => setCaloriesGoal(e.target.value)} />
+            <p className={styles.goalsFieldHint}>Roughly where you sit on a normal day.</p>
           </div>
           <div className={styles.goalsField}>
             <label className={styles.goalsLabel}>Protein (g)</label>
             <input className={styles.input} type="number" value={proteinGoal} onChange={e => setProteinGoal(e.target.value)} />
+            <p className={styles.goalsFieldHint}>
+              About {proteinPerMeal}g at each of three meals.
+            </p>
           </div>
           <div className={styles.goalsField}>
             <label className={styles.goalsLabel}>Fat (g)</label>
             <input className={styles.input} type="number" value={fatGoal} onChange={e => setFatGoal(e.target.value)} />
+            <p className={styles.goalsFieldHint}>Olive oil, avocado, nuts, seeds.</p>
           </div>
           <div className={styles.goalsField}>
             <label className={styles.goalsLabel}>Carbs (g)</label>
             <input className={styles.input} type="number" value={carbsGoal} onChange={e => setCarbsGoal(e.target.value)} />
+            <p className={styles.goalsFieldHint}>What is left after protein and fat.</p>
           </div>
         </div>
         <div className={styles.formActions}>

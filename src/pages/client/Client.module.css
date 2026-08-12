@@ -11232,6 +11232,14 @@
   font-family: var(--font-body);
 }
 
+/* One line of plain English under a target input, so the number is not bare. */
+.goalsFieldHint {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
 /* Feet and inches sit side by side inside one field. */
 .heightImperial {
   display: grid;
