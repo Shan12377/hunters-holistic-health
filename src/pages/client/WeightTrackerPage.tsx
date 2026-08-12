@@ -22,7 +22,7 @@ const WEIGHT_EDU = [
     title: 'Why the Scale Lies',
     sub: 'Daily weight fluctuates 2 to 5 lbs. Trend is what matters, not any single reading.',
     body: [
-      'Your body weight is not a precise measure of fat. A single reading reflects fat, muscle, bone, water, food in your gut, and hormonal fluid retention — all at once. On any given morning you can weigh 3 to 5 lbs more than the day before without having gained an ounce of fat.',
+      'Your body weight is not a precise measure of fat. A single reading reflects fat, muscle, bone, water, food in your gut, and hormonal fluid retention, all at once. On any given morning you can weigh 3 to 5 lbs more than the day before without having gained an ounce of fat.',
       'Glycogen (your body\'s stored carbohydrate) holds 3 to 4 grams of water per gram stored. Eat a higher-carb day and your muscles fill with glycogen and water. The scale jumps. Eat lower-carb and it drops. Neither reflects actual fat change.',
       'For women, hormonal cycles cause water retention of 2 to 5 lbs in the luteal phase (week before a period). This is normal and not fat. Weighing only once a week or tracking a 7-day average removes most of this noise.',
       'The functional medicine view: weigh weekly at the same time under the same conditions. Track your waist measurement monthly. Track how your clothes fit and your energy level weekly. These together paint a far more accurate picture than a daily scale reading.',
@@ -33,9 +33,9 @@ const WEIGHT_EDU = [
     title: 'Waist Circumference Is the Real Signal',
     sub: 'Waist inches predict metabolic risk better than total weight or BMI',
     body: [
-      'Visceral fat — the fat stored inside the abdominal cavity around your organs — is metabolically active. It secretes pro-inflammatory cytokines (TNF-alpha, IL-6) that directly impair insulin signaling, suppress adiponectin, and elevate blood pressure. This is the fat that drives disease. It also happens to be the fat that responds fastest to lifestyle intervention.',
+      'Visceral fat, the fat stored inside the abdominal cavity around your organs, is metabolically active. It secretes pro-inflammatory cytokines (TNF-alpha, IL-6) that directly impair insulin signaling, suppress adiponectin, and elevate blood pressure. This is the fat that drives disease. It also happens to be the fat that responds fastest to lifestyle intervention.',
       'Waist circumference is your best proxy for visceral fat without expensive imaging. Measure at the narrowest point of your natural waist (about 1 inch above the navel), not at the hips. Functional medicine targets: below 35 inches for women, below 40 inches for men. The waist-to-hip ratio (waist divided by hip) should be below 0.85 in women.',
-      'Many people report losing 1 to 2 inches from their waist before the scale changes. This is fat loss happening exactly as it should — visceral fat releasing before subcutaneous fat shifts. If your waist is shrinking and your scale is stuck, you are still progressing.',
+      'Many people report losing 1 to 2 inches from their waist before the scale changes. This is fat loss happening exactly as it should. Visceral fat releases before subcutaneous fat shifts. If your waist is shrinking and your scale is stuck, you are still progressing.',
       'Log both. Let the waist number tell the real story when the scale is not cooperating.',
     ],
   },
@@ -44,7 +44,7 @@ const WEIGHT_EDU = [
     title: 'The Set Point: Why Your Body Fights Back',
     sub: 'Metabolic adaptation is real. Knowing it prevents discouragement.',
     body: [
-      'When you create a caloric deficit, your body initiates a homeostatic counter-response. Ghrelin (the hunger hormone) rises. Leptin (the satiety hormone) falls. Non-exercise activity thermogenesis (NEAT) drops unconsciously — you fidget less, sit more, and take fewer steps without realizing it. Resting metabolic rate decreases beyond what lean tissue loss alone would predict.',
+      'When you create a caloric deficit, your body initiates a homeostatic counter-response. Ghrelin (the hunger hormone) rises. Leptin (the satiety hormone) falls. Non-exercise activity thermogenesis (NEAT) drops unconsciously. You fidget less, sit more, and take fewer steps without realizing it. Resting metabolic rate decreases beyond what lean tissue loss alone would predict.',
       'Research shows 40% of the resting metabolic rate reduction during weight loss comes from metabolic adaptation, not tissue loss. This is the biological set point system at work. It evolved to prevent starvation. It does not know you are choosing to lose weight.',
       'This is not failure. It is physiology. The strategies that work with it: lose slowly (0.5 to 1 lb per week prevents extreme adaptation), resistance train to preserve muscle (muscle is metabolically expensive and delays rate reduction), take periodic maintenance breaks (2 to 4 weeks at maintenance calories partially resets the adaptive response), and address the hormonal root causes (thyroid, cortisol, insulin) that set your set point in the first place.',
       'Plateaus are the set point reasserting itself. They are not permanent unless you stop.',
@@ -56,9 +56,9 @@ const WEIGHT_EDU = [
     sub: 'The one macronutrient that preserves muscle, controls hunger, and costs calories to digest',
     body: [
       'Protein has the highest thermic effect of any macronutrient: your body burns 20 to 30% of protein calories just digesting it. A 500-calorie protein portion yields only 350 to 400 net calories after digestion. No other macronutrient comes close (fat: 0 to 3%; carbs: 5 to 10%).',
-      'Protein activates the leucine threshold, the trigger for muscle protein synthesis. You need at least 2.5 to 3g of leucine in a single meal to turn on muscle building. This requires roughly 30 to 40g of complete protein per meal — not spread across the day in small amounts. First meal of the day is the most important: eating protein at breakfast sets muscle protein synthesis on for the entire day.',
-      'During a caloric deficit, muscle is at risk. Every pound of muscle lost lowers your resting metabolic rate by 6 to 10 calories per day — permanently, until that muscle is rebuilt. Lose 10 lbs of muscle and you have reduced your daily calorie burn by 60 to 100 calories. This compounds into progressively easier weight regain.',
-      'Target: 1.6 to 2.2g protein per kg of body weight daily. On any medication reducing appetite (GLP-1 drugs), this becomes 1.6g minimum — the appetite reduction increases muscle loss risk by reducing total food intake, making protein density at every meal even more critical.',
+      'Protein activates the leucine threshold, the trigger for muscle protein synthesis. You need at least 2.5 to 3g of leucine in a single meal to turn on muscle building. This requires roughly 30 to 40g of complete protein per meal, not spread across the day in small amounts. First meal of the day is the most important: eating protein at breakfast sets muscle protein synthesis on for the entire day.',
+      'During a caloric deficit, muscle is at risk. Every pound of muscle lost lowers your resting metabolic rate by 6 to 10 calories per day. That loss is permanent until the muscle is rebuilt. Lose 10 lbs of muscle and you have reduced your daily calorie burn by 60 to 100 calories. This compounds into progressively easier weight regain.',
+      'Target: 1.6 to 2.2g protein per kg of body weight daily. On any medication reducing appetite (GLP-1 drugs), this becomes 1.6g minimum. The appetite reduction increases muscle loss risk by reducing total food intake, making protein density at every meal even more critical.',
     ],
   },
   {
@@ -66,8 +66,8 @@ const WEIGHT_EDU = [
     title: 'Your Hunger Is Not Willpower: It Is Hormones',
     sub: 'Ghrelin, leptin, and GLP-1 control appetite at the biological level',
     body: [
-      'Ghrelin is the hunger hormone secreted by the stomach. It rises before meals and drops after eating. After significant weight loss, ghrelin increases chronically — meaning your body is biologically hungrier than before you lost weight. One night of 4 to 5 hours of sleep raises ghrelin by 24% and lowers leptin by 18% simultaneously. This is why sleep-deprived people eat more: they are hormonally driven to.',
-      'Leptin is the satiety hormone produced by fat cells. As fat mass decreases, leptin decreases. The brain\'s hypothalamus gets less satiety signal from the same meal. This is leptin resistance in reverse — the fat mass that produced leptin is gone, so the signal fades. This is another reason weight loss becomes harder to sustain: the brain is getting less "I am full" message even when you are eating the same amount.',
+      'Ghrelin is the hunger hormone secreted by the stomach. It rises before meals and drops after eating. After significant weight loss, ghrelin increases chronically, meaning your body is biologically hungrier than before you lost weight. One night of 4 to 5 hours of sleep raises ghrelin by 24% and lowers leptin by 18% simultaneously. This is why sleep-deprived people eat more: they are hormonally driven to.',
+      'Leptin is the satiety hormone produced by fat cells. As fat mass decreases, leptin decreases. The brain\'s hypothalamus gets less satiety signal from the same meal. This is leptin resistance in reverse. The fat mass that produced leptin is gone, so the signal fades. This is another reason weight loss becomes harder to sustain: the brain is getting less "I am full" message even when you are eating the same amount.',
       'GLP-1 (glucagon-like peptide-1) is produced by gut L cells after eating, especially after protein, fiber, and bitter foods. It slows gastric emptying, reduces appetite, and signals satiety to the brain. GLP-1 medications (semaglutide, tirzepatide) are pharmaceutical versions of this hormone. Naturally raising GLP-1 through diet: eat fiber first, then protein, then carbs at every meal; include bitter foods (arugula, dandelion, radicchio); consume polyphenol-rich foods (berries, pomegranate, green tea) that feed Akkermansia, which produces a natural GLP-1 stimulator.',
       'Tracking your hunger level daily gives you a window into your hormonal status. Persistent high hunger despite adequate food = possible leptin issue (assess with labs), sleep deficit, or insulin resistance still active. Persistent low hunger = possible GLP-1 effect, either from medication or from your nutritional approach working.',
     ],
@@ -84,7 +84,7 @@ const WEIGHT_LEVERS = [
     disruptors: [
       'Ultra-processed carbohydrates (white bread, crackers, cereals, packaged snacks)',
       'Eating carbohydrates first in a meal before protein and fiber',
-      'Eating too frequently — grazing keeps insulin elevated all day',
+      'Eating too frequently, because grazing keeps insulin elevated all day',
     ],
     fixes: [
       'Eat in the order: vegetables → protein → carbs last (reduces glucose spike 73%)',
@@ -105,7 +105,7 @@ const WEIGHT_LEVERS = [
       'Skipping meals when already stressed (fasting under stress = cortisol spike)',
     ],
     fixes: [
-      'Box breathing: 4 counts in, 4 hold, 4 out, 4 hold — 5 minutes before the largest meal',
+      'Box breathing: 4 counts in, 4 hold, 4 out, 4 hold, for 5 minutes before the largest meal',
       'Morning sunlight within 30 minutes of waking (anchors the cortisol circadian rhythm)',
       'Ashwagandha (KSM-66) 300mg in the evening (reduces cortisol by 14 to 27% in RCTs)',
     ],
@@ -125,7 +125,7 @@ const WEIGHT_LEVERS = [
     fixes: [
       'Blackout curtains and room temperature 65 to 68°F for deep sleep',
       'Magnesium glycinate 300mg at bedtime (relaxes the nervous system, improves sleep quality)',
-      '7 to 9 hours per night — sleep is the single highest-leverage weight management tool for most people',
+      '7 to 9 hours per night. Sleep is the single highest-leverage weight management tool for most people',
     ],
     question: 'Is my sleep environment set up to protect my hunger hormones tonight?',
   },
@@ -467,7 +467,7 @@ export default function WeightTrackerPage() {
                   <button key={v} type="button"
                     className={form.protein_hit === v ? styles.tagActive : styles.tag}
                     onClick={() => setForm(f => ({...f, protein_hit: f.protein_hit === v ? '' : v}))}>
-                    {v === 'yes' ? 'Yes — hit protein goal' : 'No — missed protein goal'}
+                    {v === 'yes' ? 'Yes, hit protein goal' : 'No, missed protein goal'}
                   </button>
                 ))}
               </div>
@@ -558,8 +558,8 @@ export default function WeightTrackerPage() {
         <div className={styles.zoneGrid}>
           {[
             { zone: 'Optimal',       range: 'Below 32" (women) / Below 37" (men)', color: '#4be08a',  alert: null },
-            { zone: 'Acceptable',    range: '32–34.9" (women) / 37–39.9" (men)',   color: '#c8a74b',  alert: null },
-            { zone: 'Elevated Risk', range: '35–39.9" (women) / 40–44.9" (men)',   color: '#e08a4b',  alert: 'Take action' },
+            { zone: 'Acceptable',    range: '32 to 34.9" (women) / 37 to 39.9" (men)',   color: '#c8a74b',  alert: null },
+            { zone: 'Elevated Risk', range: '35 to 39.9" (women) / 40 to 44.9" (men)',   color: '#e08a4b',  alert: 'Take action' },
             { zone: 'High Risk',     range: '40"+ (women) / 45"+ (men)',           color: '#e05c5c',  alert: 'Seek guidance' },
           ].map(({ zone, range, color, alert }) => (
             <div key={zone} className={styles.zoneItem}
@@ -583,7 +583,7 @@ export default function WeightTrackerPage() {
         </p>
       </div>
 
-      {/* 4 Root Cause Levers — Program+ only */}
+      {/* 4 Root Cause Levers, Program+ only */}
       <PlanGate requiredPlan="program" label="Your Weight Optimization Protocol is available on The Program and above.">
         <div className={styles.bpLeversSection}>
           <div className={styles.bpLeversSectionHead}>
