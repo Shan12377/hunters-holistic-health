@@ -11199,6 +11199,46 @@
   margin-bottom: var(--space-3);
 }
 
+/* Unit toggle, same pattern as the waist tool on the landing page. */
+.unitToggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  align-self: flex-start;
+  margin-bottom: var(--space-3);
+}
+
+.unitBtn {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: color 0.15s;
+}
+
+.unitBtnActive {
+  padding: 8px 14px;
+  background: var(--gold);
+  border: none;
+  color: #0e1c1b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+/* Feet and inches sit side by side inside one field. */
+.heightImperial {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
 .goalsField {
   display: flex;
   flex-direction: column;

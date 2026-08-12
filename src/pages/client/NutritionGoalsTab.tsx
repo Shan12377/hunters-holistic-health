@@ -17,6 +17,12 @@ interface Props {
   onGoalsSaved: (goals: NutritionGoals) => void
 }
 
+const CM_PER_INCH = 2.54
+const INCHES_PER_FOOT = 12
+const KG_PER_POUND = 0.45359237
+
+type UnitSystem = 'imperial' | 'metric'
+
 const ACTIVITY_LEVELS = [
   { value: 'sedentary', label: 'Sedentary (desk job, little exercise)', multiplier: 1.2 },
   { value: 'lightly', label: 'Lightly active (1-3 days/week)', multiplier: 1.375 },
@@ -26,6 +32,11 @@ const ACTIVITY_LEVELS = [
 ]
 
 export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props) {
+  // Imperial is the default because the client base is US based. The estimate
+  // itself is always computed in metric, so only the inputs change.
+  const [units, setUnits] = useState<UnitSystem>('imperial')
+  const [heightFt, setHeightFt] = useState('')
+  const [heightIn, setHeightIn] = useState('')
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
   const [age, setAge] = useState('')
@@ -47,12 +58,30 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
     }
   }, [initialGoals])
 
-  const calculateTDEE = () => {
-    const h = parseFloat(height)
+  // Mifflin-St Jeor needs centimetres and kilograms, so imperial input is
+  // converted here rather than anywhere downstream.
+  const heightInCm = (): number => {
+    if (units === 'metric') return parseFloat(height)
+    const ft = parseFloat(heightFt) || 0
+    const inches = parseFloat(heightIn) || 0
+    const totalInches = ft * INCHES_PER_FOOT + inches
+    return totalInches > 0 ? totalInches * CM_PER_INCH : NaN
+  }
+
+  const weightInKg = (): number => {
     const w = parseFloat(weight)
+    if (!w) return NaN
+    return units === 'metric' ? w : w * KG_PER_POUND
+  }
+
+  const calculateTDEE = () => {
+    const h = heightInCm()
+    const w = weightInKg()
     const a = parseFloat(age)
     if (!h || !w || !a) {
-      toast.error('Please enter height (cm), weight (kg), and age')
+      const heightUnit = units === 'metric' ? 'centimeters' : 'feet and inches'
+      const weightUnit = units === 'metric' ? 'kilograms' : 'pounds'
+      toast.error(`Please enter your height in ${heightUnit}, weight in ${weightUnit}, and age`)
       return
     }
     // Mifflin-St Jeor averaged across sexes: an educational estimate
@@ -95,23 +124,64 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
         <p className={styles.goalsHint}>
           Enter your stats for an educational estimate of your daily calorie need. This is not medical advice. Adjust your actual targets below.
         </p>
+        <div className={styles.unitToggle}>
+          <button
+            type="button"
+            className={units === 'imperial' ? styles.unitBtnActive : styles.unitBtn}
+            onClick={() => { setUnits('imperial'); setTdeeResult(null) }}
+          >
+            ft / lb
+          </button>
+          <button
+            type="button"
+            className={units === 'metric' ? styles.unitBtnActive : styles.unitBtn}
+            onClick={() => { setUnits('metric'); setTdeeResult(null) }}
+          >
+            cm / kg
+          </button>
+        </div>
         <div className={styles.goalsTdeeRow}>
           <div className={styles.goalsField}>
-            <label className={styles.goalsLabel}>Height (cm)</label>
-            <input
-              className={styles.input}
-              type="number"
-              placeholder="170"
-              value={height}
-              onChange={e => setHeight(e.target.value)}
-            />
+            <label className={styles.goalsLabel}>
+              {units === 'metric' ? 'Height (cm)' : 'Height (ft / in)'}
+            </label>
+            {units === 'metric' ? (
+              <input
+                className={styles.input}
+                type="number"
+                placeholder="170"
+                value={height}
+                onChange={e => setHeight(e.target.value)}
+              />
+            ) : (
+              <div className={styles.heightImperial}>
+                <input
+                  className={styles.input}
+                  type="number"
+                  placeholder="5 ft"
+                  aria-label="Height in feet"
+                  value={heightFt}
+                  onChange={e => setHeightFt(e.target.value)}
+                />
+                <input
+                  className={styles.input}
+                  type="number"
+                  placeholder="5 in"
+                  aria-label="Height in inches"
+                  value={heightIn}
+                  onChange={e => setHeightIn(e.target.value)}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.goalsField}>
-            <label className={styles.goalsLabel}>Weight (kg)</label>
+            <label className={styles.goalsLabel}>
+              {units === 'metric' ? 'Weight (kg)' : 'Weight (lb)'}
+            </label>
             <input
               className={styles.input}
               type="number"
-              placeholder="70"
+              placeholder={units === 'metric' ? '70' : '155'}
               value={weight}
               onChange={e => setWeight(e.target.value)}
             />

@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt', not 'autoUpdate'. autoUpdate uses skipWaiting, which means
+      // needRefresh never fires and the "Update available" toast in App.tsx can
+      // never appear. Home screen users then had no way to pull a fresh version.
+      registerType: 'prompt',
       includeAssets: ['logo.png', 'logo-mark.png', 'favicon-64.png'],
       manifest: {
         name: "Hunter's Holistic Health",

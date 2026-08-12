@@ -113,6 +113,8 @@ const BrainDumpPage = lazy(() => import('@/pages/coach/BrainDumpPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 import shared from '@/styles/shared.module.css'
 
+const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000 // hourly
+
 function LoadingScreen() {
   return (
     <div className={shared.loadingPage}>
@@ -134,7 +136,15 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: 
 
 export default function App() {
   const { setUser, setSession, setLoading, fetchProfile } = useAuthStore()
-  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
+    // A home screen PWA can stay open for days, and the browser only checks for
+    // a new service worker on load. Without this poll the update toast would
+    // rarely appear for the people most likely to be running a stale version.
+    onRegisteredSW(_swUrl, registration) {
+      if (!registration) return
+      setInterval(() => { registration.update().catch(() => {}) }, UPDATE_CHECK_INTERVAL_MS)
+    },
+  })
 
   useEffect(() => {
     if (needRefresh) {
