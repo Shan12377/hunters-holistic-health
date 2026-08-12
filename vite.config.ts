@@ -28,8 +28,23 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        // PNGs are deliberately NOT precached. They were 1.46 MB of the install
+        // download, and a photo that has not downloaded yet degrades to a blank
+        // image rather than breaking the app. They are cached on first view
+        // instead, by the runtimeCaching rule below.
+        globPatterns: ['**/*.{js,css,html,ico,svg,woff,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: { maxEntries: 80, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
         // Push + notification click handlers live in public/push-sw.js.
         importScripts: ['push-sw.js'],
       },
