@@ -78,6 +78,7 @@ export default function SignupPage() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
+        <Link to="/login" className={styles.backLink}>Back to sign in</Link>
         <div className={styles.logo}>
           <img src="/logo-mark.png" alt="Hunter's Holistic Health" className={styles.logoImg} />
         </div>

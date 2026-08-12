@@ -134,6 +134,17 @@ function ProtectedRoute({ children, role }: { children: React.ReactNode; role?: 
   return <>{children}</>
 }
 
+// The inverse of ProtectedRoute, for /login and /signup. Someone already signed in
+// who taps "Create account" was otherwise shown a signup form for an account they
+// already have, and the installed app has no browser back button to escape with.
+// Waits for loading to resolve first, same as Rule A in CLAUDE.md.
+function SignedOutOnlyRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuthStore()
+  if (loading) return <LoadingScreen />
+  if (user) return <Navigate to="/app/dashboard" replace />
+  return <>{children}</>
+}
+
 export default function App() {
   const { setUser, setSession, setLoading, fetchProfile } = useAuthStore()
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
@@ -197,8 +208,8 @@ export default function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<SignedOutOnlyRoute><LoginPage /></SignedOutOnlyRoute>} />
+        <Route path="/signup" element={<SignedOutOnlyRoute><SignupPage /></SignedOutOnlyRoute>} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

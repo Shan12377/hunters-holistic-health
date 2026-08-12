@@ -26,6 +26,7 @@ export default function LoginPage() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
+        <Link to="/" className={styles.backLink}>Back to home</Link>
         {/* Header */}
         <div className={styles.logo}>
           <img src="/logo-mark.png" alt="Hunter's Holistic Health" className={styles.logoImg} />

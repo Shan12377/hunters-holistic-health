@@ -25,6 +25,22 @@
   animation: fadeIn 0.4s var(--ease-primary) both;
 }
 
+/* Sits above the logo so there is always a way out without scrolling. The
+   installed PWA runs standalone with no browser back button, so a page with its
+   only exit at the bottom reads as a dead end on a phone. */
+.backLink {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+  padding: 6px 0;
+}
+
+.backLink:hover {
+  color: var(--gold);
+}
+
 .logo {
   text-align: center;
   margin-bottom: var(--space-8);
