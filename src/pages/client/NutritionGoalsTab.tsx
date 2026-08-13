@@ -39,6 +39,23 @@ const CALORIES_PER_G_CARB = 4
 type UnitSystem = 'imperial' | 'metric'
 type Sex = 'female' | 'male'
 
+/** The arithmetic behind the estimate, kept so it can be shown to the person
+ *  it describes. A number with no working is the black box we tell people not
+ *  to accept from anyone else. */
+interface Working {
+  heightCm: number
+  weightKg: number
+  age: number
+  sexConstant: number
+  bmr: number
+  multiplier: number
+  activityLabel: string
+  tdee: number
+  proteinFromSplit: number
+  proteinFromBodyWeight: number
+  proteinDriver: 'split' | 'bodyweight'
+}
+
 const ACTIVITY_LEVELS = [
   { value: 'sedentary', label: 'Sedentary (desk job, little exercise)', multiplier: 1.2 },
   { value: 'lightly', label: 'Lightly active (1-3 days/week)', multiplier: 1.375 },
@@ -60,6 +77,8 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
   const [age, setAge] = useState('')
   const [activity, setActivity] = useState('moderate')
   const [tdeeResult, setTdeeResult] = useState<number | null>(null)
+  const [working, setWorking] = useState<Working | null>(null)
+  const [showWorking, setShowWorking] = useState(false)
 
   const [caloriesGoal, setCaloriesGoal] = useState(String(initialGoals?.calories_goal ?? 2000))
   const [proteinGoal, setProteinGoal] = useState(String(initialGoals?.protein_goal ?? 150))
@@ -115,6 +134,22 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
     const proteinFromBodyWeight = w * PROTEIN_G_PER_KG
     const protein = Math.round(Math.max(proteinFromSplit, proteinFromBodyWeight))
     const fat = Math.round((tdee * 0.30) / CALORIES_PER_G_FAT)
+
+    // Captured so the working can be shown with this person's real numbers,
+    // rather than a generic formula they have to trust.
+    setWorking({
+      heightCm: Math.round(h * 10) / 10,
+      weightKg: Math.round(w * 10) / 10,
+      age: a,
+      sexConstant,
+      bmr: Math.round(bmr),
+      multiplier,
+      activityLabel: ACTIVITY_LEVELS.find(l => l.value === activity)?.label ?? '',
+      tdee,
+      proteinFromSplit: Math.round(proteinFromSplit),
+      proteinFromBodyWeight: Math.round(proteinFromBodyWeight),
+      proteinDriver: proteinFromBodyWeight > proteinFromSplit ? 'bodyweight' : 'split',
+    })
     const remainingCalories = tdee - protein * CALORIES_PER_G_PROTEIN - fat * CALORIES_PER_G_FAT
     const carbs = Math.max(0, Math.round(remainingCalories / CALORIES_PER_G_CARB))
 
@@ -160,14 +195,14 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
           <button
             type="button"
             className={units === 'imperial' ? styles.unitBtnActive : styles.unitBtn}
-            onClick={() => { setUnits('imperial'); setTdeeResult(null) }}
+            onClick={() => { setUnits('imperial'); setTdeeResult(null); setWorking(null) }}
           >
             ft / lb
           </button>
           <button
             type="button"
             className={units === 'metric' ? styles.unitBtnActive : styles.unitBtn}
-            onClick={() => { setUnits('metric'); setTdeeResult(null) }}
+            onClick={() => { setUnits('metric'); setTdeeResult(null); setWorking(null) }}
           >
             cm / kg
           </button>
@@ -233,7 +268,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
             <select
               className={styles.mealTypeSelect}
               value={sex}
-              onChange={e => { setSex(e.target.value as Sex); setTdeeResult(null) }}
+              onChange={e => { setSex(e.target.value as Sex); setTdeeResult(null); setWorking(null) }}
             >
               <option value="female">Female</option>
               <option value="male">Male</option>
@@ -260,6 +295,64 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
         {tdeeResult && (
           <div className={styles.tdeeResult}>
             Estimated daily need: <strong>{tdeeResult} kcal</strong>. The targets below have been filled in for you. Change any of them if you already know your own numbers.
+          </div>
+        )}
+
+        {working && (
+          <div className={styles.workingBlock}>
+            <button
+              type="button"
+              className={styles.workingToggle}
+              onClick={() => setShowWorking(v => !v)}
+              aria-expanded={showWorking}
+            >
+              {showWorking ? 'Hide the math' : 'Show me the math'}
+            </button>
+
+            {showWorking && (
+              <div className={styles.workingBody}>
+                <p className={styles.workingIntro}>
+                  This uses the Mifflin-St Jeor equation, the one most widely used for
+                  estimating energy needs. Here it is with your numbers, so you can
+                  check it yourself.
+                </p>
+
+                <p className={styles.workingStep}><strong>Step 1. Your resting rate</strong></p>
+                <p className={styles.workingMath}>
+                  (10 &times; {working.weightKg} kg) + (6.25 &times; {working.heightCm} cm)
+                  &minus; (5 &times; {working.age}) {working.sexConstant < 0 ? '−' : '+'} {Math.abs(working.sexConstant)}
+                  {' = '}<strong>{working.bmr} calories</strong>
+                </p>
+                <p className={styles.workingNote}>
+                  What your body uses at complete rest. The last number is the constant
+                  for {sex === 'female' ? 'women' : 'men'}, which is why the estimator asks.
+                </p>
+
+                <p className={styles.workingStep}><strong>Step 2. Your activity</strong></p>
+                <p className={styles.workingMath}>
+                  {working.bmr} &times; {working.multiplier} = <strong>{working.tdee} calories</strong>
+                </p>
+                <p className={styles.workingNote}>{working.activityLabel}</p>
+
+                <p className={styles.workingStep}><strong>Step 3. The targets</strong></p>
+                <p className={styles.workingNote}>
+                  Protein is whichever is higher: 30% of your calories, which is{' '}
+                  {working.proteinFromSplit}g, or {PROTEIN_G_PER_KG}g per kg of body
+                  weight, which is {working.proteinFromBodyWeight}g. For you the{' '}
+                  {working.proteinDriver === 'bodyweight' ? 'body weight figure' : '30% figure'}{' '}
+                  is higher, so that is the one used. Fat is 30% of calories. Carbohydrate
+                  is what remains.
+                </p>
+
+                <p className={styles.workingCaveat}>
+                  Every equation of this kind is an estimate built from population
+                  averages. Two people with identical numbers can differ by a few hundred
+                  calories a day. Treat it as a starting point, watch what actually
+                  happens over a few weeks, and work with a registered dietitian for
+                  targets built around your own health picture.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

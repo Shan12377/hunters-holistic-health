@@ -11232,6 +11232,55 @@
   font-family: var(--font-body);
 }
 
+/* The working behind the estimate. Collapsed by default so the page stays
+   simple, but always available, because a number nobody can check is the
+   black box we tell people not to accept. */
+.workingBlock { margin-top: var(--space-3); }
+
+.workingToggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+
+.workingBody {
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.workingIntro { font-size: 13.5px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 var(--space-3); }
+.workingStep  { font-size: 13.5px; color: var(--text); margin: var(--space-3) 0 4px; }
+
+/* Monospace so the arithmetic lines up and reads as a calculation. */
+.workingMath {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 0 0 4px;
+  overflow-x: auto;
+}
+
+.workingNote { font-size: 12.5px; line-height: 1.55; color: var(--text-secondary); margin: 0; }
+
+.workingCaveat {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
 /* One line of plain English under a target input, so the number is not bare. */
 .goalsFieldHint {
   font-size: 11px;
