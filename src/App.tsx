@@ -115,6 +115,11 @@ import shared from '@/styles/shared.module.css'
 
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000 // hourly
 
+// If auth has not resolved by now, stop waiting and render the app anyway.
+// On 2026-08-13 a hung profile fetch left the loading screen up for over ten
+// minutes on a phone, because setLoading(false) sat after an unguarded await.
+const BOOTSTRAP_TIMEOUT_MS = 8000
+
 function LoadingScreen() {
   return (
     <div className={shared.loadingPage}>
@@ -183,21 +188,43 @@ export default function App() {
   }, [needRefresh])
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      // Rule A (CLAUDE.md): the profile must be loaded before loading flips false,
-      // otherwise role-gated routes redirect while profile is still null.
-      if (session?.user) await fetchProfile(session.user.id)
-      setLoading(false)
-    })
+    // Hard stop. If anything below hangs, the app still becomes usable rather
+    // than sitting on the loading screen forever. This fires only on failure.
+    const failsafe = setTimeout(() => setLoading(false), BOOTSTRAP_TIMEOUT_MS)
+
+    supabase.auth.getSession()
+      .then(async ({ data: { session } }) => {
+        setSession(session)
+        setUser(session?.user ?? null)
+        // Rule A (CLAUDE.md): the profile must be loaded before loading flips
+        // false, otherwise role-gated routes redirect while profile is null.
+        if (session?.user) await fetchProfile(session.user.id)
+      })
+      .catch(err => {
+        // Rule E: never swallow silently. The finally still frees the app.
+        console.error('[auth] session bootstrap failed:', err)
+      })
+      .finally(() => {
+        clearTimeout(failsafe)
+        setLoading(false)
+      })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) await fetchProfile(session.user.id)
-      setLoading(false)
+      try {
+        setSession(session)
+        setUser(session?.user ?? null)
+        if (session?.user) await fetchProfile(session.user.id)
+      } catch (err) {
+        console.error('[auth] auth state change failed:', err)
+      } finally {
+        setLoading(false)
+      }
     })
-    return () => subscription.unsubscribe()
+
+    return () => {
+      clearTimeout(failsafe)
+      subscription.unsubscribe()
+    }
   }, [])
 
   return (

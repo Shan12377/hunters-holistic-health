@@ -34,13 +34,20 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchProfile: async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    if (data) set({ profile: data as Profile })
-    // Rule E (CLAUDE.md): failures must be visible, never silently swallowed.
-    else if (error) console.error('[auth] profile fetch failed:', error.message)
+    // This runs on the app's critical path, before the loading screen clears.
+    // A network failure here used to reject and strand the whole app, so it
+    // resolves either way and the caller decides what to do without a profile.
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+      if (data) set({ profile: data as Profile })
+      // Rule E (CLAUDE.md): failures must be visible, never silently swallowed.
+      else if (error) console.error('[auth] profile fetch failed:', error.message)
+    } catch (err) {
+      console.error('[auth] profile fetch threw:', err)
+    }
   },
 }))
