@@ -373,11 +373,14 @@ export default function MealGuardPage() {
                 </select>
               </div>
 
+              {/* No capture attribute on purpose. capture="environment" opens the
+                  rear camera immediately and hides Photo Library, so a meal
+                  photographed earlier could never be logged. Without it the phone
+                  offers Take Photo and Photo Library both. */}
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handlePhotoSelect}
                 className={styles.hiddenFileInput}
               />
@@ -415,7 +418,7 @@ export default function MealGuardPage() {
                   className={shared.btnGhost}
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <Camera size={16} /> {photo ? 'Retake Photo' : 'Add Photo'}
+                  <Camera size={16} /> {photo ? 'Change Photo' : 'Add Photo'}
                 </button>
                 {result && (
                   <button
