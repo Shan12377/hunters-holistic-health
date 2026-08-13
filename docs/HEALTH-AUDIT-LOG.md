@@ -33,6 +33,41 @@ Update both dates every time it runs.
 
 ## Runs
 
+### 2026-08-13, second run, before the workout tracker push
+
+Ran on her instruction to check the system had not broken during the workout
+tracker rework. All seven checks PASS. Bundle still over 500 KB, which is the
+known pre-existing flag, now 845 KB after this feature.
+
+**A real regression the audit script does not catch, found by reading callers**
+
+Migration 044 removed the one-workout-session-per-day database constraint.
+`SnapshotPage` counted rows in `workout_sessions` for the month and displayed the
+total on a card titled **Movement**, captioned "Workouts this month". Two
+consequences:
+
+- a day with both a workout and a walk would count twice once anything creates a
+  second session
+- a person who walks daily and logs it under the new Movement tab saw that card
+  sitting at zero, because the Snapshot did not know `activity_sessions` existed
+
+Fixed by counting **distinct dates across both tables**, and relabelling the card
+to "Days you moved this month" with "days" and "Last moved", so the words match
+the number underneath them (Rule C). Verified in the browser: a workout and a
+walk on the same date now show as 1 day, not 2.
+
+**Lesson for future migrations:** dropping a constraint is never local to the
+table. Grep every caller of a table before removing a uniqueness rule, because
+some other page is probably relying on that rule to mean something.
+
+**Left alone deliberately**
+
+- The Movement card's goal is still 12 a month. Now that walks count toward it,
+  that target is probably too low, but a displayed goal is Dr. Hunter's call, not
+  a number to change quietly.
+- The Late Slip modal fires as "Evening Check-In" at 3:13 PM and blocks the page
+  until dismissed. Rule B violation, pre-existing, reported to her, not yet fixed.
+
 ### 2026-08-13, first run
 
 Found on the day of the app-wide hang.

@@ -4,12 +4,21 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { format, subDays } from 'date-fns'
 import BackButton from '@/components/BackButton'
+import ActivityLog from '@/components/workout/ActivityLog'
+import SampleWeek from '@/components/workout/SampleWeek'
+import RoutineBuilder, {
+  type BuilderRoutine,
+  type BuilderExercise,
+} from '@/components/workout/RoutineBuilder'
+import WorkoutHistory from '@/components/workout/WorkoutHistory'
+import wk from '@/components/workout/Workout.module.css'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
 interface Exercise {
   id: string
   name: string
+  emoji: string | null
   coach_cue: string | null
   condition_notes: string | null
   muscle_groups: string[]
@@ -46,6 +55,8 @@ interface Routine {
   id: string
   name: string
   description: string
+  video_url: string | null
+  user_id: string | null
   exercises: RoutineExercise[]
 }
 
@@ -69,8 +80,9 @@ export default function WorkoutTrackerPage() {
   const userId = profile?.id
   const today = format(new Date(), 'yyyy-MM-dd')
 
-  const [tab, setTab] = useState<'today' | 'routines' | 'history'>('today')
+  const [tab, setTab] = useState<'today' | 'movement' | 'routines' | 'week' | 'history'>('today')
   const [allRoutines, setAllRoutines] = useState<Routine[]>([])
+  const [library, setLibrary] = useState<BuilderExercise[]>([])
   const [selectedRoutineIdx, setSelectedRoutineIdx] = useState<number>(
     () => Number(localStorage.getItem('wk_routine_idx') ?? '0')
   )
@@ -88,44 +100,86 @@ export default function WorkoutTrackerPage() {
   const [newExSets, setNewExSets] = useState(3)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadRoutines().then(routines => {
-      if (userId && routines) {
-        loadTodaySessionWithRoutines(routines)
-        loadHistory()
-        loadCustomExercises()
-      }
-    })
+    loadRoutines()
+      .then(routines => {
+        if (userId && routines) {
+          loadTodaySessionWithRoutines(routines)
+          loadHistory()
+          loadCustomExercises()
+          loadLibrary()
+        }
+      })
+      .catch(err => {
+        console.error('[workout] initial load failed:', err)
+        setLoadError('Could not load your workouts. Check your connection and try again.')
+      })
+      .finally(() => setLoading(false))
   }, [userId])
 
   useEffect(() => {
     if (userId && tab === 'history') loadProgress()
   }, [userId, tab])
 
+  const EXERCISE_FIELDS =
+    'id, name, emoji, coach_cue, condition_notes, muscle_groups, tempo_default, created_by_user_id'
+
   async function loadRoutines(): Promise<Routine[] | null> {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('workout_routines')
-      .select('id, name, description, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(id, name, coach_cue, condition_notes, muscle_groups, tempo_default))')
+      .select(`id, name, description, video_url, user_id, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(${EXERCISE_FIELDS}))`)
       .order('name', { ascending: true })
 
-    if (!data?.length) { setLoading(false); return null }
+    if (error) throw error
+    if (!data?.length) { setAllRoutines([]); return null }
 
     const routines: Routine[] = data.map(r => ({
       id: r.id,
       name: r.name,
       description: r.description,
+      video_url: r.video_url,
+      user_id: r.user_id,
       exercises: [...(r.routine_exercises as unknown as RoutineExercise[])].sort(
         (a, b) => a.order_position - b.order_position
       )
     }))
 
     setAllRoutines(routines)
+
+    // The Today tab logs against one routine. Prefer the person's own, since a
+    // routine they built is the one they actually meant to do.
+    const own = routines.filter(r => r.user_id === userId)
+    const loggable = own.length ? own : routines
     const savedIdx = Number(localStorage.getItem('wk_routine_idx') ?? '0')
-    const idx = savedIdx < routines.length ? savedIdx : 0
-    applyRoutine(routines[idx])
-    setLoading(false)
+    const idx = savedIdx < loggable.length ? savedIdx : 0
+    if (loggable[idx]) applyRoutine(loggable[idx])
     return routines
+  }
+
+  /** The shared exercise library plus this person's own, for the routine builder. */
+  async function loadLibrary() {
+    const { data, error } = await supabase
+      .from('exercises')
+      .select('id, name, emoji, muscle_groups, tempo_default, created_by_user_id')
+      .order('name', { ascending: true })
+    if (error) {
+      console.error('[workout] library load failed:', error)
+      return
+    }
+    setLibrary((data ?? []) as BuilderExercise[])
+  }
+
+  /** Re-read everything the builder can change. */
+  async function refreshRoutines() {
+    try {
+      await loadRoutines()
+      await loadLibrary()
+    } catch (err) {
+      console.error('[workout] refresh failed:', err)
+      setLoadError('Could not refresh your routines. Try again.')
+    }
   }
 
   function applyRoutine(routine: Routine) {
@@ -133,20 +187,32 @@ export default function WorkoutTrackerPage() {
     setRoutineExercises(routine.exercises)
   }
 
+  // The Today tab logs against the person's own routines when they have any.
+  // Templates are only the fallback for somebody who has not built one yet, so
+  // nobody is made to log a routine that is not theirs.
+  const ownRoutines = allRoutines.filter(r => r.user_id === userId)
+  const loggableRoutines = ownRoutines.length ? ownRoutines : allRoutines
+
   function switchRoutine(idx: number) {
     if (session) return // locked once a session exists today
+    const routine = loggableRoutines[idx]
+    if (!routine) return
     setSelectedRoutineIdx(idx)
     localStorage.setItem('wk_routine_idx', String(idx))
-    applyRoutine(allRoutines[idx])
+    applyRoutine(routine)
   }
 
   async function loadTodaySessionWithRoutines(routines: Routine[]) {
     if (!userId) return
+    // More than one session a day is now allowed, so this can no longer assume a
+    // single row. The strength session for today is the most recent one.
     const { data } = await supabase
       .from('workout_sessions')
       .select('*')
       .eq('user_id', userId)
       .eq('session_date', today)
+      .order('created_at', { ascending: false })
+      .limit(1)
       .maybeSingle()
 
     if (data) {
@@ -158,10 +224,12 @@ export default function WorkoutTrackerPage() {
       setTodaySets(sets ?? [])
       // sync the displayed routine to match the session's logged routine
       if (data.routine_id) {
-        const idx = routines.findIndex(r => r.id === data.routine_id)
+        const own = routines.filter(r => r.user_id === userId)
+        const loggable = own.length ? own : routines
+        const idx = loggable.findIndex(r => r.id === data.routine_id)
         if (idx >= 0) {
           setSelectedRoutineIdx(idx)
-          applyRoutine(routines[idx])
+          applyRoutine(loggable[idx])
         }
       }
     }
@@ -176,6 +244,7 @@ export default function WorkoutTrackerPage() {
       .eq('user_id', userId)
       .lt('session_date', today)
       .order('session_date', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
 
@@ -350,8 +419,23 @@ export default function WorkoutTrackerPage() {
 
   const completedCount = displayedExercises.filter(re => isComplete(re.exercise.id)).length
 
-  const calendarDays = Array.from({ length: 30 }, (_, i) => format(subDays(new Date(), 29 - i), 'yyyy-MM-dd'))
-  const sessionDates = new Set(history.map(s => s.session_date))
+  // Everything that could show a strength progress chart: exercises from any
+  // routine the person can see, plus the ones they added themselves. Deduped,
+  // since the same exercise appears in more than one routine.
+  const chartableExercises = [
+    ...allRoutines.flatMap(r => r.exercises.map(re => ({
+      id: re.exercise.id,
+      name: re.exercise.name,
+      emoji: re.exercise.emoji,
+      tempo_default: re.exercise.tempo_default,
+    }))),
+    ...customExercises.map(ex => ({
+      id: ex.id,
+      name: ex.name,
+      emoji: null,
+      tempo_default: '',
+    })),
+  ].filter((ex, i, arr) => arr.findIndex(x => x.id === ex.id) === i)
 
   if (loading) return <div className={shared.pageContainer}><p className={shared.loadingText}>Loading...</p></div>
 
@@ -364,25 +448,33 @@ export default function WorkoutTrackerPage() {
       </div>
 
       <div className={styles.wkTabs}>
-        {(['today', 'routines', 'history'] as const).map(t => (
+        {([
+          ['today', 'Today'],
+          ['movement', 'Movement'],
+          ['routines', 'Routines'],
+          ['week', 'Week'],
+          ['history', 'History'],
+        ] as const).map(([key, label]) => (
           <button
-            key={t}
-            className={`${styles.wkTab} ${tab === t ? styles.wkTabActive : ''}`}
-            onClick={() => setTab(t)}
+            key={key}
+            className={`${styles.wkTab} ${tab === key ? styles.wkTabActive : ''}`}
+            onClick={() => setTab(key)}
           >
-            {t === 'today' ? 'Today' : t === 'routines' ? 'My Routines' : 'History'}
+            {label}
           </button>
         ))}
       </div>
 
+      {loadError && <p className={wk.errorBox}>{loadError}</p>}
+
       {/* TODAY TAB */}
       {tab === 'today' && (
         <div>
-          {allRoutines.length > 1 && (
+          {loggableRoutines.length > 1 && (
             <div className={styles.wkRoutinePicker}>
               <span className={styles.wkRoutinePickerLabel}>Today's routine:</span>
               <div className={styles.wkRoutinePickerBtns}>
-                {allRoutines.map((r, i) => (
+                {loggableRoutines.map((r, i) => (
                   <button
                     key={r.id}
                     className={`${styles.wkRoutinePickerBtn} ${selectedRoutineIdx === i ? styles.wkRoutinePickerBtnActive : ''}`}
@@ -395,7 +487,7 @@ export default function WorkoutTrackerPage() {
                 ))}
               </div>
               {session && (
-                <p className={styles.wkRoutinePickerLocked}>Locked to {allRoutines[selectedRoutineIdx]?.name ?? 'current routine'} for today.</p>
+                <p className={styles.wkRoutinePickerLocked}>Locked to {loggableRoutines[selectedRoutineIdx]?.name ?? 'current routine'} for today.</p>
               )}
             </div>
           )}
@@ -445,7 +537,9 @@ export default function WorkoutTrackerPage() {
                         </div>
 
                         <div className={styles.wkExBody}>
-                          <span className={styles.wkExName}>{ex.name}</span>
+                          <span className={styles.wkExName}>
+                            <span className={wk.builderEmoji}>{ex.emoji ?? '💪'}</span> {ex.name}
+                          </span>
                           <span className={styles.wkExMeta}>
                             {re.sets_default} sets
                             {isIsometric ? ' · 2 min hold' : re.reps_default ? ` · ${re.reps_default} reps` : ''}
@@ -645,178 +739,30 @@ export default function WorkoutTrackerPage() {
         </div>
       )}
 
-      {/* MY ROUTINES TAB */}
+      {/* MOVEMENT TAB */}
+      {tab === 'movement' && <ActivityLog userId={userId} today={today} />}
+
+      {/* WEEK TAB */}
+      {tab === 'week' && <SampleWeek />}
+
+      {/* ROUTINES TAB */}
       {tab === 'routines' && (
-        <div>
-          {allRoutines.map(routine => (
-            <div key={routine.id} className={styles.wkRoutineCard}>
-              <h2 className={styles.wkRoutineTitle}>{routine.name}</h2>
-              <p className={styles.wkRoutineDesc}>{routine.description}</p>
-              <div className={styles.wkRoutineList}>
-                {routine.exercises.map((re, i) => {
-                  const ex = re.exercise
-                  const isIsometric = ex.tempo_default === 'isometric-2min'
-                  return (
-                    <div key={re.id} className={styles.wkRoutineRow}>
-                      <span className={styles.wkRoutineNum}>{i + 1}</span>
-                      <div className={styles.wkRoutineDetail}>
-                        <span className={styles.wkRoutineName}>{ex.name}</span>
-                        <span className={styles.wkRoutineMeta}>
-                          {re.sets_default} sets
-                          {isIsometric ? ' · 2 min hold' : re.reps_default ? ` · ${re.reps_default} reps` : ''}
-                          {' · '}{ex.muscle_groups.join(', ')}
-                        </span>
-                        <span className={styles.wkRoutineTempo}>
-                          Tempo: {isIsometric ? '2-minute isometric hold' : `${ex.tempo_default} (lower - pause - lift)`}
-                        </span>
-                      </div>
-                      <button
-                        className={styles.wkInfoBtn}
-                        onClick={() => setInfoExercise(ex)}
-                        aria-label="View modification notes"
-                      >
-                        <Info size={15} />
-                      </button>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+        <RoutineBuilder
+          userId={userId}
+          routines={allRoutines as unknown as BuilderRoutine[]}
+          library={library}
+          onChanged={refreshRoutines}
+        />
       )}
 
       {/* HISTORY TAB */}
       {tab === 'history' && (
-        <div>
-          <div className={styles.wkHistoryCard}>
-            <h2 className={styles.wkHistoryTitle}>Last 30 Days</h2>
-            <div className={styles.wkCalendar}>
-              {calendarDays.map(day => (
-                <div
-                  key={day}
-                  className={`${styles.wkCalDot} ${sessionDates.has(day) ? styles.wkCalDotFilled : ''}`}
-                  title={day}
-                />
-              ))}
-            </div>
-            <p className={styles.wkCalCount}>
-              {history.length} session{history.length !== 1 ? 's' : ''} logged in the last 30 days
-            </p>
-          </div>
-
-          {history.length === 0 ? (
-            <p className={styles.wkEmptyState}>
-              No sessions yet. Start your first workout on the Today tab.
-            </p>
-          ) : (
-            <div className={styles.wkHistoryList}>
-              {history.map(s => (
-                <div key={s.id} className={styles.wkHistoryRow}>
-                  <span className={styles.wkHistoryDate}>
-                    {format(new Date(s.session_date + 'T12:00:00'), 'EEE, MMM d')}
-                  </span>
-                  {s.energy_level && (
-                    <span className={styles.wkHistoryEnergy}>
-                      Energy {s.energy_level}/5 · {ENERGY_LABELS[s.energy_level]}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Exercise progress charts */}
-          {(() => {
-            const allRE = allRoutines.flatMap(r => r.exercises)
-              .filter((re, idx, arr) => arr.findIndex(x => x.exercise.id === re.exercise.id) === idx)
-            const hasData = allRE.some(re => progressData[re.exercise.id]?.some(d => d.maxWeight !== null))
-            return hasData ? (
-              <div className={styles.wkProgressSection}>
-              <h2 className={styles.wkProgressSectionTitle}>Exercise Progress</h2>
-              {allRE
-                .filter(re => {
-                  const entries = progressData[re.exercise.id] ?? []
-                  return !re.exercise.tempo_default.includes('isometric') && entries.some(d => d.maxWeight !== null)
-                })
-                .map(re => {
-                  const entries = (progressData[re.exercise.id] ?? []).filter(d => d.maxWeight !== null)
-                  const maxEver = Math.max(...entries.map(d => d.maxWeight!))
-                  const latest = entries[entries.length - 1]
-                  const isNewPR = entries.length > 1 && latest.maxWeight === maxEver
-                  const chartEntries = entries.slice(-15)
-
-                  return (
-                    <div key={re.exercise.id} className={styles.wkProgressCard}>
-                      <div className={styles.wkProgressHeader}>
-                        <span className={styles.wkProgressName}>{re.exercise.name}</span>
-                        {isNewPR && <span className={styles.wkPRBadge}>PR</span>}
-                        <span className={styles.wkProgressCurrent}>{latest.maxWeight} lbs</span>
-                      </div>
-                      <div className={styles.wkSparkline}>
-                        {chartEntries.map(entry => {
-                          const pct = Math.round((entry.maxWeight! / maxEver) * 100)
-                          return (
-                            <div
-                              key={entry.date}
-                              className={styles.wkSparkBar}
-                              style={{ height: `${pct}%` }}
-                              title={`${format(new Date(entry.date + 'T12:00:00'), 'MMM d')}: ${entry.maxWeight} lbs`}
-                            />
-                          )
-                        })}
-                      </div>
-                      <p className={styles.wkProgressMeta}>
-                        Best: {maxEver} lbs · {entries.length} session{entries.length !== 1 ? 's' : ''} logged
-                      </p>
-                    </div>
-                  )
-                })}
-            </div>
-            ) : null
-          })()}
-
-          {/* Custom exercise progress charts */}
-          {customExercises.some(ex => progressData[ex.id]?.some(d => d.maxWeight !== null)) && (
-            <div className={styles.wkProgressSection}>
-              <h2 className={styles.wkProgressSectionTitle}>Your Exercise Progress</h2>
-              {customExercises
-                .filter(ex => (progressData[ex.id] ?? []).some(d => d.maxWeight !== null))
-                .map(ex => {
-                  const entries = (progressData[ex.id] ?? []).filter(d => d.maxWeight !== null)
-                  const maxEver = Math.max(...entries.map(d => d.maxWeight!))
-                  const latest = entries[entries.length - 1]
-                  const isNewPR = entries.length > 1 && latest.maxWeight === maxEver
-                  const chartEntries = entries.slice(-15)
-                  return (
-                    <div key={ex.id} className={styles.wkProgressCard}>
-                      <div className={styles.wkProgressHeader}>
-                        <span className={styles.wkProgressName}>{ex.name}</span>
-                        {isNewPR && <span className={styles.wkPRBadge}>PR</span>}
-                        <span className={styles.wkProgressCurrent}>{latest.maxWeight} lbs</span>
-                      </div>
-                      <div className={styles.wkSparkline}>
-                        {chartEntries.map(entry => {
-                          const pct = Math.round((entry.maxWeight! / maxEver) * 100)
-                          return (
-                            <div
-                              key={entry.date}
-                              className={styles.wkSparkBar}
-                              style={{ height: `${pct}%` }}
-                              title={`${format(new Date(entry.date + 'T12:00:00'), 'MMM d')}: ${entry.maxWeight} lbs`}
-                            />
-                          )
-                        })}
-                      </div>
-                      <p className={styles.wkProgressMeta}>
-                        Best: {maxEver} lbs · {entries.length} session{entries.length !== 1 ? 's' : ''} logged
-                      </p>
-                    </div>
-                  )
-                })}
-            </div>
-          )}
-        </div>
+        <WorkoutHistory
+          history={history}
+          progressData={progressData}
+          chartable={chartableExercises}
+          energyLabels={ENERGY_LABELS}
+        />
       )}
 
       {/* Info modal */}

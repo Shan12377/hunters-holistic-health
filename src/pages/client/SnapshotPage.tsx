@@ -68,7 +68,8 @@ export default function SnapshotPage() {
         bsR, bsC,
         wtR,
         spC,
-        wkR, wkC,
+        wkR,
+        actR,
       ] = await Promise.all([
         supabase.from('daily_logs').select('log_date').eq('user_id', uid).gte('log_date', monthStr).order('log_date', { ascending: false }),
         supabase.from('daily_logs').select('id', { count: 'exact', head: true }).eq('user_id', uid),
@@ -78,7 +79,7 @@ export default function SnapshotPage() {
         supabase.from('weight_logs').select('weight_lbs,logged_at').eq('user_id', uid).order('logged_at', { ascending: false }).limit(7),
         supabase.from('supplement_logs').select('id', { count: 'exact', head: true }).eq('user_id', uid),
         supabase.from('workout_sessions').select('session_date').eq('user_id', uid).gte('session_date', monthStr).order('session_date', { ascending: false }),
-        supabase.from('workout_sessions').select('id', { count: 'exact', head: true }).eq('user_id', uid).gte('session_date', monthStr),
+        supabase.from('activity_sessions').select('session_date').eq('user_id', uid).gte('session_date', monthStr).order('session_date', { ascending: false }),
       ])
 
       setLogDates((lgDates.data ?? []).map(r => r.log_date))
@@ -88,8 +89,20 @@ export default function SnapshotPage() {
       setBsCount(bsC.count ?? 0)
       setWeightReadings(wtR.data ?? [])
       setSuppCount(spC.count ?? 0)
-      setWorkoutCount(wkC.count ?? 0)
-      setLastWorkout(wkR.data?.[0]?.session_date ?? null)
+
+      // This card is titled Movement, so it counts days the person moved, from
+      // both the strength tracker and the movement log. Counting rows instead
+      // would double up a day where somebody walked and lifted, and would miss
+      // a walk entirely.
+      const movementDates = [
+        ...(wkR.data ?? []).map(r => r.session_date),
+        ...(actR.data ?? []).map(r => r.session_date),
+      ]
+      const distinctDays = new Set(movementDates)
+      setWorkoutCount(distinctDays.size)
+      setLastWorkout(
+        movementDates.length ? movementDates.reduce((a, b) => (a > b ? a : b)) : null
+      )
       setLoading(false)
     })()
   }, [user?.id])
@@ -219,7 +232,7 @@ export default function SnapshotPage() {
           <div className={styles.snapshotHeroTopRow}>
             <div>
               <div className={styles.snapshotHeroEyebrow}>Movement</div>
-              <div className={styles.snapshotHeroCaption}>Workouts this month</div>
+              <div className={styles.snapshotHeroCaption}>Days you moved this month</div>
             </div>
             {workoutCount > 0 && (
               <span className={styles.snapshotBadge} style={{ background: '#0B9E8E22', color: '#0B9E8E' }}>
@@ -234,12 +247,12 @@ export default function SnapshotPage() {
                   <ScoreRing score={Math.min(Math.round((workoutCount / 12) * 100), 100)} color="#0B9E8E" />
                   <div className={styles.snapshotRingCenter}>
                     <span className={styles.snapshotRingNum}>{workoutCount}</span>
-                    <span className={styles.snapshotRingUnit}>sessions</span>
+                    <span className={styles.snapshotRingUnit}>days</span>
                   </div>
                 </div>
                 <div className={styles.snapshotHeroStats}>
                   <div className={styles.snapshotHeroStat}>
-                    <span className={styles.snapshotHeroStatLabel}>Last workout</span>
+                    <span className={styles.snapshotHeroStatLabel}>Last moved</span>
                     <span className={styles.snapshotHeroStatNum} style={{ fontSize: '0.9rem' }}>{lastWorkout ? fmtDate(lastWorkout) : ', '}</span>
                   </div>
                   <div className={styles.snapshotHeroStat}>

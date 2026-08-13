@@ -1,0 +1,765 @@
+/* Workout tracker: activity log, routine builder, sample week.
+   Colours come from src/styles/tokens.css. Nothing is eyeballed. */
+
+.loading {
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+/* --- Section headers ---------------------------------------------------- */
+
+.sectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin: var(--space-6) 0 var(--space-4);
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-family: var(--font-headline);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1);
+}
+
+.sectionSub {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--gradient-gold);
+  color: var(--teal-dark);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: box-shadow 200ms var(--ease-primary), transform 200ms var(--ease-primary);
+}
+
+.primaryBtn:hover { box-shadow: var(--gold-glow); transform: translateY(-1px); }
+.primaryBtn:active { transform: translateY(0); }
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 200ms var(--ease-primary), background 200ms var(--ease-primary);
+}
+
+.secondaryBtn:hover { border-color: var(--gold); background: rgba(var(--gold-rgb), 0.08); }
+.secondaryBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.saveBtn {
+  width: 100%;
+  background: var(--gradient-gold);
+  color: var(--teal-dark);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  margin-top: var(--space-4);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: box-shadow 200ms var(--ease-primary);
+}
+
+.saveBtn:hover:not(:disabled) { box-shadow: var(--gold-glow); }
+.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  transition: color 160ms var(--ease-primary), background 160ms var(--ease-primary);
+}
+
+.iconBtn:hover:not(:disabled) { color: var(--gold); background: rgba(var(--gold-rgb), 0.1); }
+.iconBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* --- Activity totals ---------------------------------------------------- */
+
+.activityWrap { padding-bottom: var(--space-4); }
+
+.todayTotals {
+  display: flex;
+  gap: var(--space-4);
+  background: var(--bg-card);
+  background-image: var(--gradient-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.totalItem { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.totalNum {
+  font-family: var(--font-headline);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.totalLbl {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --- Add card ----------------------------------------------------------- */
+
+.addCard,
+.pickerBox {
+  background: var(--bg-card);
+  background-image: var(--gradient-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.addHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.addTitle {
+  font-family: var(--font-headline);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* --- Activity chips ----------------------------------------------------- */
+
+.chipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 6px;
+  cursor: pointer;
+  transition: border-color 160ms var(--ease-primary), background 160ms var(--ease-primary);
+}
+
+.chip:hover { border-color: var(--border); background: var(--bg-hover); }
+
+.chipActive {
+  border-color: var(--gold);
+  background: rgba(var(--gold-rgb), 0.12);
+  box-shadow: var(--gold-glow);
+}
+
+.chipEmoji { font-size: 1.4rem; line-height: 1; }
+
+.chipLabel {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.chipActive .chipLabel { color: var(--text-primary); }
+
+/* --- Fields ------------------------------------------------------------- */
+
+.field { margin-bottom: var(--space-4); }
+
+.fieldLabel {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.segment {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 6px;
+  font-family: var(--font-body);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 160ms var(--ease-primary), color 160ms var(--ease-primary);
+}
+
+.segmentActive { background: var(--gradient-gold); color: var(--teal-dark); font-weight: 700; }
+
+.hint {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
+  font-style: italic;
+}
+
+.activityNote {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: rgba(var(--gold-rgb), 0.07);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px;
+  margin: 0 0 var(--space-4);
+}
+
+.minuteRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.minuteChip {
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-width: 44px;
+  transition: border-color 160ms var(--ease-primary);
+}
+
+.minuteChip:hover { border-color: var(--border); }
+.minuteChipActive { border-color: var(--gold); background: rgba(var(--gold-rgb), 0.12); color: var(--text-primary); }
+
+.minuteInput,
+.weightInput,
+.smallInput {
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  width: 72px;
+}
+
+.smallInput { width: 58px; padding: 6px 8px; }
+
+.minuteInput:focus,
+.weightInput:focus,
+.smallInput:focus,
+.textInput:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+
+.minuteUnit {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.textInput {
+  width: 100%;
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+.textInput::placeholder { color: var(--text-muted); }
+
+/* --- Weight prompt ------------------------------------------------------ */
+
+.weightPrompt {
+  background: var(--bg-page);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+}
+
+.weightPromptText {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.weightRow { display: flex; gap: var(--space-2); align-items: center; }
+
+/* --- Estimate ----------------------------------------------------------- */
+
+.estimateBox {
+  background: var(--bg-page);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+}
+
+.estimateRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.estimateNum {
+  font-family: var(--font-headline);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.estimateLbl {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-right: var(--space-3);
+}
+
+.mathToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mathChevOpen { transform: rotate(180deg); transition: transform 200ms var(--ease-primary); }
+
+.mathPanel {
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+}
+
+.mathLine {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.mathLine strong { color: var(--text-primary); font-weight: 700; }
+
+.mathSource {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.disclaimer {
+  font-family: var(--font-body);
+  font-size: 0.73rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: var(--space-3) 0 0;
+}
+
+.errorBox {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--error);
+  background: rgba(224, 92, 92, 0.1);
+  border: 1px solid rgba(224, 92, 92, 0.3);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: var(--space-3) 0;
+}
+
+.emptyState {
+  font-family: var(--font-body);
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  margin: 0;
+}
+
+/* --- Logged activity list ----------------------------------------------- */
+
+.activityList { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.activityRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-3);
+}
+
+.activityEmoji { font-size: 1.5rem; line-height: 1.2; flex-shrink: 0; }
+
+.activityBody { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+
+.activityName {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.activityMeta {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.activityUserNote {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.activityDate {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* --- Sample week -------------------------------------------------------- */
+
+.weekCard { margin-bottom: var(--space-6); }
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.weekDay {
+  background: var(--bg-card);
+  background-image: var(--gradient-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weekDayHead { display: flex; align-items: center; gap: var(--space-2); }
+
+.weekEmoji { font-size: 1.25rem; line-height: 1; }
+
+.weekDayName {
+  font-family: var(--font-headline);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.weekFocus {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.weekTargets {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.weekDetail {
+  font-family: var(--font-body);
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+/* --- Routine builder ---------------------------------------------------- */
+
+.routineCard,
+.templateCard {
+  background: var(--bg-card);
+  background-image: var(--gradient-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.templateCard { border-style: dashed; }
+
+.routineHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.routineName {
+  font-family: var(--font-headline);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.routineDesc {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+}
+
+.templateTag {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+  background: var(--gold);
+  border-radius: 999px;
+  padding: 3px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.videoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  transition: border-color 200ms var(--ease-primary), box-shadow 200ms var(--ease-primary);
+}
+
+.videoLink:hover { border-color: var(--gold); box-shadow: var(--gold-glow); }
+
+.videoBlock { margin-bottom: var(--space-3); }
+
+.videoNote {
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
+  max-width: 52ch;
+}
+
+.builderList,
+.templateList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.builderRow,
+.templateRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: var(--space-3);
+}
+
+.builderEmoji { font-size: 1.35rem; line-height: 1.2; flex-shrink: 0; }
+
+.builderBody { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+
+.builderName {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.builderMuscles {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.builderInputs { display: flex; gap: var(--space-3); margin-top: var(--space-2); }
+
+.builderField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.builderActions { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+
+.templateNum {
+  font-family: var(--font-headline);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 18px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* --- Exercise picker ---------------------------------------------------- */
+
+.pickerList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: var(--space-3);
+}
+
+.pickerItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 160ms var(--ease-primary), background 160ms var(--ease-primary);
+}
+
+.pickerItem:hover:not(:disabled) { border-color: var(--gold); background: var(--bg-hover); }
+.pickerItem:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pickerName {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.pickerMuscles {
+  font-family: var(--font-body);
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .sectionHead { flex-direction: column; align-items: stretch; }
+  .primaryBtn { justify-content: center; }
+  .todayTotals { gap: var(--space-3); }
+  .estimateNum { font-size: 1.45rem; }
+  .pickerMuscles { display: none; }
+}
