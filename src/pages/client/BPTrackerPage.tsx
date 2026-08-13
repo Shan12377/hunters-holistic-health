@@ -180,7 +180,8 @@ export default function BPTrackerPage() {
   }, [])
 
   const fetchTodayLog = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const today = new Date().toISOString().split('T')[0]
     const { data } = await supabase
@@ -196,7 +197,8 @@ export default function BPTrackerPage() {
   }
 
   const fetchReadings = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const { data } = await supabase
       .from('blood_pressure_logs')
@@ -217,7 +219,8 @@ export default function BPTrackerPage() {
       return
     }
     setSubmitting(true)
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const { error } = await supabase.from('blood_pressure_logs').insert({
       user_id: user.id,

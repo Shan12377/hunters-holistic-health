@@ -70,7 +70,8 @@ export default function SettingsPage() {
   const handleExportData = async () => {
     setExporting(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
       if (!user) return
       const tables = ['daily_logs', 'blood_pressure_logs', 'blood_sugar_logs', 'weight_logs', 'habit_logs'] as const
       const out: Record<string, unknown> = { exported_at: new Date().toISOString() }

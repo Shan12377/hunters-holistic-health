@@ -98,7 +98,8 @@ export default function SupplementLogPage() {
   useEffect(() => { fetchData() }, [])
 
   const fetchData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const [suppRes, logRes] = await Promise.all([
       supabase.from('supplements').select('*').eq('user_id', user.id).eq('active', true).order('timing').order('name'),
@@ -110,7 +111,8 @@ export default function SupplementLogPage() {
   }
 
   const toggleTaken = async (supp: Supplement) => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     // Look for today's log only, not a historical one.
     const existing = logs.find(l => l.supplement_id === supp.id && l.log_date === today)
@@ -129,7 +131,8 @@ export default function SupplementLogPage() {
 
   const addSupplement = async (e: React.FormEvent) => {
     e.preventDefault()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const { data, error } = await supabase.from('supplements').insert({
       user_id: user.id, name: form.name.trim(), dose: form.dose.trim(),

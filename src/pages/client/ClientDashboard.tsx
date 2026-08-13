@@ -80,7 +80,8 @@ export default function ClientDashboard() {
 
   const handleEnergyCheckIn = async (level: number) => {
     setSavingEnergy(true)
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (user) {
       await supabase.from('daily_logs').upsert(
         { user_id: user.id, log_date: today, energy_level: level },
@@ -94,7 +95,8 @@ export default function ClientDashboard() {
   }
 
   const fetchTodayData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
 
     const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
@@ -370,7 +372,8 @@ export default function ClientDashboard() {
       {showLateSlip && (
         <LateSlipModal
           onSubmit={async (reason) => {
-            const { data: { user } } = await supabase.auth.getUser()
+            const { data: { session } } = await supabase.auth.getSession()
+            const user = session?.user
             if (!user) return
             await supabase.from('daily_logs').upsert({
               user_id: user.id,

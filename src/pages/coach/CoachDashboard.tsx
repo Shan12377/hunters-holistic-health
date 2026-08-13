@@ -79,7 +79,8 @@ export default function CoachDashboard() {
 
   // One-tap check-in: sends a warm message straight to the participant's inbox.
   const sendNudge = async (clientId: string, firstName: string) => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const { error } = await supabase.from('messages').insert({
       sender_id: user.id,
@@ -220,7 +221,8 @@ export default function CoachDashboard() {
     e.preventDefault()
     if (!cohortForm.name.trim() || !cohortForm.starts_on || !cohortForm.ends_on) return
     setSavingCohort(true)
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     const { data: newCohort, error } = await supabase
       .from('cohorts')
       .insert({

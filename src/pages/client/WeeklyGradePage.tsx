@@ -27,7 +27,8 @@ export default function WeeklyGradePage() {
   useEffect(() => { fetchData() }, [])
 
   const fetchData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
 
     const fourWeeksAgo = format(subDays(new Date(), 28), 'yyyy-MM-dd')

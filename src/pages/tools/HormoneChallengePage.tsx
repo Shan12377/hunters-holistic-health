@@ -179,7 +179,8 @@ export default function HormoneChallengePage() {
   })()
 
   const loadProgress = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const { data } = await supabase
       .from('challenge_progress')
@@ -270,7 +271,8 @@ export default function HormoneChallengePage() {
     if (!setup) return
     setSaving(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
       if (!user) { toast.error('Sign in to save your progress'); setSaving(false); return }
       const { error } = await supabase.from('challenge_progress').upsert({
         user_id: user.id,

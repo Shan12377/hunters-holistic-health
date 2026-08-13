@@ -41,7 +41,8 @@ export default function EducatorMessagesPage() {
   }, [thread])
 
   async function init() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     setEducatorId(user.id)
     await fetchConversations(user.id)

@@ -56,7 +56,8 @@ export default function MealGuardPage() {
 
   useEffect(() => {
     const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
       if (!user) return
       setUserId(user.id)
       fetchTodayLogs(user.id)
@@ -189,7 +190,8 @@ export default function MealGuardPage() {
   const handleLog = async () => {
     if (!foodInput.trim()) return
     setSaving(true)
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) { setSaving(false); return }
     const { error } = await supabase.from('meal_logs').insert({
       user_id: user.id,

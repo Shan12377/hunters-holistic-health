@@ -233,7 +233,7 @@ export default function FeedPage() {
         .in('poll_option_id', optIds)
       const voteCount: Record<string, number> = {}
       const userVoted = new Set<string>()
-      const currentUser = (await supabase.auth.getUser()).data.user?.id
+      const currentUser = (await supabase.auth.getSession()).data.session?.user?.id
       for (const v of votes ?? []) {
         voteCount[v.poll_option_id] = (voteCount[v.poll_option_id] ?? 0) + 1
         if (v.user_id === currentUser) userVoted.add(v.poll_option_id)

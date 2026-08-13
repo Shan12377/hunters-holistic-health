@@ -266,7 +266,8 @@ export default function HealthHubPage() {
   useEffect(() => { fetchAll() }, [])
 
   async function fetchAll() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     const weekStart = format(subDays(new Date(), 7), 'yyyy-MM-dd')
     const bpStart   = format(subDays(new Date(), 30), 'yyyy-MM-dd')
@@ -311,7 +312,8 @@ export default function HealthHubPage() {
   }
 
   async function saveSymptoms() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     setSavingSymptoms(true)
     const { error } = await supabase.from('symptom_logs').upsert(
@@ -327,7 +329,8 @@ export default function HealthHubPage() {
   }
 
   async function submitPrep() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     setPrepStatus('submitting')
     const record = { user_id: user.id, session_id: nextSession?.id ?? null, what_changed: prepForm.whatChanged || null, top_concern: prepForm.topConcern || null, progress_feeling: prepForm.progressFeeling || null }
@@ -339,7 +342,8 @@ export default function HealthHubPage() {
   }
 
   async function submitReview() {
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) return
     setReviewStatus('submitting')
     const record = { user_id: user.id, doc_type: reviewForm.docType, main_question: reviewForm.mainQuestion || null, urgency: reviewForm.urgency, status: 'submitted' }
