@@ -33,6 +33,24 @@ Update both dates every time it runs.
 
 ## Runs
 
+### 2026-08-13, third run, before the exercise video push
+
+All seven checks PASS. Migration 045 adds a demonstration video per exercise and
+removes the routine level video that 044 added, which was the wrong unit: a 30
+minute follow along does not necessarily contain the movement you are standing
+there trying to do.
+
+**Verification method worth keeping.** Every one of the 20 YouTube IDs was checked
+against the oEmbed endpoint, which returns the real title and channel only when a
+video exists and is public:
+
+    curl "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=ID&format=json"
+
+This caught two bad picks before they shipped. A "Bicep Curls" candidate that
+search attributed to HASfit was actually a different channel, and the video filed
+under Tricep Overhead Extension was an incline extension, a different movement.
+Search result snippets are not evidence.
+
 ### 2026-08-13, second run, before the workout tracker push
 
 Ran on her instruction to check the system had not broken during the workout

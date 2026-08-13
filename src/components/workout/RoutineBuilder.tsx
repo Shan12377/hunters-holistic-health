@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Plus, X, Trash2, ChevronUp, ChevronDown, Copy, Play } from 'lucide-react'
+import { Plus, X, Trash2, ChevronUp, ChevronDown, Copy } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import ExerciseVideoLink from './ExerciseVideoLink'
 import styles from './Workout.module.css'
 
 export interface BuilderExercise {
@@ -10,6 +11,8 @@ export interface BuilderExercise {
   muscle_groups: string[]
   tempo_default: string
   created_by_user_id: string | null
+  video_url: string | null
+  video_channel: string | null
 }
 
 export interface BuilderRoutineExercise {
@@ -100,7 +103,6 @@ export default function RoutineBuilder({ userId, routines, library, onChanged }:
         name,
         user_id: userId,
         description: template.description,
-        video_url: template.video_url,
         is_default: false,
       })
       .select('id')
@@ -288,7 +290,10 @@ export default function RoutineBuilder({ userId, routines, library, onChanged }:
                 <div key={re.id} className={styles.builderRow}>
                   <span className={styles.builderEmoji}>{re.exercise.emoji ?? '💪'}</span>
                   <div className={styles.builderBody}>
-                    <span className={styles.builderName}>{re.exercise.name}</span>
+                    <span className={styles.builderName}>
+                      {re.exercise.name}
+                      <ExerciseVideoLink url={re.exercise.video_url} channel={re.exercise.video_channel} />
+                    </span>
                     <span className={styles.builderMuscles}>{re.exercise.muscle_groups.join(', ')}</span>
                     <div className={styles.builderInputs}>
                       <label className={styles.builderField}>
@@ -409,30 +414,16 @@ export default function RoutineBuilder({ userId, routines, library, onChanged }:
               </div>
               {t.description && <p className={styles.routineDesc}>{t.description}</p>}
 
-              {t.video_url && (
-                <div className={styles.videoBlock}>
-                  <a
-                    className={styles.videoLink}
-                    href={t.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Play size={14} /> Watch a follow along version
-                  </a>
-                  <p className={styles.videoNote}>
-                    Made by another trainer, not by Dr. Hunter. Use it for the movement patterns and stop if
-                    anything hurts. Talk to your own physician before starting a new exercise routine.
-                  </p>
-                </div>
-              )}
-
               <div className={styles.templateList}>
                 {t.exercises.map((re, i) => (
                   <div key={re.id} className={styles.templateRow}>
                     <span className={styles.templateNum}>{i + 1}</span>
                     <span className={styles.builderEmoji}>{re.exercise.emoji ?? '💪'}</span>
                     <div className={styles.builderBody}>
-                      <span className={styles.builderName}>{re.exercise.name}</span>
+                      <span className={styles.builderName}>
+                        {re.exercise.name}
+                        <ExerciseVideoLink url={re.exercise.video_url} channel={re.exercise.video_channel} />
+                      </span>
                       <span className={styles.builderMuscles}>
                         {re.sets_default} sets
                         {re.exercise.tempo_default === 'isometric-2min'

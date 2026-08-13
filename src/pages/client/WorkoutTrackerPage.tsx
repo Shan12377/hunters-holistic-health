@@ -11,6 +11,7 @@ import RoutineBuilder, {
   type BuilderExercise,
 } from '@/components/workout/RoutineBuilder'
 import WorkoutHistory from '@/components/workout/WorkoutHistory'
+import ExerciseVideoLink from '@/components/workout/ExerciseVideoLink'
 import wk from '@/components/workout/Workout.module.css'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
@@ -23,6 +24,8 @@ interface Exercise {
   condition_notes: string | null
   muscle_groups: string[]
   tempo_default: string
+  video_url: string | null
+  video_channel: string | null
 }
 
 interface RoutineExercise {
@@ -124,7 +127,7 @@ export default function WorkoutTrackerPage() {
   }, [userId, tab])
 
   const EXERCISE_FIELDS =
-    'id, name, emoji, coach_cue, condition_notes, muscle_groups, tempo_default, created_by_user_id'
+    'id, name, emoji, coach_cue, condition_notes, muscle_groups, tempo_default, created_by_user_id, video_url, video_channel'
 
   async function loadRoutines(): Promise<Routine[] | null> {
     const { data, error } = await supabase
@@ -162,7 +165,7 @@ export default function WorkoutTrackerPage() {
   async function loadLibrary() {
     const { data, error } = await supabase
       .from('exercises')
-      .select('id, name, emoji, muscle_groups, tempo_default, created_by_user_id')
+      .select('id, name, emoji, muscle_groups, tempo_default, created_by_user_id, video_url, video_channel')
       .order('name', { ascending: true })
     if (error) {
       console.error('[workout] library load failed:', error)
@@ -539,6 +542,7 @@ export default function WorkoutTrackerPage() {
                         <div className={styles.wkExBody}>
                           <span className={styles.wkExName}>
                             <span className={wk.builderEmoji}>{ex.emoji ?? '💪'}</span> {ex.name}
+                            <ExerciseVideoLink url={ex.video_url} channel={ex.video_channel} />
                           </span>
                           <span className={styles.wkExMeta}>
                             {re.sets_default} sets
@@ -775,6 +779,11 @@ export default function WorkoutTrackerPage() {
                 <X size={18} />
               </button>
             </div>
+            <ExerciseVideoLink
+              url={infoExercise.video_url}
+              channel={infoExercise.video_channel}
+              variant="block"
+            />
             {infoExercise.coach_cue && (
               <div className={styles.wkInfoSection}>
                 <span className={styles.wkInfoLabel}>Coaching cue</span>

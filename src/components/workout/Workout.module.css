@@ -644,6 +644,27 @@
 
 .videoBlock { margin-bottom: var(--space-3); }
 
+/* The small "Watch" link that sits beside an exercise name in a list. */
+.videoInline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: var(--space-2);
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition: border-color 160ms var(--ease-primary), background 160ms var(--ease-primary);
+}
+
+.videoInline:hover { border-color: var(--gold); background: rgba(var(--gold-rgb), 0.12); }
+
 .videoNote {
   font-family: var(--font-body);
   font-size: 0.74rem;
