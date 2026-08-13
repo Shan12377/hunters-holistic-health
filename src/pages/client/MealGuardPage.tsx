@@ -134,7 +134,11 @@ export default function MealGuardPage() {
       }
     }
     try {
-      const r = await fetch(`/api/usda-lookup?q=${encodeURIComponent(name)}`)
+      // The endpoint verifies this token, same as the other paid lookups.
+      const { data: { session } } = await supabase.auth.getSession()
+      const r = await fetch(`/api/usda-lookup?q=${encodeURIComponent(name)}`, {
+        headers: { 'Authorization': `Bearer ${session?.access_token ?? ''}` },
+      })
       const d = await r.json()
       if (d.found) {
         return { calories: d.calories, protein: d.protein, fat: d.fat, carbs: d.carbs, source: 'usda' }

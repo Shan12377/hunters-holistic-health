@@ -2,7 +2,14 @@
 // Keeps the API key server-side. Returns normalized nutrition data for a food query.
 // Educational use only — data is used as context for the Meal Guard AI assistant.
 // Lane 1 (non-PHI). No user data is stored or transmitted in this function.
+//
+// Requires a signed-in caller (CLAUDE.md API Endpoint Auth Rule). The only
+// caller is the Nourish Log at /app/meal-guard, which already sits behind
+// ProtectedRoute, so this locks out abuse without changing anything for a real
+// user. Without it, anyone with the URL could exhaust the USDA key's quota and
+// break food lookup for clients.
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { requireUser } from './_guard'
 
 const NUTRIENT_IDS = {
   calories: 1008,
@@ -13,6 +20,11 @@ const NUTRIENT_IDS = {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
+
+  // Verifies the Supabase bearer token and rate limits by IP. Returns null and
+  // has already sent 401 or 429 when it fails.
+  const user = await requireUser(req, res)
+  if (!user) return
 
   const q = req.query.q
   if (!q || typeof q !== 'string' || !q.trim()) {
