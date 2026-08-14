@@ -277,23 +277,63 @@ export function estimateActivity(params: {
 // ---------------------------------------------------------------------------
 
 /**
- * Minimum minutes for a session to count toward the movement goal.
+ * There is no minimum. Every logged session counts as a day you moved.
  *
- * Dr. Hunter, 2026-08-13: "intentional move counts, at least 15 mins, people sit
- * at desks long periods". The bar is deliberately low. It is not about training
- * hard, it is about breaking up a day spent sitting. A shorter session still
- * gets logged and still shows its calorie estimate, it just does not tick the
- * day off toward the goal.
+ * Dr. Hunter, 2026-08-13, correcting an earlier build that gated this at 15
+ * minutes:
+ *
+ *   "15 minutes was the walk goal. if i do 20 squats after a meal thats movement
+ *    or if i spend 3 minutes on the treadmill thats movement. its just that they
+ *    are not weighted equally"
+ *
+ * So twenty squats after dinner counts. Three minutes on the treadmill counts.
+ * The difference between those and a half hour walk is carried by the points
+ * below, not by a pass or fail gate. Gating it would have told somebody doing
+ * exactly the right thing after a meal that it was worth nothing.
  */
-export const INTENTIONAL_MOVEMENT_MIN_MINUTES = 15
+
+/** The walk goal, which is what the 15 applies to. Walking only. */
+export const WALK_GOAL_MINUTES = 15
 
 /**
- * Days a month the movement goal aims at, roughly five a week.
- *
- * Deliberately days rather than sessions, so walking and lifting on the same day
- * counts once and nobody games it.
+ * Days a month the movement goal aims at, roughly five a week. Days rather than
+ * sessions, so walking and lifting on the same day counts once.
  */
 export const MOVEMENT_DAYS_GOAL_PER_MONTH = 20
+
+/**
+ * Movement points: how the sessions get weighted against each other.
+ *
+ * Points are MET minutes, the METs of the activity multiplied by how long it
+ * lasted. That is the measure the physical activity guidelines are written in,
+ * so the weekly target below is not invented.
+ *
+ *   30 min brisk walk   5.0 METs x 30 = 150 points
+ *   20 squats, say 2 min 5.0 METs x  2 =  10 points
+ *   3 min easy treadmill 2.8 METs x  3 =   8 points
+ *
+ * Everything counts. Harder and longer simply counts for more.
+ */
+export function movementPoints(params: {
+  activityKey: string
+  minutes: number
+  intensity: Intensity
+}): number {
+  const activity = findActivity(params.activityKey)
+  if (!activity || !Number.isFinite(params.minutes) || params.minutes <= 0) return 0
+  return Math.round(activity.met[params.intensity] * params.minutes)
+}
+
+/**
+ * Weekly points target.
+ *
+ * 500 MET minutes a week is the level the Physical Activity Guidelines for
+ * Americans, 2nd edition, describe as the minimum for substantial health
+ * benefit. It is the same thing as 150 minutes of moderate activity, just
+ * counted in a way that lets a short hard effort and a long easy one both
+ * contribute honestly.
+ */
+export const WEEKLY_POINTS_TARGET = 500
 
 /** Shown under every estimate. Kept here so it cannot drift between screens. */
 export const ESTIMATE_DISCLAIMER =

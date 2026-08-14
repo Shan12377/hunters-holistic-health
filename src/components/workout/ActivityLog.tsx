@@ -1,14 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Plus, X, Trash2, ChevronDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import {
   ACTIVITY_TYPES,
   INTENSITIES,
   INTENSITY_LABEL,
   ESTIMATE_DISCLAIMER,
-  INTENTIONAL_MOVEMENT_MIN_MINUTES,
+  WALK_GOAL_MINUTES,
+  WEEKLY_POINTS_TARGET,
   estimateActivity,
+  movementPoints,
   findActivity,
   type Intensity,
   type Location,
@@ -33,7 +35,9 @@ interface Props {
   today: string
 }
 
-const QUICK_MINUTES = [10, 15, 20, 30, 45, 60]
+// Starts at 2 on purpose: twenty squats after a meal is a real entry, and if it
+// takes effort to log it, it does not get logged.
+const QUICK_MINUTES = [2, 5, 10, 15, 20, 30, 45, 60]
 
 export default function ActivityLog({ userId, today }: Props) {
   const [rows, setRows] = useState<ActivityRow[]>([])
@@ -177,6 +181,17 @@ export default function ActivityLog({ userId, today }: Props) {
   const todayCalories = todayRows.reduce((sum, r) => sum + (r.est_calories ?? 0), 0)
   const todayMinutes = todayRows.reduce((sum, r) => sum + r.minutes, 0)
 
+  // Points over the trailing 7 days, which is the window the weekly target is
+  // written against.
+  const weekAgo = format(subDays(new Date(), 6), 'yyyy-MM-dd')
+  const weekPoints = rows
+    .filter(r => r.session_date >= weekAgo)
+    .reduce(
+      (sum, r) =>
+        sum + movementPoints({ activityKey: r.activity_key, minutes: r.minutes, intensity: r.intensity }),
+      0
+    )
+
   if (loading) return <p className={styles.loading}>Loading your activity...</p>
 
   return (
@@ -186,8 +201,8 @@ export default function ActivityLog({ userId, today }: Props) {
           <h2 className={styles.sectionTitle}>Movement</h2>
           <p className={styles.sectionSub}>
             Walks, rebounding, HIIT, housework. Anything that is not sets and reps.
-            {' '}{INTENTIONAL_MOVEMENT_MIN_MINUTES} minutes or more counts as a day you moved.
-            Log the shorter ones anyway, they still add up.
+            Twenty squats after a meal counts. So does three minutes on the treadmill.
+            Longer and harder is worth more, but everything counts for something.
           </p>
         </div>
         {!adding && (
@@ -203,15 +218,15 @@ export default function ActivityLog({ userId, today }: Props) {
         <div className={styles.todayTotals}>
           <div className={styles.totalItem}>
             <span className={styles.totalNum}>{todayMinutes}</span>
-            <span className={styles.totalLbl}>
-              {todayMinutes >= INTENTIONAL_MOVEMENT_MIN_MINUTES
-                ? 'minutes today, that counts'
-                : `minutes today, ${INTENTIONAL_MOVEMENT_MIN_MINUTES - todayMinutes} to go`}
-            </span>
+            <span className={styles.totalLbl}>minutes today</span>
           </div>
           <div className={styles.totalItem}>
             <span className={styles.totalNum}>~{todayCalories}</span>
             <span className={styles.totalLbl}>calories, estimated</span>
+          </div>
+          <div className={styles.totalItem}>
+            <span className={styles.totalNum}>{weekPoints}</span>
+            <span className={styles.totalLbl}>points this week of {WEEKLY_POINTS_TARGET}</span>
           </div>
         </div>
       )}
@@ -295,6 +310,11 @@ export default function ActivityLog({ userId, today }: Props) {
               ))}
             </div>
             <p className={styles.hint}>{activity.intensityHint[intensity]}</p>
+            {activityKey === 'walk' && (
+              <p className={styles.hint}>
+                Walk goal: {WALK_GOAL_MINUTES} minutes. Shorter walks still count, they are just worth fewer points.
+              </p>
+            )}
           </div>
 
           {activity.note && <p className={styles.activityNote}>{activity.note}</p>}
@@ -333,6 +353,10 @@ export default function ActivityLog({ userId, today }: Props) {
           ) : estimate && (
             <div className={styles.estimateBox}>
               <div className={styles.estimateRow}>
+                <span className={styles.estimateNum}>
+                  {movementPoints({ activityKey, minutes, intensity })}
+                </span>
+                <span className={styles.estimateLbl}>points</span>
                 <span className={styles.estimateNum}>~{estimate.calories}</span>
                 <span className={styles.estimateLbl}>calories</span>
                 {estimate.steps !== null && (
@@ -390,6 +414,13 @@ export default function ActivityLog({ userId, today }: Props) {
                       none is shown rather than making a number up.
                     </p>
                   )}
+                  <p className={styles.mathLine}>
+                    <strong>Points.</strong> {estimate.working.baseMet} METs times {estimate.working.minutes}{' '}
+                    minutes = <strong>{movementPoints({ activityKey, minutes, intensity })} points</strong>. This is
+                    how sessions get weighed against each other, so a short hard effort and a long easy one both
+                    count for what they are actually worth. {WEEKLY_POINTS_TARGET} points a week is the level the
+                    physical activity guidelines describe as the minimum for real benefit.
+                  </p>
                   <p className={styles.mathSource}>
                     MET values from the 2011 Compendium of Physical Activities (Ainsworth et al.). This is a gross
                     figure, meaning it includes the calories you would have burned resting during that time. That is
@@ -434,6 +465,7 @@ export default function ActivityLog({ userId, today }: Props) {
                     {r.minutes} min · {INTENSITY_LABEL[r.intensity]}
                     {r.est_calories ? ` · ~${r.est_calories} cal` : ''}
                     {r.est_steps ? ` · ~${r.est_steps.toLocaleString()} steps` : ''}
+                    {` · ${movementPoints({ activityKey: r.activity_key, minutes: r.minutes, intensity: r.intensity })} pts`}
                   </span>
                   {r.note && <span className={styles.activityUserNote}>{r.note}</span>}
                   <span className={styles.activityDate}>

@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import {
-  INTENTIONAL_MOVEMENT_MIN_MINUTES,
-  MOVEMENT_DAYS_GOAL_PER_MONTH,
-} from '@/lib/activity'
+import { MOVEMENT_DAYS_GOAL_PER_MONTH } from '@/lib/activity'
 import { useAuthStore } from '@/store/authStore'
 import { usePlan } from '@/hooks/usePlan'
 import { format, parseISO, isValid, startOfMonth, differenceInDays } from 'date-fns'
@@ -83,7 +80,7 @@ export default function SnapshotPage() {
         supabase.from('weight_logs').select('weight_lbs,logged_at').eq('user_id', uid).order('logged_at', { ascending: false }).limit(7),
         supabase.from('supplement_logs').select('id', { count: 'exact', head: true }).eq('user_id', uid),
         supabase.from('workout_sessions').select('session_date').eq('user_id', uid).gte('session_date', monthStr).order('session_date', { ascending: false }),
-        supabase.from('activity_sessions').select('session_date, minutes').eq('user_id', uid).gte('session_date', monthStr).order('session_date', { ascending: false }),
+        supabase.from('activity_sessions').select('session_date').eq('user_id', uid).gte('session_date', monthStr).order('session_date', { ascending: false }),
       ])
 
       setLogDates((lgDates.data ?? []).map(r => r.log_date))
@@ -98,14 +95,12 @@ export default function SnapshotPage() {
       // both the strength tracker and the movement log. Counting rows instead
       // would double up a day where somebody walked and lifted, and would miss
       // a walk entirely.
-      // A logged strength session is intentional by definition. A movement
-      // session has to clear the minutes bar, so a 3 minute walk to the car does
-      // not tick off the day.
+      // No minimum. Twenty squats after a meal is movement, three minutes on the
+      // treadmill is movement. How much they were worth is carried by the points
+      // on the Movement tab, not by excluding them from the day count.
       const movementDates = [
         ...(wkR.data ?? []).map(r => r.session_date),
-        ...(actR.data ?? [])
-          .filter(r => (r.minutes ?? 0) >= INTENTIONAL_MOVEMENT_MIN_MINUTES)
-          .map(r => r.session_date),
+        ...(actR.data ?? []).map(r => r.session_date),
       ]
       const distinctDays = new Set(movementDates)
       setWorkoutCount(distinctDays.size)
@@ -241,7 +236,7 @@ export default function SnapshotPage() {
           <div className={styles.snapshotHeroTopRow}>
             <div>
               <div className={styles.snapshotHeroEyebrow}>Movement</div>
-              <div className={styles.snapshotHeroCaption}>Days you moved, {INTENTIONAL_MOVEMENT_MIN_MINUTES} min or more</div>
+              <div className={styles.snapshotHeroCaption}>Days you moved this month</div>
             </div>
             {workoutCount > 0 && (
               <span className={styles.snapshotBadge} style={{ background: '#0B9E8E22', color: '#0B9E8E' }}>
