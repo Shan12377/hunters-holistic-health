@@ -16,6 +16,7 @@ const NUTRIENT_IDS = {
   protein:  1003,
   fat:      1004,
   carbs:    1005,
+  fiber:    1079, // Fiber, total dietary
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -59,6 +60,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       protein:  get(NUTRIENT_IDS.protein),
       fat:      get(NUTRIENT_IDS.fat),
       carbs:    get(NUTRIENT_IDS.carbs),
+      fiber:    get(NUTRIENT_IDS.fiber),
       source: 'usda' as const,
     })
   } catch {

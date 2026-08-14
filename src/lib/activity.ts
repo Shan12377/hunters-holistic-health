@@ -182,6 +182,26 @@ export const ACTIVITY_TYPES: readonly ActivityType[] = [
     hasLocation: false,
     countsSteps: false,
   },
+  {
+    // A catch-all for anything not already listed: basketball, pickleball,
+    // martial arts, a sport league, gardening past what Housework covers.
+    // MET values here sit in the range general recreational sport occupies
+    // (Compendium of Physical Activities, code 15xxx sport category), not
+    // tuned to one specific activity, since this key covers all of them. The
+    // note field is where the person says what it actually was.
+    key: 'other',
+    label: 'Other',
+    emoji: '🏀',
+    met: { easy: 4.0, moderate: 6.0, hard: 8.0 },
+    intensityHint: {
+      easy: 'Casual, plenty of breaks.',
+      moderate: 'Steady effort, playing a full game or session.',
+      hard: 'Competitive, all out.',
+    },
+    hasLocation: false,
+    countsSteps: false,
+    note: 'Say what it was in the note below, like "basketball" or "pickleball league."',
+  },
 ]
 
 export const INTENSITIES: readonly Intensity[] = ['easy', 'moderate', 'hard']

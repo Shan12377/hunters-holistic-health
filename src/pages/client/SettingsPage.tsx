@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download, BellRing, Send } from 'lucide-react'
+import { Settings, Video, ExternalLink, LogOut, Trash2, Shield, User, Target, Download, BellRing, Send, RefreshCw } from 'lucide-react'
 import ReminderSettings from '@/components/ui/ReminderSettings'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
+import { usePwaUpdateStore } from '@/store/pwaUpdateStore'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import BackButton from '@/components/BackButton'
@@ -65,6 +66,7 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteInput, setDeleteInput] = useState('')
   const [exporting, setExporting] = useState(false)
+  const { needRefresh, checking, lastCheckedAt, registration, reload, checkNow } = usePwaUpdateStore()
 
   // Data portability: everything the client logged, as one JSON file they keep.
   const handleExportData = async () => {
@@ -558,6 +560,40 @@ export default function SettingsPage() {
         <button onClick={handleExportData} className={shared.btnSecondary} disabled={exporting}>
           {exporting ? 'Preparing your file...' : 'Download my data'}
         </button>
+      </div>
+
+      {/* App updates. A phone kept open for days only checks for a new
+          version automatically once an hour, and the toast that announces it
+          disappears on its own after a while. This is the backup: a control
+          that is always here, so finding out whether you are current does
+          not depend on catching a message before it vanishes. */}
+      <div className={styles.card}>
+        <h3 className={styles.cardTitle}>
+          <RefreshCw size={16} /> App Updates
+        </h3>
+        {needRefresh ? (
+          <>
+            <p className={styles.cardText}>A new version is ready.</p>
+            <button onClick={() => reload?.()} className={shared.btnPrimary}>
+              Reload now
+            </button>
+          </>
+        ) : (
+          <>
+            <p className={styles.cardText}>
+              {lastCheckedAt
+                ? `You are on the latest version. Last checked ${lastCheckedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.`
+                : 'Checks for a new version automatically about once an hour while the app is open.'}
+            </p>
+            <button
+              onClick={checkNow}
+              className={shared.btnSecondary}
+              disabled={checking || !registration}
+            >
+              {checking ? 'Checking...' : 'Check for updates'}
+            </button>
+          </>
+        )}
       </div>
 
       {/* Sign out */}

@@ -17,6 +17,7 @@ export interface NutritionData {
   protein: number
   fat: number
   carbs: number
+  fiber: number
   notes?: string
   source: 'local' | 'usda'
 }

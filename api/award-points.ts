@@ -71,12 +71,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .eq('user_id', user.id).eq('challenge_id', challengeId).eq('log_date', date).limit(1).maybeSingle()
       if (!data) return res.status(403).json({ error: 'Invalid ref' })
     } else if (eventType === 'exercise_log') {
-      // refId is "${date}_${exerciseType}"
+      // refId is "${date}_${activityKey}". Movement logging moved from the old
+      // exercise_logs table (one page, no relation to the Workout Tracker) onto
+      // activity_sessions, the table the Workout Tracker's Movement tab already
+      // wrote to, so a log made from either surface shows up on both.
       const idx = refId.indexOf('_')
       const date = refId.slice(0, idx)
-      const exerciseType = refId.slice(idx + 1)
-      const { data } = await admin.from('exercise_logs').select('id')
-        .eq('user_id', user.id).eq('log_date', date).eq('exercise_type', exerciseType).limit(1).maybeSingle()
+      const activityKey = refId.slice(idx + 1)
+      const { data } = await admin.from('activity_sessions').select('id')
+        .eq('user_id', user.id).eq('session_date', date).eq('activity_key', activityKey).limit(1).maybeSingle()
       if (!data) return res.status(403).json({ error: 'Invalid ref' })
     }
 

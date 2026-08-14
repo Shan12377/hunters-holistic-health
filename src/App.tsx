@@ -7,6 +7,7 @@ import { PWAInstallBanner } from '@/components/pwa/PWAInstallBanner'
 import ErrorBoundary from '@/components/ui/ErrorBoundary'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
+import { usePwaUpdateStore } from '@/store/pwaUpdateStore'
 import LandingPage from '@/pages/LandingPage'
 import LoginPage from '@/pages/auth/LoginPage'
 const SignupPage = lazy(() => import('@/pages/auth/SignupPage'))
@@ -158,9 +159,20 @@ export default function App() {
     // rarely appear for the people most likely to be running a stale version.
     onRegisteredSW(_swUrl, registration) {
       if (!registration) return
+      usePwaUpdateStore.getState().setRegistration(registration)
       setInterval(() => { registration.update().catch(() => {}) }, UPDATE_CHECK_INTERVAL_MS)
     },
   })
+
+  // Mirror both into the shared store so Settings can show the same status and
+  // offer the same reload action, not just this one transient toast.
+  useEffect(() => {
+    usePwaUpdateStore.getState().setNeedRefresh(needRefresh)
+  }, [needRefresh])
+
+  useEffect(() => {
+    usePwaUpdateStore.getState().setReload(() => updateServiceWorker(true))
+  }, [updateServiceWorker])
 
   useEffect(() => {
     if (needRefresh) {
@@ -182,10 +194,14 @@ export default function App() {
             </button>
           </div>
         ),
-        { duration: 8000 }
+        // No auto-dismiss. The old 8 second timer meant missing the toast once
+        // (phone in a pocket, mid-conversation, anything) lost it for good,
+        // with no other way to find out an update was waiting. It now stays
+        // until dismissed, and Settings has the same control as a backup.
+        { duration: Infinity }
       )
     }
-  }, [needRefresh])
+  }, [needRefresh, updateServiceWorker])
 
   useEffect(() => {
     // Hard stop. If anything below hangs, the app still becomes usable rather

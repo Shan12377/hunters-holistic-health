@@ -1,120 +1,10 @@
 import { useState } from 'react'
-import { Dumbbell, Bike, Waves, Zap, Activity, PersonStanding, Footprints, Square, MoreHorizontal, BookOpen, FlameKindling } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { Dumbbell, Activity, BookOpen, FlameKindling } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { format } from 'date-fns'
-import toast from 'react-hot-toast'
-import { awardPoints } from '@/lib/points'
 import BackButton from '@/components/BackButton'
+import ActivityLog from '@/components/workout/ActivityLog'
 import styles from './Client.module.css'
-import shared from '../../styles/shared.module.css'
-
-const EXERCISE_TYPES = [
-  { id: 'walking',    label: 'Walking',     Icon: Footprints },
-  { id: 'strength',   label: 'Strength',    Icon: Dumbbell },
-  { id: 'isometric',  label: 'Isometric',   Icon: Square },
-  { id: 'hiit',       label: 'HIIT',        Icon: Zap },
-  { id: 'yoga',       label: 'Yoga',        Icon: PersonStanding },
-  { id: 'cycling',    label: 'Cycling',     Icon: Bike },
-  { id: 'swimming',   label: 'Swimming',    Icon: Waves },
-  { id: 'stretching', label: 'Stretching',  Icon: Activity },
-  { id: 'other',      label: 'Other',       Icon: MoreHorizontal },
-]
-
-const INTENSITIES = [
-  { id: 'low',      label: 'Low',      desc: 'Light effort, can hold a conversation easily' },
-  { id: 'moderate', label: 'Moderate', desc: 'Steady effort, slightly breathless' },
-  { id: 'high',     label: 'High',     desc: 'Intense, difficult to speak in full sentences' },
-]
-
-const QUICK_DURATIONS = [10, 15, 20, 30, 45, 60]
-
-interface Insight {
-  headline: string
-  points: string[]
-  supplement?: string
-  study?: string
-}
-
-const INSIGHTS: Record<string, Insight> = {
-  walking: {
-    headline: 'Post-meal walking is one of the most evidence-supported tools for blood sugar management.',
-    points: [
-      'A 10-20 minute walk after your largest meal supports glucose clearance from your bloodstream.',
-      'A 2023 study found that 3 minutes of walking every 45 minutes during prolonged sitting improved blood sugar regulation more than a single 30-minute walk.',
-      'Walking activates the quadriceps and glutes, which are primary glucose disposal muscles.',
-    ],
-    study: 'Research: doi.org/10.1111/sms.14628',
-  },
-  strength: {
-    headline: 'Resistance training is the most effective long-term investment in metabolic health.',
-    points: [
-      'Muscle is your primary glucose disposal tissue. More muscle means more glucose cleared from your bloodstream after every meal.',
-      'Minimum effective dose: 2-3 sessions per week. Weights, bands, or bodyweight are equivalent if you progressively increase the challenge.',
-      'Research shows that 25-40% of weight lost during significant caloric restriction is lean tissue if resistance training is not included.',
-    ],
-    supplement: 'Aim for 25-30g of protein within 2 hours of your session to support muscle recovery and protein synthesis.',
-  },
-  isometric: {
-    headline: 'Isometric training has the strongest blood pressure evidence of any single exercise type.',
-    points: [
-      'Protocol: 4 sets of 2-minute wall sits with 2 minutes of rest between sets, 3 times per week.',
-      'Static holds create temporary vascular compression. The release triggers a powerful rebound dilation and a burst of nitric oxide, which relaxes blood vessels.',
-      'A 2023 BJSM meta-analysis showed isometric exercise lowered blood pressure by an average of 8.2/4.0 mmHg, outperforming aerobic training (4.5/2.5 mmHg) and dynamic resistance training.',
-    ],
-    study: 'Research: bjsm.bmj.com/content/57/20/1317',
-  },
-  hiit: {
-    headline: 'High-intensity intervals activate the muscle fibers that are most effective for glucose disposal.',
-    points: [
-      'Fast-twitch muscle fibers, which HIIT specifically recruits, act as high-capacity glucose sinks during and after exercise.',
-      'Post-HIIT, your muscles continue pulling glucose from circulation for 24-48 hours during recovery.',
-      'Short sessions (10-20 min) produce comparable or greater metabolic benefit to longer moderate sessions.',
-    ],
-    supplement: 'Electrolytes (sodium, potassium, magnesium) are essential on high-sweat training days. Plain water alone is often insufficient for replacement.',
-  },
-  yoga: {
-    headline: 'Yoga addresses the stress-cortisol-blood sugar link that other workouts miss.',
-    points: [
-      'Chronic stress elevates cortisol, which directly raises blood sugar and blood pressure.',
-      'Yoga and breath-focused movement support the parasympathetic nervous system, helping the body shift out of its stress-response state.',
-      'Even 10-15 minutes of intentional breath work and movement can shift cortisol patterns measurably over time.',
-    ],
-  },
-  cycling: {
-    headline: 'Cycling is a joint-supportive cardiovascular option with strong metabolic benefit.',
-    points: [
-      'Sustained cycling activates the large lower-body muscle groups that pull glucose from circulation.',
-      'Even low-to-moderate intensity cycling for 30 minutes supports insulin sensitivity.',
-      'Steady-state aerobic work supports long-term cardiovascular function when practiced consistently.',
-    ],
-  },
-  swimming: {
-    headline: 'Swimming provides full-body resistance with minimal joint load.',
-    points: [
-      'Water resistance engages muscles throughout the entire body simultaneously, making each session metabolically efficient.',
-      'A valuable option for individuals where joint or mobility concerns limit land-based movement.',
-      'Consistent swimming supports both blood pressure and blood sugar regulation in published research.',
-    ],
-    supplement: 'Post-swim protein matters. Aim for a protein-forward meal or snack within one hour of finishing.',
-  },
-  stretching: {
-    headline: 'Flexibility and mobility work protect your ability to stay consistent.',
-    points: [
-      'Stretching reduces injury risk, which is the primary barrier to long-term exercise consistency.',
-      'Low-intensity movement after periods of sitting supports circulation and blood sugar regulation.',
-      'Pairing regular stretching with your main training sessions helps the body recover and adapt faster.',
-    ],
-  },
-  other: {
-    headline: 'Any intentional movement is a metabolic investment.',
-    points: [
-      'Consistency over intensity: showing up matters more than any single session.',
-      'Daily movement, even in 10-minute blocks, produces measurable metabolic benefit over time.',
-      'Log what you did and how you felt. Patterns in your own data are the most informative teacher.',
-    ],
-  },
-}
 
 const LEARN_CARDS = [
   {
@@ -195,44 +85,7 @@ export default function ExercisePage() {
   const { user } = useAuthStore()
   const today = format(new Date(), 'yyyy-MM-dd')
 
-  const [tab, setTab]                   = useState<'log' | 'learn'>('log')
-  const [exerciseType, setExerciseType] = useState<string | null>(null)
-  const [duration, setDuration]         = useState('')
-  const [intensity, setIntensity]       = useState<'low' | 'moderate' | 'high'>('moderate')
-  const [notes, setNotes]               = useState('')
-  const [saving, setSaving]             = useState(false)
-  const [lastSaved, setLastSaved]       = useState<string | null>(null)
-
-  const addDuration = (mins: number) => {
-    setDuration(d => String((parseInt(d) || 0) + mins))
-  }
-
-  const handleSave = async () => {
-    if (!user?.id || !exerciseType || !duration || parseInt(duration) <= 0) return
-    setSaving(true)
-    const { error } = await supabase.from('exercise_logs').insert({
-      user_id: user.id,
-      log_date: today,
-      exercise_type: exerciseType,
-      duration_min: parseInt(duration),
-      intensity,
-      notes: notes.trim() || null,
-    })
-    if (error) {
-      toast.error('Could not save. Please try again.')
-    } else {
-      toast.success('Movement logged! +5 pts')
-      await awardPoints(user.id, 'exercise_log', 5, `${today}_${exerciseType}`)
-      setLastSaved(exerciseType)
-      setExerciseType(null)
-      setDuration('')
-      setNotes('')
-      setIntensity('moderate')
-    }
-    setSaving(false)
-  }
-
-  const insight = lastSaved ? INSIGHTS[lastSaved] : null
+  const [tab, setTab] = useState<'log' | 'learn'>('log')
 
   return (
     <div className="animate-fade-in">
@@ -252,113 +105,12 @@ export default function ExercisePage() {
         <button className={tab === 'learn' ? styles.exTabActive : styles.exTab} onClick={() => setTab('learn')}>Learn</button>
       </div>
 
-      {/* LOG TAB */}
-      {tab === 'log' && (
-        <>
-          {/* Post-save insight card */}
-          {insight && (
-            <div className={styles.exInsightCard}>
-              <div className={styles.exInsightHead}>{insight.headline}</div>
-              <ul className={styles.exInsightList}>
-                {insight.points.map((p, i) => <li key={i}>{p}</li>)}
-              </ul>
-              {insight.supplement && (
-                <div className={styles.exInsightSupp}>
-                  <strong>Nutrition note:</strong> {insight.supplement}
-                </div>
-              )}
-              {insight.study && (
-                <div className={styles.exInsightStudy}>{insight.study}</div>
-              )}
-              <p className={styles.exInsightDisclaimer}>Educational context only. Not medical advice.</p>
-            </div>
-          )}
-
-          {/* Exercise type grid */}
-          <div className={styles.card}>
-            <h3 className={styles.cardLabel}>What did you do?</h3>
-            <div className={styles.exTypeGrid}>
-              {EXERCISE_TYPES.map(({ id, label, Icon }) => (
-                <button
-                  key={id}
-                  className={exerciseType === id ? styles.exTypeBtnActive : styles.exTypeBtn}
-                  onClick={() => { setExerciseType(id); setLastSaved(null) }}
-                >
-                  <Icon size={20} />
-                  <span className={styles.exTypeLabel}>{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Duration */}
-          <div className={styles.card}>
-            <h3 className={styles.cardLabel}>Duration (minutes)</h3>
-            <div className={styles.exDurationRow}>
-              <input
-                className={styles.input}
-                type="number"
-                value={duration}
-                onChange={e => setDuration(e.target.value)}
-                placeholder="0"
-                min={1}
-                max={300}
-                style={{ maxWidth: 100 }}
-              />
-              <div className={styles.exQuickChips}>
-                {QUICK_DURATIONS.map(m => (
-                  <button key={m} className={styles.exQuickChip} onClick={() => addDuration(m)}>
-                    +{m}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Intensity */}
-          <div className={styles.card}>
-            <h3 className={styles.cardLabel}>Intensity</h3>
-            <div className={styles.exIntensityRow}>
-              {INTENSITIES.map(({ id, label, desc }) => (
-                <button
-                  key={id}
-                  className={intensity === id ? styles.exIntensityBtnActive : styles.exIntensityBtn}
-                  onClick={() => setIntensity(id as 'low' | 'moderate' | 'high')}
-                >
-                  <span className={styles.exIntensityLabel}>{label}</span>
-                  <span className={styles.exIntensityDesc}>{desc}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className={styles.card}>
-            <h3 className={styles.cardLabel}>Notes (optional)</h3>
-            <textarea
-              className={styles.input}
-              rows={2}
-              placeholder="How did it feel? Any observations..."
-              value={notes}
-              onChange={e => setNotes(e.target.value)}
-              maxLength={300}
-              style={{ resize: 'vertical', width: '100%', boxSizing: 'border-box' }}
-            />
-          </div>
-
-          <button
-            className={`${shared.btnPrimary} ${shared.btnFull} ${shared.btnLg}`}
-            onClick={handleSave}
-            disabled={saving || !exerciseType || !duration || parseInt(duration) <= 0}
-          >
-            {saving ? 'Saving...' : 'Log Movement +5 pts'}
-          </button>
-
-          <p className={styles.footerNote}>
-            Each exercise type earns 5 points per day. Logging builds your streak toward the 7-day streak bonus.
-          </p>
-        </>
-      )}
+      {/* LOG TAB. Shares the exact component and table the Workout Tracker's
+          Movement tab uses (activity_sessions), so a walk logged from either
+          page shows up on both. This used to be its own form writing to a
+          separate exercise_logs table that nothing else read from, which is
+          why movement logged here never carried over to the tracker. */}
+      {tab === 'log' && <ActivityLog userId={user?.id} today={today} />}
 
       {/* LEARN TAB */}
       {tab === 'learn' && (

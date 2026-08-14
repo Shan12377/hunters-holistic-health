@@ -36,6 +36,7 @@ export interface MealLog {
   protein: number | null
   fat: number | null
   carbs: number | null
+  fiber: number | null
   ai_flag: boolean
   ai_warning: string | null
   ai_alternatives: string[] | null

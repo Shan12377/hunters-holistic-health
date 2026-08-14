@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target } from 'lucide-react'
+import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { checkMealGuard, downscaleImage } from '@/lib/openai'
@@ -30,6 +30,7 @@ interface SavedFood {
   protein: number | null
   fat: number | null
   carbs: number | null
+  fiber: number | null
 }
 
 type Tab = 'log' | 'goals' | 'saved'
@@ -86,7 +87,7 @@ export default function MealGuardPage() {
   const fetchNutritionGoals = async (uid: string) => {
     const { data } = await supabase
       .from('nutrition_goals')
-      .select('calories_goal, protein_goal, fat_goal, carbs_goal')
+      .select('calories_goal, protein_goal, fat_goal, carbs_goal, fiber_goal')
       .eq('user_id', uid)
       .single()
     if (data) setGoals(data as NutritionGoals)
@@ -95,7 +96,7 @@ export default function MealGuardPage() {
   const fetchSavedFoods = async (uid: string) => {
     const { data } = await supabase
       .from('saved_foods')
-      .select('id, food_name, meal_type, calories, protein, fat, carbs')
+      .select('id, food_name, meal_type, calories, protein, fat, carbs, fiber')
       .eq('user_id', uid)
       .order('saved_at', { ascending: false })
       .limit(20)
@@ -107,7 +108,13 @@ export default function MealGuardPage() {
     protein: acc.protein + (log.protein ?? 0),
     fat: acc.fat + (log.fat ?? 0),
     carbs: acc.carbs + (log.carbs ?? 0),
-  }), { calories: 0, protein: 0, fat: 0, carbs: 0 })
+    fiber: acc.fiber + (log.fiber ?? 0),
+  }), { calories: 0, protein: 0, fat: 0, carbs: 0, fiber: 0 })
+
+  // Fiber passes through mostly undigested, so it is not really available
+  // carbohydrate. Shown separately from the raw carbs total per Rule C: the
+  // number on screen has to match what it is labeled as.
+  const todayNetCarbs = Math.max(0, todayTotals.carbs - todayTotals.fiber)
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -132,6 +139,7 @@ export default function MealGuardPage() {
         protein: local.proteinGrams,
         fat: local.fatGrams,
         carbs: local.carbGrams,
+        fiber: local.fiberGrams,
         notes: local.notes,
         source: 'local',
       }
@@ -144,7 +152,7 @@ export default function MealGuardPage() {
       })
       const d = await r.json()
       if (d.found) {
-        return { calories: d.calories, protein: d.protein, fat: d.fat, carbs: d.carbs, source: 'usda' }
+        return { calories: d.calories, protein: d.protein, fat: d.fat, carbs: d.carbs, fiber: d.fiber ?? 0, source: 'usda' }
       }
     } catch { /* skip if USDA unavailable */ }
     return null
@@ -215,6 +223,7 @@ export default function MealGuardPage() {
       protein: nutrition?.protein ?? null,
       fat: nutrition?.fat ?? null,
       carbs: nutrition?.carbs ?? null,
+      fiber: nutrition?.fiber ?? null,
     })
     if (error) {
       toast.error('Failed to save meal')
@@ -240,6 +249,7 @@ export default function MealGuardPage() {
       protein: log.protein,
       fat: log.fat,
       carbs: log.carbs,
+      fiber: log.fiber,
     })
     if (error) {
       toast.error('Could not save to favorites')
@@ -263,6 +273,7 @@ export default function MealGuardPage() {
       protein: food.protein,
       fat: food.fat,
       carbs: food.carbs,
+      fiber: food.fiber,
     })
     if (error) {
       toast.error('Could not log meal')
@@ -277,6 +288,19 @@ export default function MealGuardPage() {
     if (!userId) return
     await supabase.from('saved_foods').delete().eq('id', id).eq('user_id', userId)
     setSavedFoods(prev => prev.filter(f => f.id !== id))
+  }
+
+  // There was previously no way to remove a mistaken log entry at all.
+  const handleDeleteLog = async (id: string) => {
+    if (!userId) return
+    const previous = logs
+    setLogs(prev => prev.filter(l => l.id !== id))
+    const { error } = await supabase.from('meal_logs').delete().eq('id', id).eq('user_id', userId)
+    if (error) {
+      console.error('[meal-guard] delete failed:', error)
+      setLogs(previous)
+      toast.error('Could not delete that entry. Try again.')
+    }
   }
 
   const riskColor = { low: '#4be08a', medium: '#e0b84b', high: '#e05c5c' }
@@ -332,7 +356,9 @@ export default function MealGuardPage() {
                   { label: 'Calories', used: todayTotals.calories, goal: goals.calories_goal, unit: 'kcal' },
                   { label: 'Protein', used: todayTotals.protein, goal: goals.protein_goal, unit: 'g' },
                   { label: 'Fat', used: todayTotals.fat, goal: goals.fat_goal, unit: 'g' },
-                  { label: 'Carbs', used: todayTotals.carbs, goal: goals.carbs_goal, unit: 'g' },
+                  { label: 'Total Carbs', used: todayTotals.carbs, goal: goals.carbs_goal, unit: 'g' },
+                  { label: 'Fiber', used: todayTotals.fiber, goal: goals.fiber_goal, unit: 'g' },
+                  { label: 'Net Carbs', used: todayNetCarbs, goal: Math.max(0, goals.carbs_goal - goals.fiber_goal), unit: 'g' },
                 ] as const).map(({ label, used, goal, unit }) => (
                   <div key={label} className={styles.macroProgressRow}>
                     <div className={styles.macroProgressLabels}>
@@ -483,6 +509,11 @@ export default function MealGuardPage() {
                     <span className={styles.nutritionMacroVal}>{nutrition.carbs}g</span>
                     <span className={styles.nutritionMacroLabel}>carbs</span>
                   </div>
+                  <div className={styles.nutritionMacroDivider} />
+                  <div className={styles.nutritionMacro}>
+                    <span className={styles.nutritionMacroVal}>{nutrition.fiber}g</span>
+                    <span className={styles.nutritionMacroLabel}>fiber</span>
+                  </div>
                 </div>
                 {nutrition.notes && <p className={styles.nutritionNotes}>{nutrition.notes}</p>}
               </div>
@@ -598,6 +629,14 @@ export default function MealGuardPage() {
                         title="Save to favorites"
                       >
                         <Heart size={16} />
+                      </button>
+                      <button
+                        className={styles.heartBtn}
+                        onClick={() => handleDeleteLog(log.id)}
+                        aria-label={`Delete ${log.food_name}`}
+                        title="Delete this entry"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>

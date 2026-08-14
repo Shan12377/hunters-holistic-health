@@ -5,6 +5,7 @@ import {
   Star, TrendingUp, Shield, CalendarDays, ChefHat, Lock, BookOpen, GraduationCap,
   Gauge, Users, HeartHandshake, Trophy, Zap, Calendar, Mail, Target, ListChecks,
   HeartPulse, Clock, MessageSquare, Briefcase, PenLine, ShieldCheck, Inbox, BarChart3, Brain,
+  Search,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
@@ -46,9 +47,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Nutrition',
     items: [
-      { to: '/app/meal-guard', icon: Shield, label: 'Nourish Log' },
-      { to: '/app/meal-plan',  icon: CalendarDays, label: 'Meal Plan' },
-      { to: '/app/recipes',    icon: ChefHat, label: 'Recipes' },
+      { to: '/app/meal-guard',   icon: Shield, label: 'Nourish Log' },
+      { to: '/app/meal-plan',    icon: CalendarDays, label: 'Meal Plan' },
+      { to: '/app/recipes',      icon: ChefHat, label: 'Recipes' },
+      { to: '/app/food-search',  icon: Search, label: 'Food Search' },
     ],
   },
   {

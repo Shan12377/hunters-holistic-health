@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Plus, X, Trash2, ChevronDown } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format, subDays } from 'date-fns'
+import { awardPoints } from '@/lib/points'
 import {
   ACTIVITY_TYPES,
   INTENSITIES,
@@ -156,6 +157,9 @@ export default function ActivityLog({ userId, today }: Props) {
         setRows(prev => [data as ActivityRow, ...prev])
         setAdding(false)
         setNote('')
+        // Matches the same 5 points the old exercise_logs page gave per entry.
+        // api/award-points.ts validates this refId against activity_sessions.
+        await awardPoints(userId, 'exercise_log', 5, `${today}_${activityKey}`)
       }
     } catch (err) {
       console.error('[activity] save failed:', err)

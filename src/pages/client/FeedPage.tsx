@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag, BarChart2, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
@@ -83,11 +82,11 @@ const FILTER_PILLS: { label: string; value: PostType | null; emoji: string }[] =
   { label: 'Check-ins',     value: 'check_in',     emoji: '✅' },
 ]
 
-const ROOMS: { id: Room; label: string; emoji: string; defaultPostType: PostType; placeholder: string; lobbyLocked?: boolean }[] = [
+const ROOMS: { id: Room; label: string; emoji: string; defaultPostType: PostType; placeholder: string }[] = [
   { id: 'all',       label: 'All',       emoji: '🏠', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
-  { id: 'general',   label: 'General',   emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...', lobbyLocked: true },
+  { id: 'general',   label: 'General',   emoji: '💬', defaultPostType: 'general',  placeholder: 'Share something with the community...' },
   { id: 'wins',      label: 'Wins',      emoji: '🔥', defaultPostType: 'win',      placeholder: 'Share a win or milestone...' },
-  { id: 'questions', label: 'Questions', emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...', lobbyLocked: true },
+  { id: 'questions', label: 'Questions', emoji: '❓', defaultPostType: 'question', placeholder: 'Ask the community a question...' },
 ]
 
 function applyPrivacy(post: FeedPost): string {
@@ -132,25 +131,12 @@ export default function FeedPage() {
   const [commentText, setCommentText]           = useState('')
   const [commentSending, setCommentSending]     = useState(false)
   const [fetchError, setFetchError]             = useState(false)
-  const [hasPostedIntro, setHasPostedIntro]     = useState(false)
-  const [lobbyModalOpen, setLobbyModalOpen]     = useState(false)
   const expandedPostIdRef = useRef<string | null>(null)
 
   const userId = user?.id ?? null
-  const isFree = profile?.plan === 'free'
   const initials = profile
     ? `${profile.first_name?.[0] ?? ''}${profile.last_name?.[0] ?? ''}`.toUpperCase()
     : '?'
-
-  // Free-tier setup: runs after profile resolves so isFree is accurate
-  useEffect(() => {
-    if (!isFree) return
-    setActiveRoom('wins')
-    if (userId) {
-      supabase.from('feed_posts').select('id').eq('user_id', userId).eq('post_type', 'intro').limit(1).maybeSingle()
-        .then(({ data }) => setHasPostedIntro(!!data))
-    }
-  }, [isFree, userId])
 
   useEffect(() => {
     fetchPosts()
@@ -262,7 +248,6 @@ export default function FeedPage() {
 
   const handleRoomChange = (room: Room) => {
     const def = ROOMS.find(r => r.id === room)
-    if (isFree && def?.lobbyLocked) { setLobbyModalOpen(true); return }
     setActiveRoom(room)
     setActiveFilter(null)
     if (def) setPostType(def.defaultPostType)
@@ -292,20 +277,9 @@ export default function FeedPage() {
       // the same "Failed to post" as an actual network error, with nothing to
       // tell them the real reason.
       console.error('[feed] post failed:', error)
-      if (error.code === '42501') {
-        toast.error('You have used your one free post. Upgrade to Foundation to post, like, and comment.')
-        setLobbyModalOpen(true)
-      } else {
-        toast.error('Failed to post. Check your connection and try again.')
-      }
+      toast.error('Failed to post. Check your connection and try again.')
     } else {
       toast.success('Posted!')
-      // Free accounts get exactly one post, their intro. Reflect that in local
-      // state the moment it succeeds, not only from the page-load check, so
-      // the composer switches to the locked upgrade prompt immediately instead
-      // of staying open and letting a second attempt hit the database only to
-      // fail there.
-      if (isFree && postType === 'intro') setHasPostedIntro(true)
       if (newPost?.id) {
         await awardPoints(userId, 'feed_post', POST_PTS[postType] ?? 2, newPost.id)
         if (isPoll) {
@@ -330,7 +304,6 @@ export default function FeedPage() {
 
   const handleLike = async (post: FeedPost) => {
     if (!userId || post.user_id === userId) return
-    if (isFree) { setLobbyModalOpen(true); return }
     const isLiked = !!post.user_liked
     // Optimistic update
     setPosts(p => p.map(x => x.id === post.id
@@ -523,15 +496,13 @@ export default function FeedPage() {
                 <Heart size={16} fill={post.user_liked ? '#e05c5c' : 'none'} />
                 {post.likes > 0 && post.likes}
               </button>
-              {!isFree && (
-                <button
-                  className={styles.commentToggleBtn}
-                  onClick={() => toggleComments(post.id)}
-                >
-                  <MessageCircle size={14} />
-                  Comment
-                </button>
-              )}
+              <button
+                className={styles.commentToggleBtn}
+                onClick={() => toggleComments(post.id)}
+              >
+                <MessageCircle size={14} />
+                Comment
+              </button>
               <button
                 className={styles.reportBtn}
                 onClick={() => handleReport(post.id)}
@@ -595,38 +566,26 @@ export default function FeedPage() {
       </div>
 
       {/* Lobby read-only banner */}
-      {isFree && (
-        <div className={styles.lobbyBanner}>
-          You are in the Lobby. Read the Wins room and post one intro. <button className={styles.lobbyBannerCta} onClick={() => setLobbyModalOpen(true)}>Upgrade to Foundation to fully participate.</button>
-        </div>
-      )}
-
       {/* Room tabs */}
       <div className={styles.feedRoomTabs}>
         {ROOMS.map(room => (
           <button
             key={room.id}
-            className={`${activeRoom === room.id ? styles.feedRoomTabActive : styles.feedRoomTab} ${isFree && room.lobbyLocked ? styles.feedRoomTabLocked : ''}`}
+            className={activeRoom === room.id ? styles.feedRoomTabActive : styles.feedRoomTab}
             onClick={() => handleRoomChange(room.id)}
           >
             <span>{room.emoji}</span> {room.label}
-            {isFree && room.lobbyLocked && <span className={styles.lobbyLockIcon}>🔒</span>}
           </button>
         ))}
       </div>
 
       {/* Composer */}
       <div className={styles.feedComposerWrap}>
-        {isFree && hasPostedIntro ? (
-          <button className={styles.lobbyLockedCompose} onClick={() => setLobbyModalOpen(true)}>
-            <span>Full community participation is a Foundation membership feature.</span>
-            <span className={styles.lobbyLockedCta}>Upgrade to post, like, and comment</span>
-          </button>
-        ) : !composerOpen ? (
-          <button className={styles.feedComposerPill} onClick={() => { if (isFree) setPostType('intro'); setComposerOpen(true) }}>
+        {!composerOpen ? (
+          <button className={styles.feedComposerPill} onClick={() => setComposerOpen(true)}>
             <div className={styles.feedComposerAvatar}>{initials}</div>
             <span className={styles.feedComposerPlaceholder}>
-              {isFree ? 'Introduce yourself to the community...' : activeRoomConfig.placeholder}
+              {activeRoomConfig.placeholder}
             </span>
           </button>
         ) : (
@@ -677,34 +636,27 @@ export default function FeedPage() {
               </div>
             )}
             <div className={styles.feedComposerBar}>
-              {!isFree && (
-                <div className={styles.feedComposerPills}>
-                  {COMPOSER_TYPES.map(({ value, label, emoji }) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setPostType(value)}
-                      className={postType === value ? styles.typePillActive : styles.typePill}
-                    >
-                      {emoji} {label}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {isFree && (
-                <span className={styles.lobbyIntroLabel}>Intro post only</span>
-              )}
-              <div className={styles.feedComposerActions}>
-                {!isFree && (
+              <div className={styles.feedComposerPills}>
+                {COMPOSER_TYPES.map(({ value, label, emoji }) => (
                   <button
+                    key={value}
                     type="button"
-                    className={isPoll ? styles.pollToggleActive : styles.pollToggle}
-                    onClick={() => { setIsPoll(p => !p); if (isPoll) setPollOptions(['', '']) }}
-                    title="Add a poll"
+                    onClick={() => setPostType(value)}
+                    className={postType === value ? styles.typePillActive : styles.typePill}
                   >
-                    <BarChart2 size={14} /> Poll
+                    {emoji} {label}
                   </button>
-                )}
+                ))}
+              </div>
+              <div className={styles.feedComposerActions}>
+                <button
+                  type="button"
+                  className={isPoll ? styles.pollToggleActive : styles.pollToggle}
+                  onClick={() => { setIsPoll(p => !p); if (isPoll) setPollOptions(['', '']) }}
+                  title="Add a poll"
+                >
+                  <BarChart2 size={14} /> Poll
+                </button>
                 <span className={styles.charCount}>{content.length}/500</span>
                 <button type="button" className={styles.feedComposerCancel} onClick={() => { setComposerOpen(false); setContent('') }}>
                   Cancel
@@ -810,37 +762,6 @@ export default function FeedPage() {
         <MemberCard userId={selectedMemberId} onClose={() => setSelectedMemberId(null)} />
       )}
 
-      {/* Lobby upgrade modal.
-          Portaled to document.body: this page root carries the sitewide
-          .animate-fade-in entrance animation, which leaves a permanent
-          transform behind after it finishes and breaks position:fixed for
-          anything nested inside it. On a feed with enough posts to scroll,
-          this modal would render far down the page instead of as an overlay,
-          the same bug found and fixed on the Meal Plan and Daily Plate pages. */}
-      {lobbyModalOpen && createPortal(
-        <div className={styles.lobbyModalOverlay} onClick={() => setLobbyModalOpen(false)}>
-          <div className={styles.lobbyModalCard} onClick={e => e.stopPropagation()}>
-            <div className={styles.lobbyModalEmoji}>🔒</div>
-            <h3 className={styles.lobbyModalTitle}>Foundation membership unlocks this</h3>
-            <p className={styles.lobbyModalBody}>
-              Full community participation, including posting, liking, commenting, and all three rooms, is included in Foundation at $37/mo.
-            </p>
-            <ul className={styles.lobbyModalList}>
-              <li>✓ Post wins, check-ins, questions, and milestones</li>
-              <li>✓ Like and comment on any post</li>
-              <li>✓ Access all rooms: General, Wins, and Questions</li>
-              <li>✓ Full ROOTS curriculum, tracking suite, and Report Card</li>
-            </ul>
-            <a href="https://huntersholistichealth.com/#pricing" className={styles.lobbyModalCta}>
-              Start My Foundation, $37/mo
-            </a>
-            <button className={styles.lobbyModalDismiss} onClick={() => setLobbyModalOpen(false)}>
-              Stay in the Lobby
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   )
 }

@@ -167,11 +167,15 @@ const DAYS: DayContent[] = [
   },
 ]
 
+// introducedDay is the day each habit is actually taught in the DAYS content
+// below, not day 1 for all four. Showing "Took my daily supplements" before
+// Day 7, when the stack has not started yet and the lesson says so in plain
+// language, asks someone to check off something they were never told to do.
 const HABITS = [
-  { id: 'movement', label: "Completed today's movement practice" },
-  { id: 'protein', label: 'Hit 30g protein at breakfast' },
-  { id: 'supplement', label: 'Took my daily supplements' },
-  { id: 'sleep', label: 'Went to bed before midnight' },
+  { id: 'movement', label: "Completed today's movement practice", introducedDay: 1 },
+  { id: 'protein', label: 'Hit 30g protein at breakfast', introducedDay: 2 },
+  { id: 'sleep', label: 'Went to bed before midnight', introducedDay: 3 },
+  { id: 'supplement', label: 'Took my daily supplements', introducedDay: 7 },
 ]
 
 interface DayRow {
@@ -411,7 +415,7 @@ export default function FlatBellyChallengePage() {
               </span>
             </label>
 
-            {HABITS.map(h => (
+            {HABITS.filter(h => h.introducedDay <= currentDay).map(h => (
               <label key={h.id} className={styles.habitItem}>
                 <input
                   type="checkbox" className={styles.habitCheck}

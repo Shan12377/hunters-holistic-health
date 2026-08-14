@@ -9,6 +9,7 @@ export interface NutritionGoals {
   protein_goal: number
   fat_goal: number
   carbs_goal: number
+  fiber_goal: number
 }
 
 interface Props {
@@ -35,6 +36,12 @@ const PROTEIN_G_PER_KG = 1.6
 const CALORIES_PER_G_PROTEIN = 4
 const CALORIES_PER_G_FAT = 9
 const CALORIES_PER_G_CARB = 4
+
+// 14g of fiber per 1,000 kcal is the Institute of Medicine adequate intake
+// standard, the same figure behind the Dietary Guidelines for Americans fiber
+// target. Scaling it to calories rather than a flat number means someone
+// eating 1,600 kcal is not held to the same target as someone eating 2,400.
+const FIBER_G_PER_1000_KCAL = 14
 
 type UnitSystem = 'imperial' | 'metric'
 type Sex = 'female' | 'male'
@@ -84,6 +91,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
   const [proteinGoal, setProteinGoal] = useState(String(initialGoals?.protein_goal ?? 150))
   const [fatGoal, setFatGoal] = useState(String(initialGoals?.fat_goal ?? 65))
   const [carbsGoal, setCarbsGoal] = useState(String(initialGoals?.carbs_goal ?? 200))
+  const [fiberGoal, setFiberGoal] = useState(String(initialGoals?.fiber_goal ?? 28))
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -92,6 +100,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
       setProteinGoal(String(initialGoals.protein_goal))
       setFatGoal(String(initialGoals.fat_goal))
       setCarbsGoal(String(initialGoals.carbs_goal))
+      setFiberGoal(String(initialGoals.fiber_goal))
     }
   }, [initialGoals])
 
@@ -152,11 +161,13 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
     })
     const remainingCalories = tdee - protein * CALORIES_PER_G_PROTEIN - fat * CALORIES_PER_G_FAT
     const carbs = Math.max(0, Math.round(remainingCalories / CALORIES_PER_G_CARB))
+    const fiber = Math.round((tdee / 1000) * FIBER_G_PER_1000_KCAL)
 
     setCaloriesGoal(String(tdee))
     setProteinGoal(String(protein))
     setFatGoal(String(fat))
     setCarbsGoal(String(carbs))
+    setFiberGoal(String(fiber))
   }
 
   // Ties the protein number back to the Day 2 rule people already know: get most of
@@ -169,6 +180,7 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
       protein_goal: parseInt(proteinGoal) || 150,
       fat_goal: parseInt(fatGoal) || 65,
       carbs_goal: parseInt(carbsGoal) || 200,
+      fiber_goal: parseInt(fiberGoal) || 28,
     }
     setSaving(true)
     const { error } = await supabase.from('nutrition_goals').upsert(
@@ -341,7 +353,8 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
                   weight, which is {working.proteinFromBodyWeight}g. For you the{' '}
                   {working.proteinDriver === 'bodyweight' ? 'body weight figure' : '30% figure'}{' '}
                   is higher, so that is the one used. Fat is 30% of calories. Carbohydrate
-                  is what remains.
+                  is what remains. Fiber is {FIBER_G_PER_1000_KCAL}g per 1,000 calories, the
+                  Institute of Medicine's adequate intake standard.
                 </p>
 
                 <p className={styles.workingCaveat}>
@@ -384,6 +397,15 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
             <label className={styles.goalsLabel}>Carbs (g)</label>
             <input className={styles.input} type="number" value={carbsGoal} onChange={e => setCarbsGoal(e.target.value)} />
             <p className={styles.goalsFieldHint}>What is left after protein and fat.</p>
+          </div>
+          <div className={styles.goalsField}>
+            <label className={styles.goalsLabel}>Fiber (g)</label>
+            <input className={styles.input} type="number" value={fiberGoal} onChange={e => setFiberGoal(e.target.value)} />
+            <p className={styles.goalsFieldHint}>
+              Net carbs (carbs your body actually absorbs): {' '}
+              <strong>{Math.max(0, (parseInt(carbsGoal) || 0) - (parseInt(fiberGoal) || 0))}g</strong>.
+              Fiber passes through mostly undigested, so it is subtracted out.
+            </p>
           </div>
         </div>
         <div className={styles.formActions}>
