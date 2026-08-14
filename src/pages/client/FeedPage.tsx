@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { Users, Heart, Send, Flame, Award, CheckCircle, Megaphone, HelpCircle, SlidersHorizontal, CalendarDays, Pin, MessageCircle, Flag, BarChart2, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
@@ -284,9 +285,27 @@ export default function FeedPage() {
       likes: 0,
     }).select('id').single()
     if (error) {
-      toast.error('Failed to post')
+      // Free-tier accounts are limited by a database rule to one lifetime post
+      // (their intro), enforced by an RLS policy that fails the insert
+      // outright. Postgres reports that as code 42501. Without checking for
+      // it specifically, a free user who has already used their one post gets
+      // the same "Failed to post" as an actual network error, with nothing to
+      // tell them the real reason.
+      console.error('[feed] post failed:', error)
+      if (error.code === '42501') {
+        toast.error('You have used your one free post. Upgrade to Foundation to post, like, and comment.')
+        setLobbyModalOpen(true)
+      } else {
+        toast.error('Failed to post. Check your connection and try again.')
+      }
     } else {
       toast.success('Posted!')
+      // Free accounts get exactly one post, their intro. Reflect that in local
+      // state the moment it succeeds, not only from the page-load check, so
+      // the composer switches to the locked upgrade prompt immediately instead
+      // of staying open and letting a second attempt hit the database only to
+      // fail there.
+      if (isFree && postType === 'intro') setHasPostedIntro(true)
       if (newPost?.id) {
         await awardPoints(userId, 'feed_post', POST_PTS[postType] ?? 2, newPost.id)
         if (isPoll) {
@@ -791,8 +810,14 @@ export default function FeedPage() {
         <MemberCard userId={selectedMemberId} onClose={() => setSelectedMemberId(null)} />
       )}
 
-      {/* Lobby upgrade modal */}
-      {lobbyModalOpen && (
+      {/* Lobby upgrade modal.
+          Portaled to document.body: this page root carries the sitewide
+          .animate-fade-in entrance animation, which leaves a permanent
+          transform behind after it finishes and breaks position:fixed for
+          anything nested inside it. On a feed with enough posts to scroll,
+          this modal would render far down the page instead of as an overlay,
+          the same bug found and fixed on the Meal Plan and Daily Plate pages. */}
+      {lobbyModalOpen && createPortal(
         <div className={styles.lobbyModalOverlay} onClick={() => setLobbyModalOpen(false)}>
           <div className={styles.lobbyModalCard} onClick={e => e.stopPropagation()}>
             <div className={styles.lobbyModalEmoji}>🔒</div>
@@ -813,7 +838,8 @@ export default function FeedPage() {
               Stay in the Lobby
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

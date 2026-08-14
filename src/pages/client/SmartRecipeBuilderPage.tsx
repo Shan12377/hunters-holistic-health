@@ -140,7 +140,33 @@ export default function SmartRecipeBuilderPage() {
           </span>
         </div>
 
-        {/* Restrictions */}
+        {/* The one thing to do on this page. Everything above this point is
+            context or a compliance requirement, not an action, so none of it
+            should out-compete the field for attention. */}
+        <div className={styles.srbStartLabel}>Start here: describe the meal</div>
+
+        <form onSubmit={handleSubmit} className={styles.srbForm}>
+          <div className={styles.srbTextareaWrap}>
+            <textarea
+              className={styles.srbTextarea}
+              value={prompt}
+              onChange={e => setPrompt(e.target.value)}
+              placeholder='e.g., "A hearty Caribbean jerk chicken bowl with plantains" or "Fork and optimize: Dense Bean Salad for blood pressure support"'
+              rows={4}
+              autoFocus
+            />
+            <button
+              type="submit"
+              className={styles.srbSubmitBtn}
+              disabled={loading || !prompt.trim()}
+            >
+              {loading ? <Loader2 size={18} className={styles.srbSpinner} /> : <Send size={18} />}
+            </button>
+          </div>
+        </form>
+
+        {/* Restrictions: optional refinement, so it comes after the primary
+            field instead of competing with it for the first tap. */}
         <div className={styles.srbRestrictionsLabel}>Dietary restrictions (optional):</div>
         <div className={styles.srbRestrictions}>
           {RESTRICTION_OPTIONS.map(opt => (
@@ -154,25 +180,6 @@ export default function SmartRecipeBuilderPage() {
             </button>
           ))}
         </div>
-
-        <form onSubmit={handleSubmit} className={styles.srbForm}>
-          <div className={styles.srbTextareaWrap}>
-            <textarea
-              className={styles.srbTextarea}
-              value={prompt}
-              onChange={e => setPrompt(e.target.value)}
-              placeholder='e.g., "A hearty Caribbean jerk chicken bowl with plantains" or "Fork and optimize: Dense Bean Salad for blood pressure support"'
-              rows={4}
-            />
-            <button
-              type="submit"
-              className={styles.srbSubmitBtn}
-              disabled={loading || !prompt.trim()}
-            >
-              {loading ? <Loader2 size={18} className={styles.srbSpinner} /> : <Send size={18} />}
-            </button>
-          </div>
-        </form>
       </div>
 
       {error && (

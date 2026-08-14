@@ -8761,6 +8761,15 @@
   margin-bottom: var(--space-2);
 }
 
+.srbStartLabel {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
 .srbRestrictions {
   display: flex;
   flex-wrap: wrap;
@@ -8801,7 +8810,11 @@
 .srbTextarea {
   width: 100%;
   background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  /* Gold, not the neutral border every other box on this page uses, so this
+     is visibly the one field to interact with rather than a fourth identical
+     looking panel. */
+  border: 1.5px solid rgba(200, 167, 75, 0.45);
+  box-shadow: var(--gold-glow);
   border-radius: var(--radius-md);
   padding: var(--space-3) 56px var(--space-3) var(--space-3);
   font-size: 14px;
@@ -8809,12 +8822,13 @@
   line-height: 1.5;
   resize: none;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   box-sizing: border-box;
 }
 
 .srbTextarea:focus {
   border-color: var(--teal);
+  box-shadow: var(--teal-glow);
 }
 
 .srbTextarea::placeholder {
