@@ -7,6 +7,7 @@ import {
   INTENSITIES,
   INTENSITY_LABEL,
   ESTIMATE_DISCLAIMER,
+  INTENTIONAL_MOVEMENT_MIN_MINUTES,
   estimateActivity,
   findActivity,
   type Intensity,
@@ -183,7 +184,11 @@ export default function ActivityLog({ userId, today }: Props) {
       <div className={styles.sectionHead}>
         <div>
           <h2 className={styles.sectionTitle}>Movement</h2>
-          <p className={styles.sectionSub}>Walks, rebounding, HIIT, housework. Anything that is not sets and reps.</p>
+          <p className={styles.sectionSub}>
+            Walks, rebounding, HIIT, housework. Anything that is not sets and reps.
+            {' '}{INTENTIONAL_MOVEMENT_MIN_MINUTES} minutes or more counts as a day you moved.
+            Log the shorter ones anyway, they still add up.
+          </p>
         </div>
         {!adding && (
           <button className={styles.primaryBtn} onClick={() => setAdding(true)}>
@@ -198,7 +203,11 @@ export default function ActivityLog({ userId, today }: Props) {
         <div className={styles.todayTotals}>
           <div className={styles.totalItem}>
             <span className={styles.totalNum}>{todayMinutes}</span>
-            <span className={styles.totalLbl}>minutes today</span>
+            <span className={styles.totalLbl}>
+              {todayMinutes >= INTENTIONAL_MOVEMENT_MIN_MINUTES
+                ? 'minutes today, that counts'
+                : `minutes today, ${INTENTIONAL_MOVEMENT_MIN_MINUTES - todayMinutes} to go`}
+            </span>
           </div>
           <div className={styles.totalItem}>
             <span className={styles.totalNum}>~{todayCalories}</span>

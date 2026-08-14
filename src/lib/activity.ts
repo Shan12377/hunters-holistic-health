@@ -272,6 +272,29 @@ export function estimateActivity(params: {
   }
 }
 
+// ---------------------------------------------------------------------------
+// What counts as a day you moved
+// ---------------------------------------------------------------------------
+
+/**
+ * Minimum minutes for a session to count toward the movement goal.
+ *
+ * Dr. Hunter, 2026-08-13: "intentional move counts, at least 15 mins, people sit
+ * at desks long periods". The bar is deliberately low. It is not about training
+ * hard, it is about breaking up a day spent sitting. A shorter session still
+ * gets logged and still shows its calorie estimate, it just does not tick the
+ * day off toward the goal.
+ */
+export const INTENTIONAL_MOVEMENT_MIN_MINUTES = 15
+
+/**
+ * Days a month the movement goal aims at, roughly five a week.
+ *
+ * Deliberately days rather than sessions, so walking and lifting on the same day
+ * counts once and nobody games it.
+ */
+export const MOVEMENT_DAYS_GOAL_PER_MONTH = 20
+
 /** Shown under every estimate. Kept here so it cannot drift between screens. */
 export const ESTIMATE_DISCLAIMER =
   'These are population averages, not measurements. Your real burn depends on your fitness, your body composition and the day. Use the trend, not the individual number. Educational only, not medical advice.'

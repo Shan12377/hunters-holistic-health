@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CheckCircle2, Circle, Info, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
@@ -83,7 +83,16 @@ export default function WorkoutTrackerPage() {
   const userId = profile?.id
   const today = format(new Date(), 'yyyy-MM-dd')
 
-  const [tab, setTab] = useState<'today' | 'movement' | 'routines' | 'week' | 'history'>('today')
+  // Starts on Routines. Somebody with nothing set up needs to build a routine
+  // before Today means anything. Once they have one, the effect below moves them
+  // to Today, because that is what a returning person came to do.
+  const [tab, setTab] = useState<'today' | 'movement' | 'routines' | 'week' | 'history'>('routines')
+  const tabTouched = useRef(false)
+
+  function selectTab(next: typeof tab) {
+    tabTouched.current = true
+    setTab(next)
+  }
   const [allRoutines, setAllRoutines] = useState<Routine[]>([])
   const [library, setLibrary] = useState<BuilderExercise[]>([])
   const [selectedRoutineIdx, setSelectedRoutineIdx] = useState<number>(
@@ -125,6 +134,11 @@ export default function WorkoutTrackerPage() {
   useEffect(() => {
     if (userId && tab === 'history') loadProgress()
   }, [userId, tab])
+
+  useEffect(() => {
+    if (loading || tabTouched.current) return
+    if (allRoutines.some(r => r.user_id === userId)) setTab('today')
+  }, [loading, allRoutines, userId])
 
   const EXERCISE_FIELDS =
     'id, name, emoji, coach_cue, condition_notes, muscle_groups, tempo_default, created_by_user_id, video_url, video_channel'
@@ -452,16 +466,19 @@ export default function WorkoutTrackerPage() {
 
       <div className={styles.wkTabs}>
         {([
+          // Routines comes first on purpose. Somebody who has not built one yet
+          // lands on Today with an empty checklist and no idea why, so the tab
+          // that explains what to set up has to come before the one that logs it.
+          ['routines', 'Routines'],
           ['today', 'Today'],
           ['movement', 'Movement'],
-          ['routines', 'Routines'],
           ['week', 'Week'],
           ['history', 'History'],
         ] as const).map(([key, label]) => (
           <button
             key={key}
             className={`${styles.wkTab} ${tab === key ? styles.wkTabActive : ''}`}
-            onClick={() => setTab(key)}
+            onClick={() => selectTab(key)}
           >
             {label}
           </button>
