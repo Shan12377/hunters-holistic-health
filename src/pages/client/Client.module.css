@@ -4697,6 +4697,22 @@
   padding: 0.5rem 0;
 }
 
+.nutritionNotFoundRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: rgba(200,167,75,0.06);
+  border: 1px solid rgba(200,167,75,0.2);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.nutritionNotFoundRow svg { flex-shrink: 0; margin-top: 2px; }
+
 .nutritionPanel {
   background: rgba(200,167,75,0.06);
   border: 1px solid rgba(200,167,75,0.2);

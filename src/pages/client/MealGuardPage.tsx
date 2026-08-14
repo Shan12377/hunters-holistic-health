@@ -48,6 +48,9 @@ export default function MealGuardPage() {
   const [photo, setPhoto] = useState<string | null>(null)
   const [nutrition, setNutrition] = useState<NutritionData | null>(null)
   const [lookingUp, setLookingUp] = useState(false)
+  // Distinguishes "never searched" from "searched and found nothing," so a failed
+  // lookup can say so instead of silently letting the meal log with null calories.
+  const [nutritionLookupAttempted, setNutritionLookupAttempted] = useState(false)
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [hiddenIngredients, setHiddenIngredients] = useState('')
@@ -159,12 +162,14 @@ export default function MealGuardPage() {
     setChecking(true)
     setResult(null)
     setNutrition(null)
+    setNutritionLookupAttempted(false)
 
     let nutritionData: NutritionData | null = null
     if (foodInput.trim()) {
       setLookingUp(true)
       nutritionData = await lookupNutrition(foodInput.trim())
       setNutrition(nutritionData)
+      setNutritionLookupAttempted(true)
       setLookingUp(false)
     }
 
@@ -181,6 +186,7 @@ export default function MealGuardPage() {
       if (!nutritionData) {
         const n = await lookupNutrition(res.identified_food)
         setNutrition(n)
+        setNutritionLookupAttempted(true)
       }
     }
     setChecking(false)
@@ -441,6 +447,14 @@ export default function MealGuardPage() {
             {lookingUp && (
               <div className={styles.nutritionLookupRow}>
                 <Loader size={13} className={styles.spinIcon} /> Looking up nutritional data...
+              </div>
+            )}
+            {!nutrition && !lookingUp && nutritionLookupAttempted && (
+              <div className={styles.nutritionNotFoundRow}>
+                <AlertTriangle size={13} color="var(--gold)" />
+                Could not find nutrition data for "{foodInput || 'this meal'}". You can still log it, but calories
+                and macros will not be counted toward your daily totals. Try a simpler name, like "grilled chicken"
+                instead of a restaurant menu name.
               </div>
             )}
             {nutrition && !lookingUp && (

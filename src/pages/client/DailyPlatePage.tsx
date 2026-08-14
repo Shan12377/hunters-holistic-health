@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Coffee, Sun, Moon, Apple, Plus, X, Zap, ChevronDown, ChevronUp, Search, Sparkles, Loader2, Target, TrendingUp, ShieldCheck } from 'lucide-react'
 import { FOOD_DATABASE, MEAL_SLOT_LABELS, type MealSlot, type FoodItem } from '@/data/foodDatabase'
 import { detectSynergies, type FoodSynergy } from '@/data/synergies'
@@ -138,6 +139,21 @@ export default function DailyPlatePage() {
     )
   }, [addingTo, searchQ, plate])
 
+  // A search can miss for two different reasons: the food is not in the
+  // database, or it exists but is not tagged for the meal slot currently open
+  // (tuna is tagged lunch and snack, not breakfast or dinner). Those look
+  // identical as a flat "no results" message, so when the slot search comes up
+  // empty this looks across every slot to tell the two apart and say which
+  // slots the food actually lives under.
+  const elsewhereMatches = useMemo(() => {
+    if (!addingTo || !searchQ.trim() || slotCandidates.length > 0) return []
+    const q = searchQ.toLowerCase()
+    return FOOD_DATABASE.filter(f =>
+      !f.mealSlots.includes(addingTo) &&
+      (f.name.toLowerCase().includes(q) || f.notes.toLowerCase().includes(q))
+    )
+  }, [addingTo, searchQ, slotCandidates])
+
   function addFood(slot: MealSlot, food: FoodItem) {
     setPlate(p => ({ ...p, [slot]: [...p[slot], food] }))
     setSearchQ('')
@@ -275,8 +291,15 @@ export default function DailyPlatePage() {
         })}
       </div>
 
+      {/*
+        Portaled to document.body. This page's root carries the sitewide
+        .animate-fade-in entrance animation, which leaves a permanent transform
+        behind after it finishes and breaks position:fixed for anything nested
+        inside it, per the CSS spec. Without the portal this modal renders
+        thousands of pixels off screen instead of as a floating overlay.
+      */}
       {/* Food picker modal */}
-      {addingTo && (
+      {addingTo && createPortal(
         <div className={styles.dpModalOverlay} onClick={() => setAddingTo(null)}>
           <div className={styles.dpModal} onClick={e => e.stopPropagation()}>
             <div className={styles.dpModalHead}>
@@ -299,9 +322,35 @@ export default function DailyPlatePage() {
               />
             </div>
             <div className={styles.dpModalList}>
-              {slotCandidates.length === 0 ? (
+              {slotCandidates.length === 0 && elsewhereMatches.length > 0 && (
+                <>
+                  <p className={styles.dpModalEmpty}>
+                    Not usually listed under {MEAL_SLOT_LABELS[addingTo].toLowerCase()}, but here it is if you want
+                    it anyway:
+                  </p>
+                  {elsewhereMatches.map(food => (
+                    <button
+                      key={food.id}
+                      className={styles.dpModalItem}
+                      onClick={() => addFood(addingTo!, food)}
+                    >
+                      <div className={styles.dpModalItemInfo}>
+                        <span className={styles.dpModalItemName}>{food.name}</span>
+                        <span className={styles.dpModalItemNotes}>
+                          Usually {food.mealSlots.map(s => MEAL_SLOT_LABELS[s]).join(', ')}
+                        </span>
+                      </div>
+                      <div className={styles.dpModalItemMacros}>
+                        <span className={styles.dpModalItemP}>{food.proteinGrams}g P</span>
+                        <span className={styles.dpModalItemCal}>{food.calories} cal</span>
+                      </div>
+                    </button>
+                  ))}
+                </>
+              )}
+              {slotCandidates.length === 0 && elsewhereMatches.length === 0 ? (
                 <p className={styles.dpModalEmpty}>No foods match your search.</p>
-              ) : (
+              ) : slotCandidates.length > 0 && (
                 slotCandidates.map(food => (
                   <button
                     key={food.id}
@@ -321,7 +370,8 @@ export default function DailyPlatePage() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Active synergies */}

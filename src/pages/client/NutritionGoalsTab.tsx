@@ -369,7 +369,10 @@ export function NutritionGoalsTab({ userId, initialGoals, onGoalsSaved }: Props)
             <label className={styles.goalsLabel}>Protein (g)</label>
             <input className={styles.input} type="number" value={proteinGoal} onChange={e => setProteinGoal(e.target.value)} />
             <p className={styles.goalsFieldHint}>
-              About {proteinPerMeal}g at each of three meals.
+              About {proteinPerMeal}g at each of three meals. If you are on a GLP-1
+              medication, aim for the higher end of your range and prioritize
+              resistance training. A meaningful share of weight lost on these
+              medications can be lean tissue without it.
             </p>
           </div>
           <div className={styles.goalsField}>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { Zap, BookOpen, ExternalLink, X, ChevronDown, ChevronUp, Utensils, ShoppingCart, Copy, Check, Plus, Trash2, Download } from 'lucide-react'
 import {
   PROTOCOL_RECIPES,
@@ -796,8 +797,23 @@ export default function ProtocolPlanPage() {
         )
       })()}
 
+      {/*
+        Both modals below are rendered via a portal to document.body rather than
+        inline. This page's root is wrapped in the sitewide .animate-fade-in
+        entrance animation, which leaves a permanent transform on that element
+        after the animation finishes (animation-fill-mode: both). Per the CSS
+        spec, any transform on an ancestor, even the identity transform left
+        behind here, creates a new containing block for position:fixed
+        descendants. On a short page that is invisible. On this page, which
+        stacks 30 days of meals, it meant "position: fixed" was computed but the
+        modal was actually pinned to the bottom of the full scrollable page
+        instead of the viewport, so it rendered thousands of pixels below the
+        fold with no way to know it was there. Portaling outside the transformed
+        ancestor restores real fixed positioning.
+      */}
+
       {/* ─── MEAL PICKER MODAL ─── */}
-      {modalSlot && (
+      {modalSlot && createPortal(
         <div className={styles.ppModalOverlay} onClick={() => setModalSlot(null)}>
           <div className={styles.ppModal} onClick={e => e.stopPropagation()}>
             <div className={styles.ppModalHeader}>
@@ -824,11 +840,12 @@ export default function ProtocolPlanPage() {
               })}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ─── RECIPE DETAIL MODAL ─── */}
-      {expandedRecipe && (
+      {expandedRecipe && createPortal(
         <div className={styles.ppModalOverlay} onClick={() => setExpandedRecipe(null)}>
           <div className={styles.ppRecipeModal} onClick={e => e.stopPropagation()}>
             <div className={styles.ppRecipeModalHeader}>
@@ -857,7 +874,8 @@ export default function ProtocolPlanPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <p className={styles.recipeDisclaimer}>
