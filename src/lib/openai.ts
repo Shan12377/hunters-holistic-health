@@ -19,7 +19,7 @@ export interface NutritionData {
   carbs: number
   fiber: number
   notes?: string
-  source: 'local' | 'usda' | 'manual'
+  source: 'local' | 'usda' | 'manual' | 'ai'
 }
 
 export interface MealGuardResult {
@@ -29,6 +29,16 @@ export interface MealGuardResult {
   warning: string | null
   alternatives: string[]
   educational_note: string
+  // The AI's own estimate, asked for in the same call that identifies and
+  // analyzes the food. Used when neither the curated database nor USDA
+  // FoodData Central has a match, which is common for a compound photo
+  // description like "grilled chicken with rice and broccoli" that a text
+  // search has nothing clean to match against.
+  estimated_calories: number | null
+  estimated_protein_g: number | null
+  estimated_fat_g: number | null
+  estimated_carbs_g: number | null
+  estimated_fiber_g: number | null
 }
 
 export async function checkMealGuard(
@@ -65,6 +75,11 @@ export async function checkMealGuard(
       warning: null,
       alternatives: [],
       educational_note: '',
+      estimated_calories: null,
+      estimated_protein_g: null,
+      estimated_fat_g: null,
+      estimated_carbs_g: null,
+      estimated_fiber_g: null,
     }
   }
 }

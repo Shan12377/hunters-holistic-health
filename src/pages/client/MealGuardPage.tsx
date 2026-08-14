@@ -224,11 +224,31 @@ export default function MealGuardPage() {
     if (res.identified_food && !foodInput.trim()) {
       setFoodInput(res.identified_food)
       if (!nutritionData) {
-        const n = await lookupNutrition(res.identified_food)
-        setNutrition(n)
+        nutritionData = await lookupNutrition(res.identified_food)
+        setNutrition(nutritionData)
         setNutritionLookupAttempted(true)
       }
     }
+
+    // Neither the curated database nor USDA had a match, which is the normal
+    // case for a photo of a mixed plate, or a name too specific for a text
+    // search ("grandma's oxtail" is not going to be in either). The same AI
+    // call that just analyzed the food was asked to estimate its nutrition
+    // too, so fall back to that instead of leaving the meal with no numbers.
+    if (!nutritionData && res.estimated_calories != null) {
+      nutritionData = {
+        calories: res.estimated_calories,
+        protein: res.estimated_protein_g ?? 0,
+        fat: res.estimated_fat_g ?? 0,
+        carbs: res.estimated_carbs_g ?? 0,
+        fiber: res.estimated_fiber_g ?? 0,
+        source: 'ai',
+        notes: 'AI estimate. Less precise than a database match, use as a rough guide.',
+      }
+      setNutrition(nutritionData)
+      setNutritionLookupAttempted(true)
+    }
+
     setChecking(false)
   }
 
@@ -588,6 +608,7 @@ export default function MealGuardPage() {
                   Nutritional data ({
                     nutrition.source === 'local' ? 'curated database'
                     : nutrition.source === 'usda' ? 'USDA FoodData Central'
+                    : nutrition.source === 'ai' ? 'AI estimate, not a database match'
                     : 'entered by you'
                   }), estimates only
                 </div>

@@ -28,6 +28,7 @@ STRICT RULES:
 6. Flag concerns with risk_level: "low", "medium", or "high"
 7. Never use em dashes or hyphens as separators in sentences (do not write " - " between clauses). Use a comma or a period instead
 8. End the educational_note with: "This is educational information only. Please consult your healthcare provider for personalized medical advice."
+9. Always estimate calories, protein, fat, carbs, and fiber for the food or meal shown or described, for the realistic serving size you see or that was described, even when you are not certain. A rough estimate that is clearly labeled as an estimate is more useful than no number. Only omit these if the input genuinely contains no food at all.
 
 Respond ONLY with valid JSON in this exact format:
 {
@@ -36,7 +37,12 @@ Respond ONLY with valid JSON in this exact format:
   "risk_level": "low" | "medium" | "high",
   "warning": string | null,
   "alternatives": string[],
-  "educational_note": string
+  "educational_note": string,
+  "estimated_calories": number | null,
+  "estimated_protein_g": number | null,
+  "estimated_fat_g": number | null,
+  "estimated_carbs_g": number | null,
+  "estimated_fiber_g": number | null
 }`
 }
 
@@ -119,6 +125,11 @@ ${context}`,
       warning: null,
       alternatives: [],
       educational_note: 'AI analysis temporarily unavailable. Please use your best judgment.',
+      estimated_calories: null,
+      estimated_protein_g: null,
+      estimated_fat_g: null,
+      estimated_carbs_g: null,
+      estimated_fiber_g: null,
     })
   }
 }
