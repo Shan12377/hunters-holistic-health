@@ -190,7 +190,7 @@ export const ACTIVITY_TYPES: readonly ActivityType[] = [
     // tuned to one specific activity, since this key covers all of them. The
     // note field is where the person says what it actually was.
     key: 'other',
-    label: 'Other',
+    label: 'Other/Sport',
     emoji: '🏀',
     met: { easy: 4.0, moderate: 6.0, hard: 8.0 },
     intensityHint: {

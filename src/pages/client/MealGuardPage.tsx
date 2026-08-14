@@ -52,11 +52,38 @@ export default function MealGuardPage() {
   // Distinguishes "never searched" from "searched and found nothing," so a failed
   // lookup can say so instead of silently letting the meal log with null calories.
   const [nutritionLookupAttempted, setNutritionLookupAttempted] = useState(false)
+  // Manual entry: for a nutrition label, a restaurant menu, or anything the AI
+  // and the two lookups do not recognize. Kept as strings so the field can be
+  // blank while typing rather than snapping to 0.
+  const [manualEntry, setManualEntry] = useState(false)
+  const [manualCalories, setManualCalories] = useState('')
+  const [manualProtein, setManualProtein] = useState('')
+  const [manualFat, setManualFat] = useState('')
+  const [manualCarbs, setManualCarbs] = useState('')
+  const [manualFiber, setManualFiber] = useState('')
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [hiddenIngredients, setHiddenIngredients] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Manual numbers feed the same nutrition state the AI and USDA lookups use,
+  // so handleLog and the progress display do not need to know which source it
+  // came from.
+  useEffect(() => {
+    if (!manualEntry) return
+    const cal = parseFloat(manualCalories)
+    if (!manualCalories.trim() || Number.isNaN(cal)) { setNutrition(null); return }
+    setNutrition({
+      calories: cal,
+      protein: parseFloat(manualProtein) || 0,
+      fat: parseFloat(manualFat) || 0,
+      carbs: parseFloat(manualCarbs) || 0,
+      fiber: parseFloat(manualFiber) || 0,
+      source: 'manual',
+      notes: undefined,
+    })
+  }, [manualEntry, manualCalories, manualProtein, manualFat, manualCarbs, manualFiber])
 
   useEffect(() => {
     const init = async () => {
@@ -85,11 +112,16 @@ export default function MealGuardPage() {
   }
 
   const fetchNutritionGoals = async (uid: string) => {
-    const { data } = await supabase
+    // maybeSingle, not single: single() throws (HTTP 406) when nobody has saved
+    // goals yet, which is the normal state for a new account, not an error. That
+    // 406 was silent, so the progress section just never appeared and nothing
+    // told the person why.
+    const { data, error } = await supabase
       .from('nutrition_goals')
       .select('calories_goal, protein_goal, fat_goal, carbs_goal, fiber_goal')
       .eq('user_id', uid)
-      .single()
+      .maybeSingle()
+    if (error) console.error('[meal-guard] goals fetch failed:', error)
     if (data) setGoals(data as NutritionGoals)
   }
 
@@ -234,6 +266,12 @@ export default function MealGuardPage() {
       setPhoto(null)
       setNutrition(null)
       setHiddenIngredients('')
+      setManualEntry(false)
+      setManualCalories('')
+      setManualProtein('')
+      setManualFat('')
+      setManualCarbs('')
+      setManualFiber('')
       fetchTodayLogs()
     }
     setSaving(false)
@@ -348,40 +386,64 @@ export default function MealGuardPage() {
       {activeTab === 'log' && (
         <>
           {/* Daily macro progress */}
-          {goals && (
+          {goals ? (
             <div className={styles.card}>
               <h3 className={styles.cardTitleSolo}>Today's Progress</h3>
               <div className={styles.macroProgressList}>
                 {([
-                  { label: 'Calories', used: todayTotals.calories, goal: goals.calories_goal, unit: 'kcal' },
-                  { label: 'Protein', used: todayTotals.protein, goal: goals.protein_goal, unit: 'g' },
-                  { label: 'Fat', used: todayTotals.fat, goal: goals.fat_goal, unit: 'g' },
-                  { label: 'Total Carbs', used: todayTotals.carbs, goal: goals.carbs_goal, unit: 'g' },
-                  { label: 'Fiber', used: todayTotals.fiber, goal: goals.fiber_goal, unit: 'g' },
-                  { label: 'Net Carbs', used: todayNetCarbs, goal: Math.max(0, goals.carbs_goal - goals.fiber_goal), unit: 'g' },
-                ] as const).map(({ label, used, goal, unit }) => (
-                  <div key={label} className={styles.macroProgressRow}>
-                    <div className={styles.macroProgressLabels}>
-                      <span className={styles.macroProgressName}>{label}</span>
-                      <span className={styles.macroProgressValues}>
-                        {Math.round(used)}{unit} / {goal}{unit}
+                  { label: 'Calories', used: todayTotals.calories, goal: goals.calories_goal, unit: 'kcal', kind: 'ceiling' },
+                  { label: 'Protein', used: todayTotals.protein, goal: goals.protein_goal, unit: 'g', kind: 'floor' },
+                  { label: 'Fat', used: todayTotals.fat, goal: goals.fat_goal, unit: 'g', kind: 'ceiling' },
+                  { label: 'Total Carbs', used: todayTotals.carbs, goal: goals.carbs_goal, unit: 'g', kind: 'ceiling' },
+                  { label: 'Fiber', used: todayTotals.fiber, goal: goals.fiber_goal, unit: 'g', kind: 'floor' },
+                  { label: 'Net Carbs', used: todayNetCarbs, goal: Math.max(0, goals.carbs_goal - goals.fiber_goal), unit: 'g', kind: 'ceiling' },
+                ] as const).map(({ label, used, goal, unit, kind }) => {
+                  // "Hit" only has one honest meaning for a floor goal (protein,
+                  // fiber): reached the minimum. A ceiling goal (calories, fat,
+                  // carbs) is not something you "complete," so no checkmark is
+                  // shown for those, only the over-limit warning color.
+                  const hit = kind === 'floor' && used >= goal
+                  const over = kind === 'ceiling' && used > goal
+                  return (
+                    <div key={label} className={styles.macroProgressRow}>
+                      <div className={styles.macroProgressLabels}>
+                        <span className={styles.macroProgressName}>
+                          {hit && <CheckCircle size={13} color="#4be08a" style={{ marginRight: 4, verticalAlign: -2 }} />}
+                          {label}
+                        </span>
+                        <span className={styles.macroProgressValues}>
+                          {Math.round(used)}{unit} / {goal}{unit}
+                        </span>
+                      </div>
+                      <div className={styles.macroProgressBar}>
+                        <div
+                          className={styles.macroProgressFill}
+                          style={{
+                            width: `${pct(used, goal)}%`,
+                            background: over ? '#e05c5c' : hit ? '#4be08a' : 'var(--teal)',
+                          }}
+                        />
+                      </div>
+                      <span className={styles.macroProgressRemaining}>
+                        {kind === 'floor' && hit
+                          ? 'goal met'
+                          : `${Math.max(0, goal - Math.round(used))}${unit} ${kind === 'floor' ? 'to go' : 'remaining'}`}
                       </span>
                     </div>
-                    <div className={styles.macroProgressBar}>
-                      <div
-                        className={styles.macroProgressFill}
-                        style={{
-                          width: `${pct(used, goal)}%`,
-                          background: pct(used, goal) >= 100 ? '#e05c5c' : 'var(--teal)',
-                        }}
-                      />
-                    </div>
-                    <span className={styles.macroProgressRemaining}>
-                      {Math.max(0, goal - Math.round(used))}{unit} remaining
-                    </span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
+            </div>
+          ) : (
+            <div className={styles.card}>
+              <h3 className={styles.cardTitleSolo}>Today's Progress</h3>
+              <p className={styles.cardText}>
+                You have not set up nutrition goals yet, so there is nothing here to compare your food to. Every
+                meal you log is still saved either way.
+              </p>
+              <button className={shared.btnSecondary} onClick={() => setActiveTab('goals')}>
+                Set up my goals
+              </button>
             </div>
           )}
 
@@ -452,7 +514,14 @@ export default function MealGuardPage() {
                 >
                   <Camera size={16} /> {photo ? 'Change Photo' : 'Add Photo'}
                 </button>
-                {result && (
+                <button
+                  type="button"
+                  className={manualEntry ? shared.btnTeal : shared.btnGhost}
+                  onClick={() => setManualEntry(v => !v)}
+                >
+                  <Target size={16} /> {manualEntry ? 'Manual entry on' : 'Enter manually'}
+                </button>
+                {(result || (manualEntry && nutrition)) && (
                   <button
                     type="button"
                     className={shared.btnTeal}
@@ -463,6 +532,35 @@ export default function MealGuardPage() {
                   </button>
                 )}
               </div>
+
+              {manualEntry && (
+                <div className={styles.manualEntryGrid}>
+                  <label className={styles.manualEntryField}>
+                    <span>Calories</span>
+                    <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0} value={manualCalories} onChange={e => setManualCalories(e.target.value)} placeholder="0" />
+                  </label>
+                  <label className={styles.manualEntryField}>
+                    <span>Protein (g)</span>
+                    <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0} value={manualProtein} onChange={e => setManualProtein(e.target.value)} placeholder="0" />
+                  </label>
+                  <label className={styles.manualEntryField}>
+                    <span>Fat (g)</span>
+                    <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0} value={manualFat} onChange={e => setManualFat(e.target.value)} placeholder="0" />
+                  </label>
+                  <label className={styles.manualEntryField}>
+                    <span>Carbs (g)</span>
+                    <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0} value={manualCarbs} onChange={e => setManualCarbs(e.target.value)} placeholder="0" />
+                  </label>
+                  <label className={styles.manualEntryField}>
+                    <span>Fiber (g)</span>
+                    <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0} value={manualFiber} onChange={e => setManualFiber(e.target.value)} placeholder="0" />
+                  </label>
+                  <p className={styles.manualEntryHint}>
+                    From a nutrition label, a restaurant menu, or anywhere you already know the numbers. Type a food
+                    name above so it shows in your log, then the numbers here. AI Check is not required.
+                  </p>
+                </div>
+              )}
 
               <p className={styles.transientNote}>
                 Privacy by design: your photo is analyzed and immediately discarded. It is never stored, never saved to your log, and never linked to your account.
@@ -475,7 +573,7 @@ export default function MealGuardPage() {
                 <Loader size={13} className={styles.spinIcon} /> Looking up nutritional data...
               </div>
             )}
-            {!nutrition && !lookingUp && nutritionLookupAttempted && (
+            {!nutrition && !lookingUp && nutritionLookupAttempted && !manualEntry && (
               <div className={styles.nutritionNotFoundRow}>
                 <AlertTriangle size={13} color="var(--gold)" />
                 Could not find nutrition data for "{foodInput || 'this meal'}". You can still log it, but calories
@@ -487,7 +585,11 @@ export default function MealGuardPage() {
               <div className={styles.nutritionPanel}>
                 <div className={styles.nutritionPanelLabel}>
                   <Flame size={13} color="var(--gold)" />
-                  Nutritional data ({nutrition.source === 'local' ? 'curated database' : 'USDA FoodData Central'}), estimates only
+                  Nutritional data ({
+                    nutrition.source === 'local' ? 'curated database'
+                    : nutrition.source === 'usda' ? 'USDA FoodData Central'
+                    : 'entered by you'
+                  }), estimates only
                 </div>
                 <div className={styles.nutritionMacros}>
                   <div className={styles.nutritionMacro}>

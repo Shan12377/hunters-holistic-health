@@ -844,6 +844,26 @@
   composes: select;
   width: auto;
   min-width: 140px;
+  /* The select was the same 14px as body text with a thin border, so next to
+     a text input asking for a whole sentence it read as a minor label rather
+     than a control you tap. Bolder weight and a visible border make it look
+     like the other half of the decision it actually is. */
+  font-weight: 700;
+  border-color: var(--border);
+  border-width: 1.5px;
+}
+
+@media (max-width: 480px) {
+  .mealInputRow {
+    /* Fixed: on a narrow phone, "auto" width for a 140px-minimum select left
+       so little room for the food text input that its own placeholder
+       truncated mid-word ("Type a foo"). Stacking removes the fight over
+       width entirely. */
+    grid-template-columns: 1fr;
+  }
+  .mealTypeSelect {
+    width: 100%;
+  }
 }
 
 .aiResult {
@@ -4733,6 +4753,44 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--gold);
+}
+
+.manualEntryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--space-3);
+  background: rgba(11, 158, 142, 0.06);
+  border: 1px solid rgba(11, 158, 142, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.manualEntryField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.manualEntryField span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.manualEntryInput {
+  composes: input;
+  padding: 8px 10px;
+}
+
+.manualEntryHint {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
 }
 
 .nutritionMacros {
