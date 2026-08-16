@@ -14,8 +14,13 @@ import { Heart, Plus, Info, ChevronDown, ChevronUp, Activity, Wind, Droplets } f
 import BPGauge from '@/components/ui/BPGauge'
 import PlanGate from '@/components/ui/PlanGate'
 import BackButton from '@/components/BackButton'
+import { withTimeout } from '@/lib/withTimeout'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+
+// A hung session check or query on a weak connection previously left this on
+// "Loading chart..." forever with no way to retry short of a full reload.
+const BP_LOAD_TIMEOUT_MS = 15000
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, annotationPlugin)
 
@@ -160,6 +165,7 @@ function deriveGauges(energyLevel: number, steps: number, recentTrendDir: number
 export default function BPTrackerPage() {
   const [readings, setReadings] = useState<BPReading[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ systolic: '', diastolic: '', pulse: '', notes: '' })
@@ -180,34 +186,55 @@ export default function BPTrackerPage() {
   }, [])
 
   const fetchTodayLog = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    const user = session?.user
-    if (!user) return
-    const today = new Date().toISOString().split('T')[0]
-    const { data } = await supabase
-      .from('daily_logs')
-      .select('energy_level, steps')
-      .eq('user_id', user.id)
-      .eq('log_date', today)
-      .maybeSingle()
-    if (data) {
-      setTodayEnergy(data.energy_level ?? 5)
-      setTodaySteps(data.steps ?? 0)
+    try {
+      const { data: { session } } = await withTimeout(supabase.auth.getSession(), BP_LOAD_TIMEOUT_MS, 'Session check')
+      const user = session?.user
+      if (!user) return
+      const today = new Date().toISOString().split('T')[0]
+      const { data } = await withTimeout(
+        supabase
+          .from('daily_logs')
+          .select('energy_level, steps')
+          .eq('user_id', user.id)
+          .eq('log_date', today)
+          .maybeSingle(),
+        BP_LOAD_TIMEOUT_MS,
+        "Today's log"
+      )
+      if (data) {
+        setTodayEnergy(data.energy_level ?? 5)
+        setTodaySteps(data.steps ?? 0)
+      }
+    } catch (err) {
+      // Gauges just stay at their default values, non-critical.
+      console.error('[bp-tracker] today log fetch failed:', err)
     }
   }
 
   const fetchReadings = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    const user = session?.user
-    if (!user) return
-    const { data } = await supabase
-      .from('blood_pressure_logs')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('logged_at', { ascending: true })
-      .limit(60)
-    setReadings((data as BPReading[]) ?? [])
-    setLoading(false)
+    setLoading(true)
+    setLoadError(false)
+    try {
+      const { data: { session } } = await withTimeout(supabase.auth.getSession(), BP_LOAD_TIMEOUT_MS, 'Session check')
+      const user = session?.user
+      if (!user) { setLoading(false); return }
+      const { data } = await withTimeout(
+        supabase
+          .from('blood_pressure_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('logged_at', { ascending: true })
+          .limit(60),
+        BP_LOAD_TIMEOUT_MS,
+        'Blood pressure readings'
+      )
+      setReadings((data as BPReading[]) ?? [])
+    } catch (err) {
+      console.error('[bp-tracker] fetch failed:', err)
+      setLoadError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -555,6 +582,12 @@ export default function BPTrackerPage() {
         <h3 className={styles.cardTitleSolo}>Trend (Last 60 Readings)</h3>
         {loading ? (
           <div className={styles.chartEmpty}>Loading chart...</div>
+        ) : loadError ? (
+          <div className={styles.chartEmpty}>
+            <Heart size={32} color="var(--border)" />
+            <p>Could not load your readings. Check your connection and try again.</p>
+            <button className={shared.btnSecondary} onClick={fetchReadings}>Retry</button>
+          </div>
         ) : readings.length < 2 ? (
           <div className={styles.chartEmpty}>
             <Heart size={32} color="var(--border)" />

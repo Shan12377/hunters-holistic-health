@@ -11,6 +11,13 @@
 
 import { sanitizeMealGuardPayload } from '@/lib/deidSanitizer'
 import { authHeaders } from '@/lib/authHeaders'
+import { withTimeout } from '@/lib/withTimeout'
+
+// A hung mobile connection (weak signal, app backgrounded mid-request) can leave
+// fetch() waiting forever with no error and no timeout of its own. Without this,
+// "Analyzing..." never resolves and there is no way to unstick it short of a
+// full reload.
+const MEAL_GUARD_TIMEOUT_MS = 25000
 
 export interface NutritionData {
   calories: number
@@ -54,17 +61,21 @@ export async function checkMealGuard(
       primary_goal: primaryGoal || undefined,
       dietary_preference: dietaryPreference || undefined,
     })
-    const response = await fetch('/api/meal-guard', {
-      method: 'POST',
-      headers: await authHeaders(),
-      body: JSON.stringify({
-        food: sanitized.food,
-        primary_goal: sanitized.primary_goal,
-        dietary_preference: sanitized.dietary_preference,
-        image: imageDataUrl || undefined,
-        nutrition_data: nutrition || undefined,
+    const response = await withTimeout(
+      fetch('/api/meal-guard', {
+        method: 'POST',
+        headers: await authHeaders(),
+        body: JSON.stringify({
+          food: sanitized.food,
+          primary_goal: sanitized.primary_goal,
+          dietary_preference: sanitized.dietary_preference,
+          image: imageDataUrl || undefined,
+          nutrition_data: nutrition || undefined,
+        }),
       }),
-    })
+      MEAL_GUARD_TIMEOUT_MS,
+      'Meal Guard check'
+    )
     if (!response.ok) throw new Error('Meal Guard API error')
     return await response.json()
   } catch {

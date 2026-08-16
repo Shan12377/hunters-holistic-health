@@ -14,6 +14,7 @@ import shared from '../../styles/shared.module.css'
 import { usePlan } from '@/hooks/usePlan'
 import { NutritionGoalsTab } from './NutritionGoalsTab'
 import type { NutritionGoals } from './NutritionGoalsTab'
+import { withTimeout } from '@/lib/withTimeout'
 
 const MEAL_TYPES = [
   { value: 'morning_fast', label: 'Morning Fast Window' },
@@ -65,7 +66,15 @@ export default function MealGuardPage() {
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [hiddenIngredients, setHiddenIngredients] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
+  // If getSession() hangs on a bad connection, userId stays null and the Goals
+  // tab and Saved tab silently look empty with no explanation. This tracks that
+  // failure so the UI can say so and offer a retry instead of staying blank.
+  const [initError, setInitError] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Bumped on every new check and on clearPhoto, so a slow response that finally
+  // arrives after the user already moved on (cleared the photo, started over)
+  // gets ignored instead of overwriting whatever is on screen by then.
+  const checkGenRef = useRef(0)
 
   // Manual numbers feed the same nutrition state the AI and USDA lookups use,
   // so handleLog and the progress display do not need to know which source it
@@ -85,16 +94,23 @@ export default function MealGuardPage() {
     })
   }, [manualEntry, manualCalories, manualProtein, manualFat, manualCarbs, manualFiber])
 
-  useEffect(() => {
-    const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+  const init = async () => {
+    setInitError(false)
+    try {
+      const { data: { session } } = await withTimeout(supabase.auth.getSession(), 15000, 'Session check')
       const user = session?.user
       if (!user) return
       setUserId(user.id)
       fetchTodayLogs(user.id)
       fetchNutritionGoals(user.id)
       fetchSavedFoods(user.id)
+    } catch (err) {
+      console.error('[meal-guard] init failed:', err)
+      setInitError(true)
     }
+  }
+
+  useEffect(() => {
     init()
   }, [])
 
@@ -161,7 +177,17 @@ export default function MealGuardPage() {
     e.target.value = ''
   }
 
-  const clearPhoto = () => setPhoto(null)
+  const clearPhoto = () => {
+    setPhoto(null)
+    // Invalidate any check still in flight so a late response cannot land after
+    // the fact, and stop showing "Analyzing..." immediately rather than making
+    // someone wait out the network timeout for a photo they already removed.
+    checkGenRef.current++
+    if (checking) {
+      setChecking(false)
+      setLookingUp(false)
+    }
+  }
 
   const lookupNutrition = async (name: string): Promise<NutritionData | null> => {
     const local = searchFood(name)
@@ -199,6 +225,7 @@ export default function MealGuardPage() {
       toast.error(`You have reached your ${mealGuardDailyLimit} daily Nourish Log entries. Upgrade to The Program for unlimited access.`)
       return
     }
+    const gen = ++checkGenRef.current
     setChecking(true)
     setResult(null)
     setNutrition(null)
@@ -220,6 +247,9 @@ export default function MealGuardPage() {
       photo ?? undefined,
       nutritionData ?? undefined
     )
+    // The photo was cleared (or another check started) while this was in
+    // flight. Do not resurrect a result for a check the user already left.
+    if (checkGenRef.current !== gen) return
     setResult(res)
     if (res.identified_food && !foodInput.trim()) {
       setFoodInput(res.identified_food)
@@ -396,6 +426,16 @@ export default function MealGuardPage() {
           <Heart size={14} /> Saved {savedFoods.length > 0 && `(${savedFoods.length})`}
         </button>
       </div>
+
+      {initError && (
+        <div className={styles.nutritionNotFoundRow}>
+          <AlertTriangle size={13} color="var(--gold)" />
+          Could not load your account data. Your goals and saved foods will not show up until this loads. Check your connection and
+          <button type="button" className={shared.btnGhost} onClick={init} style={{ marginLeft: 8 }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Disclaimer banner */}
       <div className={styles.nutritionDisclaimerBanner}>
@@ -771,12 +811,23 @@ export default function MealGuardPage() {
       )}
 
       {/* ---- GOALS TAB ---- */}
-      {activeTab === 'goals' && userId && (
-        <NutritionGoalsTab
-          userId={userId}
-          initialGoals={goals}
-          onGoalsSaved={setGoals}
-        />
+      {activeTab === 'goals' && (
+        userId ? (
+          <NutritionGoalsTab
+            userId={userId}
+            initialGoals={goals}
+            onGoalsSaved={setGoals}
+          />
+        ) : (
+          <div className={styles.card}>
+            <p className={styles.cardText}>
+              {initError
+                ? 'Could not load your account, so the calculator and your goals cannot show yet.'
+                : 'Loading your goals...'}
+            </p>
+            <button className={shared.btnSecondary} onClick={init}>Retry</button>
+          </div>
+        )
       )}
 
       {/* ---- SAVED FOODS TAB ---- */}

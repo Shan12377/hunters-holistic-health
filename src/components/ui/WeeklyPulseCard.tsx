@@ -5,8 +5,14 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { sanitizeForPulse, type RawPulseData } from '@/lib/deidSanitizer'
 import { authHeaders } from '@/lib/authHeaders'
+import { withTimeout } from '@/lib/withTimeout'
 import styles from '@/pages/client/Client.module.css'
 import PlanGate from './PlanGate'
+
+// A hung Supabase call or a slow AI response on a weak connection previously left
+// this stuck on "Analyzing your week..." forever, with no timeout and no retry
+// button visible while status stayed 'loading'.
+const PULSE_TIMEOUT_MS = 25000
 
 interface PulseResult {
   headline: string
@@ -34,14 +40,19 @@ export default function WeeklyPulseCard() {
 
     const weekKey = getWeekKey()
 
+    try {
     // Check cache first (skipped on force refresh)
     if (!forceRefresh) {
-      const { data: cached } = await supabase
-        .from('pulse_cache')
-        .select('headline, insights, generated_at')
-        .eq('user_id', user.id)
-        .eq('week_key', weekKey)
-        .single()
+      const { data: cached } = await withTimeout(
+        supabase
+          .from('pulse_cache')
+          .select('headline, insights, generated_at')
+          .eq('user_id', user.id)
+          .eq('week_key', weekKey)
+          .maybeSingle(),
+        PULSE_TIMEOUT_MS,
+        'Pulse cache check'
+      )
 
       if (cached) {
         setPulse({ headline: cached.headline, insights: cached.insights as string[] })
@@ -55,23 +66,27 @@ export default function WeeklyPulseCard() {
     const sevenDaysAgo = format(subDays(new Date(), 7), 'yyyy-MM-dd')
     const sevenDaysAgoISO = new Date(Date.now() - 7 * 86400000).toISOString()
 
-    const [logsRes, bpRes, bsRes] = await Promise.all([
-      supabase
-        .from('daily_logs')
-        .select('steps, energy_level, water_oz, morning_fast_done, supplement_am_done')
-        .eq('user_id', user.id)
-        .gte('log_date', sevenDaysAgo),
-      supabase
-        .from('blood_pressure_logs')
-        .select('systolic, diastolic')
-        .eq('user_id', user.id)
-        .gte('logged_at', sevenDaysAgoISO),
-      supabase
-        .from('blood_sugar_logs')
-        .select('glucose_mg_dl, reading_context')
-        .eq('user_id', user.id)
-        .gte('logged_at', sevenDaysAgoISO),
-    ])
+    const [logsRes, bpRes, bsRes] = await withTimeout(
+      Promise.all([
+        supabase
+          .from('daily_logs')
+          .select('steps, energy_level, water_oz, morning_fast_done, supplement_am_done')
+          .eq('user_id', user.id)
+          .gte('log_date', sevenDaysAgo),
+        supabase
+          .from('blood_pressure_logs')
+          .select('systolic, diastolic')
+          .eq('user_id', user.id)
+          .gte('logged_at', sevenDaysAgoISO),
+        supabase
+          .from('blood_sugar_logs')
+          .select('glucose_mg_dl, reading_context')
+          .eq('user_id', user.id)
+          .gte('logged_at', sevenDaysAgoISO),
+      ]),
+      PULSE_TIMEOUT_MS,
+      'Weekly data fetch'
+    )
 
     const logs = logsRes.data ?? []
 
@@ -98,34 +113,38 @@ export default function WeeklyPulseCard() {
     // De-identify locally before the data leaves the browser
     const sanitized = sanitizeForPulse(rawData)
 
-    try {
-      const apiRes = await fetch('/api/weekly-pulse', {
+    const apiRes = await withTimeout(
+      fetch('/api/weekly-pulse', {
         method: 'POST',
         headers: await authHeaders(),
         body: JSON.stringify(sanitized),
-      })
+      }),
+      PULSE_TIMEOUT_MS,
+      'Weekly Pulse AI'
+    )
 
-      if (!apiRes.ok) throw new Error('API error')
-      const result: PulseResult = await apiRes.json()
+    if (!apiRes.ok) throw new Error('API error')
+    const result: PulseResult = await apiRes.json()
 
-      // Cache result in Supabase
-      await supabase
-        .from('pulse_cache')
-        .upsert(
-          {
-            user_id: user.id,
-            week_key: weekKey,
-            headline: result.headline,
-            insights: result.insights,
-            generated_at: new Date().toISOString(),
-          },
-          { onConflict: 'user_id,week_key' }
-        )
+    // Cache result in Supabase
+    await supabase
+      .from('pulse_cache')
+      .upsert(
+        {
+          user_id: user.id,
+          week_key: weekKey,
+          headline: result.headline,
+          insights: result.insights,
+          generated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id,week_key' }
+      )
 
-      setPulse(result)
-      setGeneratedAt(new Date().toISOString())
-      setStatus('done')
-    } catch {
+    setPulse(result)
+    setGeneratedAt(new Date().toISOString())
+    setStatus('done')
+    } catch (err) {
+      console.error('[weekly-pulse] load failed:', err)
       setStatus('error')
     }
   }
@@ -151,8 +170,16 @@ export default function WeeklyPulseCard() {
         <div className={styles.pulseHeader}>
           <Sparkles size={16} color="var(--gold)" />
           <span className={styles.pulseTitle}>Weekly Pulse</span>
+          <button
+            className={styles.pulseRefreshBtn}
+            onClick={() => loadPulse(true)}
+            title="Retry"
+            aria-label="Retry weekly pulse"
+          >
+            <RefreshCw size={13} />
+          </button>
         </div>
-        <p className={styles.pulseError}>Could not generate your pulse check. Try again later.</p>
+        <p className={styles.pulseError}>Could not generate your pulse check. Check your connection and tap retry.</p>
       </div>
     )
   }
