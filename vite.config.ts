@@ -58,6 +58,31 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Vendor libraries split into their own cacheable chunks, separate from
+        // app code. Chart.js in particular was only needed by a few tracker
+        // pages but riding along in the shared bundle everyone downloads on
+        // first load. Grouped by package so each stays cached across app
+        // deploys even when app code changes.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('chart.js') || id.includes('chartjs-plugin-annotation') || id.includes('react-chartjs-2')) {
+            return 'vendor-charts'
+          }
+          if (id.includes('@supabase')) return 'vendor-supabase'
+          if (id.includes('react-router-dom')) return 'vendor-router'
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('scheduler')) {
+            return 'vendor-react'
+          }
+          if (id.includes('date-fns')) return 'vendor-date-fns'
+          if (id.includes('lucide-react')) return 'vendor-icons'
+          return undefined
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     host: true,
