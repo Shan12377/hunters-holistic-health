@@ -44,6 +44,11 @@ export default function MealGuardPage() {
   const [mealType, setMealType] = useState('meal1')
   const [checking, setChecking] = useState(false)
   const [result, setResult] = useState<Awaited<ReturnType<typeof checkMealGuard>> | null>(null)
+  // Set only when the AI call itself failed (network, timeout, API error), as
+  // opposed to a normal completed check. Kept separate from `result` so a
+  // failed check never renders as if it succeeded, and so "Log This Meal"
+  // never appears tied to a result that isn't real.
+  const [checkError, setCheckError] = useState(false)
   const [logs, setLogs] = useState<MealLog[]>([])
   const [saving, setSaving] = useState(false)
   // Photo lives in component memory only, never uploaded or stored.
@@ -175,6 +180,7 @@ export default function MealGuardPage() {
       const dataUrl = await downscaleImage(file)
       setPhoto(dataUrl)
       setResult(null)
+      setCheckError(false)
     } catch {
       toast.error('Could not read that photo. Please try another.')
     }
@@ -183,6 +189,8 @@ export default function MealGuardPage() {
 
   const clearPhoto = () => {
     setPhoto(null)
+    setResult(null)
+    setCheckError(false)
     // Invalidate any check still in flight so a late response cannot land after
     // the fact, and stop showing "Analyzing..." immediately rather than making
     // someone wait out the network timeout for a photo they already removed.
@@ -232,6 +240,7 @@ export default function MealGuardPage() {
     const gen = ++checkGenRef.current
     setChecking(true)
     setResult(null)
+    setCheckError(false)
     setNutrition(null)
     setNutritionLookupAttempted(false)
 
@@ -254,6 +263,18 @@ export default function MealGuardPage() {
     // The photo was cleared (or another check started) while this was in
     // flight. Do not resurrect a result for a check the user already left.
     if (checkGenRef.current !== gen) return
+
+    // The AI call itself failed (network, timeout, API error). This is not a
+    // real result, so it must not render as one, and "Log This Meal" must not
+    // appear tied to it. Previously this silently rendered as a normal
+    // completed check, and a meal could get logged with zero nutrition and no
+    // indication anything went wrong. Manual entry is still available below.
+    if (res.ai_unavailable) {
+      setCheckError(true)
+      setChecking(false)
+      return
+    }
+
     setResult(res)
     if (res.identified_food && !foodInput.trim()) {
       setFoodInput(res.identified_food)
@@ -314,9 +335,15 @@ export default function MealGuardPage() {
     if (error) {
       toast.error('Failed to save meal')
     } else {
-      toast.success(entryDate === todayStr() ? 'Meal logged!' : `Meal logged for ${format(parseISO(entryDate), 'MMM d')}!`)
+      const dayLabel = entryDate === todayStr() ? '' : ` for ${format(parseISO(entryDate), 'MMM d')}`
+      toast.success(
+        nutrition
+          ? `Meal logged${dayLabel}!`
+          : `Meal logged${dayLabel}, but with no nutrition data, it will not count toward your goals.`
+      )
       setFoodInput('')
       setResult(null)
+      setCheckError(false)
       setPhoto(null)
       setNutrition(null)
       setHiddenIngredients('')
@@ -603,10 +630,26 @@ export default function MealGuardPage() {
                     onClick={handleLog}
                     disabled={saving || !foodInput.trim()}
                   >
-                    <Plus size={16} /> {saving ? 'Saving...' : 'Log This Meal'}
+                    <Plus size={16} />{' '}
+                    {saving
+                      ? 'Saving...'
+                      : !nutrition
+                        ? 'Log Without Nutrition Data'
+                        : 'Log This Meal'}
                   </button>
                 )}
               </div>
+
+              {checkError && (
+                <div className={styles.nutritionNotFoundRow}>
+                  <AlertTriangle size={13} color="var(--gold)" />
+                  The AI check could not run. Check your connection and try again, or use{' '}
+                  <button type="button" className={shared.btnGhost} onClick={() => setManualEntry(true)} style={{ marginLeft: 4 }}>
+                    Enter manually
+                  </button>
+                  .
+                </div>
+              )}
 
               {manualEntry && (
                 <div className={styles.manualEntryGrid}>

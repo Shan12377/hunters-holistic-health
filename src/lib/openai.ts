@@ -46,6 +46,12 @@ export interface MealGuardResult {
   estimated_fat_g: number | null
   estimated_carbs_g: number | null
   estimated_fiber_g: number | null
+  // True only when the AI call itself failed (network, timeout, API error) and
+  // this is the safe fallback shape, not a real analysis. Without this flag the
+  // fallback is indistinguishable from "the AI ran and genuinely found
+  // nothing," and a meal could get logged with zero nutrition and no warning
+  // that anything went wrong.
+  ai_unavailable?: boolean
 }
 
 export async function checkMealGuard(
@@ -79,7 +85,9 @@ export async function checkMealGuard(
     if (!response.ok) throw new Error('Meal Guard API error')
     return await response.json()
   } catch {
-    // Graceful fallback; never block the user from logging food
+    // Graceful fallback; never block the user from logging food, but flag
+    // clearly that this is not a real result so the UI does not treat it as
+    // one.
     return {
       flagged: false,
       risk_level: 'low',
@@ -91,6 +99,7 @@ export async function checkMealGuard(
       estimated_fat_g: null,
       estimated_carbs_g: null,
       estimated_fiber_g: null,
+      ai_unavailable: true,
     }
   }
 }

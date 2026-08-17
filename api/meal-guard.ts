@@ -42,7 +42,8 @@ Respond ONLY with valid JSON in this exact format:
   "estimated_protein_g": number | null,
   "estimated_fat_g": number | null,
   "estimated_carbs_g": number | null,
-  "estimated_fiber_g": number | null
+  "estimated_fiber_g": number | null,
+  "ai_unavailable": false
 }`
 }
 
@@ -130,6 +131,7 @@ ${context}`,
       estimated_fat_g: null,
       estimated_carbs_g: null,
       estimated_fiber_g: null,
+      ai_unavailable: true,
     })
   }
 }
