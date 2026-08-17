@@ -1,7 +1,6 @@
 export interface SupplementBreakdown {
   id: string
   name: string
-  timing: string
   takenDays: number
   pct: number
 }
@@ -18,7 +17,7 @@ function localDateStr(y: number, m: number, d: number): string {
 }
 
 export function calcSupplementAdherence(
-  supplements: { id: string; name: string; timing: string }[],
+  supplements: { id: string; name: string }[],
   logs: { supplement_id: string; log_date: string }[],
   days = 14
 ): SupplementAdherenceResult {
@@ -41,7 +40,6 @@ export function calcSupplementAdherence(
     return {
       id: s.id,
       name: s.name,
-      timing: s.timing,
       takenDays,
       pct: Math.round((takenDays / days) * 100),
     }

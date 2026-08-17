@@ -123,7 +123,7 @@ export default function CoachDashboard() {
         const [bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
           supabase.from('blood_pressure_logs').select('systolic,diastolic').eq('user_id', p.id).order('logged_at', { ascending: false }).limit(1).single(),
           supabase.from('daily_logs').select('*').eq('user_id', p.id).gte('log_date', thirtyDaysAgo).order('log_date', { ascending: true }),
-          supabase.from('supplements').select('id,name,timing').eq('user_id', p.id).eq('active', true),
+          supabase.from('supplements').select('id,name').eq('user_id', p.id).eq('active', true),
           supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', p.id).gte('log_date', suppWindowStart),
         ])
 
@@ -156,7 +156,7 @@ export default function CoachDashboard() {
         const lastWeekGradeResult = calcGrade(lastWeekScore)
         const at_risk = hasLogsThisWeek && gradeToNum(projected.grade) < gradeToNum(lastWeekGradeResult.grade)
 
-        const supps = (suppRes.data ?? []) as { id: string; name: string; timing: string }[]
+        const supps = (suppRes.data ?? []) as { id: string; name: string }[]
         const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
         const adhrResult = supps.length > 0 ? calcSupplementAdherence(supps, suppLogs) : null
         const supp_adherence = adhrResult ? adhrResult.overall : -1

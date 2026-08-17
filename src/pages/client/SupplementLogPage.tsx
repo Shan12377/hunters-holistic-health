@@ -9,12 +9,16 @@ import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
 
+type Timing = 'am' | 'pm' | 'with_meal' | 'as_needed'
+
 interface Supplement {
   id: string
   user_id: string
   name: string
   dose: string
-  timing: 'am' | 'pm' | 'with_meal' | 'as_needed'
+  // A supplement taken more than once a day (magnesium AM and PM) can carry
+  // more than one timing tag, it is no longer forced into a single bucket.
+  timings: Timing[]
   notes: string | null
   active: boolean
 }
@@ -27,8 +31,8 @@ interface SupplementLog {
   log_date: string
 }
 
-const TIMING_LABELS = { am: 'Morning', pm: 'Evening', with_meal: 'With Meal', as_needed: 'As Needed' }
-const TIMING_COLORS = { am: '#c8a74b', pm: '#9b59b6', with_meal: '#0b9e8e', as_needed: '#91a0ac' }
+const TIMING_LABELS: Record<Timing, string> = { am: 'Morning', pm: 'Evening', with_meal: 'With Meal', as_needed: 'As Needed' }
+const TIMING_COLORS: Record<Timing, string> = { am: '#c8a74b', pm: '#9b59b6', with_meal: '#0b9e8e', as_needed: '#91a0ac' }
 
 interface ResearchData {
   strength: 'strong' | 'moderate' | 'emerging' | 'limited'
@@ -52,7 +56,9 @@ export default function SupplementLogPage() {
   const [logs, setLogs] = useState<SupplementLog[]>([])
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', dose: '', timing: 'am' as Supplement['timing'], notes: '' })
+  const [form, setForm] = useState<{ name: string; dose: string; timings: Timing[]; notes: string }>({
+    name: '', dose: '', timings: ['am'], notes: '',
+  })
   const [researchSupp, setResearchSupp] = useState<Supplement | null>(null)
   const [researchData, setResearchData] = useState<ResearchData | null>(null)
   const [researchLoading, setResearchLoading] = useState(false)
@@ -105,7 +111,7 @@ export default function SupplementLogPage() {
     const user = session?.user
     if (!user) return
     const [suppRes, logRes] = await Promise.all([
-      supabase.from('supplements').select('*').eq('user_id', user.id).eq('active', true).order('timing').order('name'),
+      supabase.from('supplements').select('*').eq('user_id', user.id).eq('active', true).order('name'),
       supabase.from('supplement_logs').select('*').eq('user_id', user.id).gte('log_date', windowStart),
     ])
     setSupplements((suppRes.data as Supplement[]) ?? [])
@@ -150,18 +156,26 @@ export default function SupplementLogPage() {
 
   const addSupplement = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.timings.length === 0) { toast.error('Pick at least one timing'); return }
     const { data: { session } } = await supabase.auth.getSession()
     const user = session?.user
     if (!user) return
     const { data, error } = await supabase.from('supplements').insert({
       user_id: user.id, name: form.name.trim(), dose: form.dose.trim(),
-      timing: form.timing, notes: form.notes || null, active: true,
+      timings: form.timings, notes: form.notes || null, active: true,
     }).select().single()
     if (error) { toast.error('Failed to add supplement'); return }
     setSupplements(s => [...s, data as Supplement])
-    setForm({ name: '', dose: '', timing: 'am', notes: '' })
+    setForm({ name: '', dose: '', timings: ['am'], notes: '' })
     setShowForm(false)
     toast.success('Supplement added!')
+  }
+
+  const toggleFormTiming = (t: Timing) => {
+    setForm(f => ({
+      ...f,
+      timings: f.timings.includes(t) ? f.timings.filter(x => x !== t) : [...f.timings, t],
+    }))
   }
 
   const removeSupplement = async (id: string) => {
@@ -177,9 +191,11 @@ export default function SupplementLogPage() {
   for (const l of selectedLogs) {
     takenCounts.set(l.supplement_id, (takenCounts.get(l.supplement_id) ?? 0) + 1)
   }
-  const amSupps = supplements.filter(s => s.timing === 'am')
-  const pmSupps = supplements.filter(s => s.timing === 'pm')
-  const otherSupps = supplements.filter(s => s.timing !== 'am' && s.timing !== 'pm')
+  // A supplement tagged both AM and PM appears in both sections on purpose,
+  // each has its own check-off, since it is genuinely taken at both times.
+  const amSupps = supplements.filter(s => s.timings.includes('am'))
+  const pmSupps = supplements.filter(s => s.timings.includes('pm'))
+  const otherSupps = supplements.filter(s => !s.timings.includes('am') && !s.timings.includes('pm'))
   // "Taken today" for the progress bar means at least once, a supplement due
   // twice a day should not need two checks to count toward today's percent.
   const totalTaken = supplements.filter(s => takenCounts.has(s.id)).length
@@ -229,13 +245,13 @@ export default function SupplementLogPage() {
               </div>
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Timing</label>
+              <label className={styles.label}>Timing (pick as many as apply, e.g. magnesium AM and PM)</label>
               <div className={styles.timingRow}>
-                {Object.entries(TIMING_LABELS).map(([val, label]) => {
-                  const active = form.timing === val
-                  const color = TIMING_COLORS[val as Supplement['timing']]
+                {(Object.entries(TIMING_LABELS) as [Timing, string][]).map(([val, label]) => {
+                  const active = form.timings.includes(val)
+                  const color = TIMING_COLORS[val]
                   return (
-                    <button key={val} type="button" onClick={() => setForm(f => ({...f, timing: val as Supplement['timing']}))}
+                    <button key={val} type="button" onClick={() => toggleFormTiming(val)}
                       className={styles.timingBtn}
                       /* Selected timing color is data-driven, so it stays inline */
                       style={active ? { borderColor: color, background: `${color}15`, color } : undefined}>
@@ -376,7 +392,7 @@ export default function SupplementLogPage() {
                       </button>
                       <div className={styles.suppRowBody}>
                         <div className={taken ? styles.suppRowNameTaken : styles.suppRowName}>{supp.name}</div>
-                        <div className={styles.suppRowMeta}>{supp.dose} · {TIMING_LABELS[supp.timing]}{supp.notes ? ` · ${supp.notes}` : ''}</div>
+                        <div className={styles.suppRowMeta}>{supp.dose} · {supp.timings.map(t => TIMING_LABELS[t]).join(' & ')}{supp.notes ? ` · ${supp.notes}` : ''}</div>
                       </div>
                       {taken && (
                         <button

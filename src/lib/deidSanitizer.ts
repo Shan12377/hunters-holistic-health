@@ -216,17 +216,21 @@ export function sanitizeBSTrend(
  * does not identify a person). But adherence percentages replace raw log counts.
  */
 export function sanitizeSupplementSummary(
-  supplements: { name: string; timing: string }[],
+  supplements: { name: string; timings: string[] }[],
   adherencePct: number
 ): string {
   if (supplements.length === 0) {
     return 'No active supplements.'
   }
+  // A supplement taken both AM and PM counts toward both groups, it really
+  // is taken at both times.
   const timingGroups: Record<string, string[]> = {}
   for (const s of supplements) {
-    const t = s.timing ?? 'unspecified'
-    if (!timingGroups[t]) timingGroups[t] = []
-    timingGroups[t].push(s.name)
+    const tags = s.timings.length > 0 ? s.timings : ['unspecified']
+    for (const t of tags) {
+      if (!timingGroups[t]) timingGroups[t] = []
+      timingGroups[t].push(s.name)
+    }
   }
   const groupSummary = Object.entries(timingGroups)
     .map(([timing, names]) => `${names.length} ${timing} supplement${names.length > 1 ? 's' : ''}`)

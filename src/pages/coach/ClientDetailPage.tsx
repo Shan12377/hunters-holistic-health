@@ -80,14 +80,14 @@ export default function ClientDetailPage() {
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('blood_pressure_logs').select('*').eq('user_id', id).order('logged_at', { ascending: true }).limit(30),
       supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
-      supabase.from('supplements').select('id,name,timing').eq('user_id', id).eq('active', true),
+      supabase.from('supplements').select('id,name').eq('user_id', id).eq('active', true),
       supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
       supabase.from('client_protocols').select('*, protocol_data').eq('user_id', id).maybeSingle(),
     ])
     if (profileRes.data) setProfile(profileRes.data as Profile)
     setBpReadings((bpRes.data as BPReading[]) ?? [])
     setDailyLogs((logsRes.data as DailyLog[]) ?? [])
-    const supps = (suppRes.data ?? []) as { id: string; name: string; timing: string }[]
+    const supps = (suppRes.data ?? []) as { id: string; name: string }[]
     const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
     if (supps.length > 0) setAdherence(calcSupplementAdherence(supps, suppLogs))
     if (protocolRes.data) {
