@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, ChevronRight } from 'lucide-react'
+import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, ChevronRight, TrendingUp } from 'lucide-react'
+import NutritionTrendsChart from '@/components/nourish/NutritionTrendsChart'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { checkMealGuard, downscaleImage } from '@/lib/openai'
@@ -46,7 +47,7 @@ interface RecentFood {
   fiber: number | null
 }
 
-type Tab = 'log' | 'goals' | 'saved'
+type Tab = 'log' | 'trends' | 'goals' | 'saved'
 
 export default function MealGuardPage() {
   const { profile } = useAuthStore()
@@ -553,6 +554,12 @@ export default function MealGuardPage() {
           onClick={() => setActiveTab('log')}
         >
           <Shield size={14} /> Log Meal
+        </button>
+        <button
+          className={activeTab === 'trends' ? styles.tabBtnActive : styles.tabBtn}
+          onClick={() => setActiveTab('trends')}
+        >
+          <TrendingUp size={14} /> Trends
         </button>
         <button
           className={activeTab === 'goals' ? styles.tabBtnActive : styles.tabBtn}
@@ -1084,6 +1091,16 @@ export default function MealGuardPage() {
             )}
           </div>
         </>
+      )}
+
+      {/* ---- TRENDS TAB ---- */}
+      {activeTab === 'trends' && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitleSolo}>Nutrition Trend (Last 30 Days)</h3>
+          {userId
+            ? <NutritionTrendsChart userId={userId} goals={goals} />
+            : <p className={styles.cardText}>Loading...</p>}
+        </div>
       )}
 
       {/* ---- GOALS TAB ---- */}
