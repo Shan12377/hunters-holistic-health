@@ -26,7 +26,7 @@ export interface NutritionData {
   carbs: number
   fiber: number
   notes?: string
-  source: 'local' | 'usda' | 'manual' | 'ai'
+  source: 'local' | 'usda' | 'manual' | 'ai' | 'barcode'
 }
 
 export interface MealGuardResult {

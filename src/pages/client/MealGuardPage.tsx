@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, ChevronRight, TrendingUp } from 'lucide-react'
 import NutritionTrendsChart from '@/components/nourish/NutritionTrendsChart'
+import BarcodeScannerModal from '@/components/nourish/BarcodeScanner'
+import { lookupBarcode } from '@/lib/openFoodFacts'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { checkMealGuard, downscaleImage } from '@/lib/openai'
@@ -80,6 +82,8 @@ export default function MealGuardPage() {
   const [manualFat, setManualFat] = useState('')
   const [manualCarbs, setManualCarbs] = useState('')
   const [manualFiber, setManualFiber] = useState('')
+  const [showScanner, setShowScanner] = useState(false)
+  const [scanningLookup, setScanningLookup] = useState(false)
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [recentFoods, setRecentFoods] = useState<RecentFood[]>([])
@@ -289,6 +293,24 @@ export default function MealGuardPage() {
       }
     } catch { /* skip if USDA unavailable */ }
     return null
+  }
+
+  const handleBarcodeDetected = async (barcode: string) => {
+    setShowScanner(false)
+    setScanningLookup(true)
+    setResult(null)
+    setCheckError(false)
+    const found = await lookupBarcode(barcode)
+    setScanningLookup(false)
+    if (!found) {
+      toast.error(`Could not find a product for barcode ${barcode}. Try Manual Entry instead.`)
+      return
+    }
+    setFoodInput(found.productName)
+    setNutrition(found.nutrition)
+    setNutritionLookupAttempted(true)
+    setServings('1')
+    toast.success(`Found: ${found.productName}`)
   }
 
   const performCheck = async () => {
@@ -732,12 +754,19 @@ export default function MealGuardPage() {
                 </button>
                 <button
                   type="button"
+                  className={shared.btnGhost}
+                  onClick={() => setShowScanner(true)}
+                >
+                  <Barcode size={16} /> Scan Barcode
+                </button>
+                <button
+                  type="button"
                   className={manualEntry ? shared.btnTeal : shared.btnGhost}
                   onClick={() => setManualEntry(v => !v)}
                 >
                   <Target size={16} /> {manualEntry ? 'Manual entry on' : 'Enter manually'}
                 </button>
-                {(result || (manualEntry && nutrition)) && (
+                {(result || (manualEntry && nutrition) || nutrition?.source === 'barcode') && (
                   <button
                     type="button"
                     className={shared.btnTeal}
@@ -805,6 +834,11 @@ export default function MealGuardPage() {
                 <Loader size={13} className={styles.spinIcon} /> Looking up nutritional data...
               </div>
             )}
+            {scanningLookup && (
+              <div className={styles.nutritionLookupRow}>
+                <Loader size={13} className={styles.spinIcon} /> Looking up this product...
+              </div>
+            )}
             {!nutrition && !lookingUp && nutritionLookupAttempted && !manualEntry && (
               <div className={styles.nutritionNotFoundRow}>
                 <AlertTriangle size={13} color="var(--gold)" />
@@ -821,6 +855,7 @@ export default function MealGuardPage() {
                     nutrition.source === 'local' ? 'curated database'
                     : nutrition.source === 'usda' ? 'USDA FoodData Central'
                     : nutrition.source === 'ai' ? 'AI estimate, not a database match'
+                    : nutrition.source === 'barcode' ? 'scanned barcode, Open Food Facts'
                     : 'entered by you'
                   }), per serving, estimates only
                 </div>
@@ -1202,6 +1237,13 @@ export default function MealGuardPage() {
           )}
         </div>
         </>
+      )}
+
+      {showScanner && (
+        <BarcodeScannerModal
+          onDetected={handleBarcodeDetected}
+          onClose={() => setShowScanner(false)}
+        />
       )}
     </div>
   )
