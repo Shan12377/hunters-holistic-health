@@ -211,6 +211,52 @@ export default function SupplementLogPage() {
         </button>
       </div>
 
+      {/* Add form. Rendered right below the button that opens it, not after
+          three other cards, previously it could be several screens of scroll
+          away with no indication it had even appeared. */}
+      {showForm && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitleSolo}>Add New Supplement</h3>
+          <form onSubmit={addSupplement} className={styles.logForm}>
+            <div className={styles.inputRow}>
+              <div className={styles.field}>
+                <label className={styles.label}>Supplement Name *</label>
+                <input className={styles.input} type="text" placeholder="Magnesium Glycinate" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} required maxLength={100} />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Dose *</label>
+                <input className={styles.input} type="text" placeholder="400mg, 2 capsules..." value={form.dose} onChange={e => setForm(f => ({...f, dose: e.target.value}))} required maxLength={50} />
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Timing</label>
+              <div className={styles.timingRow}>
+                {Object.entries(TIMING_LABELS).map(([val, label]) => {
+                  const active = form.timing === val
+                  const color = TIMING_COLORS[val as Supplement['timing']]
+                  return (
+                    <button key={val} type="button" onClick={() => setForm(f => ({...f, timing: val as Supplement['timing']}))}
+                      className={styles.timingBtn}
+                      /* Selected timing color is data-driven, so it stays inline */
+                      style={active ? { borderColor: color, background: `${color}15`, color } : undefined}>
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Notes (optional)</label>
+              <input className={styles.input} type="text" placeholder="Take with food, avoid with coffee..." value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))} maxLength={200} />
+            </div>
+            <div className={styles.formActions}>
+              <button type="submit" className={shared.btnPrimary}>Add Supplement</button>
+              <button type="button" className={shared.btnSecondary} onClick={() => setShowForm(false)}>Cancel</button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* Missed a day? Pull it up and check off what you took. */}
       <div className={styles.card}>
         <label className={styles.label}>Checking off for</label>
@@ -290,50 +336,6 @@ export default function SupplementLogPage() {
               Consistency matters more than perfection. Pick your easiest supplement and anchor it to an existing habit.
             </p>
           )}
-        </div>
-      )}
-
-      {/* Add form */}
-      {showForm && (
-        <div className={styles.card}>
-          <h3 className={styles.cardTitleSolo}>Add New Supplement</h3>
-          <form onSubmit={addSupplement} className={styles.logForm}>
-            <div className={styles.inputRow}>
-              <div className={styles.field}>
-                <label className={styles.label}>Supplement Name *</label>
-                <input className={styles.input} type="text" placeholder="Magnesium Glycinate" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} required maxLength={100} />
-              </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Dose *</label>
-                <input className={styles.input} type="text" placeholder="400mg, 2 capsules..." value={form.dose} onChange={e => setForm(f => ({...f, dose: e.target.value}))} required maxLength={50} />
-              </div>
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>Timing</label>
-              <div className={styles.timingRow}>
-                {Object.entries(TIMING_LABELS).map(([val, label]) => {
-                  const active = form.timing === val
-                  const color = TIMING_COLORS[val as Supplement['timing']]
-                  return (
-                    <button key={val} type="button" onClick={() => setForm(f => ({...f, timing: val as Supplement['timing']}))}
-                      className={styles.timingBtn}
-                      /* Selected timing color is data-driven, so it stays inline */
-                      style={active ? { borderColor: color, background: `${color}15`, color } : undefined}>
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>Notes (optional)</label>
-              <input className={styles.input} type="text" placeholder="Take with food, avoid with coffee..." value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))} maxLength={200} />
-            </div>
-            <div className={styles.formActions}>
-              <button type="submit" className={shared.btnPrimary}>Add Supplement</button>
-              <button type="button" className={shared.btnSecondary} onClick={() => setShowForm(false)}>Cancel</button>
-            </div>
-          </form>
         </div>
       )}
 
