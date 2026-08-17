@@ -103,6 +103,25 @@ export function searchFood(query: string): FoodItem | null {
   const q = query.toLowerCase().trim()
   const exact = FOOD_DATABASE.find(f => f.name.toLowerCase() === q)
   if (exact) return exact
-  const partial = FOOD_DATABASE.find(f => f.name.toLowerCase().includes(q) || q.includes(f.name.toLowerCase()))
-  return partial ?? null
+
+  // A shorter query fully inside a longer catalogue name is still the same
+  // food ("chicken breast" inside "chicken breast, skinless"). Always safe.
+  const nameContainsQuery = FOOD_DATABASE.find(f => f.name.toLowerCase().includes(q))
+  if (nameContainsQuery) return nameContainsQuery
+
+  // The other direction (query contains the food name) is only safe when the
+  // name makes up most of the query. Without this ratio check, a real bug:
+  // a full plate description ("half plate chicken with fried rice and
+  // noodles, 4 single broccoli") matched on the single word "broccoli" and
+  // returned broccoli's nutrition, 55 calories, as the whole meal, silently
+  // dropping the chicken, rice, and noodles entirely. Requiring the food
+  // name to cover at least half the query's words means a compound,
+  // multi-item description no longer matches on one incidental ingredient.
+  const qWords = q.split(/\s+/).filter(Boolean)
+  const queryContainsName = FOOD_DATABASE.find(f => {
+    if (!q.includes(f.name.toLowerCase())) return false
+    const nameWords = f.name.toLowerCase().split(/\s+/).filter(Boolean)
+    return nameWords.length >= qWords.length * 0.5
+  })
+  return queryContainsName ?? null
 }
