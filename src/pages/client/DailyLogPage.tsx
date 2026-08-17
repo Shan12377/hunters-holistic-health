@@ -16,44 +16,53 @@ import shared from '../../styles/shared.module.css'
 const ENERGY_LABELS = ['', '😴 Exhausted', '😓 Very Low', '😔 Low', '😐 Below Average', '😶 Average', '🙂 Decent', '😊 Good', '💪 Great', '🔥 Excellent', '⚡ Peak Energy']
 const SLEEP_QUALITY_LABELS = ['', '😣 Restless', '😴 Poor', '😐 Fair', '😊 Good', '🌟 Refreshed']
 
+const BLANK_LOG: Omit<Partial<DailyLog>, 'log_date'> = {
+  steps: 0,
+  energy_level: 5,
+  water_oz: 0,
+  morning_fast_done: false,
+  meal1_logged: false,
+  meal2_logged: false,
+  snack_logged: false,
+  supplement_am_done: false,
+  supplement_noon_done: false,
+  supplement_pm_done: false,
+  sleep_hours: null,
+  sleep_quality: null,
+  late_slip_reason: null,
+}
+
 export default function DailyLogPage() {
   const { user } = useAuthStore()
   const today = format(new Date(), 'yyyy-MM-dd')
-  const [log, setLog] = useState<Partial<DailyLog>>({
-    log_date: today,
-    steps: 0,
-    energy_level: 5,
-    water_oz: 0,
-    morning_fast_done: false,
-    meal1_logged: false,
-    meal2_logged: false,
-    snack_logged: false,
-    supplement_am_done: false,
-    supplement_noon_done: false,
-    supplement_pm_done: false,
-    sleep_hours: null,
-    sleep_quality: null,
-    late_slip_reason: null,
-  })
+  // Which day is being viewed and edited. Defaults to today, but a missed day
+  // can be pulled up and filled in after the fact.
+  const [selectedDate, setSelectedDate] = useState(today)
+  const [log, setLog] = useState<Partial<DailyLog>>({ log_date: today, ...BLANK_LOG })
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (user) fetchLog()
-  }, [user?.id])
+    if (user) fetchLog(selectedDate)
+  }, [user?.id, selectedDate])
 
-  const fetchLog = async () => {
+  const fetchLog = async (date: string) => {
     if (!user) return
+    setLoaded(false)
     try {
+      // maybeSingle, not single: single() throws when there is no row yet for
+      // this day, which is the normal state for a day nothing was logged on.
       const { data, error } = await supabase
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
-        .eq('log_date', today)
-        .single()
-      if (!error && data) setLog(data as DailyLog)
+        .eq('log_date', date)
+        .maybeSingle()
+      if (error) console.error('[daily-log] fetch failed:', error)
+      setLog(data ? (data as DailyLog) : { log_date: date, ...BLANK_LOG })
     } catch {
       // Offline: keep default empty state
+      setLog({ log_date: date, ...BLANK_LOG })
     } finally {
       setLoaded(true)
     }
@@ -66,7 +75,7 @@ export default function DailyLogPage() {
     if (!navigator.onLine) {
       await enqueueLog({
         user_id: user.id,
-        log_date: today,
+        log_date: selectedDate,
         payload: { ...log },
         queued_at: Date.now(),
       })
@@ -76,16 +85,19 @@ export default function DailyLogPage() {
     }
 
     const { error } = await supabase.from('daily_logs').upsert(
-      { ...log, user_id: user.id, log_date: today },
+      { ...log, user_id: user.id, log_date: selectedDate },
       { onConflict: 'user_id,log_date' }
     )
     if (error) {
       toast.error('Failed to save log')
     } else {
-      toast.success('Daily log saved!')
-      await awardPoints(user.id, 'daily_log', 10, today)
+      toast.success(selectedDate === today ? 'Daily log saved!' : `Daily log saved for ${format(new Date(`${selectedDate}T12:00:00`), 'MMM d')}!`)
+      await awardPoints(user.id, 'daily_log', 10, selectedDate)
+      // Streak is always about the real current 7 days, regardless of which
+      // day was just filled in, backfilling a missed day can legitimately
+      // complete it.
       await checkStreak(user.id)
-      maybePromptPush(user.id)
+      if (selectedDate === today) maybePromptPush(user.id)
     }
     setSaving(false)
   }
@@ -148,11 +160,32 @@ export default function DailyLogPage() {
           <h1 className={styles.pageTopTitle}>
             <ClipboardList size={22} color="var(--teal)" /> Daily Log
           </h1>
-          <p className={styles.pageTopDate}>{format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+          <p className={styles.pageTopDate}>
+            {selectedDate === today
+              ? format(new Date(), 'EEEE, MMMM d, yyyy')
+              : format(new Date(`${selectedDate}T12:00:00`), 'EEEE, MMMM d, yyyy')}
+          </p>
         </div>
         <button className={shared.btnTeal} onClick={handleSave} disabled={saving || !loaded}>
           <Save size={16} /> {saving ? 'Saving...' : 'Save Log'}
         </button>
+      </div>
+
+      {/* Missed a day? Pull it up and fill it in. */}
+      <div className={styles.card}>
+        <label className={styles.label}>Editing day</label>
+        <input
+          className={styles.input}
+          type="date"
+          value={selectedDate}
+          max={today}
+          onChange={e => setSelectedDate(e.target.value)}
+        />
+        {selectedDate !== today && (
+          <p className={styles.goalHint} style={{ marginTop: 6 }}>
+            You are editing a past day, not today. Switch back to {format(new Date(), 'MMM d')} to log today.
+          </p>
+        )}
       </div>
 
       {/* Nutrition & Fasting */}

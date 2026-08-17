@@ -58,6 +58,9 @@ export default function SupplementLogPage() {
   const [researchLoading, setResearchLoading] = useState(false)
   const [researchError, setResearchError] = useState<string | null>(null)
   const today = format(new Date(), 'yyyy-MM-dd')
+  // Which day's checklist is being viewed and toggled. Defaults to today, but
+  // a missed day can be pulled up and marked after the fact.
+  const [selectedDate, setSelectedDate] = useState(today)
   // Fetch 14 days so adherence can be computed without an extra query.
   const windowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
 
@@ -114,18 +117,19 @@ export default function SupplementLogPage() {
     const { data: { session } } = await supabase.auth.getSession()
     const user = session?.user
     if (!user) return
-    // Look for today's log only, not a historical one.
-    const existing = logs.find(l => l.supplement_id === supp.id && l.log_date === today)
+    // Look at the day currently being viewed, today unless a past day was pulled up.
+    const existing = logs.find(l => l.supplement_id === supp.id && l.log_date === selectedDate)
     if (existing) {
       await supabase.from('supplement_logs').delete().eq('id', existing.id)
       setLogs(l => l.filter(x => x.id !== existing.id))
       toast('Marked as not taken', { icon: '↩️' })
     } else {
       const { data } = await supabase.from('supplement_logs').insert({
-        user_id: user.id, supplement_id: supp.id, log_date: today, taken_at: new Date().toISOString(),
+        user_id: user.id, supplement_id: supp.id, log_date: selectedDate,
+        taken_at: new Date(`${selectedDate}T12:00:00`).toISOString(),
       }).select().single()
       if (data) setLogs(l => [...l, data as SupplementLog])
-      toast.success(`${supp.name} marked as taken!`)
+      toast.success(selectedDate === today ? `${supp.name} marked as taken!` : `${supp.name} marked as taken for ${format(new Date(`${selectedDate}T12:00:00`), 'MMM d')}!`)
     }
   }
 
@@ -151,9 +155,9 @@ export default function SupplementLogPage() {
     toast('Supplement removed', { icon: '🗑️' })
   }
 
-  // Today-only slice for the daily tracker.
-  const todayLogs = logs.filter(l => l.log_date === today)
-  const takenIds = new Set(todayLogs.map(l => l.supplement_id))
+  // Slice for the day currently being viewed, today unless backdating.
+  const selectedLogs = logs.filter(l => l.log_date === selectedDate)
+  const takenIds = new Set(selectedLogs.map(l => l.supplement_id))
   const amSupps = supplements.filter(s => s.timing === 'am')
   const pmSupps = supplements.filter(s => s.timing === 'pm')
   const otherSupps = supplements.filter(s => s.timing !== 'am' && s.timing !== 'pm')
@@ -175,19 +179,40 @@ export default function SupplementLogPage() {
           <h1 className={styles.pageTopTitle}>
             <Pill size={22} color="#9b59b6" /> Supplement Log
           </h1>
-          <p className={styles.pageTopDate}>{format(new Date(), 'EEEE, MMMM d')}</p>
+          <p className={styles.pageTopDate}>
+            {selectedDate === today
+              ? format(new Date(), 'EEEE, MMMM d')
+              : format(new Date(`${selectedDate}T12:00:00`), 'EEEE, MMMM d')}
+          </p>
         </div>
         <button className={shared.btnPrimary} onClick={() => setShowForm(!showForm)}>
           <Plus size={16} /> Add Supplement
         </button>
       </div>
 
-      {/* Today's progress */}
+      {/* Missed a day? Pull it up and check off what you took. */}
+      <div className={styles.card}>
+        <label className={styles.label}>Checking off for</label>
+        <input
+          className={styles.input}
+          type="date"
+          value={selectedDate}
+          max={today}
+          onChange={e => setSelectedDate(e.target.value)}
+        />
+        {selectedDate !== today && (
+          <p className={styles.goalHint} style={{ marginTop: 6 }}>
+            You are checking off a past day, not today. Switch back to {format(new Date(), 'MMM d')} for today.
+          </p>
+        )}
+      </div>
+
+      {/* Progress for the day being viewed */}
       {supplements.length > 0 && (
         <div className={styles.suppProgressCard}>
           <div className={styles.suppProgressBody}>
             <div className={styles.suppProgressHeader}>
-              <span>Today's Progress</span>
+              <span>{selectedDate === today ? "Today's Progress" : `Progress for ${format(new Date(`${selectedDate}T12:00:00`), 'MMM d')}`}</span>
               <span className={styles.suppProgressCount}>{totalTaken}/{supplements.length} taken</span>
             </div>
             <div className={styles.suppProgressTrack}>

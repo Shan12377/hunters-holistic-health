@@ -169,6 +169,10 @@ export default function BPTrackerPage() {
   const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ systolic: '', diastolic: '', pulse: '', notes: '' })
+  // Lets a missed day get logged after the fact. Noon on the chosen day avoids
+  // the entry landing on the wrong day near midnight in any timezone.
+  const todayStr = () => new Date().toISOString().split('T')[0]
+  const [entryDate, setEntryDate] = useState(todayStr())
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [openEdu, setOpenEdu] = useState<string | null>(null)
   // context tags
@@ -260,15 +264,16 @@ export default function BPTrackerPage() {
         (moveTag || customMove.trim()) && `Movement: ${moveTag ?? customMove.trim()}`,
         form.notes,
       ].filter(Boolean).join(' | ') || null,
-      logged_at: new Date().toISOString(),
+      logged_at: new Date(`${entryDate}T12:00:00`).toISOString(),
     })
     if (error) {
       toast.error('Failed to save reading')
     } else {
-      toast.success('Blood pressure reading saved!')
+      toast.success(entryDate === todayStr() ? 'Blood pressure reading saved!' : `Reading saved for ${format(parseISO(entryDate), 'MMM d')}!`)
       setForm({ systolic: '', diastolic: '', pulse: '', notes: '' })
       setSelectedCategory(null)
       setDietTag(null); setStressTag(null); setMoveTag(null); setCustomMove('')
+      setEntryDate(todayStr())
       setShowForm(false)
       fetchReadings()
     }
@@ -486,6 +491,14 @@ export default function BPTrackerPage() {
         <div className={styles.card}>
           <h3 className={styles.cardTitleSolo}>New Reading</h3>
           <form onSubmit={handleSubmit} className={styles.logForm}>
+            {/* Date, defaults to today, back-dating a missed reading is fine */}
+            <div className={styles.field}>
+              <label className={styles.label}>Date</label>
+              <input className={styles.input} type="date"
+                value={entryDate} max={todayStr()}
+                onChange={e => setEntryDate(e.target.value)} required />
+            </div>
+
             {/* Quick-select category */}
             <div className={styles.bpQuickSelect}>
               <label className={styles.label}>Quick select your BP range (or enter exact numbers below)</label>
