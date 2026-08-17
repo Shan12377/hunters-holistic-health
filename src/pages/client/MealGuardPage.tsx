@@ -1,8 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, ChevronRight, TrendingUp } from 'lucide-react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, TrendingUp } from 'lucide-react'
 import NutritionTrendsChart from '@/components/nourish/NutritionTrendsChart'
-import BarcodeScannerModal from '@/components/nourish/BarcodeScanner'
 import { lookupBarcode } from '@/lib/openFoodFacts'
+
+// Lazy-loaded: the barcode decoding library is a heavy dependency (~450 KB)
+// that most visits to this page will never touch. Only fetched the moment
+// someone actually taps "Scan Barcode," not on every page load.
+const BarcodeScannerModal = lazy(() => import('@/components/nourish/BarcodeScanner'))
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { checkMealGuard, downscaleImage } from '@/lib/openai'
@@ -84,6 +88,13 @@ export default function MealGuardPage() {
   const [manualFiber, setManualFiber] = useState('')
   const [showScanner, setShowScanner] = useState(false)
   const [scanningLookup, setScanningLookup] = useState(false)
+  // Staged items for a multi-food meal (eggs + toast + coffee), built up one
+  // item at a time and logged together, instead of forcing a full plate into
+  // one AI description or one log per trip through the form.
+  const [stagedItems, setStagedItems] = useState<Array<{
+    food_name: string; meal_type: string
+    calories: number | null; protein: number | null; fat: number | null; carbs: number | null; fiber: number | null
+  }>>([])
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [recentFoods, setRecentFoods] = useState<RecentFood[]>([])
@@ -398,6 +409,24 @@ export default function MealGuardPage() {
     performCheck()
   }
 
+  // Clears just the current item's inputs, not the date, so staging a second
+  // or third item for the same meal does not reset which day is being logged.
+  const resetCurrentItemFields = () => {
+    setFoodInput('')
+    setResult(null)
+    setCheckError(false)
+    setPhoto(null)
+    setNutrition(null)
+    setServings('1')
+    setHiddenIngredients('')
+    setManualEntry(false)
+    setManualCalories('')
+    setManualProtein('')
+    setManualFat('')
+    setManualCarbs('')
+    setManualFiber('')
+  }
+
   const handleLog = async () => {
     if (!foodInput.trim()) return
     setSaving(true)
@@ -427,24 +456,62 @@ export default function MealGuardPage() {
           ? `Meal logged${dayLabel}!`
           : `Meal logged${dayLabel}, but with no nutrition data, it will not count toward your goals.`
       )
-      setFoodInput('')
-      setResult(null)
-      setCheckError(false)
-      setPhoto(null)
-      setNutrition(null)
-      setServings('1')
-      setHiddenIngredients('')
-      setManualEntry(false)
-      setManualCalories('')
-      setManualProtein('')
-      setManualFat('')
-      setManualCarbs('')
-      setManualFiber('')
+      resetCurrentItemFields()
       setEntryDate(todayStr())
       // A backdated entry does not show in "Today's Meals" or count toward
       // today's progress, both of which are scoped to today on purpose.
       fetchTodayLogs()
       fetchRecentFoods(user.id)
+    }
+    setSaving(false)
+  }
+
+  // Stages the current item (eggs, say) so a second and third item (toast,
+  // coffee) can be identified and added before logging the whole sitting at
+  // once, instead of forcing a full plate into one AI description.
+  const addToStagedItems = () => {
+    if (!foodInput.trim()) return
+    setStagedItems(prev => [...prev, {
+      food_name: foodInput.trim(),
+      meal_type: mealType,
+      calories: loggedNutrition?.calories ?? null,
+      protein: loggedNutrition?.protein ?? null,
+      fat: loggedNutrition?.fat ?? null,
+      carbs: loggedNutrition?.carbs ?? null,
+      fiber: loggedNutrition?.fiber ?? null,
+    }])
+    resetCurrentItemFields()
+    toast.success('Added. Add another item or log this meal when you are done.')
+  }
+
+  const removeStagedItem = (index: number) => setStagedItems(prev => prev.filter((_, i) => i !== index))
+
+  const handleLogStagedItems = async () => {
+    if (stagedItems.length === 0 || !userId) return
+    setSaving(true)
+    const rows = stagedItems.map(item => ({
+      user_id: userId,
+      food_name: item.food_name,
+      meal_type: item.meal_type as MealLog['meal_type'],
+      ai_flag: false,
+      ai_warning: null,
+      ai_alternatives: null,
+      logged_at: new Date(`${entryDate}T12:00:00`).toISOString(),
+      calories: item.calories,
+      protein: item.protein,
+      fat: item.fat,
+      carbs: item.carbs,
+      fiber: item.fiber,
+    }))
+    const { error } = await supabase.from('meal_logs').insert(rows)
+    if (error) {
+      toast.error('Failed to save this meal')
+    } else {
+      toast.success(`${stagedItems.length} item${stagedItems.length === 1 ? '' : 's'} logged!`)
+      setStagedItems([])
+      setEntryDate(todayStr())
+      fetchTodayLogs()
+      fetchRecentFoods(userId)
     }
     setSaving(false)
   }
@@ -767,21 +834,62 @@ export default function MealGuardPage() {
                   <Target size={16} /> {manualEntry ? 'Manual entry on' : 'Enter manually'}
                 </button>
                 {(result || (manualEntry && nutrition) || nutrition?.source === 'barcode') && (
-                  <button
-                    type="button"
-                    className={shared.btnTeal}
-                    onClick={handleLog}
-                    disabled={saving || !foodInput.trim()}
-                  >
-                    <Plus size={16} />{' '}
-                    {saving
-                      ? 'Saving...'
-                      : !nutrition
-                        ? 'Log Without Nutrition Data'
-                        : 'Log This Meal'}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className={shared.btnGhost}
+                      onClick={addToStagedItems}
+                      disabled={saving || !foodInput.trim()}
+                      title="Building a multi-item meal (eggs, toast, coffee)? Add each one, then log them all together."
+                    >
+                      <Plus size={16} /> Add to This Meal
+                    </button>
+                    <button
+                      type="button"
+                      className={shared.btnTeal}
+                      onClick={handleLog}
+                      disabled={saving || !foodInput.trim()}
+                    >
+                      <Plus size={16} />{' '}
+                      {saving
+                        ? 'Saving...'
+                        : !nutrition
+                          ? 'Log Without Nutrition Data'
+                          : stagedItems.length > 0 ? 'Log Just This Item' : 'Log This Meal'}
+                    </button>
+                  </>
                 )}
               </div>
+
+              {stagedItems.length > 0 && (
+                <div className={styles.nutritionPanel} style={{ marginTop: 10 }}>
+                  <div className={styles.nutritionPanelLabel}>
+                    <Flame size={13} color="var(--gold)" />
+                    Building this meal: {stagedItems.length} item{stagedItems.length === 1 ? '' : 's'}
+                  </div>
+                  <div className={styles.mealList}>
+                    {stagedItems.map((item, i) => (
+                      <div key={i} className={styles.mealItem}>
+                        <div className={styles.mealItemBody}>
+                          <div className={styles.mealItemName}>{item.food_name}</div>
+                          <div className={styles.mealItemMeta}>
+                            {MEAL_TYPES.find(t => t.value === item.meal_type)?.label}
+                            {item.calories != null && <span> · ~{item.calories} kcal</span>}
+                          </div>
+                        </div>
+                        <button className={styles.heartBtn} onClick={() => removeStagedItem(i)} aria-label={`Remove ${item.food_name}`}>
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={styles.formActions} style={{ marginTop: 10 }}>
+                    <button type="button" className={shared.btnTeal} onClick={handleLogStagedItems} disabled={saving}>
+                      <Check size={16} /> {saving ? 'Saving...' : `Log All ${stagedItems.length} Items`}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {checkError && (
                 <div className={styles.nutritionNotFoundRow}>
@@ -1240,10 +1348,20 @@ export default function MealGuardPage() {
       )}
 
       {showScanner && (
-        <BarcodeScannerModal
-          onDetected={handleBarcodeDetected}
-          onClose={() => setShowScanner(false)}
-        />
+        <Suspense fallback={
+          <div className={shared.modalOverlay} role="dialog" aria-modal="true" aria-label="Loading scanner">
+            <div className={shared.modalCard}>
+              <div className={styles.nutritionLookupRow}>
+                <Loader size={13} className={styles.spinIcon} /> Loading scanner...
+              </div>
+            </div>
+          </div>
+        }>
+          <BarcodeScannerModal
+            onDetected={handleBarcodeDetected}
+            onClose={() => setShowScanner(false)}
+          />
+        </Suspense>
       )}
     </div>
   )

@@ -71,6 +71,7 @@ export default defineConfig({
           if (id.includes('chart.js') || id.includes('chartjs-plugin-annotation') || id.includes('react-chartjs-2')) {
             return 'vendor-charts'
           }
+          if (id.includes('@zxing')) return 'vendor-barcode'
           if (id.includes('@supabase')) return 'vendor-supabase'
           if (id.includes('react-router-dom')) return 'vendor-router'
           if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('scheduler')) {
