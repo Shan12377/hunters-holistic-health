@@ -45,8 +45,8 @@ interface Props {
 const QUICK_MINUTES = [2, 5, 10, 15, 20, 30, 45, 60]
 
 // Dead bug is logged by sets, not minutes: 10 reps per side is one set.
-// Five sets is the full session Dr. Hunter does herself (100 reps total).
-const QUICK_DEAD_BUG_SETS = [1, 2, 3, 5]
+// Ten sets is Dr. Hunter's own full session (200 reps total).
+const QUICK_DEAD_BUG_SETS = [1, 2, 3, 5, 10]
 
 // Squats logged by reps. Starts at 10 so there is a real place to start;
 // selecting again after logging one round covers "did 40" as 4 taps of 10,
