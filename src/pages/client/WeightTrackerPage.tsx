@@ -179,6 +179,11 @@ export default function WeightTrackerPage() {
   const [foodTag, setFoodTag] = useState<FoodTag | null>(null)
   const [moveTag, setMoveTag] = useState<MoveTag | null>(null)
   const [openEdu, setOpenEdu] = useState<string | null>(null)
+  // Lets a missed day get logged after the fact instead of only "right now."
+  // Noon on the chosen day avoids the entry landing on the wrong day near midnight
+  // in any timezone.
+  const todayStr = () => new Date().toISOString().split('T')[0]
+  const [entryDate, setEntryDate] = useState(todayStr())
 
   useEffect(() => { fetchLogs() }, [])
 
@@ -223,14 +228,15 @@ export default function WeightTrackerPage() {
       protein_hit: form.protein_hit === 'yes' ? true : form.protein_hit === 'no' ? false : null,
       water_cups: form.water_cups ? parseInt(form.water_cups) : null,
       notes: notesParts || null,
-      logged_at: new Date().toISOString(),
+      logged_at: new Date(`${entryDate}T12:00:00`).toISOString(),
     })
     if (error) {
       toast.error('Failed to save entry')
     } else {
-      toast.success('Entry saved!')
+      toast.success(entryDate === todayStr() ? 'Entry saved!' : `Entry saved for ${format(parseISO(entryDate), 'MMM d')}!`)
       setForm({ weight_lbs: '', waist_in: '', hip_in: '', hunger_level: '', protein_hit: '', water_cups: '', notes: '' })
       setFoodTag(null); setMoveTag(null)
+      setEntryDate(todayStr())
       setShowForm(false)
       fetchLogs()
     }
@@ -424,6 +430,14 @@ export default function WeightTrackerPage() {
         <div className={styles.card}>
           <h3 className={styles.cardTitleSolo}>New Entry</h3>
           <form onSubmit={handleSubmit} className={styles.logForm}>
+            {/* Date, defaults to today, back-dating a missed day is fine */}
+            <div className={styles.field}>
+              <label className={styles.label}>Date</label>
+              <input className={styles.input} type="date"
+                value={entryDate} max={todayStr()}
+                onChange={e => setEntryDate(e.target.value)} required />
+            </div>
+
             {/* Primary metrics */}
             <div className={styles.inputRow3}>
               <div className={styles.field}>

@@ -65,6 +65,10 @@ export default function MealGuardPage() {
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
   const [hiddenIngredients, setHiddenIngredients] = useState('')
+  // Lets a meal from a missed day get logged after the fact. Noon on the chosen
+  // day avoids the entry landing on the wrong day near midnight in any timezone.
+  const todayStr = () => new Date().toISOString().split('T')[0]
+  const [entryDate, setEntryDate] = useState(todayStr())
   const [userId, setUserId] = useState<string | null>(null)
   // If getSession() hangs on a bad connection, userId stays null and the Goals
   // tab and Saved tab silently look empty with no explanation. This tracks that
@@ -300,7 +304,7 @@ export default function MealGuardPage() {
       ai_flag: result?.flagged ?? false,
       ai_warning: result?.warning ?? null,
       ai_alternatives: result?.alternatives?.length ? result.alternatives : null,
-      logged_at: new Date().toISOString(),
+      logged_at: new Date(`${entryDate}T12:00:00`).toISOString(),
       calories: nutrition?.calories ?? null,
       protein: nutrition?.protein ?? null,
       fat: nutrition?.fat ?? null,
@@ -310,7 +314,7 @@ export default function MealGuardPage() {
     if (error) {
       toast.error('Failed to save meal')
     } else {
-      toast.success('Meal logged!')
+      toast.success(entryDate === todayStr() ? 'Meal logged!' : `Meal logged for ${format(parseISO(entryDate), 'MMM d')}!`)
       setFoodInput('')
       setResult(null)
       setPhoto(null)
@@ -322,6 +326,9 @@ export default function MealGuardPage() {
       setManualFat('')
       setManualCarbs('')
       setManualFiber('')
+      setEntryDate(todayStr())
+      // A backdated entry does not show in "Today's Meals" or count toward
+      // today's progress, both of which are scoped to today on purpose.
       fetchTodayLogs()
     }
     setSaving(false)
@@ -510,6 +517,14 @@ export default function MealGuardPage() {
           {/* Input form */}
           <div className={styles.card}>
             <form onSubmit={handleFormSubmit}>
+              {/* Date, defaults to today, back-dating a missed meal is fine */}
+              <div className={styles.field}>
+                <label className={styles.label}>Date</label>
+                <input className={styles.input} type="date"
+                  value={entryDate} max={todayStr()}
+                  onChange={e => setEntryDate(e.target.value)} required />
+              </div>
+
               <div className={styles.mealInputRow}>
                 <input
                   className={styles.input}

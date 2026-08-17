@@ -59,6 +59,8 @@ export default function ActivityLog({ userId, today }: Props) {
   const [minutes, setMinutes] = useState(30)
   const [intensity, setIntensity] = useState<Intensity>('moderate')
   const [note, setNote] = useState('')
+  // Lets a missed day get logged after the fact instead of only "right now."
+  const [sessionDate, setSessionDate] = useState(today)
 
   const activity = findActivity(activityKey) ?? ACTIVITY_TYPES[0]
 
@@ -139,7 +141,7 @@ export default function ActivityLog({ userId, today }: Props) {
         .from('activity_sessions')
         .insert({
           user_id: userId,
-          session_date: today,
+          session_date: sessionDate,
           activity_key: activityKey,
           location: activity.hasLocation ? location : null,
           minutes,
@@ -154,12 +156,16 @@ export default function ActivityLog({ userId, today }: Props) {
 
       if (error) throw error
       if (data) {
-        setRows(prev => [data as ActivityRow, ...prev])
+        // A backdated entry needs to land in date order, not always at the top,
+        // which is only correct when logging for today.
+        setRows(prev => [data as ActivityRow, ...prev].sort((a, b) => b.session_date.localeCompare(a.session_date)))
         setAdding(false)
         setNote('')
+        setSessionDate(today)
         // Matches the same 5 points the old exercise_logs page gave per entry.
-        // api/award-points.ts validates this refId against activity_sessions.
-        await awardPoints(userId, 'exercise_log', 5, `${today}_${activityKey}`)
+        // api/award-points.ts validates this refId against activity_sessions by
+        // session_date, so it must be the date actually logged, not always today.
+        await awardPoints(userId, 'exercise_log', 5, `${sessionDate}_${activityKey}`)
       }
     } catch (err) {
       console.error('[activity] save failed:', err)
@@ -210,7 +216,7 @@ export default function ActivityLog({ userId, today }: Props) {
           </p>
         </div>
         {!adding && (
-          <button className={styles.primaryBtn} onClick={() => setAdding(true)}>
+          <button className={styles.primaryBtn} onClick={() => { setSessionDate(today); setAdding(true) }}>
             <Plus size={16} /> Log movement
           </button>
         )}
@@ -242,6 +248,18 @@ export default function ActivityLog({ userId, today }: Props) {
             <button className={styles.iconBtn} onClick={() => setAdding(false)} aria-label="Cancel">
               <X size={18} />
             </button>
+          </div>
+
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>When</span>
+            <input
+              type="date"
+              className={styles.textInput}
+              value={sessionDate}
+              max={today}
+              onChange={e => setSessionDate(e.target.value)}
+              aria-label="Date"
+            />
           </div>
 
           <div className={styles.chipGrid}>
