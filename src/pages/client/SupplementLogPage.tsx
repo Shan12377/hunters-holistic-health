@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Pill, Plus, Check, ExternalLink, Trash2, Microscope } from 'lucide-react'
+import { Pill, Plus, Check, ExternalLink, Trash2, Microscope, Minus } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format, subDays } from 'date-fns'
 import { calcSupplementAdherence } from '@/lib/adherence'
@@ -113,24 +113,39 @@ export default function SupplementLogPage() {
     setLoading(false)
   }
 
-  const toggleTaken = async (supp: Supplement) => {
+  // Logs one more dose, does not toggle. Some supplements (magnesium AM and
+  // PM, a twice-daily probiotic) are taken more than once a day, and there
+  // was previously no way to record a second dose, tapping again just
+  // un-checked the first one.
+  const logDose = async (supp: Supplement) => {
     const { data: { session } } = await supabase.auth.getSession()
     const user = session?.user
     if (!user) return
-    // Look at the day currently being viewed, today unless a past day was pulled up.
-    const existing = logs.find(l => l.supplement_id === supp.id && l.log_date === selectedDate)
-    if (existing) {
-      await supabase.from('supplement_logs').delete().eq('id', existing.id)
-      setLogs(l => l.filter(x => x.id !== existing.id))
-      toast('Marked as not taken', { icon: '↩️' })
-    } else {
-      const { data } = await supabase.from('supplement_logs').insert({
-        user_id: user.id, supplement_id: supp.id, log_date: selectedDate,
-        taken_at: new Date(`${selectedDate}T12:00:00`).toISOString(),
-      }).select().single()
-      if (data) setLogs(l => [...l, data as SupplementLog])
-      toast.success(selectedDate === today ? `${supp.name} marked as taken!` : `${supp.name} marked as taken for ${format(new Date(`${selectedDate}T12:00:00`), 'MMM d')}!`)
-    }
+    const { data } = await supabase.from('supplement_logs').insert({
+      user_id: user.id, supplement_id: supp.id, log_date: selectedDate,
+      taken_at: new Date().toISOString(),
+    }).select().single()
+    if (data) setLogs(l => [...l, data as SupplementLog])
+    const doseCount = (takenCounts.get(supp.id) ?? 0) + 1
+    const doseLabel = doseCount > 1 ? ` (dose ${doseCount})` : ''
+    toast.success(
+      selectedDate === today
+        ? `${supp.name} logged${doseLabel}!`
+        : `${supp.name} logged${doseLabel} for ${format(new Date(`${selectedDate}T12:00:00`), 'MMM d')}!`
+    )
+  }
+
+  // Removes the most recent dose for that day, so a mis-tap can be undone
+  // without guessing which of several logged doses to delete.
+  const removeLastDose = async (supp: Supplement) => {
+    const suppLogsToday = selectedLogs
+      .filter(l => l.supplement_id === supp.id)
+      .sort((a, b) => b.taken_at.localeCompare(a.taken_at))
+    const mostRecent = suppLogsToday[0]
+    if (!mostRecent) return
+    await supabase.from('supplement_logs').delete().eq('id', mostRecent.id)
+    setLogs(l => l.filter(x => x.id !== mostRecent.id))
+    toast('Removed one dose', { icon: '↩️' })
   }
 
   const addSupplement = async (e: React.FormEvent) => {
@@ -157,11 +172,17 @@ export default function SupplementLogPage() {
 
   // Slice for the day currently being viewed, today unless backdating.
   const selectedLogs = logs.filter(l => l.log_date === selectedDate)
-  const takenIds = new Set(selectedLogs.map(l => l.supplement_id))
+  // How many times each supplement was logged today, not just whether it was.
+  const takenCounts = new Map<string, number>()
+  for (const l of selectedLogs) {
+    takenCounts.set(l.supplement_id, (takenCounts.get(l.supplement_id) ?? 0) + 1)
+  }
   const amSupps = supplements.filter(s => s.timing === 'am')
   const pmSupps = supplements.filter(s => s.timing === 'pm')
   const otherSupps = supplements.filter(s => s.timing !== 'am' && s.timing !== 'pm')
-  const totalTaken = supplements.filter(s => takenIds.has(s.id)).length
+  // "Taken today" for the progress bar means at least once, a supplement due
+  // twice a day should not need two checks to count toward today's percent.
+  const totalTaken = supplements.filter(s => takenCounts.has(s.id)).length
   const pct = supplements.length ? Math.round((totalTaken / supplements.length) * 100) : 0
 
   // 14-day adherence (pure computation, no extra fetch).
@@ -338,16 +359,33 @@ export default function SupplementLogPage() {
               <h3 className={styles.cardLabel} style={{ color }}>{label}</h3>
               <div className={styles.checklist}>
                 {supps.map(supp => {
-                  const taken = takenIds.has(supp.id)
+                  const count = takenCounts.get(supp.id) ?? 0
+                  const taken = count > 0
                   return (
                     <div key={supp.id} className={taken ? styles.suppRowTaken : styles.suppRow}>
-                      <button onClick={() => toggleTaken(supp)} className={taken ? styles.suppCheckTaken : styles.suppCheck}>
-                        {taken && <Check size={16} color="#0e1c1b" strokeWidth={3} />}
+                      <button
+                        onClick={() => logDose(supp)}
+                        className={taken ? styles.suppCheckTaken : styles.suppCheck}
+                        title={taken ? 'Log another dose today' : 'Mark as taken'}
+                      >
+                        {taken && (count > 1
+                          ? <span style={{ fontSize: 11, fontWeight: 700, color: '#0e1c1b' }}>{count}x</span>
+                          : <Check size={16} color="#0e1c1b" strokeWidth={3} />)}
                       </button>
                       <div className={styles.suppRowBody}>
                         <div className={taken ? styles.suppRowNameTaken : styles.suppRowName}>{supp.name}</div>
                         <div className={styles.suppRowMeta}>{supp.dose} · {TIMING_LABELS[supp.timing]}{supp.notes ? ` · ${supp.notes}` : ''}</div>
                       </div>
+                      {taken && (
+                        <button
+                          onClick={() => removeLastDose(supp)}
+                          className={styles.heartBtn}
+                          title="Remove last dose"
+                          aria-label={`Remove one dose of ${supp.name}`}
+                        >
+                          <Minus size={14} />
+                        </button>
+                      )}
                       <button onClick={() => openResearch(supp)} className={styles.researchBtn} title="Research Check">
                         <Microscope size={14} />
                       </button>
