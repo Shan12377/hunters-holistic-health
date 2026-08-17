@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2 } from 'lucide-react'
+import { Shield, AlertTriangle, CheckCircle, Loader, Plus, Camera, X, Flame, Heart, Target, Trash2, Pencil, Check, Clock, Barcode, ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import { checkMealGuard, downscaleImage } from '@/lib/openai'
@@ -25,6 +25,18 @@ const MEAL_TYPES = [
 
 interface SavedFood {
   id: string
+  food_name: string
+  meal_type: string
+  calories: number | null
+  protein: number | null
+  fat: number | null
+  carbs: number | null
+  fiber: number | null
+}
+
+// Distinct from Favorites (explicitly starred). This is just "what have you
+// actually eaten lately," which is what most people reach for day to day.
+interface RecentFood {
   food_name: string
   meal_type: string
   calories: number | null
@@ -69,11 +81,27 @@ export default function MealGuardPage() {
   const [manualFiber, setManualFiber] = useState('')
   const [goals, setGoals] = useState<NutritionGoals | null>(null)
   const [savedFoods, setSavedFoods] = useState<SavedFood[]>([])
+  const [recentFoods, setRecentFoods] = useState<RecentFood[]>([])
   const [hiddenIngredients, setHiddenIngredients] = useState('')
+  // Multiplies the per-serving nutrition below before logging. "1 serving" is
+  // rarely the truth ("I had half this" or "I had 1.5 plates"), and there was
+  // previously no way to say so short of hand-computing new numbers yourself.
+  const [servings, setServings] = useState('1')
+  const servingsNum = () => {
+    const n = parseFloat(servings)
+    return Number.isFinite(n) && n > 0 ? n : 1
+  }
+  const round1 = (n: number) => Math.round(n * 10) / 10
   // Lets a meal from a missed day get logged after the fact. Noon on the chosen
   // day avoids the entry landing on the wrong day near midnight in any timezone.
   const todayStr = () => new Date().toISOString().split('T')[0]
   const [entryDate, setEntryDate] = useState(todayStr())
+  // Editing an already-saved log entry. Previously the only fix for a typo or
+  // a wrong number was delete and start over.
+  const [editingLogId, setEditingLogId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({
+    food_name: '', meal_type: 'meal1', calories: '', protein: '', fat: '', carbs: '', fiber: '',
+  })
   const [userId, setUserId] = useState<string | null>(null)
   // If getSession() hangs on a bad connection, userId stays null and the Goals
   // tab and Saved tab silently look empty with no explanation. This tracks that
@@ -113,6 +141,7 @@ export default function MealGuardPage() {
       fetchTodayLogs(user.id)
       fetchNutritionGoals(user.id)
       fetchSavedFoods(user.id)
+      fetchRecentFoods(user.id)
     } catch (err) {
       console.error('[meal-guard] init failed:', err)
       setInitError(true)
@@ -160,6 +189,28 @@ export default function MealGuardPage() {
     if (data) setSavedFoods(data as SavedFood[])
   }
 
+  const fetchRecentFoods = async (uid: string) => {
+    const { data } = await supabase
+      .from('meal_logs')
+      .select('food_name, meal_type, calories, protein, fat, carbs, fiber, logged_at')
+      .eq('user_id', uid)
+      .order('logged_at', { ascending: false })
+      .limit(40)
+    if (!data) return
+    // Dedupe by food name, keeping the most recent occurrence of each, since
+    // the same meal often gets logged repeatedly.
+    const seen = new Set<string>()
+    const unique: RecentFood[] = []
+    for (const row of data) {
+      const key = row.food_name.toLowerCase().trim()
+      if (seen.has(key)) continue
+      seen.add(key)
+      unique.push(row)
+      if (unique.length >= 12) break
+    }
+    setRecentFoods(unique)
+  }
+
   const todayTotals = logs.reduce((acc, log) => ({
     calories: acc.calories + (log.calories ?? 0),
     protein: acc.protein + (log.protein ?? 0),
@@ -172,6 +223,17 @@ export default function MealGuardPage() {
   // carbohydrate. Shown separately from the raw carbs total per Rule C: the
   // number on screen has to match what it is labeled as.
   const todayNetCarbs = Math.max(0, todayTotals.carbs - todayTotals.fiber)
+
+  // `nutrition` always holds the per-serving numbers, editable directly above.
+  // This is what actually gets logged, per-serving times the servings count.
+  const loggedNutrition = nutrition ? {
+    ...nutrition,
+    calories: Math.round(nutrition.calories * servingsNum()),
+    protein: round1(nutrition.protein * servingsNum()),
+    fat: round1(nutrition.fat * servingsNum()),
+    carbs: round1(nutrition.carbs * servingsNum()),
+    fiber: round1(nutrition.fiber * servingsNum()),
+  } : null
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -243,6 +305,7 @@ export default function MealGuardPage() {
     setCheckError(false)
     setNutrition(null)
     setNutritionLookupAttempted(false)
+    setServings('1')
 
     let nutritionData: NutritionData | null = null
     if (foodInput.trim()) {
@@ -326,11 +389,11 @@ export default function MealGuardPage() {
       ai_warning: result?.warning ?? null,
       ai_alternatives: result?.alternatives?.length ? result.alternatives : null,
       logged_at: new Date(`${entryDate}T12:00:00`).toISOString(),
-      calories: nutrition?.calories ?? null,
-      protein: nutrition?.protein ?? null,
-      fat: nutrition?.fat ?? null,
-      carbs: nutrition?.carbs ?? null,
-      fiber: nutrition?.fiber ?? null,
+      calories: loggedNutrition?.calories ?? null,
+      protein: loggedNutrition?.protein ?? null,
+      fat: loggedNutrition?.fat ?? null,
+      carbs: loggedNutrition?.carbs ?? null,
+      fiber: loggedNutrition?.fiber ?? null,
     })
     if (error) {
       toast.error('Failed to save meal')
@@ -346,6 +409,7 @@ export default function MealGuardPage() {
       setCheckError(false)
       setPhoto(null)
       setNutrition(null)
+      setServings('1')
       setHiddenIngredients('')
       setManualEntry(false)
       setManualCalories('')
@@ -357,11 +421,12 @@ export default function MealGuardPage() {
       // A backdated entry does not show in "Today's Meals" or count toward
       // today's progress, both of which are scoped to today on purpose.
       fetchTodayLogs()
+      fetchRecentFoods(user.id)
     }
     setSaving(false)
   }
 
-  const handleSaveToFavorites = async (log: MealLog) => {
+  const handleSaveToFavorites = async (log: MealLog | RecentFood) => {
     if (!userId) return
     const { error } = await supabase.from('saved_foods').insert({
       user_id: userId,
@@ -381,7 +446,7 @@ export default function MealGuardPage() {
     }
   }
 
-  const handleQuickLog = async (food: SavedFood) => {
+  const handleQuickLog = async (food: SavedFood | RecentFood) => {
     if (!userId) return
     const { error } = await supabase.from('meal_logs').insert({
       user_id: userId,
@@ -402,6 +467,7 @@ export default function MealGuardPage() {
     } else {
       toast.success(`${food.food_name} logged!`)
       fetchTodayLogs()
+      fetchRecentFoods(userId)
       setActiveTab('log')
     }
   }
@@ -422,6 +488,47 @@ export default function MealGuardPage() {
       console.error('[meal-guard] delete failed:', error)
       setLogs(previous)
       toast.error('Could not delete that entry. Try again.')
+    }
+  }
+
+  const startEditLog = (log: MealLog) => {
+    setEditingLogId(log.id)
+    setEditForm({
+      food_name: log.food_name,
+      meal_type: log.meal_type,
+      calories: log.calories != null ? String(log.calories) : '',
+      protein: log.protein != null ? String(log.protein) : '',
+      fat: log.fat != null ? String(log.fat) : '',
+      carbs: log.carbs != null ? String(log.carbs) : '',
+      fiber: log.fiber != null ? String(log.fiber) : '',
+    })
+  }
+
+  const cancelEditLog = () => setEditingLogId(null)
+
+  // Previously the only way to fix a typo'd name or a wrong number after
+  // saving was to delete the entry and log it again from scratch.
+  const handleUpdateLog = async () => {
+    if (!editingLogId || !userId || !editForm.food_name.trim()) return
+    const previous = logs
+    const updated = {
+      food_name: editForm.food_name.trim(),
+      meal_type: editForm.meal_type as MealLog['meal_type'],
+      calories: editForm.calories.trim() ? parseFloat(editForm.calories) : null,
+      protein: editForm.protein.trim() ? parseFloat(editForm.protein) : null,
+      fat: editForm.fat.trim() ? parseFloat(editForm.fat) : null,
+      carbs: editForm.carbs.trim() ? parseFloat(editForm.carbs) : null,
+      fiber: editForm.fiber.trim() ? parseFloat(editForm.fiber) : null,
+    }
+    setLogs(prev => prev.map(l => l.id === editingLogId ? { ...l, ...updated } : l))
+    setEditingLogId(null)
+    const { error } = await supabase.from('meal_logs').update(updated).eq('id', editingLogId).eq('user_id', userId)
+    if (error) {
+      console.error('[meal-guard] update failed:', error)
+      setLogs(previous)
+      toast.error('Could not save that change. Try again.')
+    } else {
+      toast.success('Entry updated!')
     }
   }
 
@@ -708,35 +815,89 @@ export default function MealGuardPage() {
                     : nutrition.source === 'usda' ? 'USDA FoodData Central'
                     : nutrition.source === 'ai' ? 'AI estimate, not a database match'
                     : 'entered by you'
-                  }), estimates only
+                  }), per serving, estimates only
                 </div>
-                <div className={styles.nutritionMacros}>
-                  <div className={styles.nutritionMacro}>
-                    <span className={styles.nutritionMacroVal}>~{nutrition.calories}</span>
-                    <span className={styles.nutritionMacroLabel}>kcal</span>
+
+                {!manualEntry ? (
+                  // Editable so a close-but-not-quite AI or database match can be
+                  // nudged right here, instead of abandoning it and retyping
+                  // everything in Manual Entry from scratch.
+                  <div className={styles.manualEntryGrid}>
+                    <label className={styles.manualEntryField}>
+                      <span>Calories</span>
+                      <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                        value={nutrition.calories}
+                        onChange={e => setNutrition(n => n ? { ...n, calories: parseFloat(e.target.value) || 0 } : n)} />
+                    </label>
+                    <label className={styles.manualEntryField}>
+                      <span>Protein (g)</span>
+                      <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                        value={nutrition.protein}
+                        onChange={e => setNutrition(n => n ? { ...n, protein: parseFloat(e.target.value) || 0 } : n)} />
+                    </label>
+                    <label className={styles.manualEntryField}>
+                      <span>Fat (g)</span>
+                      <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                        value={nutrition.fat}
+                        onChange={e => setNutrition(n => n ? { ...n, fat: parseFloat(e.target.value) || 0 } : n)} />
+                    </label>
+                    <label className={styles.manualEntryField}>
+                      <span>Carbs (g)</span>
+                      <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                        value={nutrition.carbs}
+                        onChange={e => setNutrition(n => n ? { ...n, carbs: parseFloat(e.target.value) || 0 } : n)} />
+                    </label>
+                    <label className={styles.manualEntryField}>
+                      <span>Fiber (g)</span>
+                      <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                        value={nutrition.fiber}
+                        onChange={e => setNutrition(n => n ? { ...n, fiber: parseFloat(e.target.value) || 0 } : n)} />
+                    </label>
                   </div>
-                  <div className={styles.nutritionMacroDivider} />
-                  <div className={styles.nutritionMacro}>
-                    <span className={styles.nutritionMacroVal}>{nutrition.protein}g</span>
-                    <span className={styles.nutritionMacroLabel}>protein</span>
+                ) : (
+                  <div className={styles.nutritionMacros}>
+                    <div className={styles.nutritionMacro}>
+                      <span className={styles.nutritionMacroVal}>~{nutrition.calories}</span>
+                      <span className={styles.nutritionMacroLabel}>kcal</span>
+                    </div>
+                    <div className={styles.nutritionMacroDivider} />
+                    <div className={styles.nutritionMacro}>
+                      <span className={styles.nutritionMacroVal}>{nutrition.protein}g</span>
+                      <span className={styles.nutritionMacroLabel}>protein</span>
+                    </div>
+                    <div className={styles.nutritionMacroDivider} />
+                    <div className={styles.nutritionMacro}>
+                      <span className={styles.nutritionMacroVal}>{nutrition.fat}g</span>
+                      <span className={styles.nutritionMacroLabel}>fat</span>
+                    </div>
+                    <div className={styles.nutritionMacroDivider} />
+                    <div className={styles.nutritionMacro}>
+                      <span className={styles.nutritionMacroVal}>{nutrition.carbs}g</span>
+                      <span className={styles.nutritionMacroLabel}>carbs</span>
+                    </div>
+                    <div className={styles.nutritionMacroDivider} />
+                    <div className={styles.nutritionMacro}>
+                      <span className={styles.nutritionMacroVal}>{nutrition.fiber}g</span>
+                      <span className={styles.nutritionMacroLabel}>fiber</span>
+                    </div>
                   </div>
-                  <div className={styles.nutritionMacroDivider} />
-                  <div className={styles.nutritionMacro}>
-                    <span className={styles.nutritionMacroVal}>{nutrition.fat}g</span>
-                    <span className={styles.nutritionMacroLabel}>fat</span>
-                  </div>
-                  <div className={styles.nutritionMacroDivider} />
-                  <div className={styles.nutritionMacro}>
-                    <span className={styles.nutritionMacroVal}>{nutrition.carbs}g</span>
-                    <span className={styles.nutritionMacroLabel}>carbs</span>
-                  </div>
-                  <div className={styles.nutritionMacroDivider} />
-                  <div className={styles.nutritionMacro}>
-                    <span className={styles.nutritionMacroVal}>{nutrition.fiber}g</span>
-                    <span className={styles.nutritionMacroLabel}>fiber</span>
-                  </div>
-                </div>
+                )}
+
                 {nutrition.notes && <p className={styles.nutritionNotes}>{nutrition.notes}</p>}
+
+                <label className={styles.manualEntryField} style={{ maxWidth: 160, marginTop: 10 }}>
+                  <span>Servings</span>
+                  <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0.25} step={0.25}
+                    value={servings} onChange={e => setServings(e.target.value)} />
+                </label>
+
+                {servingsNum() !== 1 && loggedNutrition && (
+                  <p className={styles.nutritionNotes}>
+                    Logging {servings} servings = <strong>{loggedNutrition.calories} kcal</strong>,{' '}
+                    {loggedNutrition.protein}g protein, {loggedNutrition.fat}g fat, {loggedNutrition.carbs}g carbs,{' '}
+                    {loggedNutrition.fiber}g fiber.
+                  </p>
+                )}
               </div>
             )}
 
@@ -832,35 +993,92 @@ export default function MealGuardPage() {
             ) : (
               <div className={styles.mealList}>
                 {logs.map(log => (
-                  <div key={log.id} className={log.ai_flag ? styles.mealItemFlagged : styles.mealItem}>
-                    <div className={styles.mealItemBody}>
-                      <div className={styles.mealItemName}>{log.food_name}</div>
-                      <div className={styles.mealItemMeta}>
-                        {MEAL_TYPES.find(t => t.value === log.meal_type)?.label}
-                        {' · '}{format(parseISO(log.logged_at), 'h:mm a')}
-                        {log.calories != null && <span> · ~{log.calories} kcal</span>}
+                  editingLogId === log.id ? (
+                    <div key={log.id} className={styles.manualEntryGrid}>
+                      <label className={styles.manualEntryField} style={{ gridColumn: '1 / -1' }}>
+                        <span>Food name</span>
+                        <input className={styles.manualEntryInput} type="text"
+                          value={editForm.food_name}
+                          onChange={e => setEditForm(f => ({ ...f, food_name: e.target.value }))} />
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Meal</span>
+                        <select className={styles.mealTypeSelect} value={editForm.meal_type}
+                          onChange={e => setEditForm(f => ({ ...f, meal_type: e.target.value }))}>
+                          {MEAL_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                        </select>
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Calories</span>
+                        <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                          value={editForm.calories} onChange={e => setEditForm(f => ({ ...f, calories: e.target.value }))} />
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Protein (g)</span>
+                        <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                          value={editForm.protein} onChange={e => setEditForm(f => ({ ...f, protein: e.target.value }))} />
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Fat (g)</span>
+                        <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                          value={editForm.fat} onChange={e => setEditForm(f => ({ ...f, fat: e.target.value }))} />
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Carbs (g)</span>
+                        <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                          value={editForm.carbs} onChange={e => setEditForm(f => ({ ...f, carbs: e.target.value }))} />
+                      </label>
+                      <label className={styles.manualEntryField}>
+                        <span>Fiber (g)</span>
+                        <input className={styles.manualEntryInput} type="number" inputMode="decimal" min={0}
+                          value={editForm.fiber} onChange={e => setEditForm(f => ({ ...f, fiber: e.target.value }))} />
+                      </label>
+                      <div className={styles.formActions} style={{ gridColumn: '1 / -1' }}>
+                        <button type="button" className={shared.btnTeal} onClick={handleUpdateLog}>
+                          <Check size={16} /> Save
+                        </button>
+                        <button type="button" className={shared.btnGhost} onClick={cancelEditLog}>Cancel</button>
                       </div>
                     </div>
-                    <div className={styles.mealItemActions}>
-                      {log.ai_flag && <AlertTriangle size={16} color="#e0b84b" />}
-                      <button
-                        className={styles.heartBtn}
-                        onClick={() => handleSaveToFavorites(log)}
-                        aria-label="Save to favorites"
-                        title="Save to favorites"
-                      >
-                        <Heart size={16} />
-                      </button>
-                      <button
-                        className={styles.heartBtn}
-                        onClick={() => handleDeleteLog(log.id)}
-                        aria-label={`Delete ${log.food_name}`}
-                        title="Delete this entry"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                  ) : (
+                    <div key={log.id} className={log.ai_flag ? styles.mealItemFlagged : styles.mealItem}>
+                      <div className={styles.mealItemBody}>
+                        <div className={styles.mealItemName}>{log.food_name}</div>
+                        <div className={styles.mealItemMeta}>
+                          {MEAL_TYPES.find(t => t.value === log.meal_type)?.label}
+                          {' · '}{format(parseISO(log.logged_at), 'h:mm a')}
+                          {log.calories != null && <span> · ~{log.calories} kcal</span>}
+                        </div>
+                      </div>
+                      <div className={styles.mealItemActions}>
+                        {log.ai_flag && <AlertTriangle size={16} color="#e0b84b" />}
+                        <button
+                          className={styles.heartBtn}
+                          onClick={() => startEditLog(log)}
+                          aria-label={`Edit ${log.food_name}`}
+                          title="Edit this entry"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          className={styles.heartBtn}
+                          onClick={() => handleSaveToFavorites(log)}
+                          aria-label="Save to favorites"
+                          title="Save to favorites"
+                        >
+                          <Heart size={16} />
+                        </button>
+                        <button
+                          className={styles.heartBtn}
+                          onClick={() => handleDeleteLog(log.id)}
+                          aria-label={`Delete ${log.food_name}`}
+                          title="Delete this entry"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )
                 ))}
               </div>
             )}
@@ -890,6 +1108,43 @@ export default function MealGuardPage() {
 
       {/* ---- SAVED FOODS TAB ---- */}
       {activeTab === 'saved' && (
+        <>
+        {recentFoods.length > 0 && (
+          <div className={styles.card}>
+            <h3 className={styles.cardTitleSolo}><Clock size={15} style={{ verticalAlign: -2, marginRight: 4 }} />Recent</h3>
+            <p className={styles.cardText}>Foods you've actually logged lately, whether or not you starred them.</p>
+            <div className={styles.mealList}>
+              {recentFoods.map(food => (
+                <div key={food.food_name} className={styles.mealItem}>
+                  <div className={styles.mealItemBody}>
+                    <div className={styles.mealItemName}>{food.food_name}</div>
+                    <div className={styles.mealItemMeta}>
+                      {MEAL_TYPES.find(t => t.value === food.meal_type)?.label}
+                      {food.calories != null && <span> · ~{food.calories} kcal</span>}
+                    </div>
+                  </div>
+                  <div className={styles.mealItemActions}>
+                    <button
+                      className={styles.quickLogBtn}
+                      onClick={() => handleQuickLog(food)}
+                      aria-label={`Quick log ${food.food_name}`}
+                    >
+                      <Plus size={14} /> Log
+                    </button>
+                    <button
+                      className={styles.heartBtn}
+                      onClick={() => handleSaveToFavorites(food)}
+                      aria-label="Save to favorites"
+                      title="Save to favorites"
+                    >
+                      <Heart size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className={styles.card}>
           <h3 className={styles.cardTitleSolo}>Saved Foods</h3>
           {savedFoods.length === 0 ? (
@@ -929,6 +1184,7 @@ export default function MealGuardPage() {
             </div>
           )}
         </div>
+        </>
       )}
     </div>
   )
