@@ -31,7 +31,9 @@ export function calcGradeFromData(logs: DailyLog[], feedPostCount: number): Grad
   const loggedDays = logs.length
   const movementMet = logs.filter(l => (l.steps ?? 0) >= STEPS_GOAL).length
   const movementMissed = totalDays - movementMet
-  const mealsMissed = logs.filter(l => !l.meal1_logged).length
+  // A full fasting day is not a missed meal, it is the day working as
+  // intended, so it does not count against the meal check.
+  const mealsMissed = logs.filter(l => !l.meal1_logged && !l.full_fast_day).length
   const lateSlipsSubmitted = logs.filter(l => l.late_slip_reason != null && l.late_slip_reason !== '').length
 
   if (loggedDays === 0) {
@@ -61,6 +63,11 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
   if (logs.length === 0) return { score: 0, breakdown: [] }
 
   const days = 7
+  // Full fasting days are pulled out of the meal and supplement denominators
+  // (Dr. Hunter, 2026-08-17): a real fast is compliant behavior, not three
+  // missed checkboxes. Movement and water still apply on a fast day.
+  const fullFastDays = logs.filter(l => l.full_fast_day).length
+  const mealEligibleDays = Math.max(1, days - fullFastDays)
   const fastDays = logs.filter(l => l.morning_fast_done).length
   const meal1Days = logs.filter(l => l.meal1_logged).length
   const suppAmDays = logs.filter(l => l.supplement_am_done).length
@@ -72,9 +79,9 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
   const breakdown: WeekBreakdown[] = [
     { label: 'Days Logged', score: loggedDays, max: days, pct: Math.round((loggedDays / days) * 100) },
     { label: 'Morning Fast', score: fastDays, max: days, pct: Math.round((fastDays / days) * 100) },
-    { label: 'Meal 1 Logged', score: meal1Days, max: days, pct: Math.round((meal1Days / days) * 100) },
-    { label: 'AM Supplements', score: suppAmDays, max: days, pct: Math.round((suppAmDays / days) * 100) },
-    { label: 'PM Supplements', score: suppPmDays, max: days, pct: Math.round((suppPmDays / days) * 100) },
+    { label: 'Meal 1 Logged', score: meal1Days, max: mealEligibleDays, pct: Math.min(100, Math.round((meal1Days / mealEligibleDays) * 100)) },
+    { label: 'AM Supplements', score: suppAmDays, max: mealEligibleDays, pct: Math.min(100, Math.round((suppAmDays / mealEligibleDays) * 100)) },
+    { label: 'PM Supplements', score: suppPmDays, max: mealEligibleDays, pct: Math.min(100, Math.round((suppPmDays / mealEligibleDays) * 100)) },
     { label: `${STEPS_GOAL.toLocaleString()}+ Steps`, score: stepsDays, max: days, pct: Math.round((stepsDays / days) * 100) },
     { label: `${WATER_GOAL_OZ}oz Water`, score: waterDays, max: days, pct: Math.round((waterDays / days) * 100) },
   ]
@@ -86,6 +93,8 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
 export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): number {
   if (logs.length === 0 || daysElapsed <= 0) return 0
   const d = daysElapsed
+  const fullFastDays = logs.filter(l => l.full_fast_day).length
+  const mealEligibleDays = Math.max(1, d - fullFastDays)
   const fastDays = logs.filter(l => l.morning_fast_done).length
   const meal1Days = logs.filter(l => l.meal1_logged).length
   const suppAmDays = logs.filter(l => l.supplement_am_done).length
@@ -97,9 +106,9 @@ export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): numbe
   const pcts = [
     Math.round((loggedDays / d) * 100),
     Math.round((fastDays / d) * 100),
-    Math.round((meal1Days / d) * 100),
-    Math.round((suppAmDays / d) * 100),
-    Math.round((suppPmDays / d) * 100),
+    Math.min(100, Math.round((meal1Days / mealEligibleDays) * 100)),
+    Math.min(100, Math.round((suppAmDays / mealEligibleDays) * 100)),
+    Math.min(100, Math.round((suppPmDays / mealEligibleDays) * 100)),
     Math.round((stepsDays / d) * 100),
     Math.round((waterDays / d) * 100),
   ]

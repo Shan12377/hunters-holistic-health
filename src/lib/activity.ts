@@ -183,6 +183,38 @@ export const ACTIVITY_TYPES: readonly ActivityType[] = [
     countsSteps: false,
   },
   {
+    key: 'dead_bug',
+    label: 'Dead Bug',
+    emoji: '🐛',
+    // Controlled-tempo bodyweight core work, in the same range the Compendium
+    // gives calisthenics at light-to-moderate effort with real rest between
+    // sets (this is not a fast, continuous movement).
+    met: { easy: 2.8, moderate: 3.5, hard: 4.5 },
+    intensityHint: {
+      easy: 'Small range, resting between sets.',
+      moderate: 'Full range, controlled, brief rest.',
+      hard: 'Full range, minimal rest between sets.',
+    },
+    hasLocation: false,
+    countsSteps: false,
+    note: 'From the Flat Belly Challenge, Day 5. One set is 10 reps per side.',
+  },
+  {
+    key: 'squats',
+    label: 'Squats',
+    emoji: '🦵🏾',
+    // Bodyweight squats sit with general calisthenics at light-to-moderate
+    // effort (Compendium of Physical Activities).
+    met: { easy: 3.0, moderate: 4.0, hard: 5.5 },
+    intensityHint: {
+      easy: 'Slow, controlled, resting as needed.',
+      moderate: 'Steady pace, brief rest.',
+      hard: 'Fast pace, or with added weight.',
+    },
+    hasLocation: false,
+    countsSteps: false,
+  },
+  {
     // A catch-all for anything not already listed: basketball, pickleball,
     // martial arts, a sport league, gardening past what Housework covers.
     // MET values here sit in the range general recreational sport occupies
@@ -203,6 +235,29 @@ export const ACTIVITY_TYPES: readonly ActivityType[] = [
     note: 'Say what it was in the note below, like "basketball" or "pickleball league."',
   },
 ]
+
+// ---------------------------------------------------------------------------
+// Rep-based quick logging
+//
+// The MET model above runs on minutes, not reps, so a rep-counted exercise
+// (dead bug, squats) still needs a duration under the hood. Rather than
+// making someone estimate their own minutes, the quick-select for these two
+// converts a set or rep count into minutes using a fixed pace, so logging
+// stays a single tap.
+// ---------------------------------------------------------------------------
+
+/** Dr. Hunter, confirmed 2026-08-13 while fact-checking her own testimony:
+ *  "1 full set takes about 1 minute." One dead bug set is 10 reps per side. */
+export const DEAD_BUG_MINUTES_PER_SET = 1
+export const DEAD_BUG_REPS_PER_SET = 20 // 10 per side
+
+/** A controlled bodyweight squat pace, about 6 seconds per rep including the
+ *  pause at the bottom, which is 10 reps a minute. Matches the "20 squats,
+ *  say 2 min" example already used below. An estimate, not a measurement,
+ *  same as every other number in this file. */
+export const SQUAT_REPS_PER_MINUTE = 10
+
+export const REP_BASED_ACTIVITY_KEYS = ['dead_bug', 'squats'] as const
 
 export const INTENSITIES: readonly Intensity[] = ['easy', 'moderate', 'hard']
 
@@ -329,7 +384,7 @@ export const MOVEMENT_DAYS_GOAL_PER_MONTH = 20
  * so the weekly target below is not invented.
  *
  *   30 min brisk walk   5.0 METs x 30 = 150 points
- *   20 squats, say 2 min 5.0 METs x  2 =  10 points
+ *   20 squats, say 2 min 4.0 METs x  2 =   8 points
  *   3 min easy treadmill 2.8 METs x  3 =   8 points
  *
  * Everything counts. Harder and longer simply counts for more.

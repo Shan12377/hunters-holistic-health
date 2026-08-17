@@ -10,6 +10,10 @@ import {
   ESTIMATE_DISCLAIMER,
   WALK_GOAL_MINUTES,
   WEEKLY_POINTS_TARGET,
+  DEAD_BUG_MINUTES_PER_SET,
+  DEAD_BUG_REPS_PER_SET,
+  SQUAT_REPS_PER_MINUTE,
+  REP_BASED_ACTIVITY_KEYS,
   estimateActivity,
   movementPoints,
   findActivity,
@@ -39,6 +43,15 @@ interface Props {
 // Starts at 2 on purpose: twenty squats after a meal is a real entry, and if it
 // takes effort to log it, it does not get logged.
 const QUICK_MINUTES = [2, 5, 10, 15, 20, 30, 45, 60]
+
+// Dead bug is logged by sets, not minutes: 10 reps per side is one set.
+// Five sets is the full session Dr. Hunter does herself (100 reps total).
+const QUICK_DEAD_BUG_SETS = [1, 2, 3, 5]
+
+// Squats logged by reps. Starts at 10 so there is a real place to start;
+// selecting again after logging one round covers "did 40" as 4 taps of 10,
+// since the log itself always allows more than one entry a day.
+const QUICK_SQUAT_REPS = [10, 20, 30, 40, 50]
 
 export default function ActivityLog({ userId, today }: Props) {
   const [rows, setRows] = useState<ActivityRow[]>([])
@@ -267,7 +280,15 @@ export default function ActivityLog({ userId, today }: Props) {
               <button
                 key={a.key}
                 className={`${styles.chip} ${activityKey === a.key ? styles.chipActive : ''}`}
-                onClick={() => setActivityKey(a.key)}
+                onClick={() => {
+                  setActivityKey(a.key)
+                  // Land on a sensible default the moment a rep-based activity
+                  // is picked, rather than carrying over whatever minute count
+                  // the previous activity happened to be set to.
+                  if (a.key === 'dead_bug') setMinutes(DEAD_BUG_MINUTES_PER_SET)
+                  else if (a.key === 'squats') setMinutes(Math.max(1, Math.round((QUICK_SQUAT_REPS[0] / SQUAT_REPS_PER_MINUTE) * 10) / 10))
+                  else if (activityKey === 'dead_bug' || activityKey === 'squats') setMinutes(30)
+                }}
               >
                 <span className={styles.chipEmoji}>{a.emoji}</span>
                 <span className={styles.chipLabel}>{a.label}</span>
@@ -292,31 +313,70 @@ export default function ActivityLog({ userId, today }: Props) {
             </div>
           )}
 
-          <div className={styles.field}>
-            <span className={styles.fieldLabel}>How long</span>
-            <div className={styles.minuteRow}>
-              {QUICK_MINUTES.map(m => (
-                <button
-                  key={m}
-                  className={`${styles.minuteChip} ${minutes === m ? styles.minuteChipActive : ''}`}
-                  onClick={() => setMinutes(m)}
-                >
-                  {m}
-                </button>
-              ))}
-              <input
-                type="number"
-                className={styles.minuteInput}
-                value={minutes}
-                min={1}
-                max={600}
-                inputMode="numeric"
-                onChange={e => setMinutes(Math.max(1, Math.min(600, Number(e.target.value) || 1)))}
-                aria-label="Minutes"
-              />
-              <span className={styles.minuteUnit}>min</span>
+          {activityKey === 'dead_bug' ? (
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>How many sets (10 reps per side each)</span>
+              <div className={styles.minuteRow}>
+                {QUICK_DEAD_BUG_SETS.map(sets => (
+                  <button
+                    key={sets}
+                    className={`${styles.minuteChip} ${minutes === sets * DEAD_BUG_MINUTES_PER_SET ? styles.minuteChipActive : ''}`}
+                    onClick={() => setMinutes(sets * DEAD_BUG_MINUTES_PER_SET)}
+                  >
+                    {sets} {sets === 1 ? 'set' : 'sets'}
+                  </button>
+                ))}
+              </div>
+              <p className={styles.hint}>
+                {Math.round(minutes / DEAD_BUG_MINUTES_PER_SET)} set{Math.round(minutes / DEAD_BUG_MINUTES_PER_SET) === 1 ? '' : 's'} ={' '}
+                {Math.round(minutes / DEAD_BUG_MINUTES_PER_SET) * DEAD_BUG_REPS_PER_SET} reps total
+              </p>
             </div>
-          </div>
+          ) : activityKey === 'squats' ? (
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>How many reps</span>
+              <div className={styles.minuteRow}>
+                {QUICK_SQUAT_REPS.map(reps => (
+                  <button
+                    key={reps}
+                    className={`${styles.minuteChip} ${minutes === Math.max(1, Math.round((reps / SQUAT_REPS_PER_MINUTE) * 10) / 10) ? styles.minuteChipActive : ''}`}
+                    onClick={() => setMinutes(Math.max(1, Math.round((reps / SQUAT_REPS_PER_MINUTE) * 10) / 10))}
+                  >
+                    {reps}
+                  </button>
+                ))}
+              </div>
+              <p className={styles.hint}>
+                Did more than one round? Tap again after logging, or tap a bigger number, both add up in your day's total.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>How long</span>
+              <div className={styles.minuteRow}>
+                {QUICK_MINUTES.map(m => (
+                  <button
+                    key={m}
+                    className={`${styles.minuteChip} ${minutes === m ? styles.minuteChipActive : ''}`}
+                    onClick={() => setMinutes(m)}
+                  >
+                    {m}
+                  </button>
+                ))}
+                <input
+                  type="number"
+                  className={styles.minuteInput}
+                  value={minutes}
+                  min={1}
+                  max={600}
+                  inputMode="numeric"
+                  onChange={e => setMinutes(Math.max(1, Math.min(600, Number(e.target.value) || 1)))}
+                  aria-label="Minutes"
+                />
+                <span className={styles.minuteUnit}>min</span>
+              </div>
+            </div>
+          )}
 
           <div className={styles.field}>
             <span className={styles.fieldLabel}>How hard</span>

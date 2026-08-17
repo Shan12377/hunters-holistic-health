@@ -25,6 +25,10 @@ export interface DailyLog {
   sleep_hours: number | null
   sleep_quality: number | null
   late_slip_reason: string | null
+  // A full fasting day (no meals at all), not just the morning fast window.
+  // Excludes that day from the meal and supplement completion scoring so a
+  // real extended fast is not scored as three missed meals.
+  full_fast_day: boolean
 }
 
 export interface MealLog {

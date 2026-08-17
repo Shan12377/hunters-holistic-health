@@ -30,6 +30,7 @@ const BLANK_LOG: Omit<Partial<DailyLog>, 'log_date'> = {
   sleep_hours: null,
   sleep_quality: null,
   late_slip_reason: null,
+  full_fast_day: false,
 }
 
 export default function DailyLogPage() {
@@ -192,6 +193,19 @@ export default function DailyLogPage() {
       <div className={styles.card}>
         <h3 className={styles.cardLabel}>Nutrition & Fasting</h3>
         <div className={styles.checklist}>
+          <CheckItem
+            field="full_fast_day"
+            label="Full Fast Day"
+            sublabel="No meals eaten today, an extended fast, not just the morning window"
+          />
+        </div>
+        {log.full_fast_day && (
+          <p className={styles.goalHint} style={{ marginTop: 8 }}>
+            Got it. Meal and supplement checks below are not required today and will not count against your
+            weekly score.
+          </p>
+        )}
+        <div className={styles.checklist} style={{ marginTop: 12 }}>
           <CheckItem field="morning_fast_done" label="Morning Fast Completed" sublabel="Completed fasting window before first meal" />
           <CheckItem field="meal1_logged" label="Meal 1 Logged" sublabel="First meal of the day recorded" />
           <CheckItem field="meal2_logged" label="Meal 2 Logged" sublabel="Second meal of the day recorded" />
@@ -202,6 +216,11 @@ export default function DailyLogPage() {
       {/* Supplements */}
       <div className={styles.card}>
         <h3 className={styles.cardLabel}>Supplements</h3>
+        {log.full_fast_day && (
+          <p className={styles.goalHint} style={{ marginBottom: 8 }}>
+            Full fast day, not required today.
+          </p>
+        )}
         <div className={styles.checklist}>
           <CheckItem field="supplement_am_done"   label="AM Supplements Taken"        sublabel="Morning protocol, with breakfast or first meal" />
           <CheckItem field="supplement_noon_done" label="Afternoon Supplements Taken" sublabel="Midday protocol, with lunch or a light snack" />
