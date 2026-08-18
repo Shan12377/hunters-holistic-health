@@ -5,6 +5,10 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import toast from 'react-hot-toast'
 import styles from './Client.module.css'
+import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const COURSE_TIMEOUT_MS = 15000
 
 interface CourseModule {
   id: string
@@ -49,28 +53,41 @@ export default function CoursePage() {
   const [marking, setMarking] = useState(false)
   const [notesOpen, setNotesOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => { if (user?.id && courseId) fetchAll() }, [user?.id, courseId])
 
   const fetchAll = async () => {
-    const [{ data: courseData }, { data: moduleData }, { data: completionData }] = await Promise.all([
-      supabase.from('courses').select('id, title, description').eq('id', courseId!).single(),
-      supabase.from('course_modules').select('*').eq('course_id', courseId!).order('sort_order', { ascending: true }),
-      supabase.from('module_completions').select('module_id').eq('user_id', user!.id),
-    ])
+    setLoading(true)
+    setLoadError(false)
+    try {
+      const [{ data: courseData }, { data: moduleData }, { data: completionData }] = await withTimeout(
+        Promise.all([
+          supabase.from('courses').select('id, title, description').eq('id', courseId!).maybeSingle(),
+          supabase.from('course_modules').select('*').eq('course_id', courseId!).order('sort_order', { ascending: true }),
+          supabase.from('module_completions').select('module_id').eq('user_id', user!.id),
+        ]),
+        COURSE_TIMEOUT_MS,
+        'Course data'
+      )
 
-    if (!courseData) { navigate('/app/classroom'); return }
-    setCourse(courseData as Course)
-    const mods = (moduleData ?? []) as CourseModule[]
-    setModules(mods)
+      if (!courseData) { navigate('/app/classroom'); return }
+      setCourse(courseData as Course)
+      const mods = (moduleData ?? []) as CourseModule[]
+      setModules(mods)
 
-    const ids = new Set((completionData ?? []).map((c: { module_id: string }) => c.module_id))
-    setCompletedIds(ids)
+      const ids = new Set((completionData ?? []).map((c: { module_id: string }) => c.module_id))
+      setCompletedIds(ids)
 
-    // Start on first incomplete module, or first module if all done
-    const firstIncomplete = mods.find(m => !ids.has(m.id))
-    setActiveModuleId(firstIncomplete?.id ?? mods[0]?.id ?? null)
-    setLoading(false)
+      // Start on first incomplete module, or first module if all done
+      const firstIncomplete = mods.find(m => !ids.has(m.id))
+      setActiveModuleId(firstIncomplete?.id ?? mods[0]?.id ?? null)
+    } catch (err) {
+      console.error('[course] fetch failed:', err)
+      setLoadError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const activeModule = modules.find(m => m.id === activeModuleId) ?? null
@@ -99,6 +116,14 @@ export default function CoursePage() {
   const pct = modules.length > 0 ? Math.round((completedIds.size / modules.length) * 100) : 0
 
   if (loading) return <p className={styles.evEmpty}>Loading course...</p>
+  if (loadError) {
+    return (
+      <div className={styles.evEmpty}>
+        <p>Could not load this course. Check your connection and try again.</p>
+        <button type="button" className={shared.btnSecondary} onClick={fetchAll}>Retry</button>
+      </div>
+    )
+  }
   if (!course) return null
 
   return (

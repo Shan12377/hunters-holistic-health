@@ -3,6 +3,7 @@ import { X, Flame, Trophy, CalendarDays } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { format, subDays, differenceInDays, parseISO } from 'date-fns'
 import { getTotalPoints, getLevelInfo } from '@/lib/points'
+import { withTimeout } from '@/lib/withTimeout'
 import styles from '@/pages/client/Client.module.css'
 
 interface MemberProfile {
@@ -39,26 +40,35 @@ export default function MemberCard({ userId, onClose }: Props) {
 
   useEffect(() => {
     const fetchMember = async () => {
-      const [profileRes, pts, logsRes] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('first_name, last_name, display_handle, created_at')
-          .eq('id', userId)
-          .single(),
-        getTotalPoints(userId),
-        supabase
-          .from('points_log')
-          .select('ref_id')
-          .eq('user_id', userId)
-          .eq('event_type', 'daily_log')
-          .order('ref_id', { ascending: false })
-          .limit(60),
-      ])
-      if (profileRes.data) setProfile(profileRes.data as MemberProfile)
-      setTotalPoints(pts)
-      const logDates = (logsRes.data ?? []).map(r => r.ref_id as string)
-      setStreak(calcStreak(logDates))
-      setLoading(false)
+      try {
+        const [profileRes, pts, logsRes] = await withTimeout(
+          Promise.all([
+            supabase
+              .from('profiles')
+              .select('first_name, last_name, display_handle, created_at')
+              .eq('id', userId)
+              .maybeSingle(),
+            getTotalPoints(userId),
+            supabase
+              .from('points_log')
+              .select('ref_id')
+              .eq('user_id', userId)
+              .eq('event_type', 'daily_log')
+              .order('ref_id', { ascending: false })
+              .limit(60),
+          ]),
+          15000,
+          'Member card'
+        )
+        if (profileRes.data) setProfile(profileRes.data as MemberProfile)
+        setTotalPoints(pts)
+        const logDates = (logsRes.data ?? []).map(r => r.ref_id as string)
+        setStreak(calcStreak(logDates))
+      } catch (err) {
+        console.error('[member-card] fetch failed:', err)
+      } finally {
+        setLoading(false)
+      }
     }
     fetchMember()
   }, [userId])

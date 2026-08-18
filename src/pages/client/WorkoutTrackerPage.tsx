@@ -15,6 +15,9 @@ import ExerciseVideoLink from '@/components/workout/ExerciseVideoLink'
 import wk from '@/components/workout/Workout.module.css'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const WORKOUT_TIMEOUT_MS = 15000
 
 interface Exercise {
   id: string
@@ -114,7 +117,9 @@ export default function WorkoutTrackerPage() {
   const [saving, setSaving] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
 
-  useEffect(() => {
+  function loadInitial() {
+    setLoading(true)
+    setLoadError(null)
     loadRoutines()
       .then(routines => {
         if (userId && routines) {
@@ -129,6 +134,10 @@ export default function WorkoutTrackerPage() {
         setLoadError('Could not load your workouts. Check your connection and try again.')
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadInitial()
   }, [userId])
 
   useEffect(() => {
@@ -144,10 +153,14 @@ export default function WorkoutTrackerPage() {
     'id, name, emoji, coach_cue, condition_notes, muscle_groups, tempo_default, created_by_user_id, video_url, video_channel'
 
   async function loadRoutines(): Promise<Routine[] | null> {
-    const { data, error } = await supabase
-      .from('workout_routines')
-      .select(`id, name, description, video_url, user_id, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(${EXERCISE_FIELDS}))`)
-      .order('name', { ascending: true })
+    const { data, error } = await withTimeout(
+      supabase
+        .from('workout_routines')
+        .select(`id, name, description, video_url, user_id, routine_exercises(id, order_position, sets_default, reps_default, exercise:exercises(${EXERCISE_FIELDS}))`)
+        .order('name', { ascending: true }),
+      WORKOUT_TIMEOUT_MS,
+      'Workout routines'
+    )
 
     if (error) throw error
     if (!data?.length) { setAllRoutines([]); return null }
@@ -485,7 +498,14 @@ export default function WorkoutTrackerPage() {
         ))}
       </div>
 
-      {loadError && <p className={wk.errorBox}>{loadError}</p>}
+      {loadError && (
+        <div className={wk.errorBox}>
+          {loadError}
+          <button type="button" className={shared.btnGhost} onClick={loadInitial} style={{ marginLeft: 8 }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* TODAY TAB */}
       {tab === 'today' && (

@@ -14,6 +14,9 @@ import toast from 'react-hot-toast'
 import styles from './Coach.module.css'
 import clientStyles from '../client/Client.module.css'
 import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const CLIENT_DETAIL_TIMEOUT_MS = 15000
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend)
 
@@ -24,6 +27,7 @@ export default function ClientDetailPage() {
   const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([])
   const [adherence, setAdherence] = useState<SupplementAdherenceResult | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [generatingReport, setGeneratingReport] = useState(false)
 
   type ProtocolRow = {
@@ -75,44 +79,56 @@ export default function ClientDetailPage() {
   useEffect(() => { if (clientId) fetchClientData(clientId) }, [clientId])
 
   const fetchClientData = async (id: string) => {
-    const suppWindowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
-    const [profileRes, bpRes, logsRes, suppRes, suppLogsRes, protocolRes] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', id).single(),
-      supabase.from('blood_pressure_logs').select('*').eq('user_id', id).order('logged_at', { ascending: true }).limit(30),
-      supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
-      supabase.from('supplements').select('id,name').eq('user_id', id).eq('active', true),
-      supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
-      supabase.from('client_protocols').select('*, protocol_data').eq('user_id', id).maybeSingle(),
-    ])
-    if (profileRes.data) setProfile(profileRes.data as Profile)
-    setBpReadings((bpRes.data as BPReading[]) ?? [])
-    setDailyLogs((logsRes.data as DailyLog[]) ?? [])
-    const supps = (suppRes.data ?? []) as { id: string; name: string }[]
-    const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
-    if (supps.length > 0) setAdherence(calcSupplementAdherence(supps, suppLogs))
-    if (protocolRes.data) {
-      const pd = protocolRes.data
-      const loaded: ProtocolRow = {
-        protocol_type: pd.protocol_type ?? 'blood_pressure',
-        lever_priority: pd.lever_priority ?? 'all',
-        supplement_stack: pd.supplement_stack ?? '',
-        daily_anchors: pd.daily_anchors ?? '',
-        known_triggers: pd.known_triggers ?? '',
-        current_session: pd.current_session ?? 1,
-        total_sessions: pd.total_sessions ?? 24,
-        program_end_date: pd.program_end_date ?? '',
-        educator_notes: pd.educator_notes ?? '',
-        goal_1: pd.goal_1 ?? '',
-        goal_2: pd.goal_2 ?? '',
-        active_phase: pd.active_phase ?? 'phase_0',
-        protocol_start_date: pd.protocol_start_date ?? '',
-        supplement_link: pd.supplement_link ?? '',
-        updated_at: pd.updated_at,
+    setLoading(true)
+    setLoadError(false)
+    try {
+      const suppWindowStart = format(subDays(new Date(), 13), 'yyyy-MM-dd')
+      const [profileRes, bpRes, logsRes, suppRes, suppLogsRes, protocolRes] = await withTimeout(
+        Promise.all([
+          supabase.from('profiles').select('*').eq('id', id).maybeSingle(),
+          supabase.from('blood_pressure_logs').select('*').eq('user_id', id).order('logged_at', { ascending: true }).limit(30),
+          supabase.from('daily_logs').select('*').eq('user_id', id).order('log_date', { ascending: false }).limit(30),
+          supabase.from('supplements').select('id,name').eq('user_id', id).eq('active', true),
+          supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', id).gte('log_date', suppWindowStart),
+          supabase.from('client_protocols').select('*, protocol_data').eq('user_id', id).maybeSingle(),
+        ]),
+        CLIENT_DETAIL_TIMEOUT_MS,
+        'Client detail data'
+      )
+      if (profileRes.data) setProfile(profileRes.data as Profile)
+      setBpReadings((bpRes.data as BPReading[]) ?? [])
+      setDailyLogs((logsRes.data as DailyLog[]) ?? [])
+      const supps = (suppRes.data ?? []) as { id: string; name: string }[]
+      const suppLogs = (suppLogsRes.data ?? []) as { supplement_id: string; log_date: string }[]
+      if (supps.length > 0) setAdherence(calcSupplementAdherence(supps, suppLogs))
+      if (protocolRes.data) {
+        const pd = protocolRes.data
+        const loaded: ProtocolRow = {
+          protocol_type: pd.protocol_type ?? 'blood_pressure',
+          lever_priority: pd.lever_priority ?? 'all',
+          supplement_stack: pd.supplement_stack ?? '',
+          daily_anchors: pd.daily_anchors ?? '',
+          known_triggers: pd.known_triggers ?? '',
+          current_session: pd.current_session ?? 1,
+          total_sessions: pd.total_sessions ?? 24,
+          program_end_date: pd.program_end_date ?? '',
+          educator_notes: pd.educator_notes ?? '',
+          goal_1: pd.goal_1 ?? '',
+          goal_2: pd.goal_2 ?? '',
+          active_phase: pd.active_phase ?? 'phase_0',
+          protocol_start_date: pd.protocol_start_date ?? '',
+          supplement_link: pd.supplement_link ?? '',
+          updated_at: pd.updated_at,
+        }
+        setProtocol(loaded)
+        setProtocolForm(loaded)
       }
-      setProtocol(loaded)
-      setProtocolForm(loaded)
+    } catch (err) {
+      console.error('[client-detail] fetch failed:', err)
+      setLoadError(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const saveProtocol = async () => {
@@ -275,6 +291,16 @@ new Chart(document.getElementById('stepsChart'), {
   }
 
   if (loading) return <div className={styles.loadingText}>Loading participant data...</div>
+  if (loadError) {
+    return (
+      <div className={styles.loadingText}>
+        Could not load this participant. Check your connection and try again.
+        <button type="button" className={shared.btnSecondary} onClick={() => clientId && fetchClientData(clientId)} style={{ marginLeft: 8 }}>
+          Retry
+        </button>
+      </div>
+    )
+  }
   if (!profile) return <div className={styles.loadingText}>Participant not found.</div>
 
   const bpChartData = {

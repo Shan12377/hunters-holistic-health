@@ -5,6 +5,10 @@ import { useAuthStore } from '@/store/authStore'
 import { format, subDays, parseISO } from 'date-fns'
 import toast from 'react-hot-toast'
 import styles from './HabitTrackerPage.module.css'
+import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const HABIT_TIMEOUT_MS = 15000
 
 type Category =
   | 'sleep' | 'nutrition' | 'movement' | 'supplements'
@@ -49,6 +53,7 @@ export default function HabitTrackerPage() {
   const [habits, setHabits]     = useState<Habit[]>([])
   const [logs, setLogs]         = useState<Log[]>([])
   const [loading, setLoading]   = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm]         = useState(BLANK_HABIT)
   const [saving, setSaving]     = useState(false)
@@ -65,22 +70,33 @@ export default function HabitTrackerPage() {
 
   async function fetchAll() {
     setLoading(true)
-    const [habitsRes, logsRes] = await Promise.all([
-      supabase
-        .from('habit_identities')
-        .select('*')
-        .eq('user_id', user!.id)
-        .eq('active', true)
-        .order('sort_order', { ascending: true }),
-      supabase
-        .from('habit_logs')
-        .select('habit_id, log_date, completed')
-        .eq('user_id', user!.id)
-        .gte('log_date', dates[0]),
-    ])
-    if (!habitsRes.error) setHabits(habitsRes.data ?? [])
-    if (!logsRes.error) setLogs(logsRes.data ?? [])
-    setLoading(false)
+    setLoadError(false)
+    try {
+      const [habitsRes, logsRes] = await withTimeout(
+        Promise.all([
+          supabase
+            .from('habit_identities')
+            .select('*')
+            .eq('user_id', user!.id)
+            .eq('active', true)
+            .order('sort_order', { ascending: true }),
+          supabase
+            .from('habit_logs')
+            .select('habit_id, log_date, completed')
+            .eq('user_id', user!.id)
+            .gte('log_date', dates[0]),
+        ]),
+        HABIT_TIMEOUT_MS,
+        'Habits'
+      )
+      if (!habitsRes.error) setHabits(habitsRes.data ?? [])
+      if (!logsRes.error) setLogs(logsRes.data ?? [])
+    } catch (err) {
+      console.error('[habits] fetch failed:', err)
+      setLoadError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   function isCompleted(habitId: string, date: string) {
@@ -299,6 +315,15 @@ export default function HabitTrackerPage() {
       )}
 
       {loading && <div className={styles.emptyMsg}>Loading your habits...</div>}
+
+      {!loading && loadError && (
+        <div className={styles.emptyMsg}>
+          Could not load your habits. Check your connection and try again.
+          <button type="button" className={shared.btnSecondary} onClick={fetchAll} style={{ marginLeft: 8 }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       {!loading && habits.length === 0 && !showForm && (
         <div className={styles.emptyState}>

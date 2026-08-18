@@ -10,6 +10,9 @@ import MemberCard from '@/components/ui/MemberCard'
 import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const FEED_TIMEOUT_MS = 15000
 
 type PostType = 'check_in' | 'late_slip' | 'milestone' | 'win' | 'general' | 'intro' | 'announcement' | 'question'
 type Room = 'all' | 'general' | 'wins' | 'questions' | 'challenges' | 'resources'
@@ -175,11 +178,23 @@ export default function FeedPage() {
 
   const fetchPosts = async () => {
     setFetchError(false)
-    const { data, error: fetchErr } = await supabase
-      .from('feed_posts')
-      .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
-      .order('created_at', { ascending: false })
-      .limit(100)
+    let data, fetchErr
+    try {
+      ({ data, error: fetchErr } = await withTimeout(
+        supabase
+          .from('feed_posts')
+          .select('*, profiles(first_name, last_name, display_handle, privacy_settings)')
+          .order('created_at', { ascending: false })
+          .limit(100),
+        FEED_TIMEOUT_MS,
+        'Feed posts'
+      ))
+    } catch (err) {
+      console.error('[feed] fetch failed:', err)
+      setFetchError(true)
+      setLoading(false)
+      return
+    }
     if (fetchErr) { setFetchError(true); setLoading(false); return }
     const posts = (data as FeedPost[]) ?? []
     setPosts(posts)

@@ -9,6 +9,11 @@ import { calcSupplementAdherence } from '@/lib/adherence'
 import toast from 'react-hot-toast'
 import styles from './Coach.module.css'
 import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+// Higher than most pages: this fetch runs a nested query for every client on
+// the roster, so it legitimately takes longer than a single-record page.
+const COACH_DASHBOARD_TIMEOUT_MS = 25000
 
 function gradeToNum(grade: string): number {
   const map: Record<string, number> = { 'A+': 6, 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'F': 1 }
@@ -71,6 +76,7 @@ export default function CoachDashboard() {
   const [clients, setClients] = useState<ClientSummary[]>([])
   const [cohortStats, setCohortStats] = useState<CohortStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [search, setSearch] = useState('')
   const [programCohorts, setProgramCohorts] = useState<ProgramCohort[]>([])
   const [showCohortForm, setShowCohortForm] = useState(false)
@@ -101,13 +107,20 @@ export default function CoachDashboard() {
   useEffect(() => { fetchClients(); fetchCohorts(); fetchUpcomingSessions() }, [])
 
   const fetchClients = async () => {
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('role', 'client')
-      .order('last_name')
+    setLoading(true)
+    setLoadError(false)
+    try {
+    const { data: profiles } = await withTimeout(
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'client')
+        .order('last_name'),
+      COACH_DASHBOARD_TIMEOUT_MS,
+      'Client roster'
+    )
 
-    if (!profiles) { setLoading(false); return }
+    if (!profiles) return
 
     const today = format(new Date(), 'yyyy-MM-dd')
     const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
@@ -118,10 +131,11 @@ export default function CoachDashboard() {
     const todayDow = new Date().getDay()
     const daysElapsed = Math.max(1, todayDow === 0 ? 7 : todayDow)
 
-    const rawSummaries = await Promise.all(
+    const rawSummaries = await withTimeout(
+      Promise.all(
       profiles.map(async (p) => {
         const [bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
-          supabase.from('blood_pressure_logs').select('systolic,diastolic').eq('user_id', p.id).order('logged_at', { ascending: false }).limit(1).single(),
+          supabase.from('blood_pressure_logs').select('systolic,diastolic').eq('user_id', p.id).order('logged_at', { ascending: false }).limit(1).maybeSingle(),
           supabase.from('daily_logs').select('*').eq('user_id', p.id).gte('log_date', thirtyDaysAgo).order('log_date', { ascending: true }),
           supabase.from('supplements').select('id,name').eq('user_id', p.id).eq('active', true),
           supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', p.id).gte('log_date', suppWindowStart),
@@ -182,6 +196,9 @@ export default function CoachDashboard() {
           thisWeekLogs,
         }
       })
+      ),
+      COACH_DASHBOARD_TIMEOUT_MS,
+      'Client summaries'
     )
 
     // Cohort aggregates (de-identified, no individual names)
@@ -206,7 +223,12 @@ export default function CoachDashboard() {
     const summaries: ClientSummary[] = rawSummaries.map(({ thisWeekLogs: _omit, ...rest }) => rest)
     setClients(summaries)
     setCohortStats(cs)
-    setLoading(false)
+    } catch (err) {
+      console.error('[coach-dashboard] fetch failed:', err)
+      setLoadError(true)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const fetchCohorts = async () => {
@@ -428,6 +450,13 @@ export default function CoachDashboard() {
       {/* Client list */}
       {loading ? (
         <div className={styles.loadingText}>Loading participants...</div>
+      ) : loadError ? (
+        <div className={styles.loadingText}>
+          Could not load your roster. Check your connection and try again.
+          <button type="button" className={shared.btnSecondary} onClick={fetchClients} style={{ marginLeft: 8 }}>
+            Retry
+          </button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className={styles.loadingText}>
           {clients.length === 0 ? 'No participants enrolled yet.' : 'No participants match your search.'}

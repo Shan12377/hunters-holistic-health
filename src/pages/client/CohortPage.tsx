@@ -8,6 +8,9 @@ import toast from 'react-hot-toast'
 import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 import shared from '../../styles/shared.module.css'
+import { withTimeout } from '@/lib/withTimeout'
+
+const COHORT_TIMEOUT_MS = 15000
 
 interface Cohort {
   id: string
@@ -67,91 +70,105 @@ export default function CohortPage() {
   const [content, setContent] = useState('')
   const [postType, setPostType] = useState<FeedPost['post_type']>('general')
   const [posting, setPosting] = useState(false)
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => { fetchData() }, [])
 
   const fetchData = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    const user = session?.user
-    if (!user) { setLoading(false); return }
-    setCurrentUserId(user.id)
+    setLoading(true)
+    setLoadError(false)
+    try {
+      const { data: { session } } = await withTimeout(supabase.auth.getSession(), COHORT_TIMEOUT_MS, 'Session check')
+      const user = session?.user
+      if (!user) return
+      setCurrentUserId(user.id)
 
-    const { data: memberships } = await supabase
-      .from('cohort_members')
-      .select('cohort_id')
-      .eq('user_id', user.id)
-      .limit(1)
+      const { data: memberships } = await withTimeout(
+        supabase.from('cohort_members').select('cohort_id').eq('user_id', user.id).limit(1),
+        COHORT_TIMEOUT_MS,
+        'Cohort membership'
+      )
 
-    if (!memberships || memberships.length === 0) {
+      if (!memberships || memberships.length === 0) return
+
+      const cohortId = (memberships[0] as { cohort_id: string }).cohort_id
+
+      const [cohortRes, membersRes] = await withTimeout(
+        Promise.all([
+          supabase.from('cohorts').select('*').eq('id', cohortId).maybeSingle(),
+          supabase
+            .from('cohort_members')
+            .select('user_id, profiles(first_name, last_name)')
+            .eq('cohort_id', cohortId),
+        ]),
+        COHORT_TIMEOUT_MS,
+        'Cohort data'
+      )
+
+      if (!cohortRes.data) return
+      setCohort(cohortRes.data as Cohort)
+
+      const members = (membersRes.data ?? []) as unknown as MemberRow[]
+      const ids = members.map(m => m.user_id)
+      setMemberIds(ids)
+
+      if (ids.length === 0) return
+
+      const thirtyDaysAgo = format(subDays(new Date(), 29), 'yyyy-MM-dd')
+      const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
+      const today = format(new Date(), 'yyyy-MM-dd')
+
+      const [logsRes, feedRes] = await withTimeout(
+        Promise.all([
+          supabase
+            .from('daily_logs')
+            .select('*')
+            .in('user_id', ids)
+            .gte('log_date', thirtyDaysAgo),
+          supabase
+            .from('feed_posts')
+            .select('*, profiles(first_name, last_name, display_handle)')
+            .in('user_id', ids)
+            .order('created_at', { ascending: false })
+            .limit(30),
+        ]),
+        COHORT_TIMEOUT_MS,
+        'Cohort logs and feed'
+      )
+
+      const allLogs = (logsRes.data ?? []) as DailyLog[]
+      setPosts((feedRes.data ?? []) as FeedPost[])
+
+      const entries: LeaderboardEntry[] = members.map(m => {
+        const memberLogs = allLogs.filter(l => l.user_id === m.user_id)
+        const weekLogs = memberLogs.filter(l => l.log_date >= weekStart && l.log_date <= today)
+        const { score } = scoreWeek(weekLogs)
+
+        let streak = 0
+        const logDates = new Set(memberLogs.map(l => l.log_date))
+        for (let i = 0; i < 30; i++) {
+          const d = format(subDays(new Date(), i), 'yyyy-MM-dd')
+          if (logDates.has(d)) streak++
+          else break
+        }
+
+        return {
+          user_id: m.user_id,
+          firstName: m.profiles?.first_name ?? '?',
+          lastInitial: (m.profiles?.last_name?.[0] ?? '?').toUpperCase(),
+          streak,
+          weekScore: score,
+          isCurrentUser: m.user_id === user.id,
+        }
+      }).sort((a, b) => b.weekScore - a.weekScore)
+
+      setLeaderboard(entries)
+    } catch (err) {
+      console.error('[cohort] fetch failed:', err)
+      setLoadError(true)
+    } finally {
       setLoading(false)
-      return
     }
-
-    const cohortId = (memberships[0] as { cohort_id: string }).cohort_id
-
-    const [cohortRes, membersRes] = await Promise.all([
-      supabase.from('cohorts').select('*').eq('id', cohortId).single(),
-      supabase
-        .from('cohort_members')
-        .select('user_id, profiles(first_name, last_name)')
-        .eq('cohort_id', cohortId),
-    ])
-
-    if (!cohortRes.data) { setLoading(false); return }
-    setCohort(cohortRes.data as Cohort)
-
-    const members = (membersRes.data ?? []) as unknown as MemberRow[]
-    const ids = members.map(m => m.user_id)
-    setMemberIds(ids)
-
-    if (ids.length === 0) { setLoading(false); return }
-
-    const thirtyDaysAgo = format(subDays(new Date(), 29), 'yyyy-MM-dd')
-    const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
-    const today = format(new Date(), 'yyyy-MM-dd')
-
-    const [logsRes, feedRes] = await Promise.all([
-      supabase
-        .from('daily_logs')
-        .select('*')
-        .in('user_id', ids)
-        .gte('log_date', thirtyDaysAgo),
-      supabase
-        .from('feed_posts')
-        .select('*, profiles(first_name, last_name, display_handle)')
-        .in('user_id', ids)
-        .order('created_at', { ascending: false })
-        .limit(30),
-    ])
-
-    const allLogs = (logsRes.data ?? []) as DailyLog[]
-    setPosts((feedRes.data ?? []) as FeedPost[])
-
-    const entries: LeaderboardEntry[] = members.map(m => {
-      const memberLogs = allLogs.filter(l => l.user_id === m.user_id)
-      const weekLogs = memberLogs.filter(l => l.log_date >= weekStart && l.log_date <= today)
-      const { score } = scoreWeek(weekLogs)
-
-      let streak = 0
-      const logDates = new Set(memberLogs.map(l => l.log_date))
-      for (let i = 0; i < 30; i++) {
-        const d = format(subDays(new Date(), i), 'yyyy-MM-dd')
-        if (logDates.has(d)) streak++
-        else break
-      }
-
-      return {
-        user_id: m.user_id,
-        firstName: m.profiles?.first_name ?? '?',
-        lastInitial: (m.profiles?.last_name?.[0] ?? '?').toUpperCase(),
-        streak,
-        weekScore: score,
-        isCurrentUser: m.user_id === user.id,
-      }
-    }).sort((a, b) => b.weekScore - a.weekScore)
-
-    setLeaderboard(entries)
-    setLoading(false)
   }
 
   const fetchPosts = async (ids: string[]) => {
@@ -194,6 +211,29 @@ export default function CohortPage() {
     return (
       <div className="animate-fade-in">
         <div className={styles.loadingText}>Loading your cohort...</div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <div className="animate-fade-in">
+        <BackButton />
+        <div className={styles.pageTop}>
+          <div>
+            <h1 className={styles.pageTopTitle}>
+              <Users size={22} color="var(--teal)" /> My Cohort
+            </h1>
+          </div>
+        </div>
+        <div className={styles.card}>
+          <div className={styles.cohortEmptyState}>
+            <Trophy size={48} color="var(--border-subtle)" />
+            <p className={styles.cohortEmptyTitle}>Could not load your cohort</p>
+            <p className={styles.cohortEmptyMsg}>Check your connection and try again.</p>
+            <button type="button" className={shared.btnSecondary} onClick={fetchData}>Retry</button>
+          </div>
+        </div>
       </div>
     )
   }
