@@ -114,7 +114,9 @@ const BrainDumpPage = lazy(() => import('@/pages/coach/BrainDumpPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 import shared from '@/styles/shared.module.css'
 
-const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000 // hourly
+// Hourly left too wide a gap: a fresh deploy could sit undetected for up to
+// an hour, with no reload prompt and no way to know you were on stale code.
+const UPDATE_CHECK_INTERVAL_MS = 5 * 60 * 1000 // every 5 minutes
 
 // If auth has not resolved by now, stop waiting and render the app anyway.
 // On 2026-08-13 a hung profile fetch left the loading screen up for over ten
@@ -160,6 +162,13 @@ export default function App() {
     onRegisteredSW(_swUrl, registration) {
       if (!registration) return
       usePwaUpdateStore.getState().setRegistration(registration)
+      // Check right away instead of waiting out the first interval, and again
+      // whenever the app regains focus, since a home-screen PWA reopened after
+      // sitting in the background is exactly when it's most likely stale.
+      registration.update().catch(() => {})
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') registration.update().catch(() => {})
+      })
       setInterval(() => { registration.update().catch(() => {}) }, UPDATE_CHECK_INTERVAL_MS)
     },
   })
