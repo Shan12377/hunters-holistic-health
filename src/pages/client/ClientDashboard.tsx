@@ -11,7 +11,11 @@ import OnboardingChecklist from '@/components/ui/OnboardingChecklist'
 import WeeklyPulseCard from '@/components/ui/WeeklyPulseCard'
 import { getTotalPoints, getLevelInfo } from '@/lib/points'
 import { STEPS_GOAL, WATER_GOAL_OZ } from '@/lib/goals'
+import { withTimeout } from '@/lib/withTimeout'
 import styles from './Client.module.css'
+import shared from '../../styles/shared.module.css'
+
+const DASHBOARD_TIMEOUT_MS = 15000
 
 const DOXY_URL = 'https://doxy.me/drshallandahunter'
 
@@ -49,6 +53,11 @@ export default function ClientDashboard() {
   const [totalPoints, setTotalPoints] = useState<number | null>(null)
   const [showEnergyCheckIn, setShowEnergyCheckIn] = useState(false)
   const [savingEnergy, setSavingEnergy] = useState(false)
+  // If a single query in fetchTodayData throws (no BP history yet, no
+  // blood sugar history yet, nothing logged today), it previously took the
+  // whole Promise.all down with it, silently, with no error shown and no
+  // way to retry. The dashboard just sat there looking permanently stale.
+  const [loadError, setLoadError] = useState(false)
   const today = format(new Date(), 'yyyy-MM-dd')
   const hour = new Date().getHours()
 
@@ -95,39 +104,53 @@ export default function ClientDashboard() {
   }
 
   const fetchTodayData = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    const user = session?.user
-    if (!user) return
+    setLoadError(false)
+    try {
+      const { data: { session } } = await withTimeout(supabase.auth.getSession(), DASHBOARD_TIMEOUT_MS, 'Session check')
+      const user = session?.user
+      if (!user) return
 
-    const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
+      const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
-    const [logRes, bpRes, bsRes, sessRes] = await Promise.all([
-      supabase.from('daily_logs').select('*').eq('user_id', user.id).eq('log_date', today).single(),
-      supabase.from('blood_pressure_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
-      supabase.from('blood_sugar_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).single(),
-      supabase.from('sessions')
-        .select('id, session_date, session_time, session_type')
-        .eq('user_id', user.id)
-        .eq('status', 'scheduled')
-        .gte('session_date', today)
-        .lte('session_date', tomorrow)
-        .order('session_date')
-        .order('session_time')
-        .limit(5),
-    ])
+      // maybeSingle, not single: single() throws when there is no row yet
+      // (no BP history, no blood sugar history, nothing logged today), and
+      // that throw previously took the whole Promise.all down with it, so
+      // one missing history silently blanked out data that did exist.
+      const [logRes, bpRes, bsRes, sessRes] = await withTimeout(
+        Promise.all([
+          supabase.from('daily_logs').select('*').eq('user_id', user.id).eq('log_date', today).maybeSingle(),
+          supabase.from('blood_pressure_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).maybeSingle(),
+          supabase.from('blood_sugar_logs').select('*').eq('user_id', user.id).order('logged_at', { ascending: false }).limit(1).maybeSingle(),
+          supabase.from('sessions')
+            .select('id, session_date, session_time, session_type')
+            .eq('user_id', user.id)
+            .eq('status', 'scheduled')
+            .gte('session_date', today)
+            .lte('session_date', tomorrow)
+            .order('session_date')
+            .order('session_time')
+            .limit(5),
+        ]),
+        DASHBOARD_TIMEOUT_MS,
+        "Today's dashboard data"
+      )
 
-    if (logRes.data) setTodayLog(logRes.data as DailyLog)
-    if (bpRes.data) setLatestBP(bpRes.data as BPReading)
-    if (bsRes.data) setLatestBS(bsRes.data as BSReading)
-    getTotalPoints(user.id).then(pts => setTotalPoints(pts))
+      if (logRes.data) setTodayLog(logRes.data as DailyLog)
+      if (bpRes.data) setLatestBP(bpRes.data as BPReading)
+      if (bsRes.data) setLatestBS(bsRes.data as BSReading)
+      getTotalPoints(user.id).then(pts => setTotalPoints(pts))
 
-    const now = new Date()
-    const within24h = ((sessRes.data ?? []) as UpcomingSessionBrief[]).find(s => {
-      const sessionDt = new Date(`${s.session_date}T${s.session_time}`)
-      const diffMs = sessionDt.getTime() - now.getTime()
-      return diffMs > 0 && diffMs <= 86400000
-    })
-    setUpcomingSession(within24h ?? null)
+      const now = new Date()
+      const within24h = ((sessRes.data ?? []) as UpcomingSessionBrief[]).find(s => {
+        const sessionDt = new Date(`${s.session_date}T${s.session_time}`)
+        const diffMs = sessionDt.getTime() - now.getTime()
+        return diffMs > 0 && diffMs <= 86400000
+      })
+      setUpcomingSession(within24h ?? null)
+    } catch (err) {
+      console.error('[dashboard] fetch failed:', err)
+      setLoadError(true)
+    }
   }
 
   // Labeled so the user can always see what counts toward the score (Rule C).
@@ -162,6 +185,15 @@ export default function ClientDashboard() {
           </div>
         )}
       </div>
+
+      {loadError && (
+        <div className={styles.nutritionNotFoundRow}>
+          Could not load your dashboard data. Check your connection and
+          <button type="button" className={shared.btnGhost} onClick={fetchTodayData} style={{ marginLeft: 8 }}>
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* First-week onboarding (hides itself when complete or dismissed) */}
       <OnboardingChecklist todayLog={todayLog} latestBP={latestBP} latestBS={latestBS} />
