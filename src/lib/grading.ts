@@ -25,38 +25,17 @@ export function calcGrade(score: number): GradeResult {
   return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
 }
 
-// Rubric-based grade, used on client weekly report card
-export function calcGradeFromData(logs: DailyLog[], feedPostCount: number): GradeResult {
-  const totalDays = 7
-  const loggedDays = logs.length
-  const movementMet = logs.filter(l => (l.steps ?? 0) >= STEPS_GOAL).length
-  const movementMissed = totalDays - movementMet
-  // A full fasting day is not a missed meal, it is the day working as
-  // intended, so it does not count against the meal check.
-  const mealsMissed = logs.filter(l => !l.meal1_logged && !l.full_fast_day).length
-  const lateSlipsSubmitted = logs.filter(l => l.late_slip_reason != null && l.late_slip_reason !== '').length
-
-  if (loggedDays === 0) {
-    return { grade: 'A', color: '#4be08a', message: 'You made the decision. That is step one. Log your first day to protect this grade.' }
-  }
-
-  if (loggedDays === totalDays && feedPostCount >= 2) {
-    return { grade: 'A+', color: '#4be08a', message: 'You are absolutely showing up. This is what consistency looks like.' }
-  }
-
-  if (movementMissed === 0 && mealsMissed <= 2) {
-    return { grade: 'B', color: '#c8a74b', message: 'Solid week. You kept moving and that is what matters most.' }
-  }
-
-  if (movementMissed > 0 && lateSlipsSubmitted >= movementMissed) {
-    return { grade: 'C', color: '#e0b84b', message: 'You showed up even when it was hard. That accountability is everything.' }
-  }
-
-  if (loggedDays < 3 && lateSlipsSubmitted > 0) {
-    return { grade: 'D', color: '#e08a4b', message: 'You checked in and that counts. Let us build on it this week.' }
-  }
-
-  return { grade: 'F', color: '#e05c5c', message: 'Life happens. Today is a new day. Log in and let us go.' }
+// Names the single weakest category in a week's breakdown, in plain language,
+// so a grade is never just a mystery letter. This is what the client card and
+// the coach dashboard both show alongside the grade (Dr. Hunter, 2026-08-20:
+// "I need people to have clarity with everything... let them know exactly
+// what it is"). One category dragging a grade down should be visible, not
+// buried in an average.
+export function explainGrade(breakdown: WeekBreakdown[]): string {
+  if (breakdown.length === 0) return ''
+  const weakest = breakdown.reduce((a, b) => (b.pct < a.pct ? b : a))
+  if (weakest.pct >= 90) return 'Every category is strong this week. Keep this up.'
+  return `${weakest.label} is the biggest gap this week: ${weakest.score} of ${weakest.max} days.`
 }
 
 export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBreakdown[] } {

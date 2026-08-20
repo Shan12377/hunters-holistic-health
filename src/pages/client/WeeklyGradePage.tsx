@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { format, subDays, startOfWeek, endOfWeek } from 'date-fns'
 import type { DailyLog } from '@/types'
 import type { WeekBreakdown } from '@/lib/grading'
-import { calcGradeFromData, scoreWeek } from '@/lib/grading'
+import { calcGrade, explainGrade, scoreWeek } from '@/lib/grading'
 import BackButton from '@/components/BackButton'
 import styles from './Client.module.css'
 
@@ -15,9 +15,9 @@ interface WeekScore {
   grade: string
   gradeColor: string
   gradeMessage: string
+  reason: string
   logs: DailyLog[]
   breakdown: WeekBreakdown[]
-  feedPosts: number
 }
 
 export default function WeeklyGradePage() {
@@ -32,15 +32,11 @@ export default function WeeklyGradePage() {
     if (!user) return
 
     const fourWeeksAgo = format(subDays(new Date(), 28), 'yyyy-MM-dd')
-    const thisWeekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
 
-    const [logsRes, feedRes] = await Promise.all([
-      supabase.from('daily_logs').select('*').eq('user_id', user.id).gte('log_date', fourWeeksAgo).order('log_date'),
-      supabase.from('feed_posts').select('id, created_at').eq('user_id', user.id).gte('created_at', thisWeekStart + 'T00:00:00'),
-    ])
+    const { data: logsData } = await supabase
+      .from('daily_logs').select('*').eq('user_id', user.id).gte('log_date', fourWeeksAgo).order('log_date')
 
-    const allLogs = (logsRes.data as DailyLog[]) ?? []
-    const currentWeekFeedPosts = (feedRes.data ?? []).length
+    const allLogs = (logsData as DailyLog[]) ?? []
 
     const weekScores: WeekScore[] = []
     for (let w = 0; w < 4; w++) {
@@ -49,10 +45,9 @@ export default function WeeklyGradePage() {
       const weekStartStr = format(weekStart, 'yyyy-MM-dd')
       const weekEndStr = format(weekEnd, 'yyyy-MM-dd')
       const weekLogs = allLogs.filter(l => l.log_date >= weekStartStr && l.log_date <= weekEndStr)
-      const feedCount = w === 0 ? currentWeekFeedPosts : 0
       const { score, breakdown } = scoreWeek(weekLogs)
-      const { grade, color, message } = calcGradeFromData(weekLogs, feedCount)
-      weekScores.push({ weekStart: weekStartStr, weekEnd: weekEndStr, score, grade, gradeColor: color, gradeMessage: message, logs: weekLogs, breakdown, feedPosts: feedCount })
+      const { grade, color, message } = calcGrade(score)
+      weekScores.push({ weekStart: weekStartStr, weekEnd: weekEndStr, score, grade, gradeColor: color, gradeMessage: message, reason: explainGrade(breakdown), logs: weekLogs, breakdown })
     }
 
     setWeeks(weekScores)
@@ -86,6 +81,7 @@ export default function WeeklyGradePage() {
               </div>
               <div className={styles.gradeHeroScore}>{currentWeek.score}%</div>
               <p className={styles.gradeHeroMsg}>{currentWeek.gradeMessage}</p>
+              {currentWeek.reason && <p className={styles.gradeHeroReason}>{currentWeek.reason}</p>}
               {lastWeek && (
                 <div className={styles.trendPill}>
                   {trend > 0 ? <TrendingUp size={16} color="#4be08a" /> : trend < 0 ? <TrendingDown size={16} color="#e05c5c" /> : <Minus size={16} color="#91a0ac" />}
