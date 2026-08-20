@@ -134,17 +134,21 @@ export default function CoachDashboard() {
     const rawSummaries = await withTimeout(
       Promise.all(
       profiles.map(async (p) => {
-        const [bpRes, logsRes, suppRes, suppLogsRes] = await Promise.all([
+        const [bpRes, logsRes, suppRes, suppLogsRes, feedRes] = await Promise.all([
           supabase.from('blood_pressure_logs').select('systolic,diastolic').eq('user_id', p.id).order('logged_at', { ascending: false }).limit(1).maybeSingle(),
           supabase.from('daily_logs').select('*').eq('user_id', p.id).gte('log_date', thirtyDaysAgo).order('log_date', { ascending: true }),
           supabase.from('supplements').select('id,name').eq('user_id', p.id).eq('active', true),
           supabase.from('supplement_logs').select('supplement_id,log_date').eq('user_id', p.id).gte('log_date', suppWindowStart),
+          supabase.from('feed_posts').select('created_at').eq('user_id', p.id).gte('created_at', lastWeekStart + 'T00:00:00'),
         ])
 
         const allLogs = (logsRes.data as DailyLog[]) ?? []
         const thisWeekLogs = allLogs.filter(l => l.log_date >= weekStart && l.log_date <= today)
         const lastWeekLogs = allLogs.filter(l => l.log_date >= lastWeekStart && l.log_date <= lastWeekEnd)
         const todayLog = allLogs.find(l => l.log_date === today) ?? null
+        const allPosts = (feedRes.data ?? []) as { created_at: string }[]
+        const thisWeekPostCount = allPosts.filter(post => post.created_at >= weekStart && post.created_at <= today + 'T23:59:59').length
+        const lastWeekPostCount = allPosts.filter(post => post.created_at >= lastWeekStart && post.created_at <= lastWeekEnd + 'T23:59:59').length
 
         let streak = 0
         const logDates = allLogs.map(l => l.log_date)
@@ -162,11 +166,11 @@ export default function CoachDashboard() {
         }
 
         const hasLogsThisWeek = thisWeekLogs.length > 0
-        const projectedScore = hasLogsThisWeek ? scoreWeekProjected(thisWeekLogs, daysElapsed) : 0
+        const projectedScore = hasLogsThisWeek ? scoreWeekProjected(thisWeekLogs, daysElapsed, thisWeekPostCount) : 0
         const projected = hasLogsThisWeek
           ? calcGrade(projectedScore)
           : { grade: 'N/A', color: '#91a0ac', message: '' }
-        const lastWeekScore = scoreWeek(lastWeekLogs).score
+        const lastWeekScore = scoreWeek(lastWeekLogs, lastWeekPostCount).score
         const lastWeekGradeResult = calcGrade(lastWeekScore)
         const at_risk = hasLogsThisWeek && gradeToNum(projected.grade) < gradeToNum(lastWeekGradeResult.grade)
 

@@ -33,10 +33,13 @@ export default function WeeklyGradePage() {
 
     const fourWeeksAgo = format(subDays(new Date(), 28), 'yyyy-MM-dd')
 
-    const { data: logsData } = await supabase
-      .from('daily_logs').select('*').eq('user_id', user.id).gte('log_date', fourWeeksAgo).order('log_date')
+    const [logsRes, feedRes] = await Promise.all([
+      supabase.from('daily_logs').select('*').eq('user_id', user.id).gte('log_date', fourWeeksAgo).order('log_date'),
+      supabase.from('feed_posts').select('created_at').eq('user_id', user.id).gte('created_at', fourWeeksAgo + 'T00:00:00'),
+    ])
 
-    const allLogs = (logsData as DailyLog[]) ?? []
+    const allLogs = (logsRes.data as DailyLog[]) ?? []
+    const allPosts = (feedRes.data ?? []) as { created_at: string }[]
 
     const weekScores: WeekScore[] = []
     for (let w = 0; w < 4; w++) {
@@ -45,7 +48,8 @@ export default function WeeklyGradePage() {
       const weekStartStr = format(weekStart, 'yyyy-MM-dd')
       const weekEndStr = format(weekEnd, 'yyyy-MM-dd')
       const weekLogs = allLogs.filter(l => l.log_date >= weekStartStr && l.log_date <= weekEndStr)
-      const { score, breakdown } = scoreWeek(weekLogs)
+      const weekPostCount = allPosts.filter(p => p.created_at >= weekStartStr && p.created_at <= weekEndStr + 'T23:59:59').length
+      const { score, breakdown } = scoreWeek(weekLogs, weekPostCount)
       const { grade, color, message } = calcGrade(score)
       weekScores.push({ weekStart: weekStartStr, weekEnd: weekEndStr, score, grade, gradeColor: color, gradeMessage: message, reason: explainGrade(breakdown), logs: weekLogs, breakdown })
     }

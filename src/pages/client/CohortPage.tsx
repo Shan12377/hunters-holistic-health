@@ -118,7 +118,7 @@ export default function CohortPage() {
       const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
       const today = format(new Date(), 'yyyy-MM-dd')
 
-      const [logsRes, feedRes] = await withTimeout(
+      const [logsRes, feedRes, weekPostsRes] = await withTimeout(
         Promise.all([
           supabase
             .from('daily_logs')
@@ -131,6 +131,11 @@ export default function CohortPage() {
             .in('user_id', ids)
             .order('created_at', { ascending: false })
             .limit(30),
+          supabase
+            .from('feed_posts')
+            .select('user_id, created_at')
+            .in('user_id', ids)
+            .gte('created_at', weekStart + 'T00:00:00'),
         ]),
         COHORT_TIMEOUT_MS,
         'Cohort logs and feed'
@@ -138,11 +143,13 @@ export default function CohortPage() {
 
       const allLogs = (logsRes.data ?? []) as DailyLog[]
       setPosts((feedRes.data ?? []) as FeedPost[])
+      const weekPosts = (weekPostsRes.data ?? []) as { user_id: string; created_at: string }[]
 
       const entries: LeaderboardEntry[] = members.map(m => {
         const memberLogs = allLogs.filter(l => l.user_id === m.user_id)
         const weekLogs = memberLogs.filter(l => l.log_date >= weekStart && l.log_date <= today)
-        const { score } = scoreWeek(weekLogs)
+        const weekPostCount = weekPosts.filter(p => p.user_id === m.user_id).length
+        const { score } = scoreWeek(weekLogs, weekPostCount)
 
         let streak = 0
         const logDates = new Set(memberLogs.map(l => l.log_date))

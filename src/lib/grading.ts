@@ -38,7 +38,13 @@ export function explainGrade(breakdown: WeekBreakdown[]): string {
   return `${weakest.label} is the biggest gap this week: ${weakest.score} of ${weakest.max} days.`
 }
 
-export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBreakdown[] } {
+// Posting twice in a week earns full credit for this category. Same threshold
+// the old A+ bonus used, now a normal weighted category instead of a special
+// override, so it can't disagree with the rest of the grade the way the old
+// rubric did (Dr. Hunter, 2026-08-20).
+const COMMUNITY_POST_GOAL = 2
+
+export function scoreWeek(logs: DailyLog[], feedPostCount = 0): { score: number; breakdown: WeekBreakdown[] } {
   if (logs.length === 0) return { score: 0, breakdown: [] }
 
   const days = 7
@@ -63,13 +69,14 @@ export function scoreWeek(logs: DailyLog[]): { score: number; breakdown: WeekBre
     { label: 'PM Supplements', score: suppPmDays, max: mealEligibleDays, pct: Math.min(100, Math.round((suppPmDays / mealEligibleDays) * 100)) },
     { label: `${STEPS_GOAL.toLocaleString()}+ Steps`, score: stepsDays, max: days, pct: Math.round((stepsDays / days) * 100) },
     { label: `${WATER_GOAL_OZ}oz Water`, score: waterDays, max: days, pct: Math.round((waterDays / days) * 100) },
+    { label: 'Community Engagement', score: Math.min(feedPostCount, COMMUNITY_POST_GOAL), max: COMMUNITY_POST_GOAL, pct: Math.min(100, Math.round((Math.min(feedPostCount, COMMUNITY_POST_GOAL) / COMMUNITY_POST_GOAL) * 100)) },
   ]
 
   const score = Math.round(breakdown.reduce((a, b) => a + b.pct, 0) / breakdown.length)
   return { score, breakdown }
 }
 
-export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): number {
+export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number, feedPostCount = 0): number {
   if (logs.length === 0 || daysElapsed <= 0) return 0
   const d = daysElapsed
   const fullFastDays = logs.filter(l => l.full_fast_day).length
@@ -90,6 +97,7 @@ export function scoreWeekProjected(logs: DailyLog[], daysElapsed: number): numbe
     Math.min(100, Math.round((suppPmDays / mealEligibleDays) * 100)),
     Math.round((stepsDays / d) * 100),
     Math.round((waterDays / d) * 100),
+    Math.min(100, Math.round((Math.min(feedPostCount, COMMUNITY_POST_GOAL) / COMMUNITY_POST_GOAL) * 100)),
   ]
 
   return Math.min(100, Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length))
