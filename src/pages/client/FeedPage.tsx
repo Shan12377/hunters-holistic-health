@@ -384,14 +384,21 @@ export default function FeedPage() {
   }
 
   const handleComment = async (postId: string) => {
-    if (!commentText.trim() || !userId) return
+    if (!commentText.trim()) return
+    if (!userId) {
+      toast.error('Your session may have timed out. Refresh the page and try again.')
+      return
+    }
     setCommentSending(true)
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('feed_comments')
       .insert({ post_id: postId, user_id: userId, content: commentText.trim() })
       .select('*, profiles(first_name, last_name, display_handle)')
       .single()
-    if (data) {
+    if (error) {
+      console.error('[feed] comment failed:', error)
+      toast.error('Comment failed to send. Check your connection and try again.')
+    } else if (data) {
       setComments(c => [...c, data as FeedComment])
       setCommentText('')
     }
